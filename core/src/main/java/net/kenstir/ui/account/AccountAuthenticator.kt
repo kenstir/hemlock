@@ -83,8 +83,8 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
         }
 
         val am = AccountManager.get(context)
-        var library_name = am.getUserData(account, net.kenstir.ui.account.Const.KEY_LIBRARY_NAME)
-        var library_url = am.getUserData(account, net.kenstir.ui.account.Const.KEY_LIBRARY_URL)
+        var library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME)
+        var library_url = am.getUserData(account, Const.KEY_LIBRARY_URL)
         log(TAG,
             "getAuthToken> library_name=$library_name library_url=$library_url")
         if (library_name == null) {
@@ -104,7 +104,9 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
                     if (library_url != GatewayClient.baseUrl) {
-                        throw AuthenticationException("Internal error: $library_url != ${GatewayClient.baseUrl}")
+                        // TODO: seems like this happens when the app changes the library URL, e.g. acorn
+                        // In which case we should clear the password and prompt the user to sign in again
+                        throw AuthenticationException("Server URL changed, please sign in again")
                     }
                     authToken = runBlocking {
                         App.getServiceConfig().authService.getAuthToken(account.name, password).get()
@@ -132,8 +134,8 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name)
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type)
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken)
-            result.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_NAME, library_name)
-            result.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_URL, library_url)
+            result.putString(Const.KEY_LIBRARY_NAME, library_name)
+            result.putString(Const.KEY_LIBRARY_URL, library_url)
             return result
         }
 
@@ -152,7 +154,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
     }
 
     override fun getAuthTokenLabel(authTokenType: String): String {
-        return net.kenstir.ui.account.Const.AUTHTOKEN_TYPE_LABEL
+        return Const.AUTHTOKEN_TYPE_LABEL
     }
 
     @Throws(NetworkErrorException::class)
