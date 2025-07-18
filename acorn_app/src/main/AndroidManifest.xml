@@ -90,6 +90,11 @@
         <activity
             android:name="net.kenstir.ui.view.FinesActivity"
             android:label="@string/title_fines" />
+        <activity
+            android:name="net.kenstir.ui.view.TestActivity"
+            android:label="Test Test Test"
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
+        </activity>
 
         <!-- secondary activities -->
 

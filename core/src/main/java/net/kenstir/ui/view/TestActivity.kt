@@ -1,6 +1,5 @@
 package net.kenstir.ui.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
@@ -61,7 +59,7 @@ class TestActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.navigation_view)
-        contentLayout = findViewById(R.id.content_main)
+        contentLayout = findViewById(R.id.main_content_layout)
         toolbar = findViewById(R.id.toolbar)
 
         setSupportActionBar(toolbar)

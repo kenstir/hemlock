@@ -4,6 +4,7 @@
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:clipToPadding="false"
         android:id="@+id/recycler_view"
         android:contentDescription="@string/search_results_alt"
         android:layout_width="match_parent"

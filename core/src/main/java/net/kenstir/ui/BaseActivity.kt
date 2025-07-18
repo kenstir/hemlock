@@ -17,60 +17,46 @@
 
 package net.kenstir.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.tasks.await
-import net.kenstir.data.Result
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.logging.Log.TAG_FCM
-import net.kenstir.logging.Log.TAG_PERM
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
-import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.BarcodeActivity
 import net.kenstir.ui.view.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.OrgDetailsActivity
+import net.kenstir.ui.view.TestActivity
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.main.MainActivity
 import net.kenstir.ui.view.messages.MessagesActivity
 import net.kenstir.ui.view.search.SearchActivity
-import net.kenstir.ui.view.TestActivity
 import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
@@ -79,36 +65,12 @@ import java.net.URLEncoder
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private var _toolbar: Toolbar? = null
+    protected var toolbar: Toolbar? = null
+    protected var navView: NavigationView? = null
+    protected var mainContentLayout: View? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
     val scope = lifecycleScope
-
-    protected val toolbar: Toolbar?
-        get() {
-            if (_toolbar == null) {
-                _toolbar = ActionBarUtils.initActionBarForActivity(this, null, true)
-                _toolbar?.let { tb ->
-                    ViewCompat.setOnApplyWindowInsetsListener(tb) { view, windowInsets ->
-                        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-                        // account for the status bar
-                        view.updatePadding(top = insets.top)
-
-                        // account for display cutouts (notches)
-                        val displayCutout = windowInsets.displayCutout
-                        if (displayCutout != null) {
-                            view.updatePadding(
-                                left = displayCutout.safeInsetLeft,
-                                right = displayCutout.safeInsetRight
-                            )
-                        }
-
-                        WindowInsetsCompat.CONSUMED
-                    }
-                }
-            }
-            return _toolbar
-        }
 
     protected val feedbackUrl: String
         @SuppressLint("StringFormatInvalid")
@@ -117,9 +79,34 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, getAppVersionCode(this))
         }
 
+    /** Set up the window insets listener to adjust padding for system bars */
+    open fun adjustPaddingForEdgeToEdge() {
+        //val rootLayout = findViewById<View>(R.id.root_layout)
+        val rootLayout = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
+        val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
+        val recyclerView = findViewById<View>(R.id.recycler_view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply top inset to AppBarLayout so Toolbar sits below status bar
+            appBarLayout.updatePadding(top = sysBars.top)
+
+            // Apply bottom inset to content layout
+            mainContentLayout?.updatePadding(bottom = sysBars.bottom)
+
+            // Apply insets to navigation drawer
+            navView?.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
+
+            // Dang, this is always null
+            recyclerView?.updatePadding(bottom = sysBars.bottom)
+
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false) // enable edge-to-edge mode
 
         if (!App.isStarted()) {
             App.restartApp(this)
@@ -138,22 +125,42 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
 
-        toolbar // has side effect of creating toolbar
+        toolbar = findViewById(R.id.toolbar)
+        navView = findViewById(R.id.nav_view)
+        mainContentLayout = findViewById(R.id.main_content_layout)
 
+        //setSupportActionBar(toolbar)
+        //setupNavigationDrawer()
+    }
+
+    open fun setupActionBar(titleOverride: String? = null, isMainActivity: Boolean = false) {
+        val actionBar = supportActionBar
+        Log.d(TAG, "[tb] title=$titleOverride main=$isMainActivity actionBar=$actionBar")
+        if (actionBar == null) return
+        val username =
+            if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.getAccount().displayName
+        actionBar.setSubtitle(String.format(getString(R.string.ou_activity_subtitle),
+            AppState.getString(AppState.LIBRARY_NAME), username))
+        titleOverride?.let { actionBar.setTitle(it) }
+        if (true || !isMainActivity) {
+            Log.d(TAG, "[tb] setHomeAsUpEnabled")
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setHomeAsUpIndicator(0)
+        }
+    }
+
+    open fun setupNavigationDrawer() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer != null) {
             val toggle = ActionBarDrawerToggle(
-                    this, drawer, _toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
             drawer.addDrawerListener(toggle)
             toggle.syncState()
         }
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         if (navigationView != null) {
-            //???
-            // Handle insets for the NavigationView itself if it extends to edges
-            // ViewCompat.setOnApplyWindowInsetsListener(navView) { ... }
-
             navigationView.setNavigationItemSelectedListener(this)
             val navHeader = navigationView.getHeaderView(0)
             navHeader?.let { header ->

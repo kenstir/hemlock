@@ -3,12 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/main_content_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical">
-
-    <include layout="@layout/toolbar_common"/>
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <Button
         android:id="@+id/main_search_button"
@@ -21,10 +19,10 @@
         android:onClick="onButtonClick"
         android:text="@string/title_search"
         app:layout_constraintBottom_toTopOf="@+id/main_checkouts_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread" />
 
     <Button
         android:id="@+id/main_checkouts_button"
@@ -37,11 +35,9 @@
         android:onClick="onButtonClick"
         android:text="@string/title_check_out"
         app:layout_constraintBottom_toTopOf="@+id/main_holds_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_search_button"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@+id/main_search_button" />
 
     <Button
         android:id="@+id/main_holds_button"
@@ -54,7 +50,6 @@
         android:onClick="onButtonClick"
         android:text="@string/title_holds"
         app:layout_constraintBottom_toTopOf="@+id/main_fines_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_checkouts_button" />
@@ -70,7 +65,6 @@
         android:onClick="onButtonClick"
         android:text="@string/title_fines"
         app:layout_constraintBottom_toTopOf="@+id/main_my_lists_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_holds_button" />
@@ -86,7 +80,6 @@
         android:onClick="onButtonClick"
         android:text="@string/title_my_lists"
         app:layout_constraintBottom_toTopOf="@+id/main_library_info_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_fines_button" />
@@ -102,7 +95,6 @@
         android:onClick="onButtonClick"
         android:text="@string/title_library_info"
         app:layout_constraintBottom_toTopOf="@+id/main_showcard_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_my_lists_button" />
@@ -118,7 +110,6 @@
         android:onClick="onButtonClick"
         android:text="@string/barcode_title"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_library_info_button" />

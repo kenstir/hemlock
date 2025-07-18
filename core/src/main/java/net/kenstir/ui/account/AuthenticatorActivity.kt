@@ -59,7 +59,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     /** Set up the window insets listener to adjust padding for system bars */
     private fun adjustPaddingForEdgeToEdge() {
         // Also good: findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
-        val rootLayout = findViewById<View>(R.id.login_root_layout)
+        val rootLayout = findViewById<View>(R.id.root_layout)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
