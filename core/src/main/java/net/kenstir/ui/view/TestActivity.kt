@@ -27,9 +27,7 @@ class TestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Enable full edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContentView(R.layout.activity_test)
 
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -50,7 +48,7 @@ class TestActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar)
+        val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
 
         ViewCompat.setOnApplyWindowInsetsListener(drawerLayout) { _, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

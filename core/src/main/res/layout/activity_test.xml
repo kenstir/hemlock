@@ -11,9 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- App Bar -->
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
@@ -37,7 +36,7 @@
 
             <Button
                 android:id="@+id/button"
-                style="@style/Widget.Material3.ExtendedFloatingActionButton.Primary"
+                style="@style/Hemlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Button"
@@ -49,7 +48,7 @@
 
             <Button
                 android:id="@+id/button2"
-                style="@style/Widget.Material3.Button"
+                style="@style/Hemlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Button"
@@ -60,7 +59,7 @@
 
             <Button
                 android:id="@+id/button3"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Hemlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Button"
@@ -71,7 +70,7 @@
 
             <Button
                 android:id="@+id/button4"
-                style="@style/Widget.Material3.Button.IconButton.Filled"
+                style="@style/Hemlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Button"
