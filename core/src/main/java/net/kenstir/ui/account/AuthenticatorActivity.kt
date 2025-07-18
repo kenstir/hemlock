@@ -38,7 +38,7 @@ import net.kenstir.data.model.Library
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.util.ActivityUtils.launchURL
-import net.kenstir.ui.util.enableEdgeToEdge
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
@@ -73,7 +73,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         super.onCreate(savedInstanceState)
         Analytics.initialize(this)
 
-        enableEdgeToEdge()
+        compatEnableEdgeToEdge()
         setContentViewImpl()
         adjustPaddingForEdgeToEdge()
 

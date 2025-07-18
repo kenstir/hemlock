@@ -26,7 +26,6 @@
             <option value="$PROJECT_DIR$/sagecat_app" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
