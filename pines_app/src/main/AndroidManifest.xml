@@ -25,7 +25,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINESDarkNoActionBar"
+        android:theme="@style/HemlockDarkNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />

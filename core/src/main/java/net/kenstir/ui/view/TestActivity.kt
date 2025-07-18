@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import net.kenstir.hemlock.R
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 
 class TestActivity : AppCompatActivity() {
 
@@ -24,30 +25,8 @@ class TestActivity : AppCompatActivity() {
     private lateinit var contentLayout: View
     private lateinit var toolbar: Toolbar
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_test)
-
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navView = findViewById(R.id.navigation_view)
-        contentLayout = findViewById(R.id.content_main)
-        toolbar = findViewById(R.id.toolbar)
-
-        setSupportActionBar(toolbar)
-
-        // Add hamburger icon
-        val toggle = ActionBarDrawerToggle(
-            this,
-            drawerLayout,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
+    /** Set up the window insets listener to adjust padding for system bars */
+    private fun adjustPaddingForEdgeToEdge() {
         val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
 
         ViewCompat.setOnApplyWindowInsetsListener(drawerLayout) { _, insets ->
@@ -65,6 +44,40 @@ class TestActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+        // Optional: Set system bar colors
+//        window.statusBarColor = Color.TRANSPARENT
+//        window.navigationBarColor = Color.TRANSPARENT
+//        WindowCompat.getInsetsController(window, drawerLayout).apply {
+//            isAppearanceLightStatusBars = true  // or false if you use dark background
+//            isAppearanceLightNavigationBars = true
+//        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_test)
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.navigation_view)
+        contentLayout = findViewById(R.id.content_main)
+        toolbar = findViewById(R.id.toolbar)
+
+        setSupportActionBar(toolbar)
+        adjustPaddingForEdgeToEdge()
+
+        // Add hamburger icon
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.main_search_button -> {
@@ -79,14 +92,6 @@ class TestActivity : AppCompatActivity() {
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
-        }
-
-        // Optional: Set system bar colors
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
-        WindowCompat.getInsetsController(window, drawerLayout).apply {
-            isAppearanceLightStatusBars = true  // or false if you use dark background
-            isAppearanceLightNavigationBars = true
         }
 
     }
