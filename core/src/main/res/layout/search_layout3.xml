@@ -52,12 +52,14 @@
                 android:contentDescription="@string/search_button_alt"
                 android:text="@string/search_button" />
         </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/search_options_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Hemlock.SecondaryBar">
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -82,6 +84,7 @@
                     android:contentDescription="@string/search_format_spinner_alt"
                     android:minHeight="@dimen/spinner_min_height" />
             </LinearLayout>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
