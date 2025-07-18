@@ -27,7 +27,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +38,7 @@ import net.kenstir.data.model.Library
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.util.ActivityUtils.launchURL
+import net.kenstir.ui.util.enableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
@@ -56,22 +56,26 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         setContentView(R.layout.activity_login)
     }
 
-    @SuppressLint("StringFormatInvalid")
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Analytics.initialize(this)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false) // enable edge-to-edge mode
-        setContentViewImpl()
-
-        // Set up the window insets listener to adjust padding for system bars
+    /** Set up the window insets listener to adjust padding for system bars */
+    private fun adjustPaddingForEdgeToEdge() {
+        // Also good: findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
         val rootLayout = findViewById<View>(R.id.login_root_layout)
-        // alternatively, we could use findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
+
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
             WindowInsetsCompat.CONSUMED
         }
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Analytics.initialize(this)
+
+        enableEdgeToEdge()
+        setContentViewImpl()
+        adjustPaddingForEdgeToEdge()
 
         App.init(this)
 

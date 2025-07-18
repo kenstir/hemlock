@@ -19,6 +19,7 @@ package net.kenstir.ui.util
 
 import android.app.Activity
 import android.app.AlertDialog
+import androidx.core.view.WindowCompat
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayError
@@ -57,4 +58,13 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
             }
     val alertDialog = builder.create()
     alertDialog.show()
+}
+
+/**
+ * Enables edge-to-edge mode for the activity, allowing the content to extend into the system bars area.
+ *
+ * Call this before [setContentView].
+ */
+fun Activity.enableEdgeToEdge() {
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 }
