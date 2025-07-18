@@ -19,6 +19,7 @@ package net.kenstir.ui.util
 
 import android.app.Activity
 import android.app.AlertDialog
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
@@ -63,8 +64,9 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
 /**
  * Enables edge-to-edge mode for the activity, allowing the content to extend into the system bars area.
  *
- * Call this before [setContentView].
+ * Call this before [Activity.setContentView].  After setContentView, call [ViewCompat.setOnApplyWindowInsetsListener]
+ * to adjust the insets.  See [net.kenstir.ui.account.AuthenticatorActivity.onCreate] for an example.
  */
-fun Activity.enableEdgeToEdge() {
+fun Activity.compatEnableEdgeToEdge() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
 }
