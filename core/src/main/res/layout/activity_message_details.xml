@@ -1,51 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <include layout="@layout/toolbar_common"/>
-
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-        <TextView
-            android:id="@+id/message_title"
-            style="@style/HemlockText.PagePrimary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            tools:text="Overdue Library Materials" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
-        <TextView
-            android:id="@+id/message_date"
-            style="@style/HemlockText.PageSecondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
-            tools:text="Feb 7, 2023" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    </LinearLayout>
+    <include layout="@layout/message_details" />
 
-    <TextView
-        android:id="@+id/message_body"
-        style="@style/HemlockText.PageTertiary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        tools:text="Our records indicate the following items are 10 days or more overdue.\n\n     Title:    Georgia adult literacy resources manual\n     Author:   State Bar of Georgia\n     Call No:  374.012 G\n     Checked Out At: Georgia Public Library Service - Professional Collection\n     Due Date: 12-20-2017\n\n\n\nItems may be returned and fines paid at any PINES member library. Fines will continue to accrue until items are returned.\n\nIf you have any questions, please contact your home library at:\n\n     Athens Regional Library System\n     Athens-Clarke County Library\n     2025 BAXTER ST\n     ATHENS, GA 30606-6331\n     706-613-3650\n     contact_us@arlsmail.org\n     (Please have your library card available.)\n" />
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
