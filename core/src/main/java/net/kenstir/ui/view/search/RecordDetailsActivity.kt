@@ -49,7 +49,6 @@ class RecordDetailsActivity : BaseActivity() {
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_details)
-        setSupportActionBar(toolbar)
         setupActionBar(intent.getStringExtra(Key.TITLE))
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
