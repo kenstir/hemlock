@@ -59,6 +59,7 @@ import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.Api
 import java.util.Calendar
 import java.util.Date
@@ -104,7 +105,11 @@ class PlaceHoldActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.place_hold)
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_place_hold)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         account = App.getAccount()
