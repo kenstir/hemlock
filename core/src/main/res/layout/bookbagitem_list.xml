@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include layout="@layout/toolbar_common"/>
-
-    <LinearLayout 
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="top"
@@ -26,7 +26,7 @@
                 style="@style/HemlockText.PagePrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 tools:text="Stuff to Read" />
 
             <TextView
@@ -34,17 +34,17 @@
                 style="@style/HemlockText.PageSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 tools:text="a collection of stuff to read" />
         </LinearLayout>
     </LinearLayout>
-     
-	<ListView 
-	  android:id="@+id/bookbagitem_list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="wrap_content"  
-	  android:paddingTop="8dip"
-      android:dividerHeight="1dp"
-	  />
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:dividerHeight="1dp"
+        android:paddingTop="8dp" />
 
 </LinearLayout>
