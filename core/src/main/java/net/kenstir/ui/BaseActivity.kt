@@ -80,32 +80,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, getAppVersionCode(this))
         }
 
-    /** Set up the window insets listener to adjust padding for system bars */
-    open fun adjustPaddingForEdgeToEdge() {
-        //val rootLayout = findViewById<View>(R.id.root_layout)
-        val rootLayout = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
-        val recyclerView = findViewById<View>(R.id.recycler_view)
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
-            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            // Apply top inset to AppBarLayout so Toolbar sits below status bar
-            appBarLayout?.updatePadding(top = sysBars.top)
-
-            // Apply bottom inset to content layout
-            mainContentView?.updatePadding(bottom = sysBars.bottom)
-
-            // Apply insets to navigation drawer
-            navView?.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
-
-            // Dang, this is always null
-            recyclerView?.updatePadding(bottom = sysBars.bottom)
-
-            //WindowInsetsCompat.CONSUMED
-            insets
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -134,6 +108,37 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setSupportActionBar(toolbar)
     }
 
+    /** Set up the window insets listener to adjust padding for system bars */
+    open fun adjustPaddingForEdgeToEdge() {
+        //val rootLayout = findViewById<View>(R.id.root_layout)
+        val rootLayout = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
+        val recyclerView = findViewById<View>(R.id.recycler_view)
+        val listView = findViewById<View>(R.id.list_view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply top inset to AppBarLayout so Toolbar sits below status bar
+            appBarLayout?.updatePadding(top = sysBars.top)
+
+            // Apply bottom inset to content layout
+            mainContentView?.updatePadding(bottom = sysBars.bottom)
+
+            // Apply insets to navigation drawer
+            navView?.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
+
+            // Dang, this is always null for Search (it hasn't be swapped in yet)
+            recyclerView?.updatePadding(bottom = sysBars.bottom)
+
+            // Apply bottom inset to ListView if it exists
+            listView?.updatePadding(bottom = sysBars.bottom)
+
+            //WindowInsetsCompat.CONSUMED
+            insets
+        }
+    }
+
+    /** Set up the action bar with a title and subtitle */
     open fun setupActionBar(titleOverride: String? = null, isMainActivity: Boolean = false) {
         val actionBar = supportActionBar
         Log.d(TAG, "[tb] title=$titleOverride main=$isMainActivity actionBar=$actionBar")
@@ -151,6 +156,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    /** Set up the navigation drawer, if present in this layout */
     open fun setupNavigationDrawer() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer != null) {
