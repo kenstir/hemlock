@@ -56,20 +56,15 @@ object GatewayClient {
 
     @JvmStatic
     lateinit var cacheDirectory: File
-
-    // TODO: need to expose the okHttpClient so that it can be reused by Coil
     val client: HttpClient by lazy { makeHttpClient() }
     lateinit var okHttpClient: OkHttpClient
     fun makeHttpClient(): HttpClient {
         val okHttpCache = Cache(cacheDirectory, CACHE_SIZE.toLong())
-//        val logging = HttpLoggingInterceptor().apply {
-//            level = HttpLoggingInterceptor.Level.HEADERS
-//        }
         okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
-            .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .callTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
             .addInterceptor(HemlockOkHttpInterceptor())
-//            .addInterceptor(logging)
             .build()
         return HttpClient(OkHttp) {
             engine {
@@ -84,6 +79,8 @@ object GatewayClient {
             }
         }
     }
+
+    /** Initializes the HttpClient by the lazy initializer */
     @JvmStatic
     fun initHttpClient() {
         client.pluginOrNull(HemlockPlugin)
