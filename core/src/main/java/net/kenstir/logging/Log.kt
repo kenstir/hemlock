@@ -30,12 +30,13 @@ object Log {
     const val DEBUG: Int = 3
     const val WARN: Int = 5
 
+    const val TAG_ASYNC = "async"
+    const val TAG_EXTENSIONS = "extensions"
+    const val TAG_FCM = "fcm"
+    const val TAG_PERM = "perm"
+
     val provider: LogProvider by lazy { getLogProvider() }
     var level: Int = DEBUG
-
-    var TAG_ASYNC: String = "async"
-    var TAG_FCM: String = "fcm"
-    var TAG_PERM: String = "perm"
 
     fun v(tag: String, msg: String) {
         if (level <= VERBOSE) provider.v(tag, msg)
