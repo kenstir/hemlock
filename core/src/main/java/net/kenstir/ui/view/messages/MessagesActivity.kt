@@ -35,6 +35,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.search.DividerItemDecoration
 
 const val MESSAGE_DELETE = 0
@@ -58,7 +59,12 @@ class MessagesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_messages)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
+
         progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)
