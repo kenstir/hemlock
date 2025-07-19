@@ -44,6 +44,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.history.HistoryActivity
 import net.kenstir.ui.view.search.RecordDetails
@@ -61,11 +62,15 @@ class CheckoutsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_checkouts)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
         progress = ProgressDialogSupport()
-        lv = findViewById(R.id.checkout_items_list)
+        lv = findViewById(R.id.list_view)
         listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { _, _, position, _ -> onItemClick(position) }
