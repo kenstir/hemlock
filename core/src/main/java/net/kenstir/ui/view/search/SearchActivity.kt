@@ -125,7 +125,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_search)
-        setSupportActionBar(toolbar)
         setupActionBar()
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()

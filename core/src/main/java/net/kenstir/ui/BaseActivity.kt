@@ -47,11 +47,11 @@ import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.showAlert
+import net.kenstir.ui.view.BarcodeActivity
 import net.kenstir.ui.view.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.OrgDetailsActivity
-import net.kenstir.ui.view.TestActivity
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.main.MainActivity
@@ -131,8 +131,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         navView = findViewById(R.id.nav_view)
         mainContentView = findViewById(R.id.main_content_view)
 
-        //setSupportActionBar(toolbar)
-        //setupNavigationDrawer()
+        setSupportActionBar(toolbar)
     }
 
     open fun setupActionBar(titleOverride: String? = null, isMainActivity: Boolean = false) {
@@ -248,8 +247,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else if (id == R.id.main_events_button) {
             launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
-//            startActivity(Intent(this, BarcodeActivity::class.java))
-            startActivity(Intent(this, TestActivity::class.java))
+            startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
             ret = menuItemHandler!!.onItemSelected(this, id, "nav_drawer")
         } else {
