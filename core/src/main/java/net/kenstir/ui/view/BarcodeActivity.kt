@@ -34,6 +34,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.util.BarcodeUtils
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 
 class BarcodeActivity : BaseActivity() {
     private var barcodeText: TextView? = null
@@ -44,7 +45,11 @@ class BarcodeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_barcode)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         barcodeText = findViewById(R.id.barcode_text)
         barcodeWarning = findViewById(R.id.barcode_warning)
