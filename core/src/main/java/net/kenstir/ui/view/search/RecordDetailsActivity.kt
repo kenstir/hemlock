@@ -34,6 +34,7 @@ import net.kenstir.ui.App
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ActionBarUtils
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
 
@@ -47,8 +48,12 @@ class RecordDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.record_details)
-        ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra(Key.TITLE))
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_details)
+        setSupportActionBar(toolbar)
+        setupActionBar(intent.getStringExtra(Key.TITLE))
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).

@@ -66,6 +66,7 @@ import java.net.URLEncoder
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     protected var toolbar: Toolbar? = null
+    protected var appBarLayout: AppBarLayout? = null
     protected var navView: NavigationView? = null
     protected var mainContentLayout: View? = null
     protected var menuItemHandler: MenuProvider? = null
@@ -83,14 +84,13 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     open fun adjustPaddingForEdgeToEdge() {
         //val rootLayout = findViewById<View>(R.id.root_layout)
         val rootLayout = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
-        val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
         val recyclerView = findViewById<View>(R.id.recycler_view)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
             // Apply top inset to AppBarLayout so Toolbar sits below status bar
-            appBarLayout.updatePadding(top = sysBars.top)
+            appBarLayout?.updatePadding(top = sysBars.top)
 
             // Apply bottom inset to content layout
             mainContentLayout?.updatePadding(bottom = sysBars.bottom)
@@ -126,6 +126,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         super.setContentView(layoutResID)
 
         toolbar = findViewById(R.id.toolbar)
+        appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
         navView = findViewById(R.id.nav_view)
         mainContentLayout = findViewById(R.id.main_content_layout)
 
