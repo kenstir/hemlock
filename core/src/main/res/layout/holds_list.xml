@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/main_content_view"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:orientation="vertical">
-
-	<include layout="@layout/toolbar_common"/>
+	android:orientation="vertical"
+	app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -19,10 +21,10 @@
 	</LinearLayout>
 
 	<ListView
-		android:id="@+id/holds_item_list"
+		android:id="@+id/list_view"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
-		android:dividerHeight="1dp">
-	</ListView>
+		android:clipToPadding="false"
+		android:dividerHeight="1dp" />
 
 </LinearLayout>
