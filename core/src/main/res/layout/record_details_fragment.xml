@@ -19,7 +19,8 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/record_details_scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -205,6 +206,6 @@
                 </TableRow>
             </TableLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

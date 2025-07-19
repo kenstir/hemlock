@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.viewpager.widget.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content_layout"
-    android:orientation="vertical"
+    android:id="@+id/main_content_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-    <!-- TODO: unnest this from LinearLayout -->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-</LinearLayout>
+    android:layout_height="match_parent"
+    android:layout_marginLeft="0dp"
+    android:layout_marginTop="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_weight="1"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
