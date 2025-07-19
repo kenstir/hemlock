@@ -86,7 +86,7 @@
     <string name="n_results">%1$d results</string>
     <string name="first_n_of_m_results">%1$d most relevant results (of %2$d total)</string>
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
-    <string name="n_items_on_hold">items on hold: %1$d</string>
+    <string name="n_items_on_hold">%1$d items on hold</string>
 
     <!-- Search Details -->
     <string name="show_copies">Copy info</string>
@@ -115,7 +115,6 @@
     <string name="cancel_hold_positive_button">Cancel hold</string>
     <string name="thaw_date">Activate hold on</string>
     <string name="hold_phone_hint">Contact phone number</string>
-    <string name="hold_items">Items on hold: </string>
     <string name="msg_loading_place_hold">Loading</string>
     <string name="label_select_hold_part">Select a part</string>
     <string name="title_no_part_selected">No part selected</string>
