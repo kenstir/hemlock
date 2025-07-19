@@ -27,7 +27,7 @@
 
         <!-- Main content -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main_content_layout"
+            android:id="@+id/main_content_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"

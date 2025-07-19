@@ -33,7 +33,6 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.ui.App
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
@@ -67,7 +66,7 @@ class RecordDetailsActivity : BaseActivity() {
         orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
         val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
         numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
-        mPager = findViewById(R.id.pager)
+        mPager = findViewById(R.id.main_content_view)
         mPager?.adapter = SearchFragmentAdapter(supportFragmentManager)
         mPager?.currentItem = recordPosition
     }

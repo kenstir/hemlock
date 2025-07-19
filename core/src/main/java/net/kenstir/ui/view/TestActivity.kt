@@ -59,7 +59,7 @@ class TestActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.navigation_view)
-        contentLayout = findViewById(R.id.main_content_layout)
+        contentLayout = findViewById(R.id.main_content_view)
         toolbar = findViewById(R.id.toolbar)
 
         setSupportActionBar(toolbar)
