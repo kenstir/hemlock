@@ -22,6 +22,7 @@ import android.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import net.kenstir.logging.Log
+import net.kenstir.logging.Log.TAG_EXTENSIONS
 import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayError
 import net.kenstir.util.getCustomMessage
@@ -38,6 +39,7 @@ fun Activity.showAlert(message: String, title: String? = "Error") {
 }
 
 fun Activity.showAlert(ex: Exception) {
+    Log.d(TAG_EXTENSIONS, "showAlert: ${ex.javaClass.simpleName}: ${ex.getCustomMessage()}", ex)
     if (ex is GatewayError && ex.isSessionExpired()) {
         showSessionExpiredAlert(ex)
     } else {
@@ -51,10 +53,10 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
     builder.setTitle("Error")
             .setMessage(ex.getCustomMessage())
             .setNegativeButton(android.R.string.cancel) { _, _ ->
-                Log.d("sessionexpired", "cancel")
+                Log.d(TAG_EXTENSIONS, "cancel")
             }
             .setPositiveButton("Login Again") { _, _ ->
-                Log.d("sessionexpired", "relog")
+                Log.d(TAG_EXTENSIONS, "relog")
                 App.restartApp(this)
             }
     val alertDialog = builder.create()

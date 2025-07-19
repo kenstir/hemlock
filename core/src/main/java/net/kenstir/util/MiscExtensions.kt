@@ -24,6 +24,8 @@ package net.kenstir.util
 fun Exception.getCustomMessage(): String {
     when (this) {
         is java.util.concurrent.TimeoutException -> return "Timeout"
+        is java.net.SocketTimeoutException -> return "Timeout"
+        is java.io.InterruptedIOException -> return "Timeout"
     }
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"
