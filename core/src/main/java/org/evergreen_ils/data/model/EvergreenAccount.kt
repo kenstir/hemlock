@@ -55,6 +55,7 @@ class EvergreenAccount(username: String, authToken: String? = null): Account(use
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
         this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
+        this.holdHistoryStart = map[Api.USER_SETTING_HOLD_HISTORY_START]
         this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
         this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
     }
