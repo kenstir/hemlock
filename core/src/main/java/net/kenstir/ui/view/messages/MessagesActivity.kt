@@ -44,7 +44,7 @@ const val MESSAGE_MARK_UNREAD = 2
 const val MESSAGE_VIEW = 3
 
 class MessagesActivity : BaseActivity() {
-    private val TAG = javaClass.simpleName
+    private val TAG = "MessagesActivity"
 
     private var rv: RecyclerView? = null
     private var adapter: MessageViewAdapter? = null
@@ -70,7 +70,7 @@ class MessagesActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         adapter = MessageViewAdapter(items)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
 
         initClickListener()
     }
