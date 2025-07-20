@@ -51,6 +51,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import java.util.Calendar
 import java.util.Date
 
@@ -69,8 +70,12 @@ class HoldDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.hold_details)
-        ActionBarUtils.initActionBarForActivity(this)
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_hold_details)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
+
         progress = ProgressDialogSupport()
 
         val record = intent.getSerializableExtra(Key.HOLD_RECORD) as EvergreenHoldRecord
