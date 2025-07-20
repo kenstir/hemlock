@@ -70,12 +70,14 @@ class CopyInformationActivity : BaseActivity() {
 
     override fun adjustPaddingForEdgeToEdge() {
         super.adjustPaddingForEdgeToEdge()
-        val bottomButtonRow = findViewById<View>(R.id.bottom_button_row_layout)
-        ViewCompat.setOnApplyWindowInsetsListener(bottomButtonRow) { v, insets ->
+
+        // This is a hack until I either make the Place Hold button float,
+        // or I replace the ListView with a RecyclerView.
+        val mainContentView = findViewById<View>(R.id.main_content_view)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContentView) { v, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
-                left = sysBars.left,
-                bottom = sysBars.bottom
+                bottom = sysBars.bottom + sysBars.top
             )
             insets
         }
