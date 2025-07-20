@@ -30,22 +30,4 @@
         android:clipToPadding="false"
         app:layoutManager="LinearLayoutManager" />
 
-    <!--
-    <LinearLayout
-        android:id="@+id/bottom_button_row_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/simple_place_hold_button"
-            style="@style/ApplicationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:text="@string/button_place_hold" />
-    </LinearLayout>
-    -->
 </LinearLayout>
