@@ -53,6 +53,7 @@ import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.setMargins
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.getCopySummary
@@ -69,6 +70,15 @@ class CopyInformationActivity : BaseActivity() {
 
     private val groupCopiesBySystem: Boolean
         get() = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
+
+    override fun adjustPaddingForEdgeToEdge() {
+        super.adjustPaddingForEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.floating_action_button)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setMargins(bottom = systemBars.bottom)
+            insets
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,14 +106,13 @@ class CopyInformationActivity : BaseActivity() {
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
         summaryText.text = record.getCopySummary(resources, orgID)
-/*
-        placeHoldButton = findViewById(R.id.simple_place_hold_button)
+
+        placeHoldButton = findViewById(R.id.floating_action_button)
         placeHoldButton?.setOnClickListener {
             val intent = Intent(this, PlaceHoldActivity::class.java)
             intent.putExtra(Key.RECORD_INFO, record)
             startActivity(intent)
         }
-*/
     }
 
     private fun initClickListener() {
