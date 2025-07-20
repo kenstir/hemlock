@@ -35,6 +35,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
@@ -56,7 +57,12 @@ class HistoryActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_history)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
+
         progress = ProgressDialogSupport()
 
         historySummary = findViewById(R.id.history_items_summary)
