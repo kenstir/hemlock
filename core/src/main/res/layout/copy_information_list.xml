@@ -7,17 +7,12 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:orientation="vertical"
-    android:paddingBottom="?attr/actionBarSize"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="5dp"
-        android:paddingTop="7dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="7dp"
         android:theme="@style/Hemlock.TableHeader">
 
         <TextView
@@ -27,13 +22,15 @@
             tools:text="162 of 362 copies available at All CW MARS Libraries" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        app:layoutManager="LinearLayoutManager" />
 
+    <!--
     <LinearLayout
         android:id="@+id/bottom_button_row_layout"
         android:layout_width="match_parent"
@@ -50,4 +47,5 @@
             android:paddingRight="32dp"
             android:text="@string/button_place_hold" />
     </LinearLayout>
+    -->
 </LinearLayout>
