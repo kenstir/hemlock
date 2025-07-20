@@ -34,6 +34,9 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
@@ -47,6 +50,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.getCopySummary
@@ -64,11 +68,28 @@ class CopyInformationActivity : BaseActivity() {
     private val groupCopiesBySystem: Boolean
         get() = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
 
+    override fun adjustPaddingForEdgeToEdge() {
+        super.adjustPaddingForEdgeToEdge()
+        val bottomButtonRow = findViewById<View>(R.id.bottom_button_row_layout)
+        ViewCompat.setOnApplyWindowInsetsListener(bottomButtonRow) { v, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = sysBars.left,
+                bottom = sysBars.bottom
+            )
+            insets
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.copy_information_list)
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_copy_information)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         if (savedInstanceState != null) {
             record = savedInstanceState.getSerializable(Key.RECORD_INFO) as BibRecord
@@ -78,7 +99,7 @@ class CopyInformationActivity : BaseActivity() {
             orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
         }
 
-        lv = findViewById(R.id.copy_information_list)
+        lv = findViewById(R.id.list_view)
         listAdapter = CopyInformationArrayAdapter(this, R.layout.copy_information_item, copyInfoRecords)
         lv?.adapter = listAdapter
         if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {

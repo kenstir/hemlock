@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fitsSystemWindows="true">
-
-	<include layout="@layout/toolbar_common"/>
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+	android:fitsSystemWindows="true"
+	android:clipToPadding="false"
+	android:paddingTop="?attr/actionBarSize">
 
 	<LinearLayout
 		android:theme="@style/Hemlock.TableHeader"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:paddingLeft="5dp"
@@ -27,16 +29,16 @@
 	</LinearLayout>
 
 	<ListView
-			android:id="@+id/copy_information_list"
+			android:id="@+id/list_view"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"/>
 
 	<LinearLayout
+		android:id="@+id/bottom_button_row_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:paddingBottom="3dip">
+		android:orientation="horizontal">
 
 		<Button
 			android:id="@+id/simple_place_hold_button"
