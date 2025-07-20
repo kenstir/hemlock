@@ -45,6 +45,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.system.EgOrg
 
@@ -74,7 +75,11 @@ class OrgDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_org_details)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         orgID = if (intent.hasExtra(Key.ORG_ID)) {
             intent.getIntExtra(Key.ORG_ID, 1)

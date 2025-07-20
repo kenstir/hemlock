@@ -109,11 +109,6 @@
             android:label="@string/title_search"
             android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
-        <activity
-            android:name="net.kenstir.ui.view.TestActivity"
-            android:label="Test Test Test"
-            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
-        </activity>
 
         <!-- secondary activities -->
 
