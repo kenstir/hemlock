@@ -30,7 +30,6 @@ import java.text.DateFormat
 class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.Adapter<MessageViewAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        //private val TAG = javaClass.simpleName
 
         private val title: TextView = v.findViewById(R.id.message_title)
         private val date: TextView = v.findViewById(R.id.message_date)

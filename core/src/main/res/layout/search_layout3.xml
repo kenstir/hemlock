@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include layout="@layout/toolbar_common"/>
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,12 +52,14 @@
                 android:contentDescription="@string/search_button_alt"
                 android:text="@string/search_button" />
         </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/search_options_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Hemlock.SecondaryBar">
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -81,6 +84,7 @@
                     android:contentDescription="@string/search_format_spinner_alt"
                     android:minHeight="@dimen/spinner_min_height" />
             </LinearLayout>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -113,9 +117,10 @@
     </LinearLayout>
 
     <FrameLayout
+        android:clipToPadding="false"
         android:id="@+id/search_results_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </LinearLayout>

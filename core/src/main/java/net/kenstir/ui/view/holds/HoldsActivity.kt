@@ -42,6 +42,7 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldRecord
 import net.kenstir.ui.App
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {
@@ -55,10 +56,14 @@ class HoldsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_holds)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         holdsSummary = findViewById(R.id.holds_summary)
-        lv = findViewById(R.id.holds_item_list)
+        lv = findViewById(R.id.list_view)
 
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item)

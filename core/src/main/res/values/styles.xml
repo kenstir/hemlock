@@ -131,10 +131,10 @@
         <item name="android:background">@color/table_header_background</item>
         <item name="android:textColor">@color/table_header_textcolor</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
     </style>
 
     <style name="Hemlock.ActionButton" parent="Widget.AppCompat.Button">
@@ -175,12 +175,19 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="HemlockLightNoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">

@@ -30,6 +30,7 @@ import net.kenstir.ui.App
 import org.evergreen_ils.data.model.EvergreenPatronMessage
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ActionBarUtils
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 import java.text.DateFormat
 
@@ -42,8 +43,11 @@ class MessageDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_message_details)
-        ActionBarUtils.initActionBarForActivity(this)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         message = intent.getSerializableExtra(Key.PATRON_MESSAGE) as EvergreenPatronMessage
 

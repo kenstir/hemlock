@@ -1,52 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fitsSystemWindows="true">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-	<include layout="@layout/toolbar_common"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:theme="@style/Hemlock.TableHeader">
 
-	<LinearLayout
-		android:theme="@style/Hemlock.TableHeader"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:paddingLeft="5dp"
-		android:paddingTop="7dp"
-		android:paddingRight="5dp"
-		android:paddingBottom="7dp">
+        <TextView
+            android:id="@+id/copy_information_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="162 of 362 copies available at All CW MARS Libraries" />
+    </LinearLayout>
 
-		<TextView
-			android:id="@+id/copy_information_summary"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			tools:text="162 of 362 copies available at All CW MARS Libraries" />
-	</LinearLayout>
-
-	<ListView
-			android:id="@+id/copy_information_list"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"/>
-
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:paddingBottom="3dip">
-
-		<Button
-			android:id="@+id/simple_place_hold_button"
-			style="@style/ApplicationButton"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="5dp"
-			android:paddingLeft="32dp"
-			android:paddingRight="32dp"
-			android:text="@string/button_place_hold" />
-	</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        app:layoutManager="LinearLayoutManager" />
 
 </LinearLayout>

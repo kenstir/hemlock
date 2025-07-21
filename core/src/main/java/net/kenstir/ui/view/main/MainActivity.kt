@@ -34,10 +34,11 @@ import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.view.BarcodeActivity
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
-import net.kenstir.ui.view.BarcodeActivity
 import net.kenstir.ui.view.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.OrgDetailsActivity
@@ -56,7 +57,11 @@ open class MainActivity : MainBaseActivity() {
 
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
 //        if (onCreateHandleLaunchIntent()) return
 

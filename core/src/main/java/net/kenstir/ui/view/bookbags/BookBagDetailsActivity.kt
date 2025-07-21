@@ -48,6 +48,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.pubdateSortKey
@@ -84,8 +85,11 @@ class BookBagDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.bookbagitem_list)
-        ActionBarUtils.initActionBarForActivity(this)
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_bookbag_details)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         progress = ProgressDialogSupport()
         patronList = intent.getSerializableExtra(Key.PATRON_LIST) as PatronList
@@ -96,7 +100,7 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagName?.text = patronList.name
         bookBagDescription?.text = patronList.description
 
-        lv = findViewById(R.id.bookbagitem_list)
+        lv = findViewById(R.id.list_view)
         listAdapter = ListItemArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->

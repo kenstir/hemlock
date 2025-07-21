@@ -59,6 +59,7 @@ import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -122,7 +123,12 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_search)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
+
         progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated

@@ -34,6 +34,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
@@ -47,28 +51,44 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ItemClickSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.setMargins
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.getCopySummary
 
 class CopyInformationActivity : BaseActivity() {
-    private val TAG = CopyInformationActivity::class.java.simpleName
+    private val TAG = "CopyInformationActivity"
 
     private lateinit var record: BibRecord
     private var orgID: Int = EgOrg.consortiumID
-    private var lv: ListView? = null
     private var placeHoldButton: Button? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
-    private var listAdapter: CopyInformationArrayAdapter? = null
+    private var rv: RecyclerView? = null
+    private var adapter: CopyInformationViewAdapter? = null
 
     private val groupCopiesBySystem: Boolean
         get() = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
+
+    override fun adjustPaddingForEdgeToEdge() {
+        super.adjustPaddingForEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.floating_action_button)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setMargins(bottom = systemBars.bottom)
+            insets
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.copy_information_list)
+        compatEnableEdgeToEdge()
+        setContentView(R.layout.activity_copy_information)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         if (savedInstanceState != null) {
             record = savedInstanceState.getSerializable(Key.RECORD_INFO) as BibRecord
@@ -78,26 +98,29 @@ class CopyInformationActivity : BaseActivity() {
             orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
         }
 
-        lv = findViewById(R.id.copy_information_list)
-        listAdapter = CopyInformationArrayAdapter(this, R.layout.copy_information_item, copyInfoRecords)
-        lv?.adapter = listAdapter
-        if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {
-            lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-                val clc = lv?.getItemAtPosition(position) as CopyLocationCounts
-                launchOrgDetails(clc.orgId)
-            }
-        } else {
-            lv?.setSelector(android.R.color.transparent)
-        }
+        rv = findViewById(R.id.recycler_view)
+        adapter = CopyInformationViewAdapter(copyInfoRecords, groupCopiesBySystem)
+        rv?.adapter = adapter
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        initClickListener()
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
         summaryText.text = record.getCopySummary(resources, orgID)
 
-        placeHoldButton = findViewById(R.id.simple_place_hold_button)
+        placeHoldButton = findViewById(R.id.floating_action_button)
         placeHoldButton?.setOnClickListener {
             val intent = Intent(this, PlaceHoldActivity::class.java)
             intent.putExtra(Key.RECORD_INFO, record)
             startActivity(intent)
+        }
+    }
+
+    private fun initClickListener() {
+        if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {
+            ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
+                val clc = copyInfoRecords[position]
+                launchOrgDetails(clc.orgId)
+            }
         }
     }
 
@@ -154,7 +177,7 @@ class CopyInformationActivity : BaseActivity() {
                 compareValues(getOrgNameSafe(a.orgId), getOrgNameSafe(b.orgId))
             })
         }
-        listAdapter?.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     private fun fetchData() {
@@ -167,46 +190,6 @@ class CopyInformationActivity : BaseActivity() {
             } catch (ex: Exception) {
                 showAlert(ex)
             }
-        }
-    }
-
-    internal inner class CopyInformationArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CopyLocationCounts>) : ArrayAdapter<CopyLocationCounts>(context, resourceId, items) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val row = when(convertView) {
-                null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    inflater.inflate(resourceId, parent, false)
-                }
-                else -> {
-                    convertView
-                }
-            }
-
-            val majorLocationText = row.findViewById<TextView>(R.id.copy_information_major_location)
-            val minorLocationText = row.findViewById<TextView>(R.id.copy_information_minor_location)
-            val copyCallNumberText = row.findViewById<TextView>(R.id.copy_information_call_number)
-            val copyLocationText = row.findViewById<TextView>(R.id.copy_information_copy_location)
-            val copyStatusesText = row.findViewById<TextView>(R.id.copy_information_statuses)
-
-            val clc = getItem(position)
-            val org = findOrg(clc?.orgId)
-
-            if (groupCopiesBySystem) {
-                majorLocationText.text = getOrgNameSafe(org?.parent)
-                val ss = SpannableString(org?.name)
-                ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                minorLocationText.setText(ss, TextView.BufferType.SPANNABLE)
-                minorLocationText.setOnClickListener { launchOrgDetails(org?.id) }
-            } else {
-                majorLocationText.text = getOrgNameSafe(clc?.orgId)
-                minorLocationText.visibility = View.GONE
-            }
-            copyCallNumberText.text = clc?.callNumber
-            copyLocationText.text = clc?.copyLocation
-            copyStatusesText.text = clc?.countsByStatusLabel
-
-            return row
         }
     }
 }

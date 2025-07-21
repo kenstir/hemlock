@@ -39,6 +39,7 @@ open class Account(val username: String, var authToken: String?) {
     var smsNumber: String? = null
     var holdNotifyValue: String? = null // kept for analytics
     var circHistoryStart: String? = null
+    var holdHistoryStart: String? = null
     var savedPushNotificationData: String? = null // last saved user setting, not the current token
     var savedPushNotificationEnabled: Boolean = false
 

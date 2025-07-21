@@ -1,167 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:fitsSystemWindows="true">
+    android:padding="10dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include layout="@layout/toolbar_common"/>
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:padding="10dp" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/hold_title"
+                    style="@style/HemlockText.PagePrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingTop="20dp"
+                    tools:text="Trashed : a graphic novel" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/hold_author"
+                    style="@style/HemlockText.PageTertiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    tools:text="Derf" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/hold_format"
+                    style="@style/HemlockText.PageTertiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingBottom="20dp"
+                    tools:text="Book" />
+            </TableRow>
+
+            <TableRow android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/hold_physical_description"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    tools:text="print 256 p." />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pickup_location" />
+
+                <Spinner
+                    android:id="@+id/hold_pickup_location"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/spinner_min_height"
+                    android:spinnerMode="dialog" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="@string/expiration_date" />
+
+                <EditText
+                    android:id="@+id/hold_expiration_date"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:minHeight="@dimen/target_min_height" />
+            </TableRow>
+
+            <TableRow android:id="@+id/hold_suspend_hold_row">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="@string/suspend_hold" />
+
+                <CheckBox
+                    android:id="@+id/hold_suspend_hold"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:minHeight="@dimen/target_min_height" />
+            </TableRow>
+
+            <TableRow android:id="@+id/hold_thaw_date_row">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="@string/thaw_date" />
+
+                <EditText
+                    android:id="@+id/hold_thaw_date"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:minHeight="@dimen/target_min_height" />
+            </TableRow>
+        </TableLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingLeft="0dp"
+            android:paddingTop="8dp"
+            android:paddingRight="0dp"
+            android:paddingBottom="8dp">
 
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
-
-                <TableRow android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/hold_title"
-                        style="@style/HemlockText.PagePrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_span="2"
-                        android:layout_weight="1"
-                        android:paddingLeft="0dp"
-                        android:paddingTop="20dp"
-                        tools:text="Trashed : a graphic novel" />
-                </TableRow>
-                <TableRow android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/hold_author"
-                        style="@style/HemlockText.PageTertiary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_span="2"
-                        android:layout_weight="1"
-                        android:paddingLeft="0dp"
-                        tools:text="Derf" />
-                </TableRow>
-                <TableRow android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/hold_format"
-                        style="@style/HemlockText.PageTertiary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_span="2"
-                        android:layout_weight="1"
-                        android:paddingLeft="0dp"
-                        android:paddingBottom="20dp"
-                        tools:text="Book" />
-                </TableRow>
-
-                <TableRow android:visibility="gone">
-                    <TextView
-                        android:id="@+id/hold_physical_description"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="left"
-                        tools:text="print 256 p."
-                        android:layout_gravity="left" />
-                </TableRow>
-
-                <TableRow>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pickup_location" />
-
-                    <Spinner
-                        android:id="@+id/hold_pickup_location"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:spinnerMode="dialog"
-                        android:minHeight="@dimen/spinner_min_height" />
-                </TableRow>
-                <TableRow>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/expiration_date"
-                        android:paddingRight="6dp" />
-
-                    <EditText
-                        android:id="@+id/hold_expiration_date"
-                        android:focusable="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minHeight="@dimen/target_min_height" />
-                </TableRow>
-                <TableRow android:id="@+id/hold_suspend_hold_row">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/suspend_hold"
-                        android:paddingRight="6dp"
-                        />
-                    <CheckBox
-                        android:id="@+id/hold_suspend_hold"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:checked="true"
-                        android:minHeight="@dimen/target_min_height" />
-                </TableRow>
-                <TableRow android:id="@+id/hold_thaw_date_row">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/thaw_date"
-                        android:paddingRight="6dp"
-                        />
-                    <EditText
-                        android:id="@+id/hold_thaw_date"
-                        android:focusable="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minHeight="@dimen/target_min_height" />
-                </TableRow>
-            </TableLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/cancel_hold_button"
+                style="@style/ApplicationButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp">
+                android:text="@string/cancel_hold" />
 
-                <Button
-                    android:id="@+id/cancel_hold_button"
-                    style="@style/ApplicationButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cancel_hold" />
-
-                <Button
-                    android:id="@+id/update_hold_button"
-                    style="@style/ApplicationButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/update_hold" />
-            </LinearLayout>
-
+            <Button
+                android:id="@+id/update_hold_button"
+                style="@style/ApplicationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/update_hold" />
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

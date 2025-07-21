@@ -44,6 +44,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 
 class BookBagsActivity : BaseActivity() {
@@ -53,11 +54,15 @@ class BookBagsActivity : BaseActivity() {
     private var bookBagName: EditText? = null
     private var createButton: Button? = null
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_bookbags)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         // prevent soft keyboard from popping up when the activity starts
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -68,7 +73,7 @@ class BookBagsActivity : BaseActivity() {
         createButton?.setOnClickListener(View.OnClickListener {
             createBookBag()
         })
-        lv = findViewById(R.id.bookbag_list)
+        lv = findViewById(R.id.list_view)
         listAdapter = PatronListArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->

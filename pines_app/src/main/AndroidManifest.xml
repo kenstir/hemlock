@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="133"
-    android:versionName="4.0.2">
+    android:versionCode="134"
+    android:versionName="4.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -25,7 +25,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINESDarkNoActionBar"
+        android:theme="@style/HemlockDarkNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />

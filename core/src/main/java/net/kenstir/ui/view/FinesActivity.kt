@@ -41,6 +41,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import org.evergreen_ils.gateway.GatewayClient
@@ -67,10 +68,14 @@ class FinesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_fines)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
         decimalFormatter = DecimalFormat("#0.00")
-        lv = findViewById(R.id.fines_overdue_materials_list)
+        lv = findViewById(R.id.list_view)
         total_owed = findViewById(R.id.fines_total_owed)
         total_paid = findViewById(R.id.fines_total_paid)
         balance_owed = findViewById(R.id.fines_balance_owed)
