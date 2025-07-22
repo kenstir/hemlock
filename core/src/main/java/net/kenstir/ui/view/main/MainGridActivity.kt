@@ -25,10 +25,12 @@ import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import net.kenstir.hemlock.BuildConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.util.GridButton
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
@@ -60,9 +62,13 @@ class MainGridActivity : MainBaseActivity() {
 
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_main_grid)
+        setupActionBar()
+        adjustPaddingForEdgeToEdge()
+        setupNavigationDrawer()
 
-        rv = findViewById(R.id.recycler_view)
+        rv = findViewById(R.id.grid_view)
         setupRecyclerView()
         addGridButtons()
         setupBottomRowButtons()
