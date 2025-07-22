@@ -19,36 +19,37 @@
  */
 package net.kenstir.ui.view.holds
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
 import net.kenstir.data.Result
-import net.kenstir.ui.Key
-import net.kenstir.logging.Log
-import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldRecord
+import net.kenstir.hemlock.R
+import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
+import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
-import java.util.ArrayList
+import net.kenstir.ui.util.showAlert
+import net.kenstir.ui.view.search.DividerItemDecoration
+import net.kenstir.ui.view.search.RecordDetails
 
 class HoldsActivity : BaseActivity() {
-    private var lv: ListView? = null
-    private var listAdapter: HoldsArrayAdapter? = null
-    private var holdRecords = listOf<HoldRecord>()
+    private val TAG = "Holds"
+
+    private var rv: RecyclerView? = null
+    private var adapter: HoldsViewAdapter? = null
+    private var holdRecords = mutableListOf<HoldRecord>()
     private var holdsSummary: TextView? = null
     private var progress: ProgressDialogSupport? = null
 
@@ -63,12 +64,12 @@ class HoldsActivity : BaseActivity() {
         setupNavigationDrawer()
 
         holdsSummary = findViewById(R.id.holds_summary)
-        lv = findViewById(R.id.list_view)
-
         progress = ProgressDialogSupport()
-        listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item)
-        lv?.adapter = listAdapter
-        lv?.setOnItemClickListener { _, _, position, _ ->
+        rv = findViewById(R.id.recycler_view)
+        adapter = HoldsViewAdapter(holdRecords) { editHold(it) }
+        rv?.adapter = adapter
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             showItemDetails(position)
         }
     }
@@ -107,20 +108,16 @@ class HoldsActivity : BaseActivity() {
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
 
                 // fetchHolds
-                val result = App.getServiceConfig().circService.fetchHolds(
-                    App.getAccount())
-                when (result) {
-                    is Result.Success ->
-                        holdRecords = result.get()
-                    is Result.Error -> {
-                        showAlert(result.exception)
-                        return@async
-                    }
+                val result = App.getServiceConfig().circService.fetchHolds(App.getAccount())
+                if (result is Result.Error) {
+                    showAlert(result.exception)
+                    return@async
                 }
-                holdsSummary?.text = String.format(getString(R.string.n_items_on_hold), holdRecords.size)
+                val holds = result.get()
+                holdsSummary?.text = String.format(getString(R.string.n_items_on_hold), holds.size)
 
                 // fetch hold target details and queue stats
-                for (hold in holdRecords) {
+                for (hold in holds) {
                     jobs.add(scope.async {
                         App.getServiceConfig().circService.loadHoldDetails(
                             App.getAccount(), hold)
@@ -128,7 +125,7 @@ class HoldsActivity : BaseActivity() {
                 }
 
                 jobs.map { it.await() }
-                updateHoldsList()
+                updateHoldsList(holds)
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -139,10 +136,10 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    private fun updateHoldsList() {
-        listAdapter?.clear()
-        listAdapter?.addAll(holdRecords)
-        listAdapter?.notifyDataSetChanged()
+    private fun updateHoldsList(holds: List<HoldRecord>) {
+        holdRecords.clear()
+        holdRecords.addAll(holds)
+        adapter?.notifyDataSetChanged()
     }
 
     private fun editHold(record: HoldRecord) {
@@ -164,49 +161,39 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    internal inner class HoldsArrayAdapter(context: Context, private val resourceId: Int) :
-            ArrayAdapter<HoldRecord>(context, resourceId) {
+    internal class HoldsViewAdapter(
+        private val items: List<HoldRecord>,
+        private val onEditClick: (HoldRecord) -> Unit,
+    ) : RecyclerView.Adapter<HoldsViewAdapter.ViewHolder>() {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val row = when(convertView) {
-                null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    inflater.inflate(resourceId, parent, false)
-                }
-                else -> {
-                    convertView
-                }
-            }
+        internal class ViewHolder(
+            view: View,
+            private val onEditClick: (HoldRecord) -> Unit
+        ) : RecyclerView.ViewHolder(view) {
+            val titleText: TextView = view.findViewById(R.id.hold_title)
+            val authorText: TextView = view.findViewById(R.id.hold_author)
+            val formatText: TextView = view.findViewById(R.id.hold_format)
+            val statusText: TextView = view.findViewById(R.id.hold_status)
+            val editButton: Button = view.findViewById(R.id.edit_button)
 
-            val titleText = row.findViewById<TextView>(R.id.hold_title)
-            val authorText = row.findViewById<TextView>(R.id.hold_author)
-            val formatText = row.findViewById<TextView>(R.id.hold_format)
-            val statusText = row.findViewById<TextView>(R.id.hold_status)
-            val editButton = row.findViewById<Button>(R.id.edit_button)
-
-            val record = getItem(position)
-            titleText?.text = record?.title
-            authorText?.text = record?.author
-            formatText?.text = record?.formatLabel
-            statusText?.text = record?.getHoldStatus(resources)
-
-            initEditButton(editButton, record)
-
-            return row
-        }
-
-        // This one-line function is necessary; doing setOnClickListener inside getView()
-        // captures the wrong [record], and all edit buttons operate on the last hold.
-        fun initEditButton(editButton: Button?, record: HoldRecord?) {
-            editButton?.setOnClickListener {
-                if (record != null) {
-                    editHold(record)
-                }
+            fun bindView(record: HoldRecord) {
+                titleText.text = record.title
+                authorText.text = record.author
+                formatText.text = record.formatLabel
+                statusText.text = record.getHoldStatus(itemView.resources)
+                editButton.setOnClickListener { onEditClick(record) }
             }
         }
-    }
 
-    companion object {
-        val TAG = HoldsActivity::class.java.simpleName
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.holds_list_item, parent, false)
+            return ViewHolder(view, onEditClick)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bindView(items[position])
+        }
+
+        override fun getItemCount(): Int = items.size
     }
 }

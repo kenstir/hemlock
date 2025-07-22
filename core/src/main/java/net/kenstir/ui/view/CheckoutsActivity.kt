@@ -195,12 +195,12 @@ class CheckoutsActivity : BaseActivity() {
     internal class CheckoutsViewAdapter(
         private val items: List<CircRecord>,
         private val onRenewItem: (CircRecord) -> Unit,
-    ): RecyclerView.Adapter<CheckoutsViewAdapter.ViewHolder>() {
+    ) : RecyclerView.Adapter<CheckoutsViewAdapter.ViewHolder>() {
 
         internal class ViewHolder(
             view: View,
             private val onRenewItem: (CircRecord) -> Unit,
-        ): RecyclerView.ViewHolder(view) {
+        ) : RecyclerView.ViewHolder(view) {
             val title: TextView = view.findViewById(R.id.checkout_record_title)
             val author: TextView = view.findViewById(R.id.checkout_record_author)
             val format: TextView = view.findViewById(R.id.checkout_record_format)
