@@ -20,7 +20,6 @@
 package net.kenstir.ui.view
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -29,10 +28,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -43,17 +41,19 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.history.HistoryActivity
+import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class CheckoutsActivity : BaseActivity() {
     private val TAG = "Checkouts"
 
-    private var lv: ListView? = null
-    private var listAdapter: CheckoutsArrayAdapter? = null
+    private var rv: RecyclerView? = null
+    private var adapter: CheckoutsViewAdapter? = null
     private var circRecords = mutableListOf<CircRecord>()
     private var progress: ProgressDialogSupport? = null
     private var checkoutsSummary: TextView? = null
@@ -70,10 +70,13 @@ class CheckoutsActivity : BaseActivity() {
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
         progress = ProgressDialogSupport()
-        lv = findViewById(R.id.list_view)
-        listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item)
-        lv?.adapter = listAdapter
-        lv?.setOnItemClickListener { _, _, position, _ -> onItemClick(position) }
+        rv = findViewById(R.id.recycler_view)
+        adapter = CheckoutsViewAdapter(circRecords) { renewItem(it) }
+        rv?.adapter = adapter
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
+            onItemClick(position)
+        }
     }
 
     override fun onDestroy() {
@@ -83,7 +86,7 @@ class CheckoutsActivity : BaseActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
 
         fetchData()
     }
@@ -144,18 +147,20 @@ class CheckoutsActivity : BaseActivity() {
 
                 // fetch checkouts
                 val result = circService.fetchCheckouts(account)
-                if (result is Result.Error) { showAlert(result.exception); return@async }
-                circRecords = result.get().toMutableList()
+                if (result is Result.Error) {
+                    showAlert(result.exception); return@async
+                }
+                val checkouts = result.get()
 
                 // fetch details
                 var jobs = mutableListOf<Job>()
-                for (circRecord in circRecords) {
+                for (circRecord in checkouts) {
                     jobs.add(scope.async { circService.loadCheckoutDetails(account, circRecord) })
                 }
-                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), checkouts.size)
 
                 jobs.joinAll()
-                updateCheckoutsList()
+                updateCheckoutsList(checkouts)
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -166,11 +171,11 @@ class CheckoutsActivity : BaseActivity() {
         }
     }
 
-    private fun updateCheckoutsList() {
-        listAdapter?.clear()
+    private fun updateCheckoutsList(checkouts: List<CircRecord>) {
+        circRecords.clear()
+        circRecords.addAll(checkouts)
         circRecords.sortBy { it.dueDate }
-        listAdapter?.addAll(circRecords)
-        listAdapter?.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     private fun onItemClick(position: Int) {
@@ -187,92 +192,95 @@ class CheckoutsActivity : BaseActivity() {
         }
     }
 
-    internal inner class CheckoutsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<CircRecord>(context, resourceId) {
-        private var title: TextView? = null
-        private var author: TextView? = null
-        private var format: TextView? = null
-        private var renewals: TextView? = null
-        private var dueDate: TextView? = null
-        private var renewButton: TextView? = null
+    internal class CheckoutsViewAdapter(
+        private val items: List<CircRecord>,
+        private val onRenewItem: (CircRecord) -> Unit,
+    ): RecyclerView.Adapter<CheckoutsViewAdapter.ViewHolder>() {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var row = when(convertView) {
-                null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    inflater.inflate(resourceId, parent, false)
+        internal class ViewHolder(
+            view: View,
+            private val onRenewItem: (CircRecord) -> Unit,
+        ): RecyclerView.ViewHolder(view) {
+            val title: TextView = view.findViewById(R.id.checkout_record_title)
+            val author: TextView = view.findViewById(R.id.checkout_record_author)
+            val format: TextView = view.findViewById(R.id.checkout_record_format)
+            val renewals: TextView = view.findViewById(R.id.checkout_record_renewals)
+            val dueDate: TextView = view.findViewById(R.id.checkout_record_due_date)
+            val renewButton: TextView = view.findViewById(R.id.renew_button)
+
+            fun bindView(record: CircRecord) {
+                title.text = record.title
+                author.text = record.author
+                format.text = record.record?.iconFormatLabel
+                renewals.text =
+                    String.format(itemView.context.getString(R.string.checkout_renewals_left), record.renewals)
+                dueDate.text = dueDateText(record)
+                initRenewButton(record)
+                maybeHighlightDueDate(record)
+            }
+
+            private fun dueDateText(record: CircRecord): String {
+                return when {
+                    record.isOverdue ->
+                        String.format(itemView.context.getString(R.string.label_due_date_overdue), record.dueDateLabel)
+
+                    record.isDueSoon && record.autoRenewals > 0 ->
+                        String.format(itemView.context.getString(R.string.label_due_date_may_autorenew),
+                            record.dueDateLabel)
+
+                    record.wasAutorenewed ->
+                        String.format(itemView.context.getString(R.string.label_due_date_autorenewed),
+                            record.dueDateLabel)
+
+                    else ->
+                        String.format(itemView.context.getString(R.string.label_due_date), record.dueDateLabel)
                 }
-                else -> {
-                    convertView
+            }
+
+            private fun maybeHighlightDueDate(record: CircRecord) {
+                val style = when {
+                    record.isOverdue -> R.style.alertText
+                    record.isDueSoon -> R.style.warningText
+                    else -> R.style.HemlockText_ListTertiary
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    dueDate?.setTextAppearance(style)
+                } else {
+                    dueDate?.setTextAppearance(itemView.context, style)
                 }
             }
 
-            title = row.findViewById(R.id.checkout_record_title)
-            author = row.findViewById(R.id.checkout_record_author)
-            format = row.findViewById(R.id.checkout_record_format)
-            renewals = row.findViewById(R.id.checkout_record_renewals)
-            dueDate = row.findViewById(R.id.checkout_record_due_date)
-            renewButton = row.findViewById(R.id.renew_button)
-
-            val record = getItem(position)!!
-            title?.text = record.title
-            author?.text = record.author
-            format?.text = record.record?.iconFormatLabel
-            renewals?.text = String.format(getString(R.string.checkout_renewals_left), record.renewals)
-            dueDate?.text = dueDateText(record)
-
-            initRenewButton(record)
-            maybeHighlightDueDate(record)
-
-            return row
-        }
-
-        private fun dueDateText(record: CircRecord): String {
-            return when {
-                record.isOverdue ->
-                    String.format(getString(R.string.label_due_date_overdue), record.dueDateLabel)
-                record.isDueSoon && record.autoRenewals > 0 ->
-                    String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateLabel)
-                record.wasAutorenewed ->
-                    String.format(getString(R.string.label_due_date_autorenewed), record.dueDateLabel)
-                else ->
-                    String.format(getString(R.string.label_due_date), record.dueDateLabel)
+            private fun initRenewButton(record: CircRecord) {
+                val renewable = record.renewals > 0
+                renewButton?.isEnabled = renewable
+                renewButton?.setOnClickListener(View.OnClickListener {
+                    if (!renewable) return@OnClickListener
+                    val builder = AlertDialog.Builder(itemView.context)
+                    builder.setMessage(R.string.renew_item_message)
+                    builder.setNegativeButton(android.R.string.no, null)
+                    builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                        //Analytics.logEvent("checkouts_renewitem", "num_renewals", record.renewals, "overdue", record.isOverdue)
+                        onRenewItem(record)
+                    }
+                    builder.create().show()
+                })
             }
         }
 
-        private fun maybeHighlightDueDate(record: CircRecord) {
-            val style = when {
-                record.isOverdue -> R.style.alertText
-                record.isDueSoon -> R.style.warningText
-                else -> R.style.HemlockText_ListTertiary
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                dueDate?.setTextAppearance(style)
-            } else {
-                dueDate?.setTextAppearance(applicationContext, style)
-            }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.checkout_list_item, parent, false)
+            return ViewHolder(view, onRenewItem)
         }
 
-        private fun initRenewButton(record: CircRecord) {
-            val renewable = record.renewals > 0
-            renewButton?.isEnabled = renewable
-            renewButton?.setOnClickListener(View.OnClickListener {
-                if (!renewable) return@OnClickListener
-                val builder = AlertDialog.Builder(this@CheckoutsActivity)
-                builder.setMessage(R.string.renew_item_message)
-                builder.setNegativeButton(android.R.string.no, null)
-                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                    //Analytics.logEvent("checkouts_renewitem", "num_renewals", record.renewals, "overdue", record.isOverdue)
-                    renewItem(record)
-                }
-                builder.create().show()
-            })
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bindView(items[position])
         }
+
+        override fun getItemCount(): Int = items.size
     }
 
     private fun renewItem(record: CircRecord) {
         scope.async {
-//            Log.d(TAG, "[kcxxx] renewItem: ${record.targetCopy}")
-
             record.targetCopy?.let {
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
                 val result = App.getServiceConfig().circService.renewCheckout(
@@ -280,9 +288,12 @@ class CheckoutsActivity : BaseActivity() {
                 progress?.dismiss()
                 when (result) {
                     is Result.Success -> {
-                        Toast.makeText(this@CheckoutsActivity, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@CheckoutsActivity,
+                            getString(R.string.toast_item_renewed),
+                            Toast.LENGTH_LONG).show()
                         fetchData()
                     }
+
                     is Result.Error -> {
                         showAlert(result.exception)
                     }

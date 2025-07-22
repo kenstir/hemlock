@@ -152,8 +152,7 @@ class CopyInformationActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    private fun updateCopyInfo(copyLocationCountsList: List<CopyLocationCounts>?) {
-        if (copyLocationCountsList == null) return
+    private fun updateCopyInfo(copyLocationCountsList: List<CopyLocationCounts>) {
         copyInfoRecords.clear()
         for (clc in copyLocationCountsList) {
             val org = findOrg(clc.orgId)
