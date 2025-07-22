@@ -86,13 +86,24 @@ object GatewayClient {
         client.pluginOrNull(HemlockPlugin)
     }
 
+    /**
+     * Encodes a parameter value for use in a URL query string
+     *
+     * I used to use [android.net.Uri.encode] here, but it is not mocked and so is not convenient
+     * to use in unit tests.  But URLEncoder.encode is not quite the same, it replaces spaces with `+`.
+     * This is a workaround, and if we find more issues we'll need to revisit this.
+     */
+    private fun encodeParamValue(v: String): String {
+        return URLEncoder.encode(v, "UTF-8").replace("+", "%20")
+    }
+
     fun buildQuery(service: String?, method: String?, params: List<XGatewayParam>, addCacheParams: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
         sb.append("service=").append(service)
         sb.append("&method=").append(method)
         for (param in params) {
             sb.append("&param=")
-            sb.append(URLEncoder.encode(Json.encodeToString(param), "UTF-8"))
+            sb.append(encodeParamValue(Json.encodeToString(param)))
         }
 
         if (addCacheParams) {

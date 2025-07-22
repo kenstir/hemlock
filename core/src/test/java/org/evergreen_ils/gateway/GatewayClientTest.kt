@@ -21,6 +21,7 @@ import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.test.runTest
 import net.kenstir.data.HemlockPlugin
 import org.evergreen_ils.Api
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -53,6 +54,22 @@ class GatewayClientTest {
     @Test
     fun test_pluginIsInstalled() {
         assertNotNull("HemlockPlugin should be installed", client.pluginOrNull(HemlockPlugin))
+    }
+
+    @Test
+    fun test_buildQuery_primitives() {
+        val authToken = "authtoken"
+        val id = 123
+        val name = "a b c"
+        val params = paramListOf(authToken, id, null, name)
+        val query = GatewayClient.buildQuery(Api.ACTOR, Api.CONTAINER_CREATE, params, false)
+
+        val expected = "service=open-ils.actor&method=open-ils.actor.container.create" +
+                "&param=%22authtoken%22" +
+                "&param=123" +
+                "&param=null" +
+                "&param=%22a%20b%20c%22"
+        assertEquals(expected, query)
     }
 
     // TODO: Run this test with a mock server.  This test will fail if the server does not send cache headers.
