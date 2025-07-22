@@ -71,7 +71,7 @@
             android:name="net.kenstir.ui.view.bookbags.BookBagsActivity"
             android:label="@string/title_my_lists" />
         <activity
-            android:name="net.kenstir.ui.view.CheckoutsActivity"
+            android:name="net.kenstir.ui.view.checkouts.CheckoutsActivity"
             android:label="@string/checkout_items_title" />
         <activity
             android:name="net.kenstir.ui.view.holds.HoldsActivity"

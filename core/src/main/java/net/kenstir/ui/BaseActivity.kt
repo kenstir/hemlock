@@ -48,7 +48,7 @@ import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.BarcodeActivity
-import net.kenstir.ui.view.CheckoutsActivity
+import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.OrgDetailsActivity

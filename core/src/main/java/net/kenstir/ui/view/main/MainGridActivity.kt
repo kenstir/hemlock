@@ -25,7 +25,6 @@ import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.kenstir.hemlock.BuildConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
@@ -35,7 +34,7 @@ import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.BarcodeActivity
-import net.kenstir.ui.view.CheckoutsActivity
+import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.search.SearchActivity

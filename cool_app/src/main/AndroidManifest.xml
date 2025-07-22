@@ -58,7 +58,7 @@
                 android:label="@string/advanced_search">
         </activity>
         <activity
-                android:name="net.kenstir.ui.view.CheckoutsActivity"
+                android:name="net.kenstir.ui.view.checkouts.CheckoutsActivity"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>

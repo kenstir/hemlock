@@ -39,7 +39,7 @@ import net.kenstir.ui.view.BarcodeActivity
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
-import net.kenstir.ui.view.CheckoutsActivity
+import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.search.SearchActivity
