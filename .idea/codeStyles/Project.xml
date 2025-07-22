@@ -58,7 +58,7 @@
       </option>
     </JavaCodeStyleSettings>
     <JetCodeStyleSettings>
-      <option name="SPACE_BEFORE_EXTEND_COLON" value="false" />
+      <option name="SPACE_BEFORE_EXTEND_COLON" value="true" />
       <option name="IF_RPAREN_ON_NEW_LINE" value="false" />
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
