@@ -21,10 +21,6 @@ package net.kenstir.ui.view.holds
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
@@ -161,39 +157,4 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    internal class HoldsViewAdapter(
-        private val items: List<HoldRecord>,
-        private val onEditClick: (HoldRecord) -> Unit,
-    ) : RecyclerView.Adapter<HoldsViewAdapter.ViewHolder>() {
-
-        internal class ViewHolder(
-            view: View,
-            private val onEditClick: (HoldRecord) -> Unit
-        ) : RecyclerView.ViewHolder(view) {
-            val titleText: TextView = view.findViewById(R.id.hold_title)
-            val authorText: TextView = view.findViewById(R.id.hold_author)
-            val formatText: TextView = view.findViewById(R.id.hold_format)
-            val statusText: TextView = view.findViewById(R.id.hold_status)
-            val editButton: Button = view.findViewById(R.id.edit_button)
-
-            fun bindView(record: HoldRecord) {
-                titleText.text = record.title
-                authorText.text = record.author
-                formatText.text = record.formatLabel
-                statusText.text = record.getHoldStatus(itemView.resources)
-                editButton.setOnClickListener { onEditClick(record) }
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.holds_list_item, parent, false)
-            return ViewHolder(view, onEditClick)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.bindView(items[position])
-        }
-
-        override fun getItemCount(): Int = items.size
-    }
 }
