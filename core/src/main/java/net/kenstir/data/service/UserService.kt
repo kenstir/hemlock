@@ -29,7 +29,7 @@ interface UserService {
     suspend fun deleteSession(account: Account): Result<Unit>
 
     /**
-     * loads the patron lists for the account
+     * loads the patron lists for the account into [Account.patronLists]
      *
      * NB: it does not load the items in the lists, see [loadPatronListItems]
      */
