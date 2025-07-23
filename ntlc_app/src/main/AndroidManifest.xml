@@ -27,30 +27,6 @@
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
-        <!-- Notification receiver -->
-        <receiver
-            android:name="net.kenstir.ui.service.NotificationReceiver"
-            android:process=":remote" >
-        </receiver>
-        <!-- Receiver to reinit notifications on reboot -->
-        <!--
-        <receiver android:name="org.evergreen_ils.services.RebootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="org.evergreen_ils.services.PeriodicServiceBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-        -->
-
-        <!--
-        <service android:name="org.evergreen_ils.services.ScheduledIntentService" >
-        </service>
-        -->
-
         <activity
             android:name="net.kenstir.ui.view.launch.LaunchActivity"
             android:exported="true">

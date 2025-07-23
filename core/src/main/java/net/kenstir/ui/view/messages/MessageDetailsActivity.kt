@@ -29,7 +29,6 @@ import net.kenstir.data.Result
 import net.kenstir.ui.App
 import org.evergreen_ils.data.model.EvergreenPatronMessage
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.view.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 import java.text.DateFormat

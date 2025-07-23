@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="14dp"
-            android:text="@string/advanced_search" />
+            android:text="@string/search_button" />
     </LinearLayout>
 
 </LinearLayout>

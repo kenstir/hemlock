@@ -23,7 +23,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
@@ -34,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity
 import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.ui.Key
-import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.util.Analytics.initialize
 import java.util.Locale
 import java.util.StringTokenizer
@@ -52,7 +50,6 @@ class AdvancedSearchActivity: AppCompatActivity() {
         }
 
         setContentView(R.layout.advanced_search)
-        ActionBarUtils.initActionBarForActivity(this)
 
         searchTerms = ArrayList()
         searchTermTypes = ArrayList()
