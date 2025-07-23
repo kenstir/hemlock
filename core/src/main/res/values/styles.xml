@@ -47,8 +47,7 @@
         <item name="android:gravity">left</item>
     </style>
 
-    <style name="HemlockText.ListPrimaryRead">
-        <item name="android:textSize">16sp</item>
+    <style name="HemlockText.ListPrimary.Faded">
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">left</item>
         <item name="android:textColor">?android:textColorSecondary</item>
@@ -62,11 +61,7 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="HemlockText.ListSecondaryRead">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:gravity">left</item>
-        <item name="android:ellipsize">end</item>
+    <style name="HemlockText.ListSecondary.Faded">
         <item name="android:textColor">?android:textColorTertiary</item>
     </style>
 
@@ -85,6 +80,10 @@
 
     <style name="HemlockText.PageSecondary">
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="HemlockText.PageSecondary.Faded">
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
     <style name="HemlockText.PageTertiary">

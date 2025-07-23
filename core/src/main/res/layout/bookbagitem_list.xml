@@ -31,7 +31,7 @@
 
             <TextView
                 android:id="@+id/bookbag_description"
-                style="@style/HemlockText.PageSecondary"
+                style="@style/HemlockText.PageSecondary.Faded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"

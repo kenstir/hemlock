@@ -111,6 +111,10 @@
             android:label="@string/hold_place_title">
         </activity>
         <activity
+            android:name="net.kenstir.ui.view.messages.MessageDetailsActivity"
+            android:label="@string/title_message_details">
+        </activity>
+        <activity
             android:name="net.kenstir.ui.view.search.AdvancedSearchActivity"
             android:label="@string/advanced_search">
         </activity>
