@@ -42,7 +42,7 @@ interface UserService {
      */
     suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
 
-    suspend fun createPatronList(account: Account, name: String): Result<Unit>
+    suspend fun createPatronList(account: Account, name: String, description: String): Result<Unit>
     suspend fun deletePatronList(account: Account, listId: Int): Result<Unit>
     suspend fun addItemToPatronList(account: Account, listId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromPatronList(account: Account, listId: Int, itemId: Int): Result<Unit>

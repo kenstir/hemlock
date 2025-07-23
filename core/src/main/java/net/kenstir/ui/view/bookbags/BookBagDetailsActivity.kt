@@ -153,7 +153,8 @@ class BookBagDetailsActivity : BaseActivity() {
                 reverseSortOrder()
                 return true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else ->
+                return super.onOptionsItemSelected(item)
         }
     }
 

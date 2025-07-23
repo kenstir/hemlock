@@ -23,6 +23,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -47,12 +49,10 @@ import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 
-class BookBagsActivity : BaseActivity() {
+class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListener {
     private var lv: ListView? = null
     private var listAdapter: PatronListArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
-    private var bookBagName: EditText? = null
-    private var createButton: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,11 +68,7 @@ class BookBagsActivity : BaseActivity() {
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
         progress = ProgressDialogSupport()
-        bookBagName = findViewById(R.id.bookbag_create_name)
-        createButton = findViewById(R.id.bookbag_create_button)
-        createButton?.setOnClickListener(View.OnClickListener {
-            createBookBag()
-        })
+
         lv = findViewById(R.id.list_view)
         listAdapter = PatronListArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.adapter = listAdapter
@@ -95,13 +91,28 @@ class BookBagsActivity : BaseActivity() {
         fetchData()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_bookbags, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_create_bookbag -> {
+                showCreateBookBagDialog()
+                return true
+            }
+            else ->
+                return super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun fetchData() {
         scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
                 progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
-                bookBagName?.text = null
 
                 // load bookbags
                 val result = App.getServiceConfig().userService.loadPatronLists(
@@ -146,16 +157,16 @@ class BookBagsActivity : BaseActivity() {
         }
     }
 
-    private fun createBookBag() {
-        val name = bookBagName?.text.toString().trim()
-        if (name.isEmpty()) {
-            bookBagName?.error = getString(R.string.error_list_name_empty)
-            return
-        }
+    private fun showCreateBookBagDialog() {
+        val dialogFragment = BookBagCreateDialogFragment()
+        dialogFragment.show(supportFragmentManager, BookBagCreateDialogFragment.TAG)
+    }
+
+    private fun createBookBag(name: String, description: String) {
         scope.async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
             val result = App.getServiceConfig().userService.createPatronList(
-                App.getAccount(), name)
+                App.getAccount(), name, description)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -165,6 +176,10 @@ class BookBagsActivity : BaseActivity() {
                 is Result.Success -> fetchData()
             }
         }
+    }
+
+    override fun onBookBagCreated(name: String, description: String) {
+        createBookBag(name, description)
     }
 
     internal inner class PatronListArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<PatronList>(context, resourceId) {

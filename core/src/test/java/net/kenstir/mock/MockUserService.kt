@@ -49,7 +49,7 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createPatronList(account: Account, name: String): Result<Unit> {
+    override suspend fun createPatronList(account: Account, name: String, description: String): Result<Unit> {
         TODO("Not yet implemented")
     }
 

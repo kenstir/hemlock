@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="noScroll"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>

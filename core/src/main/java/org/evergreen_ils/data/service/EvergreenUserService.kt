@@ -122,7 +122,7 @@ object EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun createPatronList(account: Account, name: String): Result<Unit> {
+    override suspend fun createPatronList(account: Account, name: String, description: String): Result<Unit> {
         return try {
             account as? EvergreenAccount
                 ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
@@ -131,6 +131,7 @@ object EvergreenUserService: UserService {
             val param = OSRFObject(netClass = "cbreb", map = jsonMapOf(
                 "btype" to Api.CONTAINER_BUCKET_TYPE_BOOKBAG,
                 "name" to name,
+                "description" to description,
                 "pub" to false,
                 "owner" to userID
             ))
