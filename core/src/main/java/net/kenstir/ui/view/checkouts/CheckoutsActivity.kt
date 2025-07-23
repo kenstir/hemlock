@@ -67,6 +67,7 @@ class CheckoutsActivity : BaseActivity() {
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
         progress = ProgressDialogSupport()
+
         rv = findViewById(R.id.recycler_view)
         adapter = CheckoutsViewAdapter(circRecords) { renewItem(it) }
         rv?.adapter = adapter

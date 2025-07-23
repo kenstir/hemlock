@@ -30,11 +30,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -45,13 +43,16 @@ import net.kenstir.util.Analytics
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
+import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
+import net.kenstir.ui.view.search.DividerItemDecoration
 
 class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListener {
-    private var lv: ListView? = null
-    private var listAdapter: PatronListArrayAdapter? = null
+    private var rv: RecyclerView? = null
+    private var adapter: BookBagViewAdapter? = null
+    private var items = mutableListOf<PatronList>()
     private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,13 +70,13 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
 
         progress = ProgressDialogSupport()
 
-        lv = findViewById(R.id.list_view)
-        listAdapter = PatronListArrayAdapter(this, R.layout.bookbag_list_item)
-        lv?.adapter = listAdapter
-        lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val item = lv?.getItemAtPosition(position) as PatronList
+        rv = findViewById(R.id.recycler_view)
+        adapter = BookBagViewAdapter(items)
+        rv?.adapter = adapter
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
-            intent.putExtra(Key.PATRON_LIST, item)
+            intent.putExtra(Key.PATRON_LIST, items[position])
             startActivityForResult(intent, 0)
         }
     }
@@ -121,10 +122,11 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
+                val patronLists = App.getAccount().patronLists
 
                 // load bookbag items
                 val jobs = mutableListOf<Deferred<Any>>()
-                for (list in App.getAccount().patronLists) {
+                for (list in patronLists) {
                     jobs.add(scope.async {
                         App.getServiceConfig().userService.loadPatronListItems(
                             App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
@@ -132,7 +134,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 }
                 jobs.map { it.await() }
 
-                updateListAdapter()
+                updateList(patronLists)
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -143,10 +145,10 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
         }
     }
 
-    private fun updateListAdapter() {
-        listAdapter?.clear()
-        listAdapter?.addAll(App.getAccount().patronLists)
-        listAdapter?.notifyDataSetChanged()
+    private fun updateList(patronLists: List<PatronList>) {
+        items.clear()
+        items.addAll(patronLists)
+        adapter?.notifyDataSetChanged()
     }
 
     @Deprecated("Deprecated in Java")
@@ -180,34 +182,6 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
 
     override fun onBookBagCreated(name: String, description: String) {
         createBookBag(name, description)
-    }
-
-    internal inner class PatronListArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<PatronList>(context, resourceId) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var row = when(convertView) {
-                null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    inflater.inflate(resourceId, parent, false)
-                }
-                else -> {
-                    convertView
-                }
-            }
-
-            val nameText = row.findViewById<TextView>(R.id.bookbag_name)
-            val descText = row.findViewById<TextView>(R.id.bookbag_description)
-            val itemsText = row.findViewById<TextView>(R.id.bookbag_items)
-
-            val record = getItem(position)
-            nameText.text = record?.name
-            descText.text = record?.description
-            itemsText.text = resources.getQuantityString(R.plurals.number_of_items,
-                    record?.items?.size ?: 0, record?.items?.size ?: 0)
-
-            return row
-        }
-
     }
 
     companion object {
