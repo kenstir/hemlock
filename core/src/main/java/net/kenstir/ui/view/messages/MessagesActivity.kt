@@ -98,7 +98,6 @@ class MessagesActivity : BaseActivity() {
                 val messageList = result.get()
 
                 loadVisibleMessages(messageList)
-                updateList()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
@@ -117,9 +116,6 @@ class MessagesActivity : BaseActivity() {
                 items.add(it)
             }
         }
-    }
-
-    private fun updateList() {
         adapter?.notifyDataSetChanged()
     }
 
