@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.ui.account
 
-package net.kenstir.ui.account;
-
-public class Const {
-    public static final String AUTHTOKEN_TYPE = "opac";
-    public static final String AUTHTOKEN_TYPE_LABEL = "Online Public Access Catalog";
-    public static final String KEY_LIBRARY_NAME = "library_name";
-    public static final String KEY_LIBRARY_URL = "library_url";
-    public final static String AUTH_TAG = "auth";
+object Const {
+    const val AUTHTOKEN_TYPE = "opac"
+    const val AUTHTOKEN_TYPE_LABEL = "Online Public Access Catalog"
+    const val KEY_LIBRARY_NAME = "library_name"
+    const val KEY_LIBRARY_URL = "library_url"
+    const val AUTH_TAG = "auth"
 }
