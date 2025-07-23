@@ -23,13 +23,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import net.kenstir.data.model.Library;
 import net.kenstir.hemlock.R;
 import net.kenstir.logging.Log;
-import net.kenstir.data.model.Library;
 
 import java.io.IOException;
-
-import static net.kenstir.util.StringUtils.safeString;
 
 public class AccountUtils {
 
@@ -82,6 +84,12 @@ public class AccountUtils {
         final String accountType = context.getString(R.string.ou_account_type);
         final Account account = new Account(account_name, accountType);
         return safeString(am.getPassword(account));
+    }
+
+    public static @NonNull String safeString(@Nullable String s) {
+        if (s == null)
+            return "";
+        return s;
     }
 
     public static String getAuthTokenForAccount(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
