@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/record_details_simple_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -12,7 +11,7 @@
         android:theme="@style/Hemlock.TableHeader">
 
         <TextView
-            android:id="@+id/record_header_text"
+            android:id="@+id/pager_header_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             tools:text="Item 1 of 100" />
@@ -46,14 +45,14 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/record_details_simple_title"
+                        android:id="@+id/record_details_title"
                         style="@style/HemlockText.PagePrimary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="Harry Potter and the Goblet of Fire" />
 
                     <TextView
-                        android:id="@+id/record_details_simple_author"
+                        android:id="@+id/record_details_author"
                         style="@style/HemlockText.PageSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -70,7 +69,7 @@
                         tools:text="Book" />
 
                     <TextView
-                        android:id="@+id/record_details_simple_publisher"
+                        android:id="@+id/record_details_publisher"
                         style="@style/HemlockText.PageTertiary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -79,7 +78,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/record_details_simple_image"
+                    android:id="@+id/record_details_image"
                     android:layout_width="140dp"
                     android:layout_height="180dp"
                     android:padding="8dp" />
@@ -87,7 +86,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/record_details_brief_description"
+                android:id="@+id/copy_information_summary_text"
                 style="@style/HemlockText.PageSecondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +104,7 @@
                 tools:ignore="RtlHardcoded">
 
                 <Button
-                    android:id="@+id/simple_place_hold_button"
+                    android:id="@+id/place_hold_button"
                     style="@style/ApplicationButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

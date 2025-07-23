@@ -34,6 +34,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil3.load
@@ -55,7 +56,6 @@ import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY
 import net.kenstir.util.getCopySummary
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.system.EgOrg
-import androidx.core.net.toUri
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
@@ -71,7 +71,7 @@ class DetailsFragment : Fragment() {
     private var subjectTextView: TextView? = null
     private var synopsisTextView: TextView? = null
     private var isbnTextView: TextView? = null
-    private var descriptionTextView: TextView? = null
+    private var copySummaryTextView: TextView? = null
     private var subjectTableRow: View? = null
     private var seriesTableRow: View? = null
     private var isbnTableRow: View? = null
@@ -105,18 +105,18 @@ class DetailsFragment : Fragment() {
         val layout = inflater.inflate(
                 R.layout.record_details_fragment, container, false) as LinearLayout
 
-        val recordHeader = layout.findViewById<TextView>(R.id.record_header_text)
-        titleTextView = layout.findViewById(R.id.record_details_simple_title)
+        val pagerHeader = layout.findViewById<TextView>(R.id.pager_header_text)
+        titleTextView = layout.findViewById(R.id.record_details_title)
         formatTextView = layout.findViewById(R.id.record_details_format)
-        authorTextView = layout.findViewById(R.id.record_details_simple_author)
-        publisherTextView = layout.findViewById(R.id.record_details_simple_publisher)
+        authorTextView = layout.findViewById(R.id.record_details_author)
+        publisherTextView = layout.findViewById(R.id.record_details_publisher)
         seriesTextView = layout.findViewById(R.id.record_details_series_text)
         subjectTextView = layout.findViewById(R.id.record_details_subject_text)
         synopsisTextView = layout.findViewById(R.id.record_details_synopsis_text)
         isbnTextView = layout.findViewById(R.id.record_details_isbn_text)
-        recordImage = layout.findViewById(R.id.record_details_simple_image)
-        descriptionTextView = layout.findViewById(R.id.record_details_brief_description)
-        placeHoldButton = layout.findViewById(R.id.simple_place_hold_button)
+        recordImage = layout.findViewById(R.id.record_details_image)
+        copySummaryTextView = layout.findViewById(R.id.copy_information_summary_text)
+        placeHoldButton = layout.findViewById(R.id.place_hold_button)
         showCopiesButton = layout.findViewById(R.id.show_copy_information_button)
         onlineAccessButton = layout.findViewById(R.id.record_details_online_button)
         addToBookbagButton = layout.findViewById(R.id.add_to_bookbag_button)
@@ -125,8 +125,8 @@ class DetailsFragment : Fragment() {
         subjectTableRow = layout.findViewById(R.id.record_details_subject_row)
         isbnTableRow = layout.findViewById(R.id.record_details_isbn_row)
 
-        recordHeader.text = String.format(getString(R.string.record_of), position!! + 1, total)
-        descriptionTextView?.text = ""
+        pagerHeader.text = String.format(getString(R.string.record_of), position!! + 1, total)
+        copySummaryTextView?.text = ""
         initButtons()
 
         // Start async load
@@ -240,7 +240,7 @@ class DetailsFragment : Fragment() {
 
             if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
                 val uri = links[0].href.toUri()
-                descriptionTextView?.text = uri.host
+                copySummaryTextView?.text = uri.host
             }
         }
     }
@@ -282,7 +282,7 @@ class DetailsFragment : Fragment() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
         val mbRecord = record as MBRecord
-        descriptionTextView?.text = when {
+        copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
             App.getBehavior().isOnlineResource(mbRecord) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
