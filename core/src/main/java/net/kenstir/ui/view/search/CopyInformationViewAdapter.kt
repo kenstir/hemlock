@@ -70,9 +70,9 @@ class CopyInformationViewAdapter(
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.copy_information_item, viewGroup, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.copy_information_item, parent, false)
         return ViewHolder(v, groupCopiesBySystem)
     }
 

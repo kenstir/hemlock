@@ -39,9 +39,9 @@ class GridButtonViewAdapter(private val items: List<GridButton>) : RecyclerView.
     }
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.buttons_grid_item, viewGroup, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.buttons_grid_item, parent, false)
         return ViewHolder(v)
     }
 

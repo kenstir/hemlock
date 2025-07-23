@@ -40,9 +40,9 @@ class BookBagViewAdapter(private val items: MutableList<PatronList>) : RecyclerV
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.bookbag_list_item, viewGroup, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.bookbag_list_item, parent, false)
         return ViewHolder(v)
     }
 

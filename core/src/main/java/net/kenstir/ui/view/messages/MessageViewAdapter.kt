@@ -54,9 +54,9 @@ class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.
     }
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.messages_list_item, viewGroup, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.messages_list_item, parent, false)
         return ViewHolder(v)
     }
 
