@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
+	android:background="?android:attr/selectableItemBackground"
 	android:gravity="left|center"
-	android:paddingBottom="3dip"
-	android:paddingTop="3dip"
+	android:orientation="horizontal"
 	android:paddingLeft="3dip"
-	android:orientation="horizontal">
+	android:paddingTop="3dip"
+	android:paddingBottom="3dip">
 
 	<LinearLayout
 		android:layout_width="fill_parent"

@@ -62,8 +62,7 @@ class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val message = items[position]
-        viewHolder.bindView(message)
+        viewHolder.bindView(items[position])
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -30,9 +30,9 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -46,7 +46,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
-import net.kenstir.ui.util.ActionBarUtils
+import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
@@ -61,11 +61,11 @@ const val SORT_DESC_STATE_KEY = "sort_desc"
 class BookBagDetailsActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
-    private var lv: ListView? = null
-    private var listAdapter: ListItemArrayAdapter? = null
+    private var rv: RecyclerView? = null
+    private var adapter: ListItemViewAdapter? = null
     private var progress: ProgressDialogSupport? = null
     private lateinit var patronList: PatronList
-    private var sortedItems = ArrayList<ListItem>()
+    private var items = ArrayList<ListItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
 
@@ -100,14 +100,15 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagName?.text = patronList.name
         bookBagDescription?.text = patronList.description
 
-        lv = findViewById(R.id.list_view)
-        listAdapter = ListItemArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
-        lv?.adapter = listAdapter
-        lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            //Analytics.logEvent("list_itemclick")
-            val records = ArrayList<BibRecord?>()
-            for (item in sortedItems) {
-                records.add(item.record)
+        rv = findViewById(R.id.recycler_view)
+        adapter = ListItemViewAdapter(items) { removeItemFromList(it) }
+        rv?.adapter = adapter
+        ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
+            val records = ArrayList<BibRecord>()
+            for (item in items) {
+                item.record?.let {
+                    records.add(it)
+                }
             }
             RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
         }
@@ -215,16 +216,16 @@ class BookBagDetailsActivity : BaseActivity() {
             else -> ListItemPubdateComparator(sortDescending)
         }
 
-        sortedItems.clear()
-        sortedItems.addAll(patronList.items.sortedWith(comparator))
-        listAdapter?.notifyDataSetChanged()
+        items.clear()
+        items.addAll(patronList.items.sortedWith(comparator))
+        adapter?.notifyDataSetChanged()
         dumpListItems()
     }
 
     private fun dumpListItems() {
         val direction = if (sortDescending) { "desc" } else "asc"
         Log.d(TAG, "[sort] $sortByKeyword $direction")
-        for (item in sortedItems) {
+        for (item in items) {
             item.record?.let {
                 Log.d(TAG, "[sort] key <<${it.titleSortKey.take(32).padEnd(32)}>> title <<${it.title.take(32).padEnd(32)}>> nf ${it.nonFilingCharacters} id ${it.id}")
             }
@@ -324,53 +325,22 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal inner class ListItemArrayAdapter(
-        context: Context,
-        private val resourceId: Int,
-        items: ArrayList<ListItem>
-    ) : ArrayAdapter<ListItem>(context, resourceId, items) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val row = when(convertView) {
-                null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    inflater.inflate(resourceId, parent, false)
-                }
-                else -> {
-                    convertView
+    private fun removeItemFromList(item: ListItem) {
+        scope.async {
+            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
+            val result = App.getServiceConfig().userService.removeItemFromPatronList(
+                App.getAccount(), patronList.id, item.id)
+            progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
+            when (result) {
+                is Result.Error -> showAlert(result.exception)
+                is Result.Success -> {
+                    setResult(RESULT_CODE_UPDATE)
+                    fetchData()
                 }
             }
-
-            val title = row.findViewById<View>(R.id.bookbagitem_title) as TextView
-            val author = row.findViewById<View>(R.id.bookbagitem_author) as TextView
-            val pubdate = row.findViewById<View>(R.id.bookbagitem_pubdate) as TextView
-            val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
-
-            val record = getItem(position)
-            title.text = record?.record?.title
-            author.text = record?.record?.author
-            pubdate.text = record?.record?.pubdate
-            remove.setOnClickListener(View.OnClickListener {
-                val id = record?.id ?: return@OnClickListener
-                scope.async {
-                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
-                    val result = App.getServiceConfig().userService.removeItemFromPatronList(
-                        App.getAccount(), patronList.id, id)
-                    progress?.dismiss()
-                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
-                        Analytics.Param.RESULT to Analytics.resultValue(result)
-                    ))
-                    when (result) {
-                        is Result.Error -> showAlert(result.exception)
-                        is Result.Success -> {
-                            setResult(RESULT_CODE_UPDATE)
-                            fetchData()
-                        }
-                    }
-                }
-            })
-
-            return row
         }
     }
 }
