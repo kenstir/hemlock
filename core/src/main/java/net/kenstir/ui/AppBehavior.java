@@ -71,7 +71,7 @@ public class AppBehavior {
         return isOnlineFormat(record.getIconFormatLabel());
     }
 
-    // Trim the link text for a better mobile UX
+    /** Trims the link text for a better mobile UX */
     protected String trimLinkTitle(String s) {
         return s;
     }

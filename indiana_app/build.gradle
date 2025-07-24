@@ -8,6 +8,7 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     compileSdk 35
@@ -28,6 +29,9 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'net.kenstir.apps.indiana'
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
