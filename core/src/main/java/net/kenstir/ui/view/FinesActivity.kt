@@ -44,6 +44,7 @@ import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
+import net.kenstir.util.isNullOrPreCat
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
@@ -140,7 +141,6 @@ class FinesActivity : BaseActivity() {
                 && homeOrg?.isPaymentAllowed == true) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
-                //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (GatewayClient.baseUrl
@@ -187,7 +187,7 @@ class FinesActivity : BaseActivity() {
         charges?.transactions?.let {
             for (fine in it) {
                 listAdapter?.add(fine)
-                if (fine.record == null) haveAnyGroceryBills = true
+                if (fine.record.isNullOrPreCat()) haveAnyGroceryBills = true
             }
         }
         listAdapter?.notifyDataSetChanged()
@@ -201,10 +201,12 @@ class FinesActivity : BaseActivity() {
             // If any of the fines are for non-circulation items ("grocery bills"), we
             // start the details flow with only the one record, if a record was selected.
             // The details flow can't handle nulls.
-            val fineRecord = listAdapter?.getItem(position) ?: return
-            fineRecord.record?.let {
-                records.add(it)
+            val chargeRecord = listAdapter?.getItem(position) ?: return
+            val bibRecord = chargeRecord.record
+            if (bibRecord.isNullOrPreCat()) {
+                return
             }
+            records.add(bibRecord!!)
         } else {
             for (item in transactions) {
                 item.record?.let {

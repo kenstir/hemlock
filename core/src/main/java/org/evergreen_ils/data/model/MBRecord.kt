@@ -19,11 +19,9 @@ package org.evergreen_ils.data.model
 
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyCount
-import net.kenstir.hemlock.R
 import net.kenstir.util.titleSortKey
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.util.TextUtils
 

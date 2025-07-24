@@ -69,3 +69,15 @@ fun BibRecord.getCopySummary(resources: Resources, orgID: Int?): String {
     return String.format(resources.getString(R.string.n_of_m_available),
         available, totalCopies, getOrgNameSafe(orgID))
 }
+
+/**
+ * Returns true if the record is null or the record is a pre-cat
+ *
+ * meaning it does not have a full bib record and might be a loaned item
+ * or just not fully cataloged.
+ */
+fun BibRecord?.isNullOrPreCat(): Boolean {
+    if (this == null) return true
+    if (this.id == -1) return true
+    return false
+}

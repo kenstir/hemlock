@@ -86,6 +86,7 @@ public class AccountUtils {
         return safeString(am.getPassword(account));
     }
 
+    // TODO: replace with kotlin native .orEmpty()
     public static @NonNull String safeString(@Nullable String s) {
         if (s == null)
             return "";
