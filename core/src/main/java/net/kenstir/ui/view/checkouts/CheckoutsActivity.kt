@@ -155,7 +155,8 @@ class CheckoutsActivity : BaseActivity() {
                 for (circRecord in checkouts) {
                     jobs.add(scope.async { circService.loadCheckoutDetails(account, circRecord) })
                 }
-                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), checkouts.size)
+                checkoutsSummary?.text = getString(R.string.checked_out_items,
+                    resources.getQuantityString(R.plurals.number_of_items, checkouts.size, checkouts.size))
 
                 jobs.joinAll()
                 updateCheckoutsList(checkouts)

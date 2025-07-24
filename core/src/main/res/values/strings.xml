@@ -131,7 +131,7 @@
     <string name="hold_status_estimated_wait">Estimated wait: %1$s</string>
 
     <!-- Checkout items -->
-    <string name="checkout_items">%1$d items checked out</string>
+    <string name="checked_out_items">%s checked out</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
     <string name="label_due_date">Due %s</string>
     <string name="label_due_date_may_autorenew">Due %s (but may auto-renew)</string>
