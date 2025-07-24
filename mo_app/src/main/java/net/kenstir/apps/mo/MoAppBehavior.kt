@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.apps.indiana
+package net.kenstir.apps.mo
 
 import androidx.annotation.Keep
 import net.kenstir.data.model.Link
@@ -24,7 +24,7 @@ import org.evergreen_ils.data.model.MBRecord
 
 @Keep
 @Suppress("unused")
-class IndianaAppBehavior : AppBehavior() {
+class MoAppBehavior : AppBehavior() {
     override fun isOnlineResource(record: MBRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null

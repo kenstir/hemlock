@@ -41,7 +41,6 @@ class NobleAppBehavior : AppBehavior() {
         return false
     }
 
-    // Trim the link text for a better mobile UX
     override fun trimLinkTitle(s: String): String {
         return s
     }
