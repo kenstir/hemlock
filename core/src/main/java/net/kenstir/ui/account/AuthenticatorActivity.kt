@@ -62,9 +62,9 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         val rootLayout = findViewById<View>(R.id.root_layout)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
-            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
-            WindowInsetsCompat.CONSUMED
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.updatePadding(top = imeInsets.top, bottom = imeInsets.bottom)
+            insets
         }
     }
 
@@ -84,7 +84,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         val accountName = intent.getStringExtra(ARG_ACCOUNT_NAME)
         Analytics.log(TAG, "accountName=$accountName")
         authTokenType = intent.getStringExtra(ARG_AUTH_TYPE)
-        if (authTokenType == null) authTokenType = net.kenstir.ui.account.Const.AUTHTOKEN_TYPE
+        if (authTokenType == null) authTokenType = Const.AUTHTOKEN_TYPE
         Analytics.log(TAG, "authTokenType=$authTokenType")
 
         val signInText = findViewById<TextView>(R.id.account_sign_in_text)
