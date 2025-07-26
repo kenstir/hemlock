@@ -6,7 +6,6 @@
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
     android:orientation="vertical"
     android:paddingLeft="0dp"
     android:paddingTop="0dp"

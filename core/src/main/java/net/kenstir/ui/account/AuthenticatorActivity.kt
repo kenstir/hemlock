@@ -56,14 +56,15 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         setContentView(R.layout.activity_login)
     }
 
-    /** Set up the window insets listener to adjust padding for system bars */
+    /** Sets up the window insets listener to adjust padding for system bars and soft keyboard */
     private fun adjustPaddingForEdgeToEdge() {
         // Also good: findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
         val rootLayout = findViewById<View>(R.id.root_layout)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-            view.updatePadding(top = imeInsets.top, bottom = imeInsets.bottom)
+            view.updatePadding(top = sysBars.top + imeInsets.top, bottom = sysBars.bottom + imeInsets.bottom)
             insets
         }
     }
