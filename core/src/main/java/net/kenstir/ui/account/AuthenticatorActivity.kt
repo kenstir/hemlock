@@ -51,6 +51,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     private var selectedLibrary: Library? = null
     protected var forgotPasswordButton: Button? = null
     protected var submitButton: Button? = null
+    lateinit var accountNameText: TextView
+    lateinit var accountPasswordText: TextView
 
     protected open fun setContentViewImpl() {
         setContentView(R.layout.activity_login)
@@ -94,9 +96,11 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.
-        val accountNameText = findViewById<TextView>(R.id.accountName)
+        accountNameText = findViewById(R.id.accountName)
         accountNameText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         accountNameText.text = accountName
+
+        accountPasswordText = findViewById(R.id.accountPassword)
 
         submitButton = findViewById(R.id.submit)
         submitButton?.setOnClickListener { submit() }
@@ -158,8 +162,19 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     fun submit() {
         Analytics.log(TAG, "submit>")
 
-        val username = (findViewById<View>(R.id.accountName) as TextView).text.toString()
-        val password = (findViewById<View>(R.id.accountPassword) as TextView).text.toString()
+        // Neither username nor password can be empty.
+        // Username cannot contain any spaces, so trim it for convenience.
+        // Password can contain spaces, so do not trim it.
+        val username = accountNameText.text.toString().trim()
+        val password = accountPasswordText.text.toString()
+        if (username.isEmpty()) {
+            accountNameText.error = getString(R.string.error_username_empty)
+            return
+        }
+        if (password.isEmpty()) {
+            accountPasswordText.error = getString(R.string.error_password_empty)
+            return
+        }
 
         scope.async {
             try {
