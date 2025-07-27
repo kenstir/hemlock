@@ -123,9 +123,11 @@ class MessagesActivity : BaseActivity() {
         registerForContextMenu(rv)
         val cs = ItemClickSupport.addTo(rv)
         cs.setOnItemClickListener { _, position, _ ->
+            if (position < 0 || position >= items.size) return@setOnItemClickListener
             viewMessage(items[position])
         }
         cs.setOnItemLongClickListener { recyclerView, position, _ ->
+            if (position < 0 || position >= items.size) return@setOnItemLongClickListener false
             contextMenuInfo = ContextMenuMessageInfo(position, items[position])
             openContextMenu(recyclerView)
             return@setOnItemLongClickListener true
