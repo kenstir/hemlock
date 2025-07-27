@@ -22,6 +22,7 @@ package net.kenstir.ui
  * But AccountManager.* keys don't have a prefix, and I haven't seen any problems with omitting prefixes.
  */
 object Key {
+    const val ACCOUNT_ID = "accountId"
     const val HOLD_RECORD = "holdRecord"
     const val NUM_RESULTS = "numResults"
     const val ORG_ID = "orgID"

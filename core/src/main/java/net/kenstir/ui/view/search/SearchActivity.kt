@@ -112,8 +112,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private val searchFormatCode: String?
         get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
 
-    private val accountIdKey = "accountId"
-
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: BibRecord? = null
         var position = 0
@@ -132,12 +130,14 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated
-        val lastAccountId = savedInstanceState?.getInt(accountIdKey)
-        val accountId = App.getAccount().id ?: -1
+        val lastAccountId = savedInstanceState?.getInt(Key.ACCOUNT_ID)
+        val accountId = App.getAccount().id
         Log.d(TAG, "lastAccountId = $lastAccountId")
         Log.d(TAG, "accountId = $accountId")
         if (lastAccountId == null || lastAccountId != accountId) {
             clearResults()
+        } else {
+            restoreResults()
         }
 
         // create search results fragment
@@ -176,7 +176,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         App.getAccount().id?.let { id ->
-            outState.putInt(accountIdKey, id)
+            outState.putInt(Key.ACCOUNT_ID, id)
         }
     }
 
@@ -195,6 +195,11 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private fun clearResults() {
         haveSearched = false
         searchResults = null
+    }
+
+    private fun restoreResults() {
+        haveSearched = true
+        searchResults = App.getServiceConfig().searchService.getLastSearchResults()
     }
 
     private fun initSearchButton() {
