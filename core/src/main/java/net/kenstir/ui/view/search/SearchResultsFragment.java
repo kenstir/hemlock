@@ -79,25 +79,25 @@ public class SearchResultsFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL_LIST));
 
         ItemClickSupport cs = ItemClickSupport.addTo(mRecyclerView);
-        cs.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                if (mOnRecordClickListener != null) {
-                    BibRecord record = mDataset.get(position);
-                    mOnRecordClickListener.onClick(record, position);
-                }
+        cs.setOnItemClickListener((recyclerView, position, v) -> {
+            if (position < 0 || position >= mDataset.size()) {
+                return;
+            }
+            if (mOnRecordClickListener != null) {
+                BibRecord record = mDataset.get(position);
+                mOnRecordClickListener.onClick(record, position);
             }
         });
-        cs.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                if (mOnRecordLongClickListener != null) {
-                    BibRecord record = mDataset.get(position);
-                    mOnRecordLongClickListener.onLongClick(record, position);
-                    return true;
-                }
+        cs.setOnItemLongClickListener((recyclerView, position, v) -> {
+            if (position < 0 || position >= mDataset.size()) {
                 return false;
             }
+            if (mOnRecordLongClickListener != null) {
+                BibRecord record = mDataset.get(position);
+                mOnRecordLongClickListener.onLongClick(record, position);
+                return true;
+            }
+            return false;
         });
 
         return rootView;
