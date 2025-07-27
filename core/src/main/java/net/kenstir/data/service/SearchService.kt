@@ -52,7 +52,7 @@ interface SearchResults {
 
     /** matching records
      *
-     * These records are skeletons, and do not have Details, Attributes, or CopyCounds loaded
+     * These records are skeletons, and do not have Details, Attributes, or CopyCounts loaded
      */
     val records: List<BibRecord>
 }
