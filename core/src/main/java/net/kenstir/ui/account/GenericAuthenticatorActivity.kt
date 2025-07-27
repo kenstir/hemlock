@@ -151,7 +151,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             chooseNearestLibrary()
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            // we could show an expanation to the user here, but it really is not worth it
+            // we could show an explanation to the user here, but it really is not worth it
             return
         } else {
             ActivityCompat.requestPermissions(this,
@@ -164,11 +164,11 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         // if the user has any existing accounts, then we can select a reasonable default library
         var default_library: Library? = null
         val existing_accounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
-        Log.d(net.kenstir.ui.account.Const.AUTH_TAG, "there are " + existing_accounts.size + " existing accounts")
+        Log.d(Const.AUTH_TAG, "there are " + existing_accounts.size + " existing accounts")
         if (existing_accounts.size > 0) {
             default_library = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
                 existing_accounts[0])
-            Log.d(net.kenstir.ui.account.Const.AUTH_TAG,
+            Log.d(Const.AUTH_TAG,
                 "default_library=$default_library")
         }
 
