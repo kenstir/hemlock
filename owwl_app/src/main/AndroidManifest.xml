@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="10"
-    android:versionName="2.9.1.2">
+    android:versionCode="11"
+    android:versionName="4.0.4.1">
+    <!-- REMINDER: use Major.Minor.Patch.Build where Build starts with 1 -->
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
