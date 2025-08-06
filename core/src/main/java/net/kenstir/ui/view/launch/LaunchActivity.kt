@@ -157,7 +157,7 @@ class LaunchActivity : AppCompatActivity() {
         // FCM: handle background push notification
         intent.extras?.let {
             val notification = PushNotification(it)
-            Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")
+            Log.d(TAG_FCM, "[fcm] notification: $notification")
             if (notification.isNotGeneral()) {
                 val targetActivityClass = activityForNotificationType(notification)
                 App.startAppFromPushNotification(this, targetActivityClass)

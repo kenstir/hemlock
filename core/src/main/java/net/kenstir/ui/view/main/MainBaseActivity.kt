@@ -158,7 +158,7 @@ open class MainBaseActivity : BaseActivity() {
             return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
         }
         val token = task.result
-        Log.d(TAG_FCM, "fetched fcm token=$token")
+        Log.d(TAG_FCM, "[fcm] fetched token=$token")
         App.setFcmNotificationToken(token)
         return Result.Success(Unit)
     }
@@ -216,10 +216,10 @@ open class MainBaseActivity : BaseActivity() {
             val storedToken = App.getAccount().savedPushNotificationData
             val storedEnabledFlag = App.getAccount().savedPushNotificationEnabled
             val currentToken = App.getFcmNotificationToken()
-            Log.d(TAG_FCM, "stored token was: $storedToken")
+            Log.d(TAG_FCM, "[fcm] stored token was: $storedToken")
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
-                Log.d(TAG_FCM, "updating stored token")
+                Log.d(TAG_FCM, "[fcm] updating stored token")
                 val updateResult = App.getServiceConfig().userService.updatePushNotificationToken(
                     App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {

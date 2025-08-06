@@ -34,17 +34,17 @@ class MessagingService: FirebaseMessagingService() {
 
     /** Called when message is received and the app is in the foreground. */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG_FCM, "onMessageReceived: $remoteMessage")
+        Log.d(TAG_FCM, "[fcm] onMessageReceived: $remoteMessage")
         val notification = PushNotification(remoteMessage.notification?.title,
             remoteMessage.notification?.body,
             remoteMessage.data[PushNotification.TYPE_KEY],
             remoteMessage.data[PushNotification.USERNAME_KEY])
-        Log.d(TAG_FCM, "foreground notification: $notification")
+        Log.d(TAG_FCM, "[fcm] foreground notification: $notification")
         sendNotification(notification)
     }
 
     override fun onNewToken(token: String) {
-        Log.d(TAG_FCM, "Refreshed token: $token")
+        Log.d(TAG_FCM, "[fcm] Refreshed token: $token")
     }
 
     /**
