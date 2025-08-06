@@ -23,10 +23,14 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -48,6 +52,7 @@ import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.util.compatEnableEdgeToEdge
 import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
@@ -60,11 +65,27 @@ class LaunchActivity : AppCompatActivity() {
     private lateinit var mModel: LaunchViewModel
     private var mRetryCount = 0
 
+    /** Set up the window insets listener to adjust padding for system bars */
+    fun adjustPaddingForEdgeToEdge() {
+        //val rootLayout = findViewById<View>(R.id.root_layout)
+        val rootLayout = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            rootLayout?.updatePadding(top = sysBars.top)
+
+            insets
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onCreate(savedInstanceState)
 
+        compatEnableEdgeToEdge()
         setContentView(R.layout.activity_splash)
+        adjustPaddingForEdgeToEdge()
 
         Analytics.initialize(this)
         App.init(this)
