@@ -29,6 +29,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -273,7 +274,13 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else if (id == R.id.action_add_account) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
             invalidateOptionsMenu()
-            AccountUtils.addAccount(this) { App.restartApp(this@BaseActivity) }
+            AccountUtils.addAccount(this) {
+                App.restartApp(this@BaseActivity)
+            }
+            return true
+        } else if (id == R.id.action_clear_all_accounts) {
+            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
+            maybeLogoutAndClearAllAccounts()
             return true
         } else if (id == R.id.action_logout) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
@@ -294,6 +301,22 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return false
         }
         return false
+    }
+
+    private fun maybeLogoutAndClearAllAccounts() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.clear_all_accounts_title)
+            .setMessage(R.string.clear_all_accounts_message)
+            .setPositiveButton(android.R.string.ok) { _, _ -> clearAllAccounts() }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun clearAllAccounts() {
+        logout()
+        AccountUtils.removeAllAccounts(this) {
+            App.restartApp(this)
+        }
     }
 
     // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;

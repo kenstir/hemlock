@@ -32,6 +32,8 @@ import net.kenstir.hemlock.R;
 import net.kenstir.logging.Log;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class AccountUtils {
 
@@ -142,6 +144,7 @@ public class AccountUtils {
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         final Account[] availableAccounts = am.getAccountsByType(accountType);
+        Log.d(Const.AUTH_TAG, "getAccountsByType found " + availableAccounts.length + " accounts");
         return availableAccounts;
     }
 
@@ -167,6 +170,53 @@ public class AccountUtils {
                 }
             }
         }, null);
+    }
+
+    public static void removeAllAccounts(final Activity activity, final Runnable runnable) {
+        Log.d(Const.AUTH_TAG, "removeAllAccounts");
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        Account[] accounts = am.getAccountsByType(accountType);
+
+        // seems unlikely
+        if (accounts.length == 0) {
+            Log.d(Const.AUTH_TAG, "no accounts to remove");
+            activity.runOnUiThread(runnable);
+            return;
+        }
+
+        // use a CountDownLatch to wait for completion
+        CountDownLatch latch = new CountDownLatch(accounts.length);
+        for (Account account : accounts) {
+            am.removeAccount(account, new AccountManagerCallback<Boolean>() {
+                @Override
+                public void run(AccountManagerFuture<Boolean> future) {
+                    try {
+                        Boolean result = future.getResult();
+                        Log.d(Const.AUTH_TAG, "removed account: " + account.name + ", result: " + result);
+                    } catch (Exception e) {
+                        Log.d(Const.AUTH_TAG, "failed to remove account", e);
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            }, null);
+        }
+
+        // Use a new thread to wait, so we don't block the UI thread.
+        new Thread(() -> {
+            try {
+                // Wait for all account removal operations to complete, with a timeout
+                // to prevent infinite waiting in case of an issue.
+                latch.await(5, TimeUnit.SECONDS);
+                Log.d(Const.AUTH_TAG, "All account removal operations have completed.");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Log.d(Const.AUTH_TAG, "Waiting for accounts removal was interrupted.", e);
+            } finally {
+                activity.runOnUiThread(runnable);
+            }
+        }).start();
     }
 
     public static boolean runningOnUIThread() {
