@@ -10,6 +10,6 @@
     <color name="primary">@color/owwl_logo_blue</color>
     <color name="primary_dark">@color/owwl_logo_blue</color>
     <color name="accent">@color/owwl_logo_green</color>
-    <color name="logo_background">@color/material_grey_50</color>
+    <color name="logo_background">@color/owwl_logo_blue</color>
     <color name="button_icon_tint">@color/owwl_logo_blue</color>
 </resources>
