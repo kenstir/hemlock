@@ -59,9 +59,7 @@ class BookBagCreateDialogFragment : DialogFragment() {
         builder.setView(view)
             .setTitle(R.string.create_list_title)
             .setPositiveButton(R.string.create_list_title, null) // Set to null to override and prevent auto-dismiss
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.cancel()
-            }
+            .setNegativeButton(R.string.cancel, null)
 
         val dialog = builder.create()
 

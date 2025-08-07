@@ -305,10 +305,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun maybeLogoutAndClearAllAccounts() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.clear_all_accounts_title)
-            .setMessage(R.string.clear_all_accounts_message)
+        builder.setTitle(R.string.clear_accounts_alert_title)
+            .setMessage(R.string.clear_accounts_alert_message)
             .setPositiveButton(android.R.string.ok) { _, _ -> clearAllAccounts() }
-            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(android.R.string.cancel, null)
         builder.create().show()
     }
 

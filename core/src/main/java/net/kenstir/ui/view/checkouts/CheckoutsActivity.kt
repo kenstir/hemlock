@@ -112,8 +112,7 @@ class CheckoutsActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this@CheckoutsActivity)
         builder.setTitle(getString(R.string.enable_history_alert_title))
             .setMessage(getString(R.string.enable_history_alert_msg))
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-            }
+            .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(getString(R.string.enable_history_button)) { _, _ ->
                 enableCheckoutHistory()
             }

@@ -52,13 +52,8 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Error")
             .setMessage(ex.getCustomMessage())
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                Log.d(TAG_EXTENSIONS, "cancel")
-            }
-            .setPositiveButton("Login Again") { _, _ ->
-                Log.d(TAG_EXTENSIONS, "relog")
-                App.restartApp(this)
-            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton("Login Again") { _, _ -> App.restartApp(this) }
     val alertDialog = builder.create()
     alertDialog.show()
 }

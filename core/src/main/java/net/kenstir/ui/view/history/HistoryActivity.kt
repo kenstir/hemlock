@@ -100,8 +100,7 @@ class HistoryActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this@HistoryActivity)
         builder.setTitle(getString(R.string.disable_history_alert_title))
             .setMessage(getString(R.string.disable_history_alert_msg))
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-            }
+            .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(getString(R.string.disable_history_alert_button)) { _, _ ->
                 disableCheckoutHistory()
             }

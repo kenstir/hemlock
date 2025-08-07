@@ -92,8 +92,8 @@ class CheckoutsViewAdapter(
                 if (!renewable) return@OnClickListener
                 val builder = AlertDialog.Builder(itemView.context)
                 builder.setMessage(R.string.renew_item_message)
-                builder.setNegativeButton(android.R.string.no, null)
-                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                builder.setNegativeButton(android.R.string.cancel, null)
+                builder.setPositiveButton(android.R.string.ok) { _, _ ->
                     //Analytics.logEvent("checkouts_renewitem", "num_renewals", record.renewals, "overdue", record.isOverdue)
                     onRenewItem(record)
                 }
