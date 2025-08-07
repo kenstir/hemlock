@@ -2,8 +2,7 @@
 *.iml
 .gradle
 fm_IDL.*
-/secret.*
-/secrets.*
+/secret*
 /local.gradle
 /local.properties
 /.idea/AndroidProjectSystem.xml

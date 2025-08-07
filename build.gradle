@@ -30,7 +30,7 @@ ext.testServer = "https://demo.evergreencatalog.com"
 ext.testUsername = "hemlock"
 ext.testPassword = "1234"
 ext.testHttpbinServer = "https://httpbin.org"
-def secretGradleFile = rootProject.file('secret.gradle')
+def secretGradleFile = rootProject.file('secret/secret.gradle')
 if (secretGradleFile.exists()) {
     apply from: secretGradleFile
 }
