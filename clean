@@ -1,2 +1,2 @@
 #!/bin/bash -
-git clean -dfx --exclude=secret.gradle --exclude=google-services.json
+git clean -dfx --exclude=secret/ --exclude=google-services.json
