@@ -33,7 +33,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.app.ActivityCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
 import com.google.android.gms.common.GoogleApiAvailability
@@ -76,7 +75,7 @@ const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
 const val SEARCH_CLASS_AUTHOR = "author"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
-class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+class SearchActivity : BaseActivity() {
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
     private var searchOptionsLayout: View? = null
