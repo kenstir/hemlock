@@ -103,8 +103,10 @@ public class App {
 
     static public void init(Context context) {
         if (mInitialized) {
+            //Log.d(TAG, "[init] App.init already done");
             return;
         }
+        Log.d(TAG, "[init] App.init");
         enableCaching(context);
         behavior = AppFactory.makeBehavior(context.getResources());
         GatewayClient.initHttpClient();
@@ -152,7 +154,7 @@ public class App {
      * </code>
      */
     public static void restartApp(Activity activity) {
-        Analytics.log(TAG, "restartApp> Restarting");
+        Analytics.log(TAG, "[init] restartApp");
         Intent i = new Intent(activity.getApplicationContext(), LaunchActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(i);
@@ -160,6 +162,7 @@ public class App {
     }
 
     public static void startApp(Activity activity) {
+        Analytics.log(TAG, "[init] startApp");
         setStarted(true);
         updateLaunchCount();
         Intent intent = getMainActivityIntent(activity);
@@ -169,6 +172,7 @@ public class App {
 
     /** Start app from a push notification */
     public static void startAppFromPushNotification(Activity activity, Class<? extends BaseActivity> targetActivityClass) {
+        Analytics.log(TAG, "[init] startAppFromPushNotification");
         setStarted(true);
         updateLaunchCount();
         Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass);

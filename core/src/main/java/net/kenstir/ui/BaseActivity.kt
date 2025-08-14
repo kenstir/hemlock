@@ -82,6 +82,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        Log.d(TAG, "[init] BaseActivity onCreate")
         super.onCreate(savedInstanceState)
 
         if (!App.isStarted()) {

@@ -52,8 +52,6 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: fix crash here
-        // https://console.firebase.google.com/u/0/project/pines-e1f4d/crashlytics/app/android:net.kenstir.apps.pines/issues/50b75e6b15fd31e91a8f762c05539a9e?time=last-seven-days&types=crash&sessionEventKey=68842270027700010F08DBD37A17FF02_2109627947480090230
         mDataset = App.getServiceConfig().getSearchService().getLastSearchResults().getRecords();
         mAdapter = new RecordViewAdapter(mDataset);
     }

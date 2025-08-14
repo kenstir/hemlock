@@ -24,11 +24,14 @@ class Application : androidx.multidex.MultiDexApplication() {
     private val TAG = javaClass.simpleName
 
     override fun onCreate() {
+        Log.d(TAG, "[init] Application.onCreate")
         Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
         super.onCreate()
 
         AppState.init(this)
         val changed = ThemeManager.applyNightMode()
         Log.d(TAG, "applyNightMode returned $changed")
+
+        App.init(this)
     }
 }
