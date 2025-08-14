@@ -65,7 +65,10 @@ cwmars|pines|hemlock)
 esac
 jarsigner -keystore "$KEY_STORE" "$bundle" "$keyalias"
 
-echo "signed $bundle"
+echo "Signed $bundle"
+cp "$bundle" ~/Downloads/
+echo "Copied to ~/Downloads/"
+explorer "$HOMEDRIVE$HOMEPATH\\Downloads"
 
 ### make the tag
 
