@@ -4,20 +4,24 @@ if [ $# -ne 1 ]; then
     echo "usage: $0 app_name"
     exit 1
 fi
-app_name="$1"
-app=${app_name}_app
+app="$1"
+project=${app}_app
+
+### load env
+
+. secret/env.signing
 
 ### find manifest
 
-manifest="${app}/src/main/AndroidManifest.xml"
+manifest="${project}/src/main/AndroidManifest.xml"
 if [ ! -f "$manifest" ]; then
     echo "No such file: $manifest"
     exit 1
 fi
 
-set -e
-
 ### scrape versionCode / versionName from the manifest
+
+set -e
 
 versionCode=$(egrep android:versionCode $manifest)
 versionCode=${versionCode#*\"}
@@ -36,6 +40,7 @@ test -n "$versionName"
 tag=${app}_v${versionCode}
 msg="${tag} (${versionName})"
 
+echo Checking for tag $tag ...
 if git rev-parse $tag &>/dev/null; then
     echo $tag already exists at $(git rev-parse $tag)
     exit 1
@@ -47,19 +52,18 @@ PATH=$PATH:"/c/Program Files/Android/Android Studio/jbr/bin"
 
 ### make the bundle
 
-./gradlew :${app}:bundleRelease
-bundle=${app}/build/outputs/bundle/release/${app}-release.aab
+./gradlew :${project}:bundleRelease
+bundle=${project}/build/outputs/bundle/release/${project}-release.aab
 
 ### sign the bundle
 
-. secret/env.signing
-case "$app_name" in
+case "$app" in
 cwmars|pines|hemlock)
     keyalias=$ORIGINAL_UPLOAD_KEY_ALIAS;;
 *)
     keyalias=$NEW_UPLOAD_KEY_ALIAS;;
 esac
-jarsigner -keystore $KEY_STORE $bundle $keyalias
+jarsigner -keystore "$KEY_STORE" "$bundle" "$keyalias"
 
 echo "signed $bundle"
 

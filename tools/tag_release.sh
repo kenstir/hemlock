@@ -5,12 +5,17 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 app="$1"
+project=${app}_app
 
-manifest="${app}_app/src/main/AndroidManifest.xml"
+### find manifest
+
+manifest="${project}/src/main/AndroidManifest.xml"
 if [ ! -f "$manifest" ]; then
     echo "No such file: $manifest"
     exit 1
 fi
+
+### scrape versionCode / versionName from the manifest
 
 set -e
 
@@ -25,6 +30,8 @@ versionName=${versionName#*\"}
 versionName=${versionName%\"*}
 echo versionName=$versionName
 test -n "$versionName"
+
+### tag it
 
 set -ex
 
