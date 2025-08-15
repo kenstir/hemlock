@@ -79,7 +79,6 @@
 
         <Button
             android:id="@+id/activity_splash_retry_button"
-            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
