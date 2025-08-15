@@ -30,6 +30,16 @@ for ((i=0; i<${#dir[@]}; i++)); do
     d="${dir[$i]}"
     px="${pixels[$i]}"
 
+    echo
+    set -x
+
+    ## resize to target dimensions
     mkdir -p $d
-    echo magick "$orig" -resize ${px}x${px} $d/$base
+    magick "$orig" -resize ${px}x${px} $d/$base
+
+    ## annotate with text indicating density directory
+    magick $d/$base -gravity SouthEast -pointsize 32 -font "Arial" -fill black -stroke black -strokewidth 1 -annotate +10+10 "$d" $d/new_$base
+    mv $d/new_$base $d/$base
+
+    set +x
 done
