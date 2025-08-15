@@ -94,7 +94,7 @@ object EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit> {
+    override suspend fun loadPatronListItems(account: Account, patronList: PatronList): Result<Unit> {
         return try {
             account as? EvergreenAccount
                 ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
@@ -105,12 +105,10 @@ object EvergreenUserService: UserService {
 
             // query first to find visible items; CONTAINER_FLESH returns the contents including
             // items that are marked deleted
-            if (queryForVisibleItems) {
-                val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
-                val queryResult = EvergreenSearchService.fetchMulticlassQuery(query, 999, false)
-                if (queryResult is Result.Error) return queryResult
-                bookBag.initVisibleIdsFromQuery(queryResult.get())
-            }
+            val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
+            val queryResult = EvergreenSearchService.fetchMulticlassQuery(query, 999, false)
+            if (queryResult is Result.Error) return queryResult
+            bookBag.initVisibleIdsFromQuery(queryResult.get())
 
             // then flesh the objects
             val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, patronList.id)
