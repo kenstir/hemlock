@@ -50,22 +50,14 @@ fi
 
 PATH=$PATH:"/c/Program Files/Android/Android Studio/jbr/bin"
 
-### make the bundle
+### build and sign the bundle
 
 ./gradlew :${project}:bundleRelease
 bundle=${project}/build/outputs/bundle/release/${project}-release.aab
 
-### sign the bundle
+### copy the bundle somewhere convenient
 
-case "$app" in
-cwmars|pines|hemlock)
-    keyalias=$ORIGINAL_UPLOAD_KEY_ALIAS;;
-*)
-    keyalias=$NEW_UPLOAD_KEY_ALIAS;;
-esac
-jarsigner -keystore "$KEY_STORE" "$bundle" "$keyalias"
-
-echo "Signed $bundle"
+echo "Built signed bundle at $bundle"
 cp "$bundle" ~/Downloads/
 echo "Copied to ~/Downloads/"
 explorer "$HOMEDRIVE$HOMEPATH\\Downloads"
