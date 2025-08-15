@@ -47,6 +47,7 @@ android {
             // include ProGuard rules files
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
+            // use signingConfig defined above
             signingConfig signingConfigs.release
         }
     }
