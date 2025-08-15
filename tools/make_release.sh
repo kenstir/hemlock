@@ -7,9 +7,12 @@ fi
 app="$1"
 project=${app}_app
 
-### load env
+### check env
 
-. secret/env.signing
+if [ ! -r secret/keystore.properties ]; then
+    echo "No such file: secret/keystore.properties"
+    exit 1
+fi
 
 ### find manifest
 
