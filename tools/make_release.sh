@@ -26,13 +26,13 @@ set -e
 versionCode=$(egrep android:versionCode $manifest)
 versionCode=${versionCode#*\"}
 versionCode=${versionCode%\"*}
-echo versionCode=$versionCode
+echo "Found versionCode=$versionCode"
 test -n "$versionCode"
 
 versionName=$(egrep android:versionName $manifest)
 versionName=${versionName#*\"}
 versionName=${versionName%\"*}
-echo versionName=$versionName
+echo "Found versionName=$versionName"
 test -n "$versionName"
 
 ### see if the tag exists
@@ -40,7 +40,7 @@ test -n "$versionName"
 tag=${app}_v${versionCode}
 msg="${tag} (${versionName})"
 
-echo Checking for tag $tag ...
+echo "Checking for tag $tag ..."
 if git rev-parse $tag &>/dev/null; then
     echo $tag already exists at $(git rev-parse $tag)
     exit 1
