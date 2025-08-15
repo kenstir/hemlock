@@ -14,7 +14,9 @@ apply plugin: 'org.jetbrains.kotlin.android'
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('secret/keystore.properties')
 if (keystorePropertiesFile.exists()) {
-   keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    keystoreProperties.setProperty('storeFile', '/dev/null')
 }
 
 android {
