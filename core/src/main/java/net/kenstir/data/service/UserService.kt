@@ -40,7 +40,7 @@ interface UserService {
      *
      * NB: it does not load the records for the items, see [BiblioService.loadRecordDetails]
      */
-    suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
+    suspend fun loadPatronListItems(account: Account, patronList: PatronList): Result<Unit>
 
     suspend fun createPatronList(account: Account, name: String, description: String): Result<Unit>
     suspend fun deletePatronList(account: Account, listId: Int): Result<Unit>

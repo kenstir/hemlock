@@ -81,8 +81,6 @@
     <bool name="ou_enable_hours_of_operation">true</bool>
     <!-- if true, Firebase Analytics is initialized -->
     <bool name="ou_enable_analytics">false</bool>
-    <!-- if true, use an extra container() query to weed deleted items from bookbags -->
-    <bool name="ou_extra_bookbag_query">true</bool>
     <!-- if true, add Events button, link to home org setting hemlock.events_calendar_url -->
     <bool name="ou_enable_events_button">false</bool>
     <!-- true only for the Hemlock generic app; used for analytics -->

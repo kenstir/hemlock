@@ -128,8 +128,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (list in patronLists) {
                     jobs.add(scope.async {
-                        App.getServiceConfig().userService.loadPatronListItems(
-                            App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                        App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), list)
                     })
                 }
                 jobs.map { it.await() }

@@ -34,7 +34,6 @@
     <bool name="ou_need_marc_record">true</bool>
     <bool name="ou_always_popup_online_links">true</bool>
     <bool name="ou_enable_analytics">true</bool>
-    <bool name="ou_extra_bookbag_query">true</bool>
 
     <!-- [fcm] -->
     <bool name="ou_enable_push_notifications">true</bool>
