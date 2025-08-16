@@ -6,7 +6,7 @@
     <string name="menu_add_account">Add account</string>
     <string name="clear_accounts_menu">Clear all accounts</string>
     <string name="clear_accounts_alert_title">Clear all accounts?</string>
-    <string name="clear_accounts_alert_message">Logout and clear all accounts from this device?  This does not affect your account on the server.</string>
+    <string name="clear_accounts_alert_message">Logout and clear all accounts from this device?  This will not delete your library account.</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_messages">Messages</string>
