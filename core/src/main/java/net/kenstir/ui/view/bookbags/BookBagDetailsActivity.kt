@@ -180,8 +180,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
                 // load bookBag contents
-                val result = App.getServiceConfig().userService.loadPatronListItems(
-                    App.getAccount(), patronList, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), patronList)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
