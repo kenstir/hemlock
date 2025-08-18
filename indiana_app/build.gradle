@@ -10,6 +10,15 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'org.jetbrains.kotlin.android'
 
+// load signing keys from a secret file
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('secret/keystore.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    keystoreProperties.setProperty('storeFile', '/dev/null')
+}
+
 android {
     compileSdk 35
     defaultConfig {
@@ -18,10 +27,30 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['uploadKeyAlias']
+            keyPassword keystoreProperties['uploadKeyPassword']
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            /// https://developer.android.com/studio/build/shrink-code
+
+            // enable code shrinking, obfuscating, and optimization
+            // see also {dontshrink|dontobfuscate|dontoptimize} in proguard-rules.pro
+            minifyEnabled true
+
+            // enable resource shrinking
+            shrinkResources true
+
+            // include ProGuard rules files
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // use signingConfig defined above
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
