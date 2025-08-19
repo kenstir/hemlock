@@ -17,8 +17,6 @@
 
 package net.kenstir.ui;
 
-import static net.kenstir.util.FileUtilsKt.deleteRecursively;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -89,16 +87,10 @@ public class App {
         return version;
     }
 
-    public static void enableCaching(Context context) {
-        try {
-            GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
-
-            // Delete the legacy cache directory if it exists
-            File volleyCacheDir = new File(context.getCacheDir(), "volley");
-            deleteRecursively(volleyCacheDir);
-        } catch (Exception e) {
-            Log.d(TAG, "HTTP response cache is unavailable.");
-        }
+    public static void configureHttpClient(Context context) {
+        GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
+        GatewayClient.initHttpClient();
+        CoilImageLoader.INSTANCE.setImageLoader(context, GatewayClient.okHttpClient);
     }
 
     static public void init(Context context) {
@@ -107,10 +99,8 @@ public class App {
             return;
         }
         Log.d(TAG, "[init] App.init");
-        enableCaching(context);
+        configureHttpClient(context);
         behavior = AppFactory.makeBehavior(context.getResources());
-        GatewayClient.initHttpClient();
-        CoilImageLoader.INSTANCE.setImageLoader(context, GatewayClient.okHttpClient);
         if (mServiceConfig == null) {
             mServiceConfig = new ServiceConfig();
         }

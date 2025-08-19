@@ -17,11 +17,20 @@
 
 package net.kenstir.ui
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import net.kenstir.logging.Log
 import net.kenstir.ui.util.ThemeManager
+import java.io.File
 
 class Application : androidx.multidex.MultiDexApplication() {
     private val TAG = javaClass.simpleName
+
+    // Define a scope that lives as long as the application
+    // Use SupervisorJob so if one child coroutine fails, others aren't cancelled
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
         Log.d(TAG, "[init] Application.onCreate")
@@ -33,5 +42,19 @@ class Application : androidx.multidex.MultiDexApplication() {
         Log.d(TAG, "applyNightMode returned $changed")
 
         App.init(this)
+        deleteLegacyCacheDirectory()
+    }
+
+    private fun deleteLegacyCacheDirectory() {
+        applicationScope.launch(Dispatchers.IO) {
+            try {
+                // Delete the pre-4.0 cache directory if it exists
+                val volleyCacheDir = File(applicationContext.cacheDir, "volley")
+                val ok = volleyCacheDir.deleteRecursively()
+                Log.d(TAG, "[init] Deleted volley cache directory: $ok")
+            } catch (e: Exception) {
+                Log.d(TAG, "[init] Failed to delete volley cache directory", e)
+            }
+        }
     }
 }
