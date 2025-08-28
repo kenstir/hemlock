@@ -317,7 +317,6 @@ class PlaceHoldActivity : BaseActivity() {
             return
 
         scope.async {
-            Log.d(TAG, "[kcxxx] placeHold: ${record.id}")
             val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             val holdType: String
@@ -326,6 +325,7 @@ class PlaceHoldActivity : BaseActivity() {
                 partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
                 else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
+            Log.d(TAG, "[kcxxx] placeHold: ${holdType} ${itemId}")
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val options = HoldOptions(
                 holdType = holdType,
@@ -340,7 +340,7 @@ class PlaceHoldActivity : BaseActivity() {
                 thawDate = getThawDate()
             )
             val result = App.getServiceConfig().circService.placeHold(
-                App.getAccount(), record.id, options)
+                App.getAccount(), itemId, options)
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {
