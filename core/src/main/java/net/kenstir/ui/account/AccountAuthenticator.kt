@@ -37,8 +37,8 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
 
     init {
         // Choose the right AuthenticatorActivity.  A custom app does not require the library spinner.
-        val library_url = context.getString(R.string.ou_library_url)
-        if (TextUtils.isEmpty(library_url)) {
+        val libraryUrl = context.getString(R.string.ou_library_url)
+        if (TextUtils.isEmpty(libraryUrl)) {
             this.authenticatorActivity = GenericAuthenticatorActivity::class.java
         } else {
             this.authenticatorActivity = AuthenticatorActivity::class.java
@@ -76,24 +76,23 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
 
         // If the caller requested an authToken type we don't support, then
         // return an error
-        if (authTokenType != net.kenstir.ui.account.Const.AUTHTOKEN_TYPE) {
+        if (authTokenType != Const.AUTHTOKEN_TYPE) {
             val result = Bundle()
             result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType")
             return result
         }
 
         val am = AccountManager.get(context)
-        var library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME)
-        var library_url = am.getUserData(account, Const.KEY_LIBRARY_URL)
-        log(TAG,
-            "getAuthToken> library_name=$library_name library_url=$library_url")
-        if (library_name == null) {
+        var libraryName = am.getUserData(account, Const.KEY_LIBRARY_NAME)
+        var libraryUrl = am.getUserData(account, Const.KEY_LIBRARY_URL)
+        log(TAG, "getAuthToken> library_name=$libraryName library_url=$libraryUrl")
+        if (libraryName == null) {
             // workaround issue #24 - not sure how it happened
-            library_name = context.getString(R.string.ou_library_name)
+            libraryName = context.getString(R.string.ou_library_name)
         }
-        if (library_url == null) {
+        if (libraryUrl == null) {
             // workaround issue #24 - not sure how it happened
-            library_url = context.getString(R.string.ou_library_url)
+            libraryUrl = context.getString(R.string.ou_library_url)
         }
 
         var authToken = am.peekAuthToken(account, authTokenType)
@@ -103,7 +102,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             if (password != null) {
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
-                    if (library_url != GatewayClient.baseUrl) {
+                    if (libraryUrl != GatewayClient.baseUrl) {
                         // TODO: seems like this happens when the app changes the library URL, e.g. acorn
                         // In which case we should clear the password and prompt the user to sign in again
                         throw AuthenticationException("Server URL changed, please sign in again")
@@ -134,8 +133,8 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name)
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type)
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken)
-            result.putString(Const.KEY_LIBRARY_NAME, library_name)
-            result.putString(Const.KEY_LIBRARY_URL, library_url)
+            result.putString(Const.KEY_LIBRARY_NAME, libraryName)
+            result.putString(Const.KEY_LIBRARY_URL, libraryUrl)
             return result
         }
 

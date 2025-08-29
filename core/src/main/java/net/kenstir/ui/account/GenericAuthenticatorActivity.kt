@@ -17,6 +17,7 @@
 package net.kenstir.ui.account
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -40,7 +41,6 @@ import net.kenstir.logging.Log
 import net.kenstir.util.Analytics
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.gateway.GatewayClient
-import java.util.Collections
 
 @Serializable
 data class DirectoryEntry(
@@ -55,7 +55,6 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
     private var librarySpinner: Spinner? = null
     var libraries: MutableList<Library> = ArrayList()
     var directoryUrl: String? = null
-    private var start_ms: Long = 0
 
     override fun setContentViewImpl() {
         setContentView(R.layout.activity_generic_login)
@@ -68,7 +67,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         directoryUrl = getString(R.string.evergreen_libraries_url)
 
         librarySpinner = findViewById(R.id.choose_library_spinner)
-        librarySpinner?.setOnItemSelectedListener(object: AdapterView.OnItemSelectedListener {
+        librarySpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
                 setLibrary(libraries[position])
             }
@@ -76,7 +75,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 setLibrary(null)
             }
-        })
+        }
     }
 
     override fun initSelectedLibrary() {
@@ -93,7 +92,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[async] fetchData ...")
                 val start = System.currentTimeMillis()
 
                 val url = directoryUrl ?: return@async
@@ -101,45 +100,49 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
                 onLibrariesLoaded()
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[async] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[async] fetchData ... caught", ex)
                 showAlert(ex)
             }
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun chooseNearestLibrary() {
         var location: Location? = null
         val lm = getSystemService(LOCATION_SERVICE) as? LocationManager
         if (lm != null) {
             try {
                 location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                Log.d(TAG, "[auth] got location")
             } catch (ex: SecurityException) {
+                Log.d(TAG, "[auth] failed to get location: $ex.message")
             }
         }
 
-        var min_distance = Float.MAX_VALUE
-        var default_library_index: Int? = null
+        var minDistance = Float.MAX_VALUE
+        var defaultLibraryIndex: Int? = null
         for (i in libraries.indices) {
             val library = libraries[i]
             if (location != null && library.location != null) {
                 val distance = location.distanceTo(library.location)
-                if (distance < min_distance) {
-                    default_library_index = i
-                    min_distance = distance
+                if (distance < minDistance) {
+                    defaultLibraryIndex = i
+                    minDistance = distance
                 }
             }
         }
-        if (default_library_index != null) {
-            librarySpinner!!.setSelection(default_library_index)
+        if (defaultLibraryIndex != null) {
+            librarySpinner!!.setSelection(defaultLibraryIndex)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_COARSE_LOCATION) {
             // If request is cancelled, the result arrays are empty.
-            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 chooseNearestLibrary()
             }
         }
@@ -162,30 +165,29 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
 
     private fun onLibrariesLoaded() {
         // if the user has any existing accounts, then we can select a reasonable default library
-        var default_library: Library? = null
-        val existing_accounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
-        Log.d(Const.AUTH_TAG, "there are " + existing_accounts.size + " existing accounts")
-        if (existing_accounts.size > 0) {
-            default_library = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
-                existing_accounts[0])
-            Log.d(Const.AUTH_TAG,
-                "default_library=$default_library")
+        var defaultLibrary: Library? = null
+        val existingAccounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
+        Log.d(Const.AUTH_TAG, "[auth] found ${existingAccounts.size} existing accounts")
+        if (existingAccounts.isNotEmpty()) {
+            defaultLibrary = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
+                existingAccounts[0])
+            Log.d(Const.AUTH_TAG, "[auth] defaultLibrary=$defaultLibrary")
         }
 
         // Build a List<String> for use in the spinner adapter
         // While we're at it choose a default library; first by prior account, second by proximity
-        var default_library_index: Int? = null
+        var defaultLibraryIndex: Int? = null
         val l = ArrayList<String?>(libraries.size)
         for ((url, _, directoryName) in libraries) {
-            if (default_library != null && TextUtils.equals(default_library.url, url)) {
-                default_library_index = l.size
+            if (defaultLibrary != null && TextUtils.equals(defaultLibrary.url, url)) {
+                defaultLibraryIndex = l.size
             }
             l.add(directoryName)
         }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, l)
         librarySpinner!!.adapter = adapter
-        if (default_library_index != null) {
-            librarySpinner!!.setSelection(default_library_index)
+        if (defaultLibraryIndex != null) {
+            librarySpinner!!.setSelection(defaultLibraryIndex)
         } else {
             requestPermission()
         }
@@ -207,7 +209,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             libraries.add(library)
         }
 
-        Collections.sort(libraries) { a, b -> a.directoryName!!.compareTo(b.directoryName!!) }
+        libraries.sortWith(Comparator { a, b -> a.directoryName!!.compareTo(b.directoryName!!) })
     }
 
     companion object {
