@@ -169,7 +169,7 @@ class PlaceHoldActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[async] fetchData ...")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Result<Unit>>>()
                 progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
@@ -200,9 +200,9 @@ class PlaceHoldActivity : BaseActivity() {
                 initPartControls()
                 initSMSControls()
                 placeHold?.isEnabled = true
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[async] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[async] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
@@ -236,7 +236,7 @@ class PlaceHoldActivity : BaseActivity() {
         Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
-    private fun logPlaceHoldResult(succeeded: Boolean, result: String) {
+    private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
         if (emailNotification?.isChecked == true) notify.add("email")
         if (phoneNotification?.isChecked == true) notify.add("phone")
@@ -325,7 +325,7 @@ class PlaceHoldActivity : BaseActivity() {
                 partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
                 else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
-            Log.d(TAG, "[kcxxx] placeHold: ${holdType} ${itemId}")
+            Log.d(TAG, "[hold] placeHold: $holdType $itemId")
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val options = HoldOptions(
                 holdType = holdType,
@@ -341,17 +341,17 @@ class PlaceHoldActivity : BaseActivity() {
             )
             val result = App.getServiceConfig().circService.placeHold(
                 App.getAccount(), itemId, options)
-            Log.d(TAG, "[kcxxx] placeHold: $result")
+            Log.d(TAG, "[hold] placeHold: $result")
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    logPlaceHoldResult(true, Analytics.Value.OK)
+                    logPlaceHoldResult(Analytics.Value.OK)
                     Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed", Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
                     finish()
                 }
                 is Result.Error -> {
-                    logPlaceHoldResult(false, result.exception.getCustomMessage())
+                    logPlaceHoldResult(result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
@@ -359,7 +359,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSuspendHoldButton() {
-        suspendHold?.setOnCheckedChangeListener { buttonView, isChecked -> thawDateEdittext?.isEnabled = isChecked }
+        suspendHold?.setOnCheckedChangeListener { _, isChecked -> thawDateEdittext?.isEnabled = isChecked }
     }
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
@@ -371,7 +371,7 @@ class PlaceHoldActivity : BaseActivity() {
         }
 
         if (isPhoneNotifyVisible) {
-            phoneNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
+            phoneNotification?.setOnCheckedChangeListener { _, isChecked ->
                 phoneNotify?.isEnabled = isChecked
             }
             phoneNotify?.isEnabled = (phoneNotification?.isChecked == true)
@@ -391,7 +391,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         val enabled = EgOrg.smsEnabled
         if (enabled) {
-            smsNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
+            smsNotification?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
                 smsNotify?.isEnabled = isChecked
             }
@@ -433,22 +433,20 @@ class PlaceHoldActivity : BaseActivity() {
     private fun initDatePickers() {
         val cal = Calendar.getInstance()
         datePicker = DatePickerDialog(this,
-                OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                    val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
-                    expireDate = chosenDate
-                    val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
-                    expirationDate?.setText(strDate)
-                }, cal[Calendar.YEAR], cal[Calendar.MONTH],
-                cal[Calendar.DAY_OF_MONTH])
+            { _, year, monthOfYear, dayOfMonth ->
+                val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
+                expireDate = chosenDate
+                val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
+                expirationDate?.setText(strDate)
+            }, cal[Calendar.YEAR], cal[Calendar.MONTH], cal[Calendar.DAY_OF_MONTH])
         expirationDate?.setOnClickListener { datePicker?.show() }
         thawDatePicker = DatePickerDialog(this,
-                OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                    val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
-                    thawDate = chosenDate
-                    val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
-                    thawDateEdittext?.setText(strDate)
-                }, cal[Calendar.YEAR], cal[Calendar.MONTH],
-                cal[Calendar.DAY_OF_MONTH])
+            { _, year, monthOfYear, dayOfMonth ->
+                val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
+                thawDate = chosenDate
+                val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
+                thawDateEdittext?.setText(strDate)
+            }, cal[Calendar.YEAR], cal[Calendar.MONTH], cal[Calendar.DAY_OF_MONTH])
         thawDateEdittext?.setOnClickListener { thawDatePicker?.show() }
     }
 
