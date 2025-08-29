@@ -7,7 +7,6 @@ include ':indiana_app'
 include ':mo_app'
 include ':noble_app'
 include ':owwl_app'
-include ':ntlc_app'
 include ':pines_app'
 include ':sagecat_app'
 
