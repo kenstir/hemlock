@@ -1,0 +1,34 @@
+#-----------------------------------------
+# SHARED fastlane.tools config
+#
+# usage: import "../../fastlane/Fastfile"
+#-----------------------------------------
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+    gradle(task: "connectedAndroidTest")
+  end
+
+  desc "Submit a new build to the open testing channel"
+  lane :beta do
+    Dir.chdir("..") do # from fastlane/ subdir to project root
+      sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
+    end
+    upload_to_play_store(
+      aab: "build/outputs/bundle/release/hemlock_app-release.aab",
+      track: "beta",
+      release_status: "completed",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

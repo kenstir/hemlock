@@ -1,0 +1,2 @@
+json_key_file("../secret/pines-fastlane.json")
+package_name("net.kenstir.apps.pines")
