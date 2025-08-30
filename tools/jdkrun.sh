@@ -9,7 +9,6 @@ PATH=$PATH:"/c/Program Files/Android/Android Studio/jbr/bin"
 
 ### run whatever it is
 
-echo '$#' "is $#"
 case $# in
 0)
     echo "usage: $0 jdk-program [arg...]"
