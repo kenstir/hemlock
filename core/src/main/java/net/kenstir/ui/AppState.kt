@@ -28,26 +28,25 @@ import androidx.core.content.edit
 object AppState {
     private val TAG: String = AppState::class.java.simpleName
 
-    const val LAUNCH_COUNT: String = "launch_count"
-    const val LIBRARY_URL: String = "library_url"
-    const val LIBRARY_NAME: String = "library_name"
-    const val NIGHT_MODE: String = "night_mode"
-    const val NOTIFICATIONS_DENY_COUNT: String = "notifications_deny_count"
+    const val LAUNCH_COUNT = "launch_count"
+    const val LIBRARY_URL = "library_url"
+    const val LIBRARY_NAME = "library_name"
+    const val NIGHT_MODE = "night_mode"
+    const val NOTIFICATIONS_DENY_COUNT = "notifications_deny_count"
 
-    // increment PREFS_VERSION every time you make a change to the persistent pref storage
+    // increment PREFS_VERSION every time you make a breaking change to the persistent pref storage
     private const val PREFS_VERSION = 2
     private const val VERSION = "version"
     private var initialized = false
     private lateinit var prefs: SharedPreferences
 
-    fun init(callingContext: Context) {
+    fun init(context: Context) {
         if (initialized) return
 
-        val context = callingContext.applicationContext
+        prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
         initialized = true
 
         // set default values unless already set
-        prefs = PreferenceManager.getDefaultSharedPreferences(context)
         var version = prefs.getInt(VERSION, 0)
         if (version < PREFS_VERSION) {
             prefs.edit(commit = true) {
