@@ -19,44 +19,34 @@
  */
 package net.kenstir.ui.view.search
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.URLSpan
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.ui.Key
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyLocationCounts
+import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgOrg.findOrg
-import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.setMargins
+import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.getCopySummary
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgOrg.findOrg
+import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 
 class CopyInformationActivity : BaseActivity() {
     private val TAG = "CopyInformationActivity"

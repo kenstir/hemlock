@@ -20,16 +20,9 @@
 package net.kenstir.ui.view.bookbags
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +34,6 @@ import net.kenstir.data.model.ListItem
 import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.util.Analytics
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
@@ -51,6 +43,7 @@ import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
+import net.kenstir.util.Analytics
 import net.kenstir.util.pubdateSortKey
 import java.text.Collator
 
