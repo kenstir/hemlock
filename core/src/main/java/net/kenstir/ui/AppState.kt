@@ -28,11 +28,25 @@ import androidx.core.content.edit
 object AppState {
     private val TAG: String = AppState::class.java.simpleName
 
+    // keys for prefs
+    const val LIST_SORT_BY = "list_sort_by"
+    const val LIST_SORT_DESCENDING = "list_sort_descending"
+    const val HOLD_NOTIFY_BY_EMAIL = "notify_by_email"
+    const val HOLD_NOTIFY_BY_PHONE = "notify_by_phone"
+    const val HOLD_NOTIFY_BY_SMS = "notify_by_sms"
+    const val HOLD_PHONE_NUMBER = "phone_number"
+    const val HOLD_PICKUP_ORG_ID = "pickup_org_id"
+    const val HOLD_SMS_CARRIER_ID = "sms_carrier_id"
+    const val HOLD_SMS_NUMBER = "sms_number"
     const val LAUNCH_COUNT = "launch_count"
     const val LIBRARY_URL = "library_url"
     const val LIBRARY_NAME = "library_name"
     const val NIGHT_MODE = "night_mode"
     const val NOTIFICATIONS_DENY_COUNT = "notifications_deny_count"
+    const val SEARCH_CLASS = "search_class"
+    const val SEARCH_FORMAT = "search_format"
+    const val SEARCH_OPTIONS_ARE_VISIBLE = "search_options_visible"
+    const val SEARCH_ORG_SHORT_NAME = "search_org"
 
     // increment PREFS_VERSION every time you make a breaking change to the persistent pref storage
     private const val PREFS_VERSION = 2

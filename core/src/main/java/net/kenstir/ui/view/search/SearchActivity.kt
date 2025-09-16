@@ -52,6 +52,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
+import net.kenstir.data.model.SearchClass
 import net.kenstir.data.service.SearchResults
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
@@ -71,9 +72,6 @@ const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
 const val ITEM_ADD_TO_LIST = 2
 
-const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
-const val SEARCH_CLASS_AUTHOR = "author"
-const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
 class SearchActivity : BaseActivity() {
     private var searchTextView: EditText? = null
@@ -89,23 +87,22 @@ class SearchActivity : BaseActivity() {
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
-    private lateinit var searchClassKeywords: Array<String>
+    private val searchClassKeywords = SearchClass.spinnerValues
 
     private val searchText: String
         get() = searchTextView?.text.toString().trim()
 
     private val searchClass: String
         get() {
-            val index = searchClassSpinner?.selectedItemPosition
-            return index?.let { searchClassKeywords[it] }!!
+            return SearchClass.spinnerValues[searchClassSpinner?.selectedItemPosition ?: 0]
         }
     private val searchClassIdentifierIndex: Int
         get() {
-            return searchClassKeywords.indexOf(SEARCH_CLASS_IDENTIFIER)
+            return searchClassKeywords.indexOf(SearchClass.IDENTIFIER)
         }
     private val searchClassAuthorIndex: Int
         get() {
-            return searchClassKeywords.indexOf(SEARCH_CLASS_AUTHOR)
+            return searchClassKeywords.indexOf(SearchClass.AUTHOR)
         }
 
     private val searchFormatCode: String?
@@ -158,8 +155,6 @@ class SearchActivity : BaseActivity() {
         orgSpinner = findViewById(R.id.search_org_spinner)
         searchResultsSummary = findViewById(R.id.search_result_number)
 
-        searchClassKeywords = resources.getStringArray(R.array.search_class_keyword)
-
         initSearchOptionsVisibility()
         initSearchText()
         initSearchOptionsButton()
@@ -206,14 +201,14 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchOptionsVisibility() {
-        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
+        val lastState = AppState.getBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
-        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
+        AppState.setBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, visible)
     }
 
     private fun initSearchOptionsButton() {
@@ -368,20 +363,9 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchClassSpinner() {
-        searchClassSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d(TAG, "searchClassSpinner: position $position class $searchClass")
-                // Do not startScanning here because it can be called twice when invoked from the
-                // app bar scan icon (scan_icon >> startScanning >> setSelection >> onItemSelected).
-//                if (searchClass == SEARCH_CLASS_IDENTIFIER) {
-//                    startScanning()
-//                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG, "onNothingSelected")
-            }
-        }
+        val labels = SearchClass.spinnerLabels
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
+        searchClassSpinner?.adapter = adapter
     }
 
     private fun initRecordClickListener() {

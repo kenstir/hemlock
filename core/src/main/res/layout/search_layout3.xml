@@ -72,7 +72,6 @@
                     android:layout_margin="1dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_class_spinner_alt"
-                    android:entries="@array/search_class"
                     android:minHeight="@dimen/spinner_min_height" />
 
                 <Spinner

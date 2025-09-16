@@ -54,6 +54,8 @@ object Analytics {
         const val MESSAGES_OPEN = "messages_open"
         const val SCAN = "barcode_scan"
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
+        const val SEARCH_ADV_SEARCH = "search_advanced_search"
+        const val SEARCH_ADV_CANCEL = "search_advanced_cancel"
         const val VIEW_ITEM_DETAILS = FirebaseAnalytics.Event.VIEW_ITEM
     }
 
