@@ -127,6 +127,10 @@ object EgOrg {
         return visibleOrgs.map { it.spinnerLabel }
     }
 
+    fun spinnerShortNames(): List<String> {
+        return visibleOrgs.map { it.shortname }
+    }
+
     // return list of spinner labels and the index at which defaultOrgId appears else (0)
     fun orgSpinnerLabelsAndSelectedIndex(defaultOrgId: Int?): Pair<ArrayList<String>, Int> {
         val labels: ArrayList<String> = ArrayList<String>(visibleOrgs.size)

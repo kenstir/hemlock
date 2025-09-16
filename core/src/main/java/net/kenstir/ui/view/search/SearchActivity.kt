@@ -66,6 +66,7 @@ import org.evergreen_ils.system.EgSearch
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
+import net.kenstir.util.indexOfOrZero
 
 
 const val ITEM_PLACE_HOLD = 0
@@ -85,9 +86,13 @@ class SearchActivity : BaseActivity() {
     private var searchResultsFragment: SearchResultsFragment? = null
     private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
+    private var isProgrammaticSearchClassChange = false
+    private var isProgrammaticSearchFormatChange = false
+    private var isProgrammaticSearchOrgChange = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
     private val searchClassKeywords = SearchClass.spinnerValues
+    private val searchFormatCodes = EgCodedValueMap.searchFormatSpinnerValues
 
     private val searchText: String
         get() = searchTextView?.text.toString().trim()
@@ -98,15 +103,15 @@ class SearchActivity : BaseActivity() {
         }
     private val searchClassIdentifierIndex: Int
         get() {
-            return searchClassKeywords.indexOf(SearchClass.IDENTIFIER)
+            return searchClassKeywords.indexOfOrZero(SearchClass.IDENTIFIER)
         }
     private val searchClassAuthorIndex: Int
         get() {
-            return searchClassKeywords.indexOf(SearchClass.AUTHOR)
+            return searchClassKeywords.indexOfOrZero(SearchClass.AUTHOR)
         }
 
     private val searchFormatCode: String?
-        get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
+        get() = searchFormatCodes[searchFormatSpinner?.selectedItemPosition ?: 0]
 
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: BibRecord? = null
@@ -157,7 +162,6 @@ class SearchActivity : BaseActivity() {
 
         initSearchOptionsVisibility()
         initSearchText()
-        initSearchOptionsButton()
         initSearchButton()
         initSearchClassSpinner()
         initSearchFormatSpinner()
@@ -204,15 +208,12 @@ class SearchActivity : BaseActivity() {
         val lastState = AppState.getBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
+        searchOptionsButton?.setOnCheckedChangeListener { _, isChecked -> setSearchOptionsVisibility(isChecked) }
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
         AppState.setBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, visible)
-    }
-
-    private fun initSearchOptionsButton() {
-        searchOptionsButton?.setOnCheckedChangeListener { _, isChecked -> setSearchOptionsVisibility(isChecked) }
     }
 
     private fun initSearchText() {
@@ -333,22 +334,26 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        var selectedOrgPos = 0
-        val defaultOrgId = App.getAccount().searchOrg
-        val list = ArrayList<String>()
-        for ((index, org) in EgOrg.visibleOrgs.withIndex()) {
-            list.add(org.spinnerLabel)
-            if (org.id == defaultOrgId) {
-                selectedOrgPos = index
-            }
-        }
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, false)
+        val labels = EgOrg.orgSpinnerLabels()
+        val adapter = OrgArrayAdapter(this, R.layout.org_item_layout, labels, false)
         orgSpinner?.adapter = adapter
-        orgSpinner?.setSelection(selectedOrgPos)
-        EgSearch.selectedOrganization = EgOrg.visibleOrgs[selectedOrgPos]
+
+        // restore last selected value
+        val defaultOrgShortName = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname
+        val lastValue = AppState.getString(AppState.SEARCH_ORG_SHORT_NAME, null) ?: defaultOrgShortName
+        val index = EgOrg.spinnerShortNames().indexOfOrZero(lastValue)
+        orgSpinner?.setSelection(index)
+        EgSearch.selectedOrganization = EgOrg.visibleOrgs[index]
+        isProgrammaticSearchOrgChange = true // ignore first automatic onItemSelected callback
         orgSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchOrgChange ${EgOrg.visibleOrgs[position].shortname}")
                 EgSearch.selectedOrganization = EgOrg.visibleOrgs[position]
+                if (isProgrammaticSearchOrgChange) {
+                    isProgrammaticSearchOrgChange = false
+                    return
+                }
+                AppState.setString(AppState.SEARCH_ORG_SHORT_NAME, EgOrg.visibleOrgs[position].shortname)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -360,12 +365,49 @@ class SearchActivity : BaseActivity() {
         val labels = EgCodedValueMap.searchFormatSpinnerLabels
         val adapter = ArrayAdapter(this, R.layout.org_item_layout, labels)
         searchFormatSpinner?.adapter = adapter
+
+        // restore last selected value
+        val lastValue = AppState.getString(AppState.SEARCH_FORMAT, null)
+        searchFormatSpinner?.setSelection(searchFormatCodes.indexOfOrZero(lastValue))
+        isProgrammaticSearchFormatChange = true // ignore first automatic onItemSelected callback
+        searchFormatSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchFormatChange ${searchFormatCodes[position]}")
+                if (isProgrammaticSearchFormatChange) {
+                    isProgrammaticSearchFormatChange = false
+                    return
+                }
+                AppState.setString(AppState.SEARCH_FORMAT, searchFormatCodes[position])
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
     }
 
     private fun initSearchClassSpinner() {
         val labels = SearchClass.spinnerLabels
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
         searchClassSpinner?.adapter = adapter
+
+        // restore last selected value
+        val lastValue = AppState.getString(AppState.SEARCH_CLASS, SearchClass.KEYWORD)
+        searchClassSpinner?.setSelection(searchClassKeywords.indexOfOrZero(lastValue))
+        isProgrammaticSearchClassChange = true // ignore first automatic onItemSelected callback
+        searchClassSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchClassChange ${searchClassKeywords[position]}")
+                if (isProgrammaticSearchClassChange) {
+                    isProgrammaticSearchClassChange = false
+                    return
+                }
+                AppState.setString(AppState.SEARCH_CLASS, searchClassKeywords[position])
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+        Log.d(TAG, "[prefs] init done")
     }
 
     private fun initRecordClickListener() {
@@ -575,6 +617,7 @@ class SearchActivity : BaseActivity() {
     private fun setSearchClass(index: Int) {
         // Set the searchClassSpinner to the specified index. Because we are changing the state
         // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
+        isProgrammaticSearchClassChange = true
         searchClassSpinner?.setSelection(index)
         searchOptionsButton?.isChecked = true
     }

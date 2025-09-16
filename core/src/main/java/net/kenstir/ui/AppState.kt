@@ -80,7 +80,9 @@ object AppState {
     }
 
     fun getString(key: String, defaultValue: String?): String? {
-        return prefs.getString(key, defaultValue)
+        val value = prefs.getString(key, defaultValue)
+        Log.d(TAG, "[prefs] Got $key = $value")
+        return value
     }
 
     fun getBoolean(key: String): Boolean {
@@ -88,7 +90,9 @@ object AppState {
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return prefs.getBoolean(key, defaultValue)
+        val value = prefs.getBoolean(key, defaultValue)
+        Log.d(TAG, "[prefs] Got $key = $value")
+        return value
     }
 
     @JvmStatic
@@ -97,16 +101,20 @@ object AppState {
     }
 
     fun getInt(key: String, defaultValue: Int): Int {
-        return prefs.getInt(key, defaultValue)
+        val value = prefs.getInt(key, defaultValue)
+        Log.d(TAG, "[prefs] Got $key = $value")
+        return value
     }
 
     fun setString(key: String, value: String?) {
+        Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
             putString(key, value)
         }
     }
 
     fun setBoolean(key: String, value: Boolean) {
+        Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
             putBoolean(key, value)
         }
@@ -114,6 +122,7 @@ object AppState {
 
     @JvmStatic
     fun setInt(key: String, value: Int) {
+        Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
             putInt(key, value)
         }
