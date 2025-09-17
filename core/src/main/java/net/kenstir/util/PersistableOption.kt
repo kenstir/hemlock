@@ -97,6 +97,11 @@ class StringOption(
         selectedIndex = values.indexOfOrZero(selectedValue)
     }
 
+    fun selectByIndex(index: Int) {
+        require(index >= 0 && index < optionLabels.size)
+        selectedIndex = index
+    }
+
     override fun load(): String {
         val storedValue = AppState.getString(key, null)
         if (storedValue != null) {
