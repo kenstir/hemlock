@@ -91,21 +91,18 @@ class SearchActivity : BaseActivity() {
     private var isProgrammaticSearchOrgChange = false
     private val searchClassOption = StringOption(
         key = AppState.SEARCH_CLASS,
-        title = "Search Class",
         defaultValue = SearchClass.KEYWORD,
         optionLabels = SearchClass.spinnerLabels,
         optionValues = SearchClass.spinnerValues
     )
     private val searchFormatOption = StringOption(
         key = AppState.SEARCH_FORMAT,
-        title = "Search Format",
         defaultValue = "",
         optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
         optionValues = EgCodedValueMap.searchFormatSpinnerValues
     )
     private val searchOrgOption = StringOption(
         key = AppState.SEARCH_ORG_SHORT_NAME,
-        title = "Search Organization",
         defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: "",
         optionLabels = EgOrg.orgSpinnerLabels(),
         optionValues = EgOrg.spinnerShortNames()

@@ -34,19 +34,13 @@ interface PersistableOption<T> {
 interface SelectableOption {
     val optionLabels: List<String>
     val optionValues: List<String>
-    val optionIsEnabled: List<Boolean>
-    val optionIsPrimary: List<Boolean>
 }
 
-// StringOption: combines persistence + selection
-class StringOption(
+open class StringOption(
     override val key: String,
-    val title: String,
-    val defaultValue: String,
+    open val defaultValue: String,
     override val optionLabels: List<String>,
     override val optionValues: List<String> = emptyList(),
-    override val optionIsEnabled: List<Boolean> = emptyList(),
-    override val optionIsPrimary: List<Boolean> = emptyList()
 ) : PersistableOption<String>, SelectableOption {
 
     // index of selected option
@@ -67,8 +61,6 @@ class StringOption(
     init {
         require(optionLabels.isNotEmpty()) { "optionLabels must not be empty" }
         require(optionValues.isEmpty() || optionValues.size == optionLabels.size)
-        require(optionIsEnabled.isEmpty() || optionIsEnabled.size == optionLabels.size)
-        require(optionIsPrimary.isEmpty() || optionIsPrimary.size == optionLabels.size)
         require(optionValues.contains(defaultValue) || optionLabels.contains(defaultValue))
 
         selectByValue(defaultValue)
@@ -76,7 +68,6 @@ class StringOption(
 
     constructor(
         key: String,
-        title: String,
         defaultIndex: Int,
         optionLabels: List<String>,
         optionValues: List<String> = emptyList(),
@@ -84,12 +75,9 @@ class StringOption(
         optionIsPrimary: List<Boolean> = emptyList()
     ) : this(
         key,
-        title,
         if (optionValues.isEmpty()) optionLabels[defaultIndex] else optionValues[defaultIndex],
         optionLabels,
         optionValues,
-        optionIsEnabled,
-        optionIsPrimary
     )
 
     fun selectByValue(selectedValue: String) {
