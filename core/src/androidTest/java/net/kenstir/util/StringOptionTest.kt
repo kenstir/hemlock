@@ -22,7 +22,7 @@ import org.junit.Test
 
 class StringOptionTest {
     @Test
-    fun test_initWithOnlyLabels() {
+    fun test_initWithLabelsOnly() {
         val option = StringOption(
             key = "test_option",
             defaultValue = "Bravo",
