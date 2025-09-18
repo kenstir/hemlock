@@ -229,20 +229,19 @@ class SearchActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = App.getServiceConfig().userService.loadPatronLists(
-                    App.getAccount())
+                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
 
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             }
         }
@@ -252,10 +251,7 @@ class SearchActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                //var jobs = mutableListOf<Deferred<Any>()
                 progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
-
-                Log.d(TAG, "[kcxxx] fetchSearchResults ...")
 
                 // check searchText is not blank
                 if (searchText.isBlank()) {
@@ -269,6 +265,7 @@ class SearchActivity : BaseActivity() {
 
                 // submit the query
                 val queryString = App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
                 val result = App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
@@ -285,10 +282,9 @@ class SearchActivity : BaseActivity() {
                 updateSearchResultsSummary()
                 searchResultsFragment?.notifyDatasetChanged()
 
-//                jobs.map { it.await() }
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchSearchResults ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchSearchResults ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchSearchResults ... caught", ex)
+                Log.d(TAG, "[fetch] fetchSearchResults ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
@@ -334,12 +330,12 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
+        // connect spinner to option and set adapter
         val option = searchOrgOption
-        val adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
-        orgSpinner?.adapter = adapter
         option.spinner = orgSpinner
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
 
-        // restore last selected value
+        // restore last selected value and monitor changes
         option.load()
         EgSearch.selectedOrganization = EgOrg.visibleOrgs[option.selectedIndex]
         option.addSelectionListener { index, value ->
@@ -349,12 +345,12 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchFormatSpinner() {
+        // connect spinner to option and set adapter
         val option = searchFormatOption
-        val adapter = ArrayAdapter(this, R.layout.org_item_layout, option.optionLabels)
-        searchFormatSpinner?.adapter = adapter
         option.spinner = searchFormatSpinner
+        searchFormatSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, option.optionLabels)
 
-        // restore last selected value
+        // restore last selected value and monitor changes
         option.load()
         option.addSelectionListener { index, value ->
             Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
@@ -362,12 +358,12 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchClassSpinner() {
+        // connect spinner to option and set adapter
         val option = searchClassOption
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, option.optionLabels)
-        searchClassSpinner?.adapter = adapter
         option.spinner = searchClassSpinner
+        searchClassSpinner?.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, option.optionLabels)
 
-        // restore last selected value
+        // restore last selected value and monitor changes
         option.load()
         option.addSelectionListener { index, value ->
             Log.d(TAG, "[prefs] ${option.key} changed: $index $value")

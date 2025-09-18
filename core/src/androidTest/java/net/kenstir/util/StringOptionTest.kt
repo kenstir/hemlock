@@ -22,10 +22,9 @@ import org.junit.Test
 
 class StringOptionTest {
     @Test
-    fun test_stringOptionWithOnlyLabels() {
+    fun test_initWithOnlyLabels() {
         val option = StringOption(
             key = "test_option",
-            title = "Test Option",
             defaultValue = "Bravo",
             optionLabels = listOf("Alpha", "Bravo", "Charlie")
         )
@@ -41,10 +40,9 @@ class StringOptionTest {
     }
 
     @Test
-    fun test_stringOptionWithLabelsAndValues() {
+    fun test_initWithLabelsAndValues() {
         val option = StringOption(
             key = "test_option",
-            title = "Test Option",
             defaultValue = "B",
             optionLabels = listOf("Alpha", "Bravo", "Charlie"),
             optionValues = listOf("A", "B", "C")
@@ -61,10 +59,9 @@ class StringOptionTest {
     }
 
     @Test
-    fun test_stringOptionInitByIndex() {
+    fun test_initByIndex() {
         val option = StringOption(
             key = "test_option",
-            title = "Test Option",
             defaultIndex = 2,
             optionLabels = listOf("Alpha", "Bravo", "Charlie"),
             optionValues = listOf("A", "B", "C")
@@ -73,10 +70,9 @@ class StringOptionTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun test_stringOptionInvalidDefaultValue() {
+    fun test_invalidDefaultValue() {
         StringOption(
             key = "test_option",
-            title = "Test Option",
             defaultValue = "Delta",
             optionLabels = listOf("Alpha", "Bravo", "Charlie"),
             optionValues = listOf("A", "B", "C")
@@ -84,13 +80,29 @@ class StringOptionTest {
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
-    fun test_StringOptionInvalidDefaultIndex() {
+    fun test_invalidDefaultIndex() {
         val option = StringOption(
             key = "test_option",
-            title = "Test Option",
             defaultIndex = 5,
             optionLabels = listOf("Alpha", "Bravo", "Charlie"),
             optionValues = listOf("A", "B", "C")
         )
+    }
+
+    @Test
+    fun test_obsoleteSavedValue() {
+        val option = StringOption(
+            key = "test_option",
+            defaultValue = "Bravo",
+            optionLabels = listOf("Alpha", "Bravo", "Charlie"),
+            optionValues = listOf("A", "B", "C")
+        )
+
+        // Simulate what would happen if a saved value is removed from the available options
+        option.save("OBSOLETE")
+
+        // Loading should default to the first value
+        option.load()
+        assertEquals("A", option.value)
     }
 }
