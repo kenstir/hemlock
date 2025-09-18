@@ -59,7 +59,7 @@ open class StringOption(
         get() = optionLabels[selectedIndex].trim()
 
     init {
-        require(optionLabels.isNotEmpty()) { "optionLabels must not be empty" }
+        require(optionLabels.isNotEmpty())
         require(optionValues.isEmpty() || optionValues.size == optionLabels.size)
         require(optionValues.contains(defaultValue) || optionLabels.contains(defaultValue))
 
@@ -80,9 +80,9 @@ open class StringOption(
         optionValues,
     )
 
-    fun selectByValue(selectedValue: String) {
+    open fun selectByValue(newValue: String) {
         val values = if (optionValues.isEmpty()) optionLabels else optionValues
-        selectedIndex = values.indexOfOrZero(selectedValue)
+        selectedIndex = values.indexOfOrZero(newValue)
     }
 
     fun selectByIndex(index: Int) {

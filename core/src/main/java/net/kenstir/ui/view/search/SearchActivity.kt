@@ -59,6 +59,7 @@ import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
@@ -86,22 +87,19 @@ class SearchActivity : BaseActivity() {
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
-    private var isProgrammaticSearchClassChange = false
-    private var isProgrammaticSearchFormatChange = false
-    private var isProgrammaticSearchOrgChange = false
-    private val searchClassOption = StringOption(
+    private val searchClassOption = SpinnerStringOption(
         key = AppState.SEARCH_CLASS,
         defaultValue = SearchClass.KEYWORD,
         optionLabels = SearchClass.spinnerLabels,
         optionValues = SearchClass.spinnerValues
     )
-    private val searchFormatOption = StringOption(
+    private val searchFormatOption = SpinnerStringOption(
         key = AppState.SEARCH_FORMAT,
         defaultValue = "",
         optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
         optionValues = EgCodedValueMap.searchFormatSpinnerValues
     )
-    private val searchOrgOption = StringOption(
+    private val searchOrgOption = SpinnerStringOption(
         key = AppState.SEARCH_ORG_SHORT_NAME,
         defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: "",
         optionLabels = EgOrg.orgSpinnerLabels(),
@@ -339,26 +337,14 @@ class SearchActivity : BaseActivity() {
         val option = searchOrgOption
         val adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
         orgSpinner?.adapter = adapter
+        option.spinner = orgSpinner
 
         // restore last selected value
         option.load()
-        orgSpinner?.setSelection(option.selectedIndex)
         EgSearch.selectedOrganization = EgOrg.visibleOrgs[option.selectedIndex]
-        isProgrammaticSearchOrgChange = true // ignore first automatic onItemSelected callback
-        orgSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                option.selectByIndex(position)
-                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchOrgChange org=${option.value}")
-                EgSearch.selectedOrganization = EgOrg.visibleOrgs[position]
-                if (isProgrammaticSearchOrgChange) {
-                    isProgrammaticSearchOrgChange = false
-                    return
-                }
-                option.save()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
+            EgSearch.selectedOrganization = EgOrg.visibleOrgs[index]
         }
     }
 
@@ -366,24 +352,12 @@ class SearchActivity : BaseActivity() {
         val option = searchFormatOption
         val adapter = ArrayAdapter(this, R.layout.org_item_layout, option.optionLabels)
         searchFormatSpinner?.adapter = adapter
+        option.spinner = searchFormatSpinner
 
         // restore last selected value
         option.load()
-        searchFormatSpinner?.setSelection(option.selectedIndex)
-        isProgrammaticSearchFormatChange = true // ignore first automatic onItemSelected callback
-        searchFormatSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                option.selectByIndex(position)
-                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchFormatChange format=${option.value}")
-                if (isProgrammaticSearchFormatChange) {
-                    isProgrammaticSearchFormatChange = false
-                    return
-                }
-                option.save()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
         }
     }
 
@@ -391,24 +365,12 @@ class SearchActivity : BaseActivity() {
         val option = searchClassOption
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, option.optionLabels)
         searchClassSpinner?.adapter = adapter
+        option.spinner = searchClassSpinner
 
         // restore last selected value
         option.load()
-        searchClassSpinner?.setSelection(option.selectedIndex)
-        isProgrammaticSearchClassChange = true // ignore first automatic onItemSelected callback
-        searchClassSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                option.selectByIndex(position)
-                Log.d(TAG, "[prefs] onItemSelected auto=$isProgrammaticSearchFormatChange class=${option.value}")
-                if (isProgrammaticSearchClassChange) {
-                    isProgrammaticSearchClassChange = false
-                    return
-                }
-                option.save()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
         }
     }
 
@@ -619,9 +581,7 @@ class SearchActivity : BaseActivity() {
     private fun setSearchClass(value: String) {
         // Set the searchClassSpinner to the specified value. Because we are changing the state
         // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
-        isProgrammaticSearchClassChange = true
         searchClassOption.selectByValue(value)
-        searchClassSpinner?.setSelection(searchClassOption.selectedIndex)
         searchOptionsButton?.isChecked = true
     }
 
