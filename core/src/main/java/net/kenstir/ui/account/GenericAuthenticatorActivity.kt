@@ -92,7 +92,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[async] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
 
                 val url = directoryUrl ?: return@async
@@ -100,9 +100,9 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
                 onLibrariesLoaded()
-                Log.logElapsedTime(TAG, start, "[async] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[async] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             }
         }
