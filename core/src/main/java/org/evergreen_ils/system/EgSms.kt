@@ -44,6 +44,11 @@ object EgSms {
         }
     }
 
+    val spinnerLabels: List<String>
+        get() = carriers.map { it.name }
+    val spinnerValues: List<String>
+        get() = carriers.map { it.id.toString() }
+
     @JvmStatic
-    fun findCarrier(id: Int): SMSCarrier? = carriers.firstOrNull { it.id == id }
+    fun findCarrier(id: Int?): SMSCarrier? = carriers.firstOrNull { it.id == id }
 }

@@ -51,15 +51,17 @@ import net.kenstir.data.model.HoldPart
 import net.kenstir.logging.Log
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.ui.App
+import net.kenstir.ui.AppState
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.data.model.SMSCarrier
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
 import java.util.Calendar
 import java.util.Date
@@ -90,10 +92,18 @@ class PlaceHoldActivity : BaseActivity() {
     private var expireDate: Date? = null
     private var thawDate: Date? = null
     private var selectedOrgPos = 0
+    private var ignoreNextOrgSelection = false // ignore initial onItemSelected callback
     private var selectedSMSPos = 0
+    private var ignoreNextSMSSelection = false // ignore initial onItemSelected callback
     private var progress: ProgressDialogSupport? = null
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
+    private val orgOption = SpinnerStringOption(
+        key = AppState.HOLD_PICKUP_ORG_ID,
+        defaultValue = EgOrg.findOrg(App.getAccount().pickupOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
+        optionLabels = EgOrg.orgSpinnerLabels(),
+        optionValues = EgOrg.spinnerShortNames()
+    )
     private lateinit var record: BibRecord
 
     private val hasParts: Boolean
@@ -242,8 +252,6 @@ class PlaceHoldActivity : BaseActivity() {
         if (phoneNotification?.isChecked == true) notify.add("phone")
         if (smsNotification?.isChecked == true) notify.add("sms")
 
-        //TODO: change HOLD_NOTIFY to dimensional value {default | +-email:+-phone:+-sms:
-
         val notifyTypes = TextUtils.join("|", notify)
         try {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
@@ -364,7 +372,8 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
         // Allow phone_notify to be set even if UX is not visible
-        val notifyPhoneNumber = account?.phoneNumber
+        val savedNumber = AppState.getString(AppState.HOLD_PHONE_NUMBER, null)
+        val notifyPhoneNumber = savedNumber ?: account?.phoneNumber
         phoneNotify?.setText(notifyPhoneNumber)
         if (account?.notifyByPhone == true && !notifyPhoneNumber.isNullOrEmpty()) {
             phoneNotification?.isChecked = true
@@ -373,6 +382,7 @@ class PlaceHoldActivity : BaseActivity() {
         if (isPhoneNotifyVisible) {
             phoneNotification?.setOnCheckedChangeListener { _, isChecked ->
                 phoneNotify?.isEnabled = isChecked
+                AppState.setBoolean(AppState.HOLD_NOTIFY_BY_PHONE, isChecked)
             }
             phoneNotify?.isEnabled = (phoneNotification?.isChecked == true)
         } else {
@@ -383,7 +393,8 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSControls() {
-        val notifySmsNumber = account?.smsNumber
+        val savedNumber = AppState.getString(AppState.HOLD_SMS_NUMBER, null)
+        val notifySmsNumber = savedNumber ?: account?.smsNumber
         smsNotify?.setText(notifySmsNumber)
         if (account?.notifyBySMS == true && !notifySmsNumber.isNullOrEmpty()) {
             smsNotification?.isChecked = true
@@ -394,10 +405,11 @@ class PlaceHoldActivity : BaseActivity() {
             smsNotification?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
                 smsNotify?.isEnabled = isChecked
+                AppState.setBoolean(AppState.HOLD_NOTIFY_BY_SMS, isChecked)
             }
             smsNotify?.isEnabled = (smsNotification?.isChecked == true)
             smsSpinner?.isEnabled = (smsNotification?.isChecked == true)
-            initSMSSpinner(account?.smsCarrier)
+            initSMSSpinner()
         }
 
         val visibility = if (enabled) View.VISIBLE else View.GONE
@@ -408,22 +420,23 @@ class PlaceHoldActivity : BaseActivity() {
         smsNotify?.visibility = visibility
     }
 
-    private fun initSMSSpinner(defaultCarrierID: Int?) {
-        val entries = ArrayList<String>()
-        val carriers: List<SMSCarrier> = EgSms.carriers
-        for (i in carriers.indices) {
-            val (id, name) = carriers[i]
-            entries.add(name)
-            if (id == defaultCarrierID) {
-                selectedSMSPos = i
-            }
-        }
-        val adapter = ArrayAdapter(this, R.layout.org_item_layout, entries)
-        smsSpinner?.adapter = adapter
+    private fun initSMSSpinner() {
+        smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, EgSms.spinnerLabels)
+
+        val savedCarrierId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
+        val defaultCarrierId = if (savedCarrierId != -1) savedCarrierId else account?.smsCarrier
+        selectedSMSPos = EgSms.carriers.indexOfFirstOrZero { it.id == defaultCarrierId }
         smsSpinner?.setSelection(selectedSMSPos)
+        ignoreNextSMSSelection = true
         smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (ignoreNextSMSSelection) {
+                    ignoreNextSMSSelection = false
+                    return
+                }
+                if (position == selectedSMSPos) return
                 selectedSMSPos = position
+                AppState.setInt(AppState.HOLD_SMS_CARRIER_ID, EgSms.carriers[position].id)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

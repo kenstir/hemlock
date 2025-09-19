@@ -17,6 +17,8 @@
 
 package net.kenstir.ui.util
 
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Spinner
 import net.kenstir.util.StringOption
 
@@ -47,12 +49,7 @@ class SpinnerStringOption(
     fun addSelectionListener(listener: (Int, String) -> Unit) {
         squelchNextChange = true // ignore first automatic onItemSelected callback
         spinner?.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: android.widget.AdapterView<*>?,
-                view: android.view.View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (squelchNextChange) {
                     squelchNextChange = false
                     return
@@ -64,7 +61,7 @@ class SpinnerStringOption(
                 }
             }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
                 // do nothing
             }
         }

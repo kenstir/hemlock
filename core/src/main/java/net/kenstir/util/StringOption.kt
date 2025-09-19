@@ -54,8 +54,6 @@ open class StringOption(
         defaultIndex: Int,
         optionLabels: List<String>,
         optionValues: List<String> = emptyList(),
-        optionIsEnabled: List<Boolean> = emptyList(),
-        optionIsPrimary: List<Boolean> = emptyList()
     ) : this(
         key,
         if (optionValues.isEmpty()) optionLabels[defaultIndex] else optionValues[defaultIndex],
