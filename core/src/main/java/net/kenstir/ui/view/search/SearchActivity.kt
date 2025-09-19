@@ -101,7 +101,7 @@ class SearchActivity : BaseActivity() {
     )
     private val searchOrgOption = SpinnerStringOption(
         key = AppState.SEARCH_ORG_SHORT_NAME,
-        defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: "",
+        defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
         optionLabels = EgOrg.orgSpinnerLabels(),
         optionValues = EgOrg.spinnerShortNames()
     )
