@@ -20,7 +20,6 @@
 package net.kenstir.ui.view.holds
 
 import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -38,6 +37,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
@@ -71,12 +71,11 @@ class PlaceHoldActivity : BaseActivity() {
     private var author: TextView? = null
     private var format: TextView? = null
     private var account: Account? = null
-    private var expirationDate: EditText? = null
-    private var smsNotify: EditText? = null
-    private var phoneNotify: EditText? = null
-    private var phoneNotification: CheckBox? = null
-    private var emailNotification: CheckBox? = null
-    private var smsNotification: CheckBox? = null
+    private var smsNumberText: EditText? = null
+    private var phoneNumberText: EditText? = null
+    private var notifyByPhone: CheckBox? = null
+    private var notifyByEmail: CheckBox? = null
+    private var notifyBySMS: CheckBox? = null
     private var smsSpinner: Spinner? = null
     private var placeHold: Button? = null
     private var suspendHold: CheckBox? = null
@@ -88,9 +87,10 @@ class PlaceHoldActivity : BaseActivity() {
     private var smsSpinnerLabel: TextView? = null
     private var datePicker: DatePickerDialog? = null
     private var thawDatePicker: DatePickerDialog? = null
-    private var thawDateEdittext: EditText? = null
-    private var expireDate: Date? = null
+    private var thawDateText: EditText? = null
     private var thawDate: Date? = null
+    private var expireDateText: EditText? = null
+    private var expireDate: Date? = null
     private var selectedOrgPos = 0
     private var ignoreNextOrgSelection = false // ignore initial onItemSelected callback
     private var selectedSMSPos = 0
@@ -128,21 +128,21 @@ class PlaceHoldActivity : BaseActivity() {
         author = findViewById(R.id.hold_author)
         format = findViewById(R.id.hold_format)
         placeHold = findViewById(R.id.place_hold)
-        expirationDate = findViewById(R.id.hold_expiration_date)
-        emailNotification = findViewById(R.id.hold_enable_email_notification)
+        expireDateText = findViewById(R.id.hold_expiration_date)
+        notifyByEmail = findViewById(R.id.hold_enable_email_notification)
         phoneNotificationLabel = findViewById(R.id.hold_phone_notification_label)
         smsNotificationLabel = findViewById(R.id.hold_sms_notification_label)
         smsSpinnerLabel = findViewById(R.id.hold_sms_spinner_label)
-        phoneNotification = findViewById(R.id.hold_enable_phone_notification)
-        phoneNotify = findViewById(R.id.hold_phone_notify)
-        smsNotify = findViewById(R.id.hold_sms_notify)
-        smsNotification = findViewById(R.id.hold_enable_sms_notification)
+        notifyByPhone = findViewById(R.id.hold_enable_phone_notification)
+        phoneNumberText = findViewById(R.id.hold_phone_notify)
+        smsNumberText = findViewById(R.id.hold_sms_notify)
+        notifyBySMS = findViewById(R.id.hold_enable_sms_notification)
         smsSpinner = findViewById(R.id.hold_sms_carrier)
         suspendHold = findViewById(R.id.hold_suspend_hold)
         partRow = findViewById(R.id.hold_part_row)
         partSpinner = findViewById(R.id.hold_part_spinner)
         orgSpinner = findViewById(R.id.hold_pickup_location)
-        thawDateEdittext = findViewById(R.id.hold_thaw_date)
+        thawDateText = findViewById(R.id.hold_thaw_date)
 
         title?.text = record.title
         author?.text = record.author
@@ -248,9 +248,9 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
-        if (emailNotification?.isChecked == true) notify.add("email")
-        if (phoneNotification?.isChecked == true) notify.add("phone")
-        if (smsNotification?.isChecked == true) notify.add("sms")
+        if (notifyByEmail?.isChecked == true) notify.add("email")
+        if (notifyByPhone?.isChecked == true) notify.add("phone")
+        if (notifyBySMS?.isChecked == true) notify.add("sms")
 
         val notifyTypes = TextUtils.join("|", notify)
         try {
@@ -272,15 +272,15 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getPhoneNotify(): String? {
-        return if (phoneNotification?.isChecked == true) phoneNotify?.text.toString() else null
+        return if (notifyByPhone?.isChecked == true) phoneNumberText?.text.toString() else null
     }
 
     private fun getSMSNotify(): String? {
-        return if (smsNotification?.isChecked == true) smsNotify?.text.toString() else null
+        return if (notifyBySMS?.isChecked == true) smsNumberText?.text.toString() else null
     }
 
     private fun getSMSNotifyCarrier(id: Int): Int? {
-        return if (smsNotification?.isChecked == true) id else null
+        return if (notifyBySMS?.isChecked == true) id else null
     }
 
     private fun getExpireDate(): String? {
@@ -309,12 +309,12 @@ class PlaceHoldActivity : BaseActivity() {
             builder.create().show()
             return false
         }
-        if (phoneNotification?.isChecked == true && TextUtils.isEmpty(phoneNotify?.text.toString())) {
-            phoneNotify?.error = getString(R.string.error_phone_notify_empty)
+        if (notifyByPhone?.isChecked == true && TextUtils.isEmpty(phoneNumberText?.text.toString())) {
+            phoneNumberText?.error = getString(R.string.error_phone_notify_empty)
             return false
         }
-        if (smsNotification?.isChecked == true && TextUtils.isEmpty(smsNotify?.text.toString())) {
-            smsNotify?.error = getString(R.string.error_sms_notify_empty)
+        if (notifyBySMS?.isChecked == true && TextUtils.isEmpty(smsNumberText?.text.toString())) {
+            smsNumberText?.error = getString(R.string.error_sms_notify_empty)
             return false
         }
         return true
@@ -337,7 +337,7 @@ class PlaceHoldActivity : BaseActivity() {
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val options = HoldOptions(
                 holdType = holdType,
-                emailNotify = emailNotification?.isChecked == true,
+                emailNotify = notifyByEmail?.isChecked == true,
                 phoneNotify = getPhoneNotify(),
                 smsNotify = getSMSNotify(),
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
@@ -367,65 +367,72 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSuspendHoldButton() {
-        suspendHold?.setOnCheckedChangeListener { _, isChecked -> thawDateEdittext?.isEnabled = isChecked }
+        suspendHold?.setOnCheckedChangeListener { _, isChecked -> thawDateText?.isEnabled = isChecked }
     }
 
     private fun initEmailNotification() {
         val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_EMAIL, account?.notifyByEmail ?: false)
-        emailNotification?.isChecked = notify
-        emailNotification?.setOnCheckedChangeListener { _, isChecked ->
+        notifyByEmail?.isChecked = notify
+        notifyByEmail?.setOnCheckedChangeListener { _, isChecked ->
             AppState.setBoolean(AppState.HOLD_NOTIFY_BY_EMAIL, isChecked)
         }
     }
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
         // Allow phone_notify to be set even if UX is not visible
+        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_PHONE, account?.notifyByPhone ?: false)
+        notifyByPhone?.isChecked = notify
         val savedNumber = AppState.getString(AppState.HOLD_PHONE_NUMBER, null)
         val notifyPhoneNumber = savedNumber ?: account?.phoneNumber
-        phoneNotify?.setText(notifyPhoneNumber)
-        if (account?.notifyByPhone == true && !notifyPhoneNumber.isNullOrEmpty()) {
-            phoneNotification?.isChecked = true
-        }
+        phoneNumberText?.setText(notifyPhoneNumber)
 
         if (isPhoneNotifyVisible) {
-            phoneNotification?.setOnCheckedChangeListener { _, isChecked ->
-                phoneNotify?.isEnabled = isChecked
+            notifyByPhone?.setOnCheckedChangeListener { _, isChecked ->
+                phoneNumberText?.isEnabled = isChecked
                 AppState.setBoolean(AppState.HOLD_NOTIFY_BY_PHONE, isChecked)
             }
-            phoneNotify?.isEnabled = (phoneNotification?.isChecked == true)
+            phoneNumberText?.addTextChangedListener {
+                Log.d(TAG, "[prefs] phoneNumberText changed: $it")
+                AppState.setString(AppState.HOLD_PHONE_NUMBER, it.toString())
+            }
+            phoneNumberText?.isEnabled = (notifyByPhone?.isChecked == true)
         } else {
             phoneNotificationLabel?.visibility = View.GONE
-            phoneNotification?.visibility = View.GONE
-            phoneNotify?.visibility = View.GONE
+            notifyByPhone?.visibility = View.GONE
+            phoneNumberText?.visibility = View.GONE
         }
     }
 
     private fun initSMSControls() {
         val savedNumber = AppState.getString(AppState.HOLD_SMS_NUMBER, null)
         val notifySmsNumber = savedNumber ?: account?.smsNumber
-        smsNotify?.setText(notifySmsNumber)
+        smsNumberText?.setText(notifySmsNumber)
         if (account?.notifyBySMS == true && !notifySmsNumber.isNullOrEmpty()) {
-            smsNotification?.isChecked = true
+            notifyBySMS?.isChecked = true
         }
 
         val enabled = EgOrg.smsEnabled
         if (enabled) {
-            smsNotification?.setOnCheckedChangeListener { _, isChecked ->
+            notifyBySMS?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
-                smsNotify?.isEnabled = isChecked
+                smsNumberText?.isEnabled = isChecked
                 AppState.setBoolean(AppState.HOLD_NOTIFY_BY_SMS, isChecked)
             }
-            smsNotify?.isEnabled = (smsNotification?.isChecked == true)
-            smsSpinner?.isEnabled = (smsNotification?.isChecked == true)
+            smsNumberText?.addTextChangedListener {
+                Log.d(TAG, "[prefs] smsNumberText changed: $it")
+                AppState.setString(AppState.HOLD_SMS_NUMBER, it.toString())
+            }
+            smsNumberText?.isEnabled = (notifyBySMS?.isChecked == true)
+            smsSpinner?.isEnabled = (notifyBySMS?.isChecked == true)
             initSMSSpinner()
         }
 
         val visibility = if (enabled) View.VISIBLE else View.GONE
         smsNotificationLabel?.visibility = visibility
         smsSpinnerLabel?.visibility = visibility
-        smsNotification?.visibility = visibility
+        notifyBySMS?.visibility = visibility
         smsSpinner?.visibility = visibility
-        smsNotify?.visibility = visibility
+        smsNumberText?.visibility = visibility
     }
 
     private fun initSMSSpinner() {
@@ -458,17 +465,17 @@ class PlaceHoldActivity : BaseActivity() {
                 val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
                 expireDate = chosenDate
                 val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
-                expirationDate?.setText(strDate)
+                expireDateText?.setText(strDate)
             }, cal[Calendar.YEAR], cal[Calendar.MONTH], cal[Calendar.DAY_OF_MONTH])
-        expirationDate?.setOnClickListener { datePicker?.show() }
+        expireDateText?.setOnClickListener { datePicker?.show() }
         thawDatePicker = DatePickerDialog(this,
             { _, year, monthOfYear, dayOfMonth ->
                 val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
                 thawDate = chosenDate
                 val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
-                thawDateEdittext?.setText(strDate)
+                thawDateText?.setText(strDate)
             }, cal[Calendar.YEAR], cal[Calendar.MONTH], cal[Calendar.DAY_OF_MONTH])
-        thawDateEdittext?.setOnClickListener { thawDatePicker?.show() }
+        thawDateText?.setOnClickListener { thawDatePicker?.show() }
     }
 
     private fun initPartControls() {
