@@ -392,8 +392,11 @@ class PlaceHoldActivity : BaseActivity() {
                 AppState.setBoolean(AppState.HOLD_NOTIFY_BY_PHONE, isChecked)
             }
             phoneNumberText?.addTextChangedListener {
-                Log.d(TAG, "[prefs] phoneNumberText changed: $it")
-                AppState.setString(AppState.HOLD_PHONE_NUMBER, it.toString())
+                if (it.isNullOrEmpty()) {
+                    AppState.remove(AppState.HOLD_PHONE_NUMBER)
+                } else {
+                    AppState.setString(AppState.HOLD_PHONE_NUMBER, it.toString())
+                }
             }
             phoneNumberText?.isEnabled = (notifyByPhone?.isChecked == true)
         } else {
@@ -419,8 +422,11 @@ class PlaceHoldActivity : BaseActivity() {
                 AppState.setBoolean(AppState.HOLD_NOTIFY_BY_SMS, isChecked)
             }
             smsNumberText?.addTextChangedListener {
-                Log.d(TAG, "[prefs] smsNumberText changed: $it")
-                AppState.setString(AppState.HOLD_SMS_NUMBER, it.toString())
+                if (it.isNullOrEmpty()) {
+                    AppState.remove(AppState.HOLD_SMS_NUMBER)
+                } else {
+                    AppState.setString(AppState.HOLD_SMS_NUMBER, it.toString())
+                }
             }
             smsNumberText?.isEnabled = (notifyBySMS?.isChecked == true)
             smsSpinner?.isEnabled = (notifyBySMS?.isChecked == true)
@@ -438,9 +444,9 @@ class PlaceHoldActivity : BaseActivity() {
     private fun initSMSSpinner() {
         smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, EgSms.spinnerLabels)
 
-        val savedCarrierId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
-        val defaultCarrierId = if (savedCarrierId != -1) savedCarrierId else account?.smsCarrier
-        selectedSMSPos = EgSms.carriers.indexOfFirstOrZero { it.id == defaultCarrierId }
+        val savedId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
+        val defaultId = if (savedId != -1) savedId else account?.smsCarrier
+        selectedSMSPos = EgSms.carriers.indexOfFirstOrZero { it.id == defaultId }
         smsSpinner?.setSelection(selectedSMSPos)
         ignoreNextSMSSelection = true
         smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
@@ -505,20 +511,22 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val defaultOrgId = account?.pickupOrg
-        val list = ArrayList<String>()
-        for ((index, org) in EgOrg.visibleOrgs.withIndex()) {
-            list.add(org.spinnerLabel)
-            if (org.id == defaultOrgId) {
-                selectedOrgPos = index
-            }
-        }
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, true)
-        orgSpinner?.adapter = adapter
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, EgOrg.orgSpinnerLabels(), true)
+
+        val savedId = AppState.getInt(AppState.HOLD_PICKUP_ORG_ID, -1)
+        val defaultId = if (savedId != -1) savedId else account?.pickupOrg
+        selectedOrgPos = EgOrg.visibleOrgs.indexOfFirstOrZero { it.id == defaultId }
+        ignoreNextOrgSelection = true
         orgSpinner?.setSelection(selectedOrgPos)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (ignoreNextOrgSelection) {
+                    ignoreNextOrgSelection = false
+                    return
+                }
+                if (position == selectedOrgPos) return
                 selectedOrgPos = position
+                AppState.setInt(AppState.HOLD_PICKUP_ORG_ID, EgOrg.visibleOrgs[position].id)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

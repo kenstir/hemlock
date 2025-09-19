@@ -128,6 +128,13 @@ object AppState {
         }
     }
 
+    fun remove(key: String) {
+        Log.d(TAG, "[prefs] Clr $key")
+        prefs.edit {
+            remove(key)
+        }
+    }
+
     fun clearTestPreferences() {
         val keysToRemove = prefs.all.keys.filter { it.startsWith("test_") }
         prefs.edit {
