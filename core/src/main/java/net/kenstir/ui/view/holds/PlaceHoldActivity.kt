@@ -147,8 +147,8 @@ class PlaceHoldActivity : BaseActivity() {
         title?.text = record.title
         author?.text = record.author
         format?.text = record.iconFormatLabel
-        emailNotification?.isChecked = account?.notifyByEmail ?: false
 
+        initEmailNotification()
         initPhoneControls(resources.getBoolean(R.bool.ou_enable_phone_notification))
         initPlaceHoldButton()
         initSuspendHoldButton()
@@ -368,6 +368,14 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initSuspendHoldButton() {
         suspendHold?.setOnCheckedChangeListener { _, isChecked -> thawDateEdittext?.isEnabled = isChecked }
+    }
+
+    private fun initEmailNotification() {
+        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_EMAIL, account?.notifyByEmail ?: false)
+        emailNotification?.isChecked = notify
+        emailNotification?.setOnCheckedChangeListener { _, isChecked ->
+            AppState.setBoolean(AppState.HOLD_NOTIFY_BY_EMAIL, isChecked)
+        }
     }
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
