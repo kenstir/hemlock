@@ -18,7 +18,6 @@ package net.kenstir.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import androidx.core.content.edit
@@ -29,8 +28,8 @@ object AppState {
     private val TAG: String = AppState::class.java.simpleName
 
     // keys for prefs
-    const val LIST_SORT_BY = "list_sort_by"
-    const val LIST_SORT_DESCENDING = "list_sort_descending"
+    const val LIST_SORT_BY = "sort_by"
+    const val LIST_SORT_DESC = "sort_desc"
     const val HOLD_NOTIFY_BY_EMAIL = "notify_by_email"
     const val HOLD_NOTIFY_BY_PHONE = "notify_by_phone"
     const val HOLD_NOTIFY_BY_SMS = "notify_by_sms"
@@ -57,7 +56,8 @@ object AppState {
     fun init(context: Context) {
         if (initialized) return
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+        // get the same shared preferences as deprecated PreferenceManager.getDefaultSharedPreferences(context)
+        prefs = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
         initialized = true
 
         // set default values unless already set
@@ -125,6 +125,13 @@ object AppState {
         Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
             putInt(key, value)
+        }
+    }
+
+    fun clearTestPreferences() {
+        val keysToRemove = prefs.all.keys.filter { it.startsWith("test_") }
+        prefs.edit {
+            keysToRemove.forEach { remove(it) }
         }
     }
 }

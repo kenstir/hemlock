@@ -17,10 +17,14 @@
 
 package net.kenstir.util
 
+import net.kenstir.ui.AppState
+import org.junit.AfterClass
 import org.junit.Assert.assertEquals
+import org.junit.BeforeClass
 import org.junit.Test
 
 class StringOptionTest {
+
     @Test
     fun test_initWithLabelsOnly() {
         val option = StringOption(
@@ -104,5 +108,19 @@ class StringOptionTest {
         // Loading should default to the first value
         option.load()
         assertEquals("A", option.value)
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUpClass() {
+            AppState.clearTestPreferences()
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun tearDown() {
+            AppState.clearTestPreferences()
+        }
     }
 }

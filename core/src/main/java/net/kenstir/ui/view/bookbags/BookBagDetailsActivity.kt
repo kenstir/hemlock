@@ -48,8 +48,6 @@ import net.kenstir.util.pubdateSortKey
 import java.text.Collator
 
 const val RESULT_CODE_UPDATE = 1
-const val SORT_BY_STATE_KEY = "sort_by"
-const val SORT_DESC_STATE_KEY = "sort_desc"
 
 class BookBagDetailsActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -159,8 +157,8 @@ class BookBagDetailsActivity : BaseActivity() {
         SORT_BY_TITLE = resources.getString(R.string.sort_by_title_keyword)
 
         // the default sort is whatever was last selected; pubdate descending by default
-        sortDescending = AppState.getBoolean(SORT_DESC_STATE_KEY, true)
-        val keyword = AppState.getString(SORT_BY_STATE_KEY, SORT_BY_PUBDATE)
+        sortDescending = AppState.getBoolean(AppState.LIST_SORT_DESC, true)
+        val keyword = AppState.getString(AppState.LIST_SORT_BY, SORT_BY_PUBDATE)
         val index = if (keyword in sortByKeywords) sortByKeywords.indexOf(keyword) else sortByKeywords.indexOf(SORT_BY_PUBDATE)
         sortBySelectedIndex = index
     }
@@ -257,7 +255,7 @@ class BookBagDetailsActivity : BaseActivity() {
         builder.setTitle(R.string.msg_sort_by)
         builder.setSingleChoiceItems(R.array.sort_by, sortBySelectedIndex) { dialog, which ->
             this.sortBySelectedIndex = which
-            AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
+            AppState.setString(AppState.LIST_SORT_BY, sortByKeyword)
             updateItemsList()
             dialog.dismiss()
         }
@@ -266,13 +264,12 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun reverseSortOrder() {
         sortDescending = !sortDescending
-        AppState.setBoolean(SORT_DESC_STATE_KEY, sortDescending)
+        AppState.setBoolean(AppState.LIST_SORT_DESC, sortDescending)
         invalidateOptionsMenu()
         updateItemsList()
     }
 
-    internal class ListItemAuthorComparator(descending: Boolean): Comparator<ListItem> {
-        private val descending = descending
+    internal class ListItemAuthorComparator(private val descending: Boolean): Comparator<ListItem> {
 
         override fun compare(o1: ListItem?, o2: ListItem?): Int {
             val key1 = if (descending) o2?.record?.author else o1?.record?.author
@@ -286,8 +283,7 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal class ListItemPubdateComparator(descending: Boolean): Comparator<ListItem> {
-        private val descending = descending
+    internal class ListItemPubdateComparator(private val descending: Boolean): Comparator<ListItem> {
 
         override fun compare(o1: ListItem?, o2: ListItem?): Int {
             val key1 = if (descending) pubdateSortKey(o2?.record?.pubdate) else pubdateSortKey(o1?.record?.pubdate)
@@ -301,8 +297,7 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal class ListItemTitleComparator(descending: Boolean): Comparator<ListItem> {
-        private val descending = descending
+    internal class ListItemTitleComparator(private val descending: Boolean): Comparator<ListItem> {
         private val collator = Collator.getInstance()
 
         override fun compare(o1: ListItem?, o2: ListItem?): Int {
