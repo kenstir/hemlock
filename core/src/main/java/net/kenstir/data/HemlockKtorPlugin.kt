@@ -29,24 +29,24 @@ import net.kenstir.util.Analytics
 import okhttp3.Interceptor
 
 object HemlockPluginKeys {
-    val debugTag = "h.debugTag"
-    val debugUrl = "h.debugUrl"
-    val fromCache = "h.fromCache"
-    val recvTime = "h.recvTime"
-    val sentTime = "h.sentTime"
+    const val DEBUG_TAG = "h.debugTag"
+    const val DEBUG_URL = "h.debugUrl"
+    const val FROM_CACHE = "h.fromCache"
+    const val RECV_TIME = "h.recvTime"
+    const val SENT_TIME = "h.sentTime"
 }
 
 object HemlockPluginAttributeKeys {
     /** hash value of the request, for logging */
-    val debugTagKey = AttributeKey<String>(HemlockPluginKeys.debugTag)
+    val debugTagKey = AttributeKey<String>(HemlockPluginKeys.DEBUG_TAG)
     /** URL of the request, for logging, with POST body expressed as parameters */
-    val debugUrlKey = AttributeKey<String>(HemlockPluginKeys.debugUrl)
+    val debugUrlKey = AttributeKey<String>(HemlockPluginKeys.DEBUG_URL)
     /** true if the response was cached by the OkHttp engine */
-    val fromCacheKey = AttributeKey<Boolean>(HemlockPluginKeys.fromCache)
+    val fromCacheKey = AttributeKey<Boolean>(HemlockPluginKeys.FROM_CACHE)
     /** time the response was received */
-    val recvTimeKey = AttributeKey<Long>(HemlockPluginKeys.recvTime)
+    val recvTimeKey = AttributeKey<Long>(HemlockPluginKeys.RECV_TIME)
     /** time the request was sent */
-    val sentTimeKey = AttributeKey<Long>(HemlockPluginKeys.sentTime)
+    val sentTimeKey = AttributeKey<Long>(HemlockPluginKeys.SENT_TIME)
 }
 
 private const val X_FROM_CACHE = "X-From-Cache"
