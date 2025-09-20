@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 35
-        multiDexEnabled true
+        multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments = [server: testServer, username: testUsername, password: testPassword, httpbinServer: testHttpbinServer]
     }
@@ -31,13 +31,13 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = '17'
     }
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
-    namespace 'net.kenstir.hemlock'
+    namespace = 'net.kenstir.hemlock'
 }
 
 repositories {

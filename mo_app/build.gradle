@@ -24,7 +24,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 35
-        multiDexEnabled true
+        multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -44,13 +44,13 @@ android {
             minifyEnabled true
 
             // enable resource shrinking
-            shrinkResources true
+            shrinkResources = true
 
             // include ProGuard rules files
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             // use signingConfig defined above
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
     compileOptions {
@@ -60,7 +60,7 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace 'net.kenstir.apps.mo'
+    namespace = 'net.kenstir.apps.mo'
 }
 
 dependencies {
