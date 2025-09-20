@@ -24,22 +24,26 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import net.kenstir.data.model.SearchClass
 import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.ui.Key
+import net.kenstir.util.Analytics
 import net.kenstir.util.Analytics.initialize
 import java.util.Locale
 import java.util.StringTokenizer
 
 class AdvancedSearchActivity: AppCompatActivity() {
-    private var searchTerms: ArrayList<String?>? = null
-    private var searchTermTypes: ArrayList<String?>? = null
+    private val searchTerms = mutableListOf<String>()
+    private val searchTermTypes = mutableListOf<String>()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,21 +55,23 @@ class AdvancedSearchActivity: AppCompatActivity() {
 
         setContentView(R.layout.advanced_search)
 
-        searchTerms = ArrayList()
-        searchTermTypes = ArrayList()
-
         val layout = findViewById<LinearLayout>(R.id.advanced_search_filters)
         val addFilter = findViewById<Button>(R.id.advanced_search_add_filter_button)
         val search_class_spinner = findViewById<Spinner>(R.id.advanced_search_class_spinner)
         val search_contains_spinner = findViewById<Spinner>(R.id.advanced_search_contains_spinner)
         val search_filter_text = findViewById<EditText>(R.id.advanced_search_text)
 
+        initSearchClassSpinner(search_class_spinner)
+
         addFilter.setOnClickListener {
             val contains_pos = search_contains_spinner.selectedItemPosition
             var query = ""
+            val filter = search_filter_text.text.toString().trim()
+            if (filter.isEmpty()) {
+                return@setOnClickListener
+            }
             val qtype = search_class_spinner.selectedItem.toString().lowercase(Locale.getDefault())
-            searchTermTypes!!.add(qtype)
-            val filter = search_filter_text.text.toString()
+            searchTermTypes.add(qtype)
 
             when (contains_pos) {
                 0 -> {
@@ -86,7 +92,7 @@ class AdvancedSearchActivity: AppCompatActivity() {
                     query = "$qtype: \"$filter\""
                 }
             }
-            searchTerms!!.add(query)
+            searchTerms.add(query)
             val text = TextView(this@AdvancedSearchActivity)
             text.layoutParams =
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -97,17 +103,26 @@ class AdvancedSearchActivity: AppCompatActivity() {
 
         val cancel = findViewById<Button>(R.id.advanced_search_cancel)
         cancel.setOnClickListener {
-            //Analytics.logEvent("advsearch_cancel");
+            Analytics.logEvent(Analytics.Event.SEARCH_ADV_CANCEL)
             finish()
         }
 
         val search = findViewById<Button>(R.id.advanced_search_button)
         search.setOnClickListener {
+            Analytics.logEvent(Analytics.Event.SEARCH_ADV_SEARCH, bundleOf(
+                Analytics.Param.NUM_ITEMS to searchTerms.size,
+            ))
             val returnIntent = Intent()
-            returnIntent.putExtra(Key.SEARCH_TEXT, TextUtils.join(" ", searchTerms!!))
+            returnIntent.putExtra(Key.SEARCH_TEXT, TextUtils.join(" ", searchTerms))
             setResult(SearchActivity.RESULT_CODE_SEARCH_BY_KEYWORD, returnIntent)
             finish()
         }
+    }
+
+    private fun initSearchClassSpinner(searchClassSpinner: Spinner) {
+        val labels = SearchClass.spinnerLabels
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
+        searchClassSpinner.adapter = adapter
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

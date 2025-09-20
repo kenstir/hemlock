@@ -52,12 +52,14 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
+import net.kenstir.data.model.SearchClass
 import net.kenstir.data.service.SearchResults
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
@@ -65,15 +67,11 @@ import org.evergreen_ils.system.EgSearch
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
-
+import net.kenstir.util.StringOption
 
 const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
 const val ITEM_ADD_TO_LIST = 2
-
-const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
-const val SEARCH_CLASS_AUTHOR = "author"
-const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
 class SearchActivity : BaseActivity() {
     private var searchTextView: EditText? = null
@@ -89,27 +87,31 @@ class SearchActivity : BaseActivity() {
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
-    private lateinit var searchClassKeywords: Array<String>
+    private val searchClassOption = SpinnerStringOption(
+        key = AppState.SEARCH_CLASS,
+        defaultValue = SearchClass.KEYWORD,
+        optionLabels = SearchClass.spinnerLabels,
+        optionValues = SearchClass.spinnerValues
+    )
+    private val searchFormatOption = SpinnerStringOption(
+        key = AppState.SEARCH_FORMAT,
+        defaultValue = "",
+        optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
+        optionValues = EgCodedValueMap.searchFormatSpinnerValues
+    )
+    private val searchOrgOption = SpinnerStringOption(
+        key = AppState.SEARCH_ORG_SHORT_NAME,
+        defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
+        optionLabels = EgOrg.orgSpinnerLabels(),
+        optionValues = EgOrg.spinnerShortNames()
+    )
 
     private val searchText: String
         get() = searchTextView?.text.toString().trim()
-
     private val searchClass: String
-        get() {
-            val index = searchClassSpinner?.selectedItemPosition
-            return index?.let { searchClassKeywords[it] }!!
-        }
-    private val searchClassIdentifierIndex: Int
-        get() {
-            return searchClassKeywords.indexOf(SEARCH_CLASS_IDENTIFIER)
-        }
-    private val searchClassAuthorIndex: Int
-        get() {
-            return searchClassKeywords.indexOf(SEARCH_CLASS_AUTHOR)
-        }
-
-    private val searchFormatCode: String?
-        get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
+        get() = searchClassOption.value
+    private val searchFormatCode: String
+        get() = searchFormatOption.value
 
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: BibRecord? = null
@@ -158,11 +160,8 @@ class SearchActivity : BaseActivity() {
         orgSpinner = findViewById(R.id.search_org_spinner)
         searchResultsSummary = findViewById(R.id.search_result_number)
 
-        searchClassKeywords = resources.getStringArray(R.array.search_class_keyword)
-
         initSearchOptionsVisibility()
         initSearchText()
-        initSearchOptionsButton()
         initSearchButton()
         initSearchClassSpinner()
         initSearchFormatSpinner()
@@ -206,18 +205,15 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchOptionsVisibility() {
-        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
+        val lastState = AppState.getBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
+        searchOptionsButton?.setOnCheckedChangeListener { _, isChecked -> setSearchOptionsVisibility(isChecked) }
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
-        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
-    }
-
-    private fun initSearchOptionsButton() {
-        searchOptionsButton?.setOnCheckedChangeListener { _, isChecked -> setSearchOptionsVisibility(isChecked) }
+        AppState.setBoolean(AppState.SEARCH_OPTIONS_ARE_VISIBLE, visible)
     }
 
     private fun initSearchText() {
@@ -233,20 +229,19 @@ class SearchActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = App.getServiceConfig().userService.loadPatronLists(
-                    App.getAccount())
+                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
 
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             }
         }
@@ -256,10 +251,7 @@ class SearchActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                //var jobs = mutableListOf<Deferred<Any>()
                 progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
-
-                Log.d(TAG, "[kcxxx] fetchSearchResults ...")
 
                 // check searchText is not blank
                 if (searchText.isBlank()) {
@@ -273,6 +265,7 @@ class SearchActivity : BaseActivity() {
 
                 // submit the query
                 val queryString = App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
                 val result = App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
@@ -289,10 +282,9 @@ class SearchActivity : BaseActivity() {
                 updateSearchResultsSummary()
                 searchResultsFragment?.notifyDatasetChanged()
 
-//                jobs.map { it.await() }
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchSearchResults ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchSearchResults ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchSearchResults ... caught", ex)
+                Log.d(TAG, "[fetch] fetchSearchResults ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
@@ -338,49 +330,43 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        var selectedOrgPos = 0
-        val defaultOrgId = App.getAccount().searchOrg
-        val list = ArrayList<String>()
-        for ((index, org) in EgOrg.visibleOrgs.withIndex()) {
-            list.add(org.spinnerLabel)
-            if (org.id == defaultOrgId) {
-                selectedOrgPos = index
-            }
-        }
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, false)
-        orgSpinner?.adapter = adapter
-        orgSpinner?.setSelection(selectedOrgPos)
-        EgSearch.selectedOrganization = EgOrg.visibleOrgs[selectedOrgPos]
-        orgSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                EgSearch.selectedOrganization = EgOrg.visibleOrgs[position]
-            }
+        // connect spinner to option and set adapter
+        val option = searchOrgOption
+        option.spinner = orgSpinner
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        // restore last selected value and monitor changes
+        option.load()
+        EgSearch.selectedOrganization = EgOrg.visibleOrgs[option.selectedIndex]
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
+            EgSearch.selectedOrganization = EgOrg.visibleOrgs[index]
         }
     }
 
     private fun initSearchFormatSpinner() {
-        val labels = EgCodedValueMap.searchFormatSpinnerLabels
-        val adapter = ArrayAdapter(this, R.layout.org_item_layout, labels)
-        searchFormatSpinner?.adapter = adapter
+        // connect spinner to option and set adapter
+        val option = searchFormatOption
+        option.spinner = searchFormatSpinner
+        searchFormatSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, option.optionLabels)
+
+        // restore last selected value and monitor changes
+        option.load()
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
+        }
     }
 
     private fun initSearchClassSpinner() {
-        searchClassSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d(TAG, "searchClassSpinner: position $position class $searchClass")
-                // Do not startScanning here because it can be called twice when invoked from the
-                // app bar scan icon (scan_icon >> startScanning >> setSelection >> onItemSelected).
-//                if (searchClass == SEARCH_CLASS_IDENTIFIER) {
-//                    startScanning()
-//                }
-            }
+        // connect spinner to option and set adapter
+        val option = searchClassOption
+        option.spinner = searchClassSpinner
+        searchClassSpinner?.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, option.optionLabels)
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG, "onNothingSelected")
-            }
+        // restore last selected value and monitor changes
+        option.load()
+        option.addSelectionListener { index, value ->
+            Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
         }
     }
 
@@ -427,7 +413,7 @@ class SearchActivity : BaseActivity() {
                 return true
             }
             ITEM_ADD_TO_LIST -> {
-                if (!App.getAccount().patronLists.isNullOrEmpty()) {
+                if (App.getAccount().patronLists.isNotEmpty()) {
                     //Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.getAccount().patronLists, info.record!!)
                 } else {
@@ -474,7 +460,7 @@ class SearchActivity : BaseActivity() {
             RESULT_CODE_SEARCH_BY_AUTHOR -> {
                 // NOTREACHED
                 searchTextView?.setText(data?.getStringExtra(Key.SEARCH_TEXT))
-                setSearchClass(searchClassAuthorIndex)
+                setSearchClass(SearchClass.AUTHOR)
                 fetchSearchResults()
             }
             RESULT_CODE_SEARCH_BY_KEYWORD -> {
@@ -489,7 +475,7 @@ class SearchActivity : BaseActivity() {
         val code = data.getIntExtra(Key.SEARCH_BY, 0)
         if (text?.isNotEmpty() == true && code == RESULT_CODE_SEARCH_BY_AUTHOR) {
             searchTextView?.setText(text)
-            setSearchClass(searchClassAuthorIndex)
+            setSearchClass(SearchClass.AUTHOR)
             fetchSearchResults()
         }
     }
@@ -583,15 +569,15 @@ class SearchActivity : BaseActivity() {
         barcode.rawValue?.let {
             Log.d(TAG, "[scanner]: got $it")
             searchTextView?.setText(it)
-            setSearchClass(searchClassIdentifierIndex)
+            setSearchClass(SearchClass.IDENTIFIER)
             fetchSearchResults()
         }
     }
 
-    private fun setSearchClass(index: Int) {
-        // Set the searchClassSpinner to the specified index. Because we are changing the state
+    private fun setSearchClass(value: String) {
+        // Set the searchClassSpinner to the specified value. Because we are changing the state
         // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
-        searchClassSpinner?.setSelection(index)
+        searchClassOption.selectByValue(value)
         searchOptionsButton?.isChecked = true
     }
 

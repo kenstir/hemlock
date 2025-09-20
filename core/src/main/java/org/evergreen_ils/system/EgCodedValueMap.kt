@@ -95,7 +95,6 @@ object EgCodedValueMap {
     }
 
     /// list of labels e.g. "All Formats", "All Books", ...
-    @JvmStatic
     val searchFormatSpinnerLabels: List<String>
         get() {
             val labels = ArrayList<String>()
@@ -107,5 +106,14 @@ object EgCodedValueMap {
             labels.sort()
             labels.add(0, ALL_SEARCH_FORMATS)
             return labels
+        }
+
+    val searchFormatSpinnerValues: List<String>
+        get() {
+            val codes = ArrayList<String>()
+            for (label in searchFormatSpinnerLabels) {
+                codes.add(searchFormatCode(label) ?: "")
+            }
+            return codes
         }
 }

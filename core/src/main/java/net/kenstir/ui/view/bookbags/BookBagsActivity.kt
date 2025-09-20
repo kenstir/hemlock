@@ -19,18 +19,11 @@
  */
 package net.kenstir.ui.view.bookbags
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
@@ -39,7 +32,6 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.util.Analytics
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
@@ -48,6 +40,7 @@ import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.DividerItemDecoration
+import net.kenstir.util.Analytics
 
 class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListener {
     private var rv: RecyclerView? = null

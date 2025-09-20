@@ -28,4 +28,22 @@ class MiscExtensionsTest {
         assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
     }
+
+    @Test
+    fun test_indexOfOrZero() {
+        val list = listOf("a", "b", "c")
+        assertEquals(0, list.indexOfOrZero("a"))
+        assertEquals(1, list.indexOfOrZero("b"))
+        assertEquals(2, list.indexOfOrZero("c"))
+        assertEquals(0, list.indexOfOrZero("d"))
+    }
+
+    @Test
+    fun test_indexOfFirstOrZero() {
+        val list = listOf("a", "b", "c")
+        assertEquals(0, list.indexOfFirstOrZero { it == "a" })
+        assertEquals(1, list.indexOfFirstOrZero { it == "b" })
+        assertEquals(2, list.indexOfFirstOrZero { it == "c" })
+        assertEquals(0, list.indexOfFirstOrZero { it == "d" })
+    }
 }

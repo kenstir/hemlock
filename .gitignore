@@ -10,6 +10,7 @@ fm_IDL.*
 /.idea/appInsightsSettings.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
+/.idea/copilot.data.*
 /.idea/deploymentTargetDropDown.xml
 /.idea/deploymentTargetSelector.xml
 /.idea/deviceManager.xml

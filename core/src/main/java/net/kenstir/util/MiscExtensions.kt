@@ -30,3 +30,17 @@ fun Exception.getCustomMessage(): String {
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"
 }
+
+/** returns index of item in array that matches string, or 0 if not found
+ *
+ * like indexOf but with a safe default
+ */
+fun <T> List<T>.indexOfOrZero(element: T): Int =
+    indexOf(element).takeIf { it >= 0 } ?: 0
+
+/** like indexOfFirst but with a safe default
+ *
+ * returns index of first item in array that matches predicate, or 0 if not found
+ */
+fun <T> List<T>.indexOfFirstOrZero(predicate: (T) -> Boolean): Int =
+    indexOfFirst(predicate).takeIf { it >= 0 } ?: 0
