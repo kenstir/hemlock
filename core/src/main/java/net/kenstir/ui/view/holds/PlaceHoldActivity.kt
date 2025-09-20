@@ -383,8 +383,8 @@ class PlaceHoldActivity : BaseActivity() {
         val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_PHONE, account?.notifyByPhone ?: false)
         notifyByPhone?.isChecked = notify
         val savedNumber = AppState.getString(AppState.HOLD_PHONE_NUMBER, null)
-        val notifyPhoneNumber = savedNumber ?: account?.phoneNumber
-        phoneNumberText?.setText(notifyPhoneNumber)
+        val notifyNumber = savedNumber ?: account?.phoneNumber
+        phoneNumberText?.setText(notifyNumber)
 
         if (isPhoneNotifyVisible) {
             notifyByPhone?.setOnCheckedChangeListener { _, isChecked ->
@@ -407,12 +407,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSControls() {
+        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
+        notifyBySMS?.isChecked = notify
         val savedNumber = AppState.getString(AppState.HOLD_SMS_NUMBER, null)
-        val notifySmsNumber = savedNumber ?: account?.smsNumber
-        smsNumberText?.setText(notifySmsNumber)
-        if (account?.notifyBySMS == true && !notifySmsNumber.isNullOrEmpty()) {
-            notifyBySMS?.isChecked = true
-        }
+        val notifyNumber = savedNumber ?: account?.smsNumber
+        smsNumberText?.setText(notifyNumber)
 
         val enabled = EgOrg.smsEnabled
         if (enabled) {
