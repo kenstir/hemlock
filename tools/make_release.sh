@@ -55,7 +55,7 @@ PATH=$PATH:"/c/Program Files/Android/Android Studio/jbr/bin"
 
 ### build and sign the bundle
 
-./gradlew :${project}:bundleRelease
+bash gradlew :${project}:bundleRelease
 bundle=${project}/build/outputs/bundle/release/${project}-release.aab
 
 ### copy the bundle somewhere convenient
@@ -63,7 +63,10 @@ bundle=${project}/build/outputs/bundle/release/${project}-release.aab
 echo "Built signed bundle at $bundle"
 cp "$bundle" ~/Downloads/
 echo "Copied to ~/Downloads/"
-explorer "$HOMEDRIVE$HOMEPATH\\Downloads"
+case "$OSTYPE" in
+darwin*) open ~/Downloads;;
+*) explorer "$HOMEDRIVE$HOMEPATH\\Downloads";
+esac
 
 ### make the tag
 
