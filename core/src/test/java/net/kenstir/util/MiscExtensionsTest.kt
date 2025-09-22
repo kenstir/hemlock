@@ -39,6 +39,15 @@ class MiscExtensionsTest {
     }
 
     @Test
+    fun test_indexOfOrZeroArray() {
+        val list = arrayOf("a", "b", "c")
+        assertEquals(0, list.indexOfOrZero("a"))
+        assertEquals(1, list.indexOfOrZero("b"))
+        assertEquals(2, list.indexOfOrZero("c"))
+        assertEquals(0, list.indexOfOrZero("d"))
+    }
+
+    @Test
     fun test_indexOfFirstOrZero() {
         val list = listOf("a", "b", "c")
         assertEquals(0, list.indexOfFirstOrZero { it == "a" })

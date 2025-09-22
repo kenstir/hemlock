@@ -44,6 +44,7 @@ import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.Analytics
+import net.kenstir.util.indexOfOrZero
 import net.kenstir.util.pubdateSortKey
 import java.text.Collator
 
@@ -159,14 +160,13 @@ class BookBagDetailsActivity : BaseActivity() {
         // the default sort is whatever was last selected; pubdate descending by default
         sortDescending = AppState.getBoolean(AppState.LIST_SORT_DESC, true)
         val keyword = AppState.getString(AppState.LIST_SORT_BY, SORT_BY_PUBDATE)
-        val index = if (keyword in sortByKeywords) sortByKeywords.indexOf(keyword) else sortByKeywords.indexOf(SORT_BY_PUBDATE)
-        sortBySelectedIndex = index
+        sortBySelectedIndex = sortByKeywords.indexOfOrZero(keyword)
     }
 
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
@@ -182,9 +182,9 @@ class BookBagDetailsActivity : BaseActivity() {
                 jobs.map { it.await() }
 
                 updateItemsList()
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
