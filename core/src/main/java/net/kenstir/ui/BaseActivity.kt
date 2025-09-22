@@ -103,7 +103,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         super.setContentView(layoutResID)
 
         toolbar = findViewById(R.id.toolbar)
-        appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
+        appBarLayout = findViewById(R.id.app_bar_layout)
         navView = findViewById(R.id.nav_view)
         mainContentView = findViewById(R.id.main_content_view)
 
@@ -147,9 +147,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (actionBar == null) return
         val username =
             if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.getAccount().displayName
-        actionBar.setSubtitle(String.format(getString(R.string.ou_activity_subtitle),
-            AppState.getString(AppState.LIBRARY_NAME), username))
-        titleOverride?.let { actionBar.setTitle(it) }
+        actionBar.subtitle = String.format(getString(R.string.ou_activity_subtitle),
+            AppState.getString(AppState.LIBRARY_NAME), username)
+        titleOverride?.let { actionBar.title = it }
         if (true || !isMainActivity) {
             Log.d(TAG, "[tb] setHomeAsUpEnabled")
             actionBar.setDisplayHomeAsUpEnabled(true)
@@ -268,40 +268,48 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun handleMenuAction(id: Int): Boolean {
-        if (id == R.id.action_switch_account) {
-            Analytics.logEvent(Analytics.Event.ACCOUNT_SWITCH)
-            App.restartApp(this)
-            return true
-        } else if (id == R.id.action_add_account) {
-            Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
-            invalidateOptionsMenu()
-            AccountUtils.addAccount(this) {
-                App.restartApp(this@BaseActivity)
+        when (id) {
+            R.id.action_switch_account -> {
+                Analytics.logEvent(Analytics.Event.ACCOUNT_SWITCH)
+                App.restartApp(this)
+                return true
             }
-            return true
-        } else if (id == R.id.action_clear_all_accounts) {
-            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-            maybeLogoutAndClearAllAccounts()
-            return true
-        } else if (id == R.id.action_logout) {
-            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-            logout()
-            App.restartApp(this)
-            return true
-        } else if (id == R.id.action_messages) {
-            Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
-            startActivityForResult(Intent(this, MessagesActivity::class.java), App.REQUEST_MESSAGES)
-            return true
-        } else if (id == R.id.action_dark_mode) {
-            ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            // return false or else the menu view will be leaked when the activity is restarted
-            return false
-        } else if (id == R.id.action_light_mode) {
-            ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            // return false or else the menu view will be leaked when the activity is restarted
-            return false
+            R.id.action_add_account -> {
+                Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
+                invalidateOptionsMenu()
+                AccountUtils.addAccount(this) {
+                    App.restartApp(this@BaseActivity)
+                }
+                return true
+            }
+            R.id.action_clear_all_accounts -> {
+                Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
+                maybeLogoutAndClearAllAccounts()
+                return true
+            }
+            R.id.action_logout -> {
+                Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
+                logout()
+                App.restartApp(this)
+                return true
+            }
+            R.id.action_messages -> {
+                Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
+                startActivityForResult(Intent(this, MessagesActivity::class.java), App.REQUEST_MESSAGES)
+                return true
+            }
+            R.id.action_dark_mode -> {
+                ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                // return false or else the menu view will be leaked when the activity is restarted
+                return false
+            }
+            R.id.action_light_mode -> {
+                ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                // return false or else the menu view will be leaked when the activity is restarted
+                return false
+            }
+            else -> return false
         }
-        return false
     }
 
     private fun maybeLogoutAndClearAllAccounts() {
@@ -336,7 +344,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             } else {
                 startActivity(intent)
             }
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toast.makeText(this, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
         }
     }

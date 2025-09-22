@@ -53,10 +53,10 @@ import java.text.DecimalFormat
 private const val TAG = "FinesActivity"
 
 class FinesActivity : BaseActivity() {
-    private var total_owed: TextView? = null
-    private var total_paid: TextView? = null
-    private var balance_owed: TextView? = null
-    private var pay_fines_button: Button? = null
+    private var totalOwed: TextView? = null
+    private var totalPaid: TextView? = null
+    private var balanceOwed: TextView? = null
+    private var payFinesButton: Button? = null
     private var lv: ListView? = null
     private var listAdapter: FinesArrayAdapter? = null
     private var charges: PatronCharges? = null
@@ -77,10 +77,10 @@ class FinesActivity : BaseActivity() {
 
         decimalFormatter = DecimalFormat("#0.00")
         lv = findViewById(R.id.list_view)
-        total_owed = findViewById(R.id.fines_total_owed)
-        total_paid = findViewById(R.id.fines_total_paid)
-        balance_owed = findViewById(R.id.fines_balance_owed)
-        pay_fines_button = findViewById(R.id.pay_fines)
+        totalOwed = findViewById(R.id.fines_total_owed)
+        totalPaid = findViewById(R.id.fines_total_paid)
+        balanceOwed = findViewById(R.id.fines_balance_owed)
+        payFinesButton = findViewById(R.id.pay_fines)
         progress = ProgressDialogSupport()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item)
         lv?.adapter = listAdapter
@@ -105,7 +105,7 @@ class FinesActivity : BaseActivity() {
             try {
                 val start = System.currentTimeMillis()
                 progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
@@ -125,9 +125,9 @@ class FinesActivity : BaseActivity() {
                 })
 
                 jobs.map { it.await() }
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
@@ -139,23 +139,23 @@ class FinesActivity : BaseActivity() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
                 && homeOrg?.isPaymentAllowed == true) {
-            pay_fines_button?.visibility = View.VISIBLE
-            pay_fines_button?.setOnClickListener {
+            payFinesButton?.visibility = View.VISIBLE
+            payFinesButton?.setOnClickListener {
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
-                var url = (GatewayClient.baseUrl
+                val url = (GatewayClient.baseUrl
                         + "/eg/opac/login"
                         + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"))
                 launchURL(url)
             }
         } else {
-            pay_fines_button?.visibility = View.GONE
+            payFinesButton?.visibility = View.GONE
         }
-//        Log.d(TAG, "[kcxxx] updatePayFinesButtonVisibility v:${pay_fines_button?.visibility}")
+//        Log.d(TAG, "[fetch] updatePayFinesButtonVisibility v:${pay_fines_button?.visibility}")
     }
 
     private fun updatePayFinesButtonState(enabled: Boolean) {
-        pay_fines_button?.isEnabled = enabled
+        payFinesButton?.isEnabled = enabled
     }
 
     private fun onChargesResult(result: Result<PatronCharges>) {
@@ -174,9 +174,9 @@ class FinesActivity : BaseActivity() {
         if (charges == null) {
             return
         }
-        total_owed?.text = decimalFormatter?.format(charges!!.totalCharges)
-        total_paid?.text = decimalFormatter?.format(charges!!.totalPaid)
-        balance_owed?.text = decimalFormatter?.format(charges!!.balanceOwed)
+        totalOwed?.text = decimalFormatter?.format(charges!!.totalCharges)
+        totalPaid?.text = decimalFormatter?.format(charges!!.totalPaid)
+        balanceOwed?.text = decimalFormatter?.format(charges!!.balanceOwed)
         updatePayFinesButtonState(charges!!.balanceOwed > 0)
     }
 
@@ -194,7 +194,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
+        //Analytics.logEvent(FINES_ITEM_CLICK, "have_grocery_bills", haveAnyGroceryBills)
         val records = ArrayList<BibRecord>()
         val transactions = charges?.transactions ?: return
         if (haveAnyGroceryBills) {
@@ -214,7 +214,7 @@ class FinesActivity : BaseActivity() {
                 }
             }
         }
-        if (records.size > 0) {
+        if (records.isNotEmpty()) {
             val targetPosition = if (position > records.size - 1) records.size - 1 else position
             RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
         }
@@ -229,7 +229,7 @@ class FinesActivity : BaseActivity() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
                 null -> {
-                    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val inflater = context.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
                     inflater.inflate(resourceId, parent, false)
                 }
                 else -> {

@@ -28,7 +28,7 @@ object JsonUtils {
     fun parseObject(json: String?): JSONDictionary? {
         return try {
             json?.let { Json.decodeFromString(JSONDictionarySerializer, it) }
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             null
         }
     }

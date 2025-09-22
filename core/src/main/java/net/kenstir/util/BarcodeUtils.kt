@@ -24,10 +24,10 @@ import net.kenstir.util.Analytics.logException
 object BarcodeUtils {
     // Try to encode the barcode data using the given format
     // @returns BitMatrix if successful, null if not
-    fun tryEncode(data: String, image_width: Int, image_height: Int, format: BarcodeFormat): BitMatrix? {
+    fun tryEncode(data: String, imageWidth: Int, imageHeight: Int, format: BarcodeFormat): BitMatrix? {
         try {
             val barcodeWriter = MultiFormatWriter()
-            return barcodeWriter.encode(data, format, image_width, image_height)
+            return barcodeWriter.encode(data, format, imageWidth, imageHeight)
         } catch (e: Exception) {
             // IllegalArgumentException happens for invalid chars in barcode, don't log that
             if (e !is IllegalArgumentException) logException(e)

@@ -19,7 +19,6 @@
  */
 package net.kenstir.ui.view.search
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -67,7 +66,6 @@ import org.evergreen_ils.system.EgSearch
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
-import net.kenstir.util.StringOption
 
 const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
@@ -260,7 +258,7 @@ class SearchActivity : BaseActivity() {
                 }
 
                 // hide soft keyboard
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
@@ -435,19 +433,23 @@ class SearchActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == R.id.action_advanced_search) {
-            startActivityForResult(Intent(applicationContext, AdvancedSearchActivity::class.java), 2)
-            return true
-        } else if (id == R.id.action_logout) {
-            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-            logout()
-            App.restartApp(this)
-            return true
-        } else if (id == R.id.action_barcode_search) {
-            startScanning()
-            return true
+        when (id) {
+            R.id.action_advanced_search -> {
+                startActivityForResult(Intent(applicationContext, AdvancedSearchActivity::class.java), 2)
+                return true
+            }
+            R.id.action_logout -> {
+                Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
+                logout()
+                App.restartApp(this)
+                return true
+            }
+            R.id.action_barcode_search -> {
+                startScanning()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     @Deprecated("Deprecated in Java")

@@ -35,7 +35,7 @@ object ActivityUtils {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
             activity.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toast.makeText(activity, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
         }
     }

@@ -10,8 +10,8 @@ import org.evergreen_ils.system.EgOrg
 
 class OrgArrayAdapter(
     context: Context,
-    private val resourceId: Int,
-    private val items: List<String>,
+    resourceId: Int,
+    items: List<String>,
     private val forPickup: Boolean
 ) : ArrayAdapter<String>(context, resourceId, items) {
     override fun isEnabled(pos: Int): Boolean {

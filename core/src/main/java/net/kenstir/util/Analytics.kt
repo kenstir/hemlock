@@ -99,9 +99,9 @@ object Analytics {
     private var analytics = false
     private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
-    private const val mQueueSize = 64
+    private const val LOG_BUFFER_SIZE = 64
     const val MAX_DATA_SHOWN = 512 // max length of data shown in logResponseX
-    private val mEntries = ArrayDeque<String>(mQueueSize)
+    private val mEntries = ArrayDeque<String>(LOG_BUFFER_SIZE)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     val mRedactedResponseRegex = Regex("""
         ("__c":"aum?"|"authtoken":)
@@ -182,15 +182,6 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logElapsed(tag: String, startTime: Long, debugTag: String, shouldCache: Boolean, msg: String) {
-        val elapsed = System.currentTimeMillis() - startTime
-        val elapsedStr = String.format("%5d ms", elapsed)
-        val badge = if (shouldCache) "cacheable" else "no-store "
-        val logMsg = "[net] $debugTag: $elapsedStr: $badge: $msg"
-        Log.d(tag, logMsg)
-    }
-
-    @JvmStatic
     fun logEvent(event: String, b: Bundle?) {
         if (event.length > 40) {
             if (BuildConfig.DEBUG) throw AssertionError("Event name is too long")
@@ -211,11 +202,6 @@ object Analytics {
         val logMsg = "[net] $tag8 $method  $url"
         Log.d(TAG, logMsg)
         addToLogBuffer(logMsg)
-    }
-
-    @JvmStatic
-    fun logResponse(debugTag: String, url: String, cached: Boolean, data: String) {
-        logResponseX(debugTag, url, cached, data, null)
     }
 
     fun logResponseX(debugTag: String, url: String, cached: Boolean, data: String, elapsed: Long? = null) {
@@ -246,9 +232,9 @@ object Analytics {
         val date = mTimeFormat.format(System.currentTimeMillis())
         sb.append(date).append(' ').append(msg)
         mEntries.push(sb.toString())
-        //Log.d(TAG, "[LOGBUF] ${sb.toString()}")
+        //Log.d(TAG, "[LOG] ${sb.toString()}")
 
-        while (mEntries.size > mQueueSize) {
+        while (mEntries.size > LOG_BUFFER_SIZE) {
             mEntries.pop()
         }
     }
@@ -256,7 +242,7 @@ object Analytics {
     @JvmStatic
     @Synchronized
     fun getLogBuffer(): String {
-        val sb = StringBuilder(mQueueSize * 120)
+        val sb = StringBuilder(LOG_BUFFER_SIZE * 120)
         val it = mEntries.descendingIterator()
         while (it.hasNext()) {
             sb.append(it.next()).append('\n')

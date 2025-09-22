@@ -103,13 +103,13 @@ class OrgDetailsActivity : BaseActivity() {
         map = findViewById(R.id.org_details_map)
         address = findViewById(R.id.org_details_address)
 
-        val hours_header: View? = findViewById(R.id.org_details_opening_hours_header)
-        val hours_table: View? = findViewById(R.id.org_details_opening_hours_table)
+        val hoursHeader: View? = findViewById(R.id.org_details_opening_hours_header)
+        val hoursTable: View? = findViewById(R.id.org_details_opening_hours_table)
 
         progress = ProgressDialogSupport()
 
         initOrgSpinner()
-        initHoursViews(hours_header, hours_table)
+        initHoursViews(hoursHeader, hoursTable)
         initButtons()
     }
 
@@ -131,12 +131,12 @@ class OrgDetailsActivity : BaseActivity() {
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(if (index > 0) index else 0)
-        Log.d(TAG, "[kcxxx] setSelection $index")
+        Log.d(TAG, "[fetch] setSelection $index")
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 org = EgOrg.visibleOrgs[position]
                 orgID = org?.id
-                Log.d(TAG, "[kcxxx] onItemSelected $position, orgID=$orgID")
+                Log.d(TAG, "[fetch] onItemSelected $position, orgID=$orgID")
                 fetchData()
             }
 
@@ -265,13 +265,12 @@ class OrgDetailsActivity : BaseActivity() {
         scope.async {
             try {
                 val account = App.getAccount()
-                val org = org ?: return@async
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()
                 progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
 
-                Log.d(TAG, "[kcxxx] fetchData ... orgID=$orgID")
+                Log.d(TAG, "[fetch] fetchData ... orgID=$orgID")
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
@@ -290,9 +289,9 @@ class OrgDetailsActivity : BaseActivity() {
                 // await all deferred (see awaitAll doc for differences)
                 jobs.map { it.await() }
                 onOrgLoaded()
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()

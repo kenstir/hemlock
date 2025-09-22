@@ -33,7 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /** AppBehavior - customizable app behaviors
- *
+ * <p>
  * to override, create a subclass of AppBehavior in the xxx_app module,
  * and specify the name of that class in R.string.ou_behavior_provider.
  */
@@ -109,7 +109,7 @@ public class AppBehavior {
     public List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
         MARCRecord marcRecord = record.getMarcRecord();
         if (marcRecord == null)
-            return new ArrayList<Link>();
+            return new ArrayList<>();
 
         return getLinksFromMARCRecord(marcRecord, orgShortName);
     }

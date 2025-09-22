@@ -98,12 +98,6 @@ class PlaceHoldActivity : BaseActivity() {
     private var progress: ProgressDialogSupport? = null
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
-    private val orgOption = SpinnerStringOption(
-        key = AppState.HOLD_PICKUP_ORG_ID,
-        defaultValue = EgOrg.findOrg(App.getAccount().pickupOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
-        optionLabels = EgOrg.orgSpinnerLabels(),
-        optionValues = EgOrg.spinnerShortNames()
-    )
     private lateinit var record: BibRecord
 
     private val hasParts: Boolean
