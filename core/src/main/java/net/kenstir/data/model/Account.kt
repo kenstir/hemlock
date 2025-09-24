@@ -62,8 +62,11 @@ open class Account(val username: String, var authToken: String?) {
                 username
             }
         }
-    val pickupOrg: Int?
+    var pickupOrg: Int?
         get() = _pickupOrg ?: homeOrg
+        set(value) {
+            _pickupOrg = value
+        }
     val searchOrg: Int?
         get() = _searchOrg ?: homeOrg
     val expireDateString: String?

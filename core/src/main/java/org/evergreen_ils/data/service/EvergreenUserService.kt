@@ -255,6 +255,16 @@ object EvergreenUserService: UserService {
         }
     }
 
+    override suspend fun changePickupOrg(account: Account, orgId: Int): Result<Unit> {
+        return try {
+            updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION to orgId))
+            account.pickupOrg = orgId
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>> {
         return try {
             Result.Success(fetchPatronMessagesImpl(account))

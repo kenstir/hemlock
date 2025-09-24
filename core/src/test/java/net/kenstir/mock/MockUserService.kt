@@ -76,6 +76,10 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun changePickupOrg(account: Account, orgId: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
         TODO("Not yet implemented")
     }

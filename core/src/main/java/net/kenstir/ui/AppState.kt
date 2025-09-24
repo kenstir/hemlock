@@ -34,7 +34,6 @@ object AppState {
     const val HOLD_NOTIFY_BY_PHONE = "notify_by_phone"
     const val HOLD_NOTIFY_BY_SMS = "notify_by_sms"
     const val HOLD_PHONE_NUMBER = "phone_number"
-    const val HOLD_PICKUP_ORG_ID = "pickup_org_id"
     const val HOLD_SMS_CARRIER_ID = "sms_carrier_id"
     const val HOLD_SMS_NUMBER = "sms_number"
     const val LAUNCH_COUNT = "launch_count"

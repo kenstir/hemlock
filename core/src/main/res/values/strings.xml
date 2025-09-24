@@ -134,6 +134,10 @@
     <string name="hold_status_queue_position">Queue position: %1$d</string>
     <string name="hold_status_expires">Expires %1$s</string>
     <string name="hold_status_estimated_wait">Estimated wait: %1$s</string>
+    <string name="title_change_pickup_location">Change pickup location?</string>
+    <string name="msg_change_pickup_location">Change pickup location to %1$s?</string>
+    <string name="button_just_once">Just once</string>
+    <string name="button_always">Always</string>
 
     <!-- Checkout items -->
     <string name="checked_out_items">%s checked out</string>

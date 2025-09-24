@@ -59,7 +59,6 @@ import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
-import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
@@ -67,6 +66,7 @@ import java.util.Calendar
 import java.util.Date
 
 class PlaceHoldActivity : BaseActivity() {
+    private val TAG = javaClass.simpleName
     private var title: TextView? = null
     private var author: TextView? = null
     private var format: TextView? = null
@@ -503,26 +503,74 @@ class PlaceHoldActivity : BaseActivity() {
         return partId ?: -1
     }
 
+    // The pickup org preference is handled differently from other preferences:
+    // * it always defaults to the account setting
+    // * changing it results in an JUST ONCE / ALWAYS alert
+    // * ALWAYS saves it back to the account
     private fun initOrgSpinner() {
         orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, EgOrg.orgSpinnerLabels(), true)
 
-        val savedId = AppState.getInt(AppState.HOLD_PICKUP_ORG_ID, -1)
-        val defaultId = if (savedId != -1) savedId else account?.pickupOrg
+        val defaultId = account?.pickupOrg
         selectedOrgPos = EgOrg.visibleOrgs.indexOfFirstOrZero { it.id == defaultId }
         ignoreNextOrgSelection = true
         orgSpinner?.setSelection(selectedOrgPos)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(TAG, "[prefs] Org selected: ignore=$ignoreNextOrgSelection pos=$position selectedOrgPos=$selectedOrgPos")
                 if (ignoreNextOrgSelection) {
                     ignoreNextOrgSelection = false
                     return
                 }
-                if (position == selectedOrgPos) return
-                selectedOrgPos = position
-                AppState.setInt(AppState.HOLD_PICKUP_ORG_ID, EgOrg.visibleOrgs[position].id)
+                maybeChangePickupLocation(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+    private fun maybeChangePickupLocation(newPos: Int) {
+        val newOrg = EgOrg.visibleOrgs[newPos]
+
+        if (newOrg.id == account?.pickupOrg) {
+            // update selectedOrgPos but do not show alert
+            Log.d(TAG, "[prefs] Pickup org: same as account pickup org")
+            selectedOrgPos = newPos
+            return
+        }
+
+        val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+        builder.setTitle(getString(R.string.title_change_pickup_location))
+            .setMessage(getString(R.string.msg_change_pickup_location, newOrg.name))
+            .setPositiveButton(R.string.button_always) { _, _ ->
+                // update selectedOrgPos and save it
+                Log.d(TAG, "[prefs] Pickup org: ${newOrg.shortname} always")
+                selectedOrgPos = newPos
+                savePickupLocation(newPos)
+            }
+            .setNeutralButton(R.string.button_just_once) { _, _ ->
+                // update selectedOrgPos but do not save it
+                Log.d(TAG, "[prefs] Pickup org: ${newOrg.shortname} just once")
+                selectedOrgPos = newPos
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                // reset selection back
+                Log.d(TAG, "[prefs] Pickup org: cancel")
+                ignoreNextOrgSelection = true
+                orgSpinner?.setSelection(selectedOrgPos)
+            }
+        builder.create().show()
+    }
+
+    private fun savePickupLocation(newPos: Int) {
+        val newOrg = EgOrg.visibleOrgs[newPos]
+        scope.async {
+            try {
+                account?.let { account ->
+                    App.getServiceConfig().userService.changePickupOrg(account, newOrg.id)
+                }
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
         }
     }
 
@@ -533,9 +581,5 @@ class PlaceHoldActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    companion object {
-        private val TAG = PlaceHoldActivity::class.java.simpleName
     }
 }
