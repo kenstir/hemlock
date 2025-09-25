@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ou_library_url">https://evergreen.noblenet.org</string>
+    <string name="ou_library_url">https://evergreen-ils.noblenet.org</string>
     <string name="ou_account_type">net.kenstir.apps.noble</string>
 
     <string name="ou_account_label">NOBLE</string>
