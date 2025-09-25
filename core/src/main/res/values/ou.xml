@@ -18,7 +18,7 @@
     <!-- label above sign_in field on generic Hemlock app -->
     <string name="ou_sign_in_label">Login to your account:</string>
     <!-- library name displayed in the app bar -->
-    <string name="ou_library_name">EXAMPLE</string>
+    <string name="ou_library_name"></string>
     <!-- subtitle displayed in the app bar -->
     <string name="ou_activity_subtitle">%1$s - %2$s</string>
     <!-- URL of feedback form -->

@@ -44,13 +44,17 @@ public class AccountUtils {
         // For custom apps, library_url should come from the resources.
         // For the generic Hemlock app, it is stored as user data in the AccountManager.
         String library_url = context.getString(R.string.ou_library_url);
+        Log.d(Const.AUTH_TAG, "[auth] library_url from resources: " + library_url);
         if (TextUtils.isEmpty(library_url)) {
             library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
+            Log.d(Const.AUTH_TAG, "[auth] library_url from user data: " + library_url);
         }
 
-        String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
+        String library_name = context.getString(R.string.ou_library_name);
+        Log.d(Const.AUTH_TAG, "[auth] library_name from resources: " + library_name);
         if (TextUtils.isEmpty(library_name)) {
-            library_name = context.getString(R.string.ou_library_name);
+            library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
+            Log.d(Const.AUTH_TAG, "[auth] library_name from user data: " + library_name);
         }
 
         return new Library(library_url, library_name);
