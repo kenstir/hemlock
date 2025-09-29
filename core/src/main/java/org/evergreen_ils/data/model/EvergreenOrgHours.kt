@@ -18,6 +18,7 @@
 package org.evergreen_ils.data.model
 
 import net.kenstir.data.model.OrgHours
+import net.kenstir.logging.Log
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.gateway.OSRFObject
 
@@ -55,6 +56,8 @@ class EvergreenOrgHours(
         private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
             val openTimeApi = obj?.getString("dow_${day}_open")
             val closeTimeApi = obj?.getString("dow_${day}_close")
+            val note = obj?.getString("dow_${day}_note")
+            Log.d(Log.TAG_EG, "[hours] note: $note")
             val openTime = OSRFUtils.parseHours(openTimeApi)
             val closeTime = OSRFUtils.parseHours(closeTimeApi)
             if (openTime == null || closeTime == null) {
