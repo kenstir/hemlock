@@ -59,6 +59,13 @@ class OrgDetailsActivity : BaseActivity() {
     private var day4Hours: TextView? = null
     private var day5Hours: TextView? = null
     private var day6Hours: TextView? = null
+    private var day0Note: TextView? = null
+    private var day1Note: TextView? = null
+    private var day2Note: TextView? = null
+    private var day3Note: TextView? = null
+    private var day4Note: TextView? = null
+    private var day5Note: TextView? = null
+    private var day6Note: TextView? = null
     private lateinit var closuresTable: TableLayout
     private var webSite: Button? = null
     private var email: Button? = null
@@ -95,6 +102,13 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours = findViewById(R.id.org_details_day4hours)
         day5Hours = findViewById(R.id.org_details_day5hours)
         day6Hours = findViewById(R.id.org_details_day6hours)
+        day0Note = findViewById(R.id.org_details_day0note)
+        day1Note = findViewById(R.id.org_details_day1note)
+        day2Note = findViewById(R.id.org_details_day2note)
+        day3Note = findViewById(R.id.org_details_day3note)
+        day4Note = findViewById(R.id.org_details_day4note)
+        day5Note = findViewById(R.id.org_details_day5note)
+        day6Note = findViewById(R.id.org_details_day6note)
         closuresTable = findViewById(R.id.org_details_closures_table)
         webSite = findViewById(R.id.org_details_web_site)
         email = findViewById(R.id.org_details_email)
@@ -181,6 +195,13 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours?.text = hours.day4Hours
         day5Hours?.text = hours.day5Hours
         day6Hours?.text = hours.day6Hours
+        day0Note?.text = hours.day0Note
+        day1Note?.text = hours.day1Note
+        day2Note?.text = hours.day2Note
+        day3Note?.text = hours.day3Note
+        day4Note?.text = hours.day4Note
+        day5Note?.text = hours.day5Note
+        day6Note?.text = hours.day6Note
     }
 
     private fun loadClosures(closures: List<OrgClosure>) {

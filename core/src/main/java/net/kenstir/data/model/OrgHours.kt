@@ -18,11 +18,18 @@
 package net.kenstir.data.model
 
 open class OrgHours(
-    val day0Hours: String? = null,
-    val day1Hours: String? = null,
-    val day2Hours: String? = null,
-    val day3Hours: String? = null,
-    val day4Hours: String? = null,
-    val day5Hours: String? = null,
-    val day6Hours: String? = null,
+    open val day0Hours: String? = null,
+    open val day1Hours: String? = null,
+    open val day2Hours: String? = null,
+    open val day3Hours: String? = null,
+    open val day4Hours: String? = null,
+    open val day5Hours: String? = null,
+    open val day6Hours: String? = null,
+    open val day0Note: String? = null,
+    open val day1Note: String? = null,
+    open val day2Note: String? = null,
+    open val day3Note: String? = null,
+    open val day4Note: String? = null,
+    open val day5Note: String? = null,
+    open val day6Note: String? = null
 )

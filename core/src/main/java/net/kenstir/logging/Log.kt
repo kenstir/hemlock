@@ -31,6 +31,7 @@ object Log {
     const val WARN: Int = 5
 
     const val TAG_ASYNC = "async"
+    const val TAG_EG = "eg"
     const val TAG_EXTENSIONS = "extensions"
     const val TAG_FCM = "fcm"
     const val TAG_PERM = "perm"

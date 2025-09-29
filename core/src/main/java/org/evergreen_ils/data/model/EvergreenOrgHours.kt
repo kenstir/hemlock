@@ -18,40 +18,27 @@
 package org.evergreen_ils.data.model
 
 import net.kenstir.data.model.OrgHours
+import net.kenstir.logging.Log
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.gateway.OSRFObject
 
-class EvergreenOrgHours(
-    day0Hours: String?,
-    day1Hours: String?,
-    day2Hours: String?,
-    day3Hours: String?,
-    day4Hours: String?,
-    day5Hours: String?,
-    day6Hours: String?,
-): OrgHours(day0Hours, day1Hours, day2Hours, day3Hours, day4Hours, day5Hours, day6Hours) {
-    companion object {
-        // TODO: [Add Hours of Operation Note field](https://evergreen-ils.org/documentation/release/RELEASE_NOTES_3_10.html#_hours_of_operation_note_field)
-        // Look for fields e.g. "dow_0_note"
-        fun make(obj: OSRFObject?): EvergreenOrgHours {
-            val day0Hours = hoursOfOperation(obj, 0)
-            val day1Hours = hoursOfOperation(obj, 1)
-            val day2Hours = hoursOfOperation(obj, 2)
-            val day3Hours = hoursOfOperation(obj, 3)
-            val day4Hours = hoursOfOperation(obj, 4)
-            val day5Hours = hoursOfOperation(obj, 5)
-            val day6Hours = hoursOfOperation(obj, 6)
-            return EvergreenOrgHours(
-                day0Hours,
-                day1Hours,
-                day2Hours,
-                day3Hours,
-                day4Hours,
-                day5Hours,
-                day6Hours
-            )
-        }
+class EvergreenOrgHours(val obj: OSRFObject?) : OrgHours() {
+    override val day0Hours: String? = obj?.let { hoursOfOperation(it, 0) }
+    override val day1Hours: String? = obj?.let { hoursOfOperation(it, 1) }
+    override val day2Hours: String? = obj?.let { hoursOfOperation(it, 2) }
+    override val day3Hours: String? = obj?.let { hoursOfOperation(it, 3) }
+    override val day4Hours: String? = obj?.let { hoursOfOperation(it, 4) }
+    override val day5Hours: String? = obj?.let { hoursOfOperation(it, 5) }
+    override val day6Hours: String? = obj?.let { hoursOfOperation(it, 6) }
+    override val day0Note: String? = obj?.getString("dow_0_note")
+    override val day1Note: String? = obj?.getString("dow_1_note")
+    override val day2Note: String? = obj?.getString("dow_2_note")
+    override val day3Note: String? = obj?.getString("dow_3_note")
+    override val day4Note: String? = obj?.getString("dow_4_note")
+    override val day5Note: String? = obj?.getString("dow_5_note")
+    override val day6Note: String? = obj?.getString("dow_6_note")
 
+    companion object {
         private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
             val openTimeApi = obj?.getString("dow_${day}_open")
             val closeTimeApi = obj?.getString("dow_${day}_close")

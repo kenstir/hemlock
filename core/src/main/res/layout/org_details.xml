@@ -60,29 +60,37 @@
 
         <TableLayout
             android:id="@+id/org_details_opening_hours_table"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="2">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_mon" />
 
                 <TextView
                     android:id="@+id/org_details_day0hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day0note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
-                    android:paddingEnd="0dp" />
+                    android:paddingEnd="0dp"
+                    tools:text="(Closes at 1:00 PM on Saturdays during the months of July and August)" />
             </TableRow>
 
             <TableRow
@@ -90,19 +98,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_tue" />
 
                 <TextView
                     android:id="@+id/org_details_day1hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day1note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -112,19 +126,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_wed" />
 
                 <TextView
                     android:id="@+id/org_details_day2hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day2note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -134,19 +154,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_thu" />
 
                 <TextView
                     android:id="@+id/org_details_day3hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day3note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -156,19 +182,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_fri" />
 
                 <TextView
                     android:id="@+id/org_details_day4hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day4note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -178,19 +210,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_sat" />
 
                 <TextView
                     android:id="@+id/org_details_day5hours"
-                    tools:text="9:00 AM - 5:00 PM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="9:00 AM - 5:00 PM" />
+
+                <TextView
+                    android:id="@+id/org_details_day5note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -200,19 +238,25 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_sun" />
 
                 <TextView
                     android:id="@+id/org_details_day6hours"
-                    tools:text="@string/value_closed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    tools:text="@string/value_closed" />
+
+                <TextView
+                    android:id="@+id/org_details_day6note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp" />
             </TableRow>
@@ -229,10 +273,10 @@
 
         <TableLayout
             android:id="@+id/org_details_closures_table"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TableRow
+        <TableRow
                 android:id="@+id/org_details_closures_none_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -241,7 +285,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="2"
-                    android:layout_weight="100"
+                    android:layout_weight="2"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/no_closures_scheduled_msg" />
@@ -257,7 +301,7 @@
                     style="@style/HemlockText.PageTertiary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="28"
+                    android:layout_weight="1"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_date" />
@@ -267,7 +311,7 @@
                     style="@style/HemlockText.PageTertiary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="72"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp"
                     android:text="@string/title_reason_for_closure" />
@@ -279,20 +323,20 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    tools:text="12/24/2024 - 12/26/2024"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
+                    android:layout_weight="1"
                     android:paddingStart="16dp"
-                    android:paddingEnd="0dp" />
+                    android:paddingEnd="0dp"
+                    tools:text="12/24/2024 - 12/26/2024" />
 
                 <TextView
-                    tools:text="Christmas Holidays"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
-                    android:paddingEnd="0dp" />
+                    android:paddingEnd="0dp"
+                    tools:text="Christmas Holidays" />
             </TableRow>
 
             <TableRow
@@ -301,20 +345,20 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    tools:text="3/29/2024 12:00 PM - 3/29/2024 8:00 PM"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
+                    android:layout_weight="1"
                     android:paddingStart="16dp"
-                    android:paddingEnd="0dp" />
+                    android:paddingEnd="0dp"
+                    tools:text="3/29/2024 12:00 PM - 3/29/2024 8:00 PM" />
 
                 <TextView
-                    tools:text="Good Friday"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
+                    android:layout_weight="1"
                     android:paddingStart="8dp"
-                    android:paddingEnd="0dp" />
+                    android:paddingEnd="0dp"
+                    tools:text="Good Friday" />
             </TableRow>
         </TableLayout>
 

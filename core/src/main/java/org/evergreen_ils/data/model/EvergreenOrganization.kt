@@ -91,7 +91,7 @@ class EvergreenOrganization(
     }
 
     fun loadHours(obj: OSRFObject?) {
-        this.hours = EvergreenOrgHours.make(obj)
+        this.hours = EvergreenOrgHours(obj)
     }
 
     fun loadClosures(objList: List<OSRFObject>) {
