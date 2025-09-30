@@ -85,24 +85,9 @@ class SearchActivity : BaseActivity() {
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
-    private val searchClassOption = SpinnerStringOption(
-        key = AppState.SEARCH_CLASS,
-        defaultValue = SearchClass.KEYWORD,
-        optionLabels = SearchClass.spinnerLabels,
-        optionValues = SearchClass.spinnerValues
-    )
-    private val searchFormatOption = SpinnerStringOption(
-        key = AppState.SEARCH_FORMAT,
-        defaultValue = "",
-        optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
-        optionValues = EgCodedValueMap.searchFormatSpinnerValues
-    )
-    private val searchOrgOption = SpinnerStringOption(
-        key = AppState.SEARCH_ORG_SHORT_NAME,
-        defaultValue = EgOrg.findOrg(App.getAccount().searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
-        optionLabels = EgOrg.orgSpinnerLabels(),
-        optionValues = EgOrg.spinnerShortNames()
-    )
+    private lateinit var searchClassOption: SpinnerStringOption
+    private lateinit var searchFormatOption: SpinnerStringOption
+    private lateinit var searchOrgOption: SpinnerStringOption
 
     private val searchText: String
         get() = searchTextView?.text.toString().trim()
@@ -158,6 +143,7 @@ class SearchActivity : BaseActivity() {
         orgSpinner = findViewById(R.id.search_org_spinner)
         searchResultsSummary = findViewById(R.id.search_result_number)
 
+        initSearchOptions()
         initSearchOptionsVisibility()
         initSearchText()
         initSearchButton()
@@ -200,6 +186,27 @@ class SearchActivity : BaseActivity() {
 
     private fun initSearchButton() {
         searchButton?.setOnClickListener { fetchSearchResults() }
+    }
+
+    private fun initSearchOptions() {
+        searchClassOption = SpinnerStringOption(
+            key = AppState.SEARCH_CLASS,
+            defaultValue = SearchClass.KEYWORD,
+            optionLabels = SearchClass.spinnerLabels,
+            optionValues = SearchClass.spinnerValues
+        )
+        searchFormatOption = SpinnerStringOption(
+            key = AppState.SEARCH_FORMAT,
+            defaultValue = "",
+            optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
+            optionValues = EgCodedValueMap.searchFormatSpinnerValues
+        )
+        searchOrgOption = SpinnerStringOption(
+            key = AppState.SEARCH_ORG_SHORT_NAME,
+            defaultValue = EgOrg.findOrg(App.getAccount()?.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
+            optionLabels = EgOrg.orgSpinnerLabels(),
+            optionValues = EgOrg.spinnerShortNames()
+        )
     }
 
     private fun initSearchOptionsVisibility() {
