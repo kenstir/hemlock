@@ -86,7 +86,7 @@ class EvergreenOrganization(
         settingsLoaded = true
     }
 
-    fun loadAddress(obj: OSRFObject) {
+    fun loadAddress(obj: OSRFObject?) {
         addressObj = obj
     }
 

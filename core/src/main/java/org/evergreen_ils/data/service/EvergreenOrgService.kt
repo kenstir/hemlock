@@ -108,9 +108,11 @@ object EvergreenOrgService: OrgService {
     }
 
     private suspend fun loadOrgAddress(org: EvergreenOrganization) {
+        if (org.addressID == null)
+            return
         Log.d(TAG, "loading org address for org ${org.id} ...")
         val response = GatewayClient.fetch(Api.ACTOR, Api.ADDRESS_RETRIEVE, paramListOf(org.addressID), false)
-        org.loadAddress(response.payloadFirstAsObject())
+        org.loadAddress(response.payloadFirstAsObjectOrNull())
         Log.d(TAG, "loading org address for org ${org.id} ... done")
     }
 }
