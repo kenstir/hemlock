@@ -17,6 +17,7 @@
 
 package net.kenstir.util
 
+import net.kenstir.data.ShouldNotHappenException
 import net.kenstir.ui.AppState
 
 open class StringOption(
@@ -42,9 +43,21 @@ open class StringOption(
         get() = optionLabels[selectedIndex].trim()
 
     init {
-        require(optionLabels.isNotEmpty())
-        require(optionValues.isEmpty() || optionValues.size == optionLabels.size)
-        require(optionValues.contains(defaultValue) || optionLabels.contains(defaultValue))
+        assert(optionLabels.isNotEmpty()) {
+            val msg = "optionLabels must not be empty"
+            Analytics.logException(ShouldNotHappenException(msg))
+            msg
+        }
+        assert(optionValues.isEmpty() || optionValues.size == optionLabels.size) {
+            val msg = "optionValues (${optionValues.count()}) must be empty or the same size as optionLabels (${optionLabels.count()})"
+            Analytics.logException(ShouldNotHappenException(msg))
+            msg
+        }
+        // do not use assert here because we don't control the user's default search org
+        if (!optionValues.contains(defaultValue) && !optionLabels.contains(defaultValue)) {
+            val msg = "defaultValue ($defaultValue) is not present in either optionValues (${optionValues.count()}) or optionLabels (${optionLabels.count()})"
+            Analytics.logException(ShouldNotHappenException(msg))
+        }
 
         selectByValue(defaultValue)
     }
@@ -67,7 +80,11 @@ open class StringOption(
     }
 
     fun selectByIndex(index: Int) {
-        require(index >= 0 && index < optionLabels.size)
+        assert(index >= 0 && index < optionLabels.size) {
+            val msg = "index ($index) must be between 0 and ${optionLabels.size - 1}"
+            Analytics.logException(ShouldNotHappenException(msg))
+            msg
+        }
         selectedIndex = index
     }
 

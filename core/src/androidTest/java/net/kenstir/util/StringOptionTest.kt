@@ -73,14 +73,15 @@ class StringOptionTest {
         assertEquals("C", option.value)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun test_invalidDefaultValue() {
-        StringOption(
+        val option = StringOption(
             key = "test_option",
             defaultValue = "Delta",
             optionLabels = listOf("Alpha", "Bravo", "Charlie"),
             optionValues = listOf("A", "B", "C")
         )
+        assertEquals("A", option.value)
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
