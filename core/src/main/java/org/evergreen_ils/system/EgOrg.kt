@@ -53,7 +53,7 @@ object EgOrg {
                 }
             }
         }
-        Log.d(TAG, "loadOrgTypes: ${objArray.size} org types")
+        Log.d(TAG, "[orgs] ${objArray.size} org types")
     }
 
     @JvmStatic
@@ -69,7 +69,7 @@ object EgOrg {
         val parent = obj.getInt("parent_ou")
         val org = EvergreenOrganization(id, level, name, shortName, opacVisible, parent, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
-        Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
+        Log.d(TAG, "[orgs] id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
@@ -95,7 +95,7 @@ object EgOrg {
                 }
             }
         }
-        Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
+        Log.d(TAG, "[orgs] ${orgs.size} orgs")
     }
 
     @JvmStatic
@@ -151,14 +151,14 @@ object EgOrg {
         val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
         val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
         val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        Log.d(TAG, String.format("%3d visible orgs", visibleOrgs.size))
-        Log.d(TAG, String.format("%3d are pickup locations", numPickupLocations))
-        Log.d(TAG, String.format("%3d have events URLs", numWithEvents))
-        Log.d(TAG, String.format("%3d have eresources URLs", numWithEresources))
-        Log.d(TAG, String.format("%3d have meeting rooms URLs", numWithMeetingRooms))
-        Log.d(TAG, String.format("%3d have museum passes URLs", numWithMuseumPasses))
-        print("")
+        Log.d(TAG, String.format("[orgs] %3d visible orgs", visibleOrgs.size))
+        Log.d(TAG, String.format("[orgs] %3d are pickup locations", numPickupLocations))
+        Log.d(TAG, String.format("[orgs] %3d have events URLs", numWithEvents))
+        Log.d(TAG, String.format("[orgs] %3d have eresources URLs", numWithEresources))
+        Log.d(TAG, String.format("[orgs] %3d have meeting rooms URLs", numWithMeetingRooms))
+        Log.d(TAG, String.format("[orgs] %3d have museum passes URLs", numWithMuseumPasses))
 
+//        print("")
 //        for (org in allOrgs) {
 //            Log.d(TAG, String.format("%d,%s,%s", org.id, org.shortname, org.name))
 //        }
