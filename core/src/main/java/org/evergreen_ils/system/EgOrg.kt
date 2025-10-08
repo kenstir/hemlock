@@ -69,7 +69,7 @@ object EgOrg {
         val parent = obj.getInt("parent_ou")
         val org = EvergreenOrganization(id, level, name, shortName, opacVisible, parent, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
-        Log.d(TAG, "[orgs] id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
+        Log.v(TAG, "[orgs] id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
