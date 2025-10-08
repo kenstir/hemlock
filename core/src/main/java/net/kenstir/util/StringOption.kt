@@ -53,11 +53,9 @@ open class StringOption(
             Analytics.logException(ShouldNotHappenException(msg))
             msg
         }
-        // do not use assert here because we don't control the user's default search org
-        if (!optionValues.contains(defaultValue) && !optionLabels.contains(defaultValue)) {
-            val msg = "defaultValue ($defaultValue) is not present in either optionValues (${optionValues.count()}) or optionLabels (${optionLabels.count()})"
-            Analytics.logException(ShouldNotHappenException(msg))
-        }
+        // Do not assert defaultValue is valid! The user's default org may be hidden.
+        // See also test_invalidDefaultValue().
+        //assert(optionValues.contains(defaultValue) || optionLabels.contains(defaultValue))
 
         selectByValue(defaultValue)
     }
