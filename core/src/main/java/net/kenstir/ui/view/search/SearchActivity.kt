@@ -591,7 +591,7 @@ class SearchActivity : BaseActivity() {
     }
 
     companion object {
-        private val TAG = SearchActivity::class.java.simpleName
+        private const val TAG = "SearchActivity"
 
         const val RESULT_CODE_NORMAL = 10
         const val RESULT_CODE_SEARCH_BY_AUTHOR = 11

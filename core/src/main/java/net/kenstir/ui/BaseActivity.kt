@@ -395,7 +395,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     companion object {
 
-        private val TAG = BaseActivity::class.java.simpleName
+        private const val TAG = "BaseActivity"
 
         fun getAppVersionCode(context: Context): String {
             var version = ""

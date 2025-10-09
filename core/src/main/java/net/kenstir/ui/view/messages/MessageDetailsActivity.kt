@@ -34,7 +34,6 @@ import net.kenstir.ui.view.messages.MessagesActivity.Companion.RESULT_MESSAGE_UP
 import java.text.DateFormat
 
 class MessageDetailsActivity : BaseActivity() {
-    val TAG = javaClass.simpleName
 
     private lateinit var message: EvergreenPatronMessage
 
@@ -110,5 +109,9 @@ class MessageDetailsActivity : BaseActivity() {
             setResult(RESULT_MESSAGE_UPDATED)
             finish()
         }
+    }
+
+    companion object {
+        private const val TAG = "MessageDetailsActivity"
     }
 }

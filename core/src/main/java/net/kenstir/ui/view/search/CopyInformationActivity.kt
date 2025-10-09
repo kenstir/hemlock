@@ -49,7 +49,6 @@ import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 
 class CopyInformationActivity : BaseActivity() {
-    private val TAG = "CopyInformationActivity"
 
     private lateinit var record: BibRecord
     private var orgID: Int = EgOrg.consortiumID
@@ -180,5 +179,9 @@ class CopyInformationActivity : BaseActivity() {
                 showAlert(ex)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "CopyInformationActivity"
     }
 }

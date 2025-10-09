@@ -24,8 +24,6 @@ import net.kenstir.hemlock.R;
 import net.kenstir.util.Analytics;
 
 public class AppFactory {
-    private static final String TAG = AppFactory.class.getSimpleName();
-
     static public AppBehavior makeBehavior(Resources resources) {
         String clazzName = resources.getString(R.string.ou_behavior_provider);
         if (!TextUtils.isEmpty(clazzName)) {

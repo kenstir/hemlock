@@ -177,6 +177,6 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
     }
 
     companion object {
-        private val TAG = BookBagsActivity::class.java.simpleName
+        private const val TAG = "BookBags"
     }
 }

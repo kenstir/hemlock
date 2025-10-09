@@ -25,7 +25,7 @@ import androidx.core.content.edit
 /** App State that is persistent across invocations; stored as preferences.
  */
 object AppState {
-    private val TAG: String = AppState::class.java.simpleName
+    private const val TAG = "AppState"
 
     // keys for prefs
     const val LIST_SORT_BY = "sort_by"

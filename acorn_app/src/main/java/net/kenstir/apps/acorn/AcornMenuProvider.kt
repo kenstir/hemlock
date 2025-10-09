@@ -23,8 +23,8 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.view.MenuProvider
 
 @Keep
+@Suppress("unused")
 class AcornMenuProvider : MenuProvider() {
-    private val TAG = javaClass.simpleName
 
     override fun onCreate(activity: Activity?) {
         return;
@@ -41,5 +41,9 @@ class AcornMenuProvider : MenuProvider() {
             }
         }
         return true
+    }
+
+    companion object {
+        private const val TAG = "AcornMenuProvider"
     }
 }

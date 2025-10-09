@@ -44,7 +44,6 @@ const val MESSAGE_MARK_UNREAD = 2
 const val MESSAGE_VIEW = 3
 
 class MessagesActivity : BaseActivity() {
-    private val TAG = "MessagesActivity"
 
     private var rv: RecyclerView? = null
     private var adapter: MessageViewAdapter? = null
@@ -214,6 +213,8 @@ class MessagesActivity : BaseActivity() {
     }
 
     companion object {
+        private const val TAG = "MessagesActivity"
+
         const val RESULT_MESSAGE_UPDATED = 1
     }
 }

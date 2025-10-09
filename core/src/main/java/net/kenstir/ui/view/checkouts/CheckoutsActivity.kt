@@ -47,7 +47,6 @@ import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class CheckoutsActivity : BaseActivity() {
-    private val TAG = "Checkouts"
 
     private var rv: RecyclerView? = null
     private var adapter: CheckoutsViewAdapter? = null
@@ -211,5 +210,9 @@ class CheckoutsActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "Checkouts"
     }
 }

@@ -27,7 +27,6 @@ import net.kenstir.util.Analytics;
  * and the name of that class is specified in R.string.ou_main_menu_provider .
  */
 public abstract class MenuProvider {
-    private static final String TAG = MenuProvider.class.getSimpleName();
 
     static public MenuProvider create(String clazzName) {
         if (TextUtils.isEmpty(clazzName)) {

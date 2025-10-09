@@ -195,6 +195,6 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
     }
 
     companion object {
-        private val TAG: String = AccountAuthenticator::class.java.simpleName
+        private const val TAG = "AccountAuthenticator"
     }
 }

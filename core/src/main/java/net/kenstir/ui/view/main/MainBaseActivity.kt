@@ -49,7 +49,6 @@ import net.kenstir.ui.util.showAlert
  * This primarily involves handling push notifications.
  */
 open class MainBaseActivity : BaseActivity() {
-    private val TAG = javaClass.simpleName
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {

@@ -50,7 +50,6 @@ import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.system.EgOrg
 
 class OrgDetailsActivity : BaseActivity() {
-    private val TAG = OrgDetailsActivity::class.java.simpleName
 
     private var orgSpinner: Spinner? = null
     private var day0Hours: TextView? = null
@@ -297,5 +296,9 @@ class OrgDetailsActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "OrgDetailsActivity"
     }
 }

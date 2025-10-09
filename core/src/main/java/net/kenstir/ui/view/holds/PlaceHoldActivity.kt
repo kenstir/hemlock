@@ -66,7 +66,6 @@ import java.util.Calendar
 import java.util.Date
 
 class PlaceHoldActivity : BaseActivity() {
-    private val TAG = javaClass.simpleName
     private var title: TextView? = null
     private var author: TextView? = null
     private var format: TextView? = null
@@ -581,5 +580,9 @@ class PlaceHoldActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private const val TAG = "PlaceHoldActivity"
     }
 }

@@ -51,7 +51,6 @@ import java.text.Collator
 const val RESULT_CODE_UPDATE = 1
 
 class BookBagDetailsActivity : BaseActivity() {
-    private val TAG = javaClass.simpleName
 
     private var rv: RecyclerView? = null
     private var adapter: ListItemViewAdapter? = null
@@ -329,5 +328,9 @@ class BookBagDetailsActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "BookBagDetails"
     }
 }

@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 
 @Keep
 public class OwwlAppBehavior extends AppBehavior {
-    private static final String TAG = OwwlAppBehavior.class.getSimpleName();
 
     public OwwlAppBehavior() {
         // loaded through class loader via ou_behavior_provider

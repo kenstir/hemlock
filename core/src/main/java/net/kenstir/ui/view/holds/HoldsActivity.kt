@@ -41,7 +41,6 @@ import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class HoldsActivity : BaseActivity() {
-    private val TAG = "Holds"
 
     private var rv: RecyclerView? = null
     private var adapter: HoldsViewAdapter? = null
@@ -157,4 +156,7 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
+    companion object {
+        private const val TAG = "HoldsActivity"
+    }
 }

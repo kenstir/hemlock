@@ -28,7 +28,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 public class MARCXMLParser {
-    private static final String TAG = MARCXMLParser.class.getSimpleName();
+    private static final String TAG = "MARCXMLParser";
 
     MARCRecord currentRecord = new MARCRecord();
     MARCRecord.MARCDatafield currentDatafield = null;

@@ -68,7 +68,7 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject
     }
 
     companion object {
-        private val TAG = FineRecord::class.java.simpleName
+        private const val TAG = "FineRecord"
 
         fun makeArray(objects: List<OSRFObject>): List<ChargeRecord> {
             val ret = mutableListOf<ChargeRecord>()

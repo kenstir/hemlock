@@ -32,7 +32,7 @@ import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
 
-    private static final String TAG = SearchResultsFragment.class.getSimpleName();
+    private static final String TAG = "SearchResultsFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
 

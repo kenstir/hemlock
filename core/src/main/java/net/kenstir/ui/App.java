@@ -43,7 +43,7 @@ import java.io.File;
 
 // TODO: This functionality could be moved to our custom Application class
 public class App {
-    private static final String TAG = App.class.getSimpleName();
+    private static final String TAG = "App";
 
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_MESSAGES = 10002;

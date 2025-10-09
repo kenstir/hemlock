@@ -21,7 +21,7 @@ import net.kenstir.ui.AppState
 import net.kenstir.logging.Log
 
 object ThemeManager {
-    private val TAG = ThemeManager::class.java.simpleName
+    private const val TAG = "ThemeManager"
 
     fun applyNightMode(): Boolean {
         val nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES)

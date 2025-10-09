@@ -40,7 +40,6 @@ import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.search.SearchActivity
 
 class MainGridActivity : MainBaseActivity() {
-    private val TAG = javaClass.simpleName
     private val SPAN_COUNT = 2
 
     private var rv: RecyclerView? = null
@@ -223,5 +222,9 @@ class MainGridActivity : MainBaseActivity() {
         } else if (menuItemHandler != null) {
             menuItemHandler?.onItemSelected(this, id, "main_button")
         }
+    }
+
+    companion object {
+        private const val TAG = "MainGridActivity"
     }
 }

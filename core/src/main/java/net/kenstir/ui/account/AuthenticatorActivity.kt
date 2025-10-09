@@ -258,7 +258,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     companion object {
-        private val TAG: String = AuthenticatorActivity::class.java.simpleName
+        private const val TAG = "Authenticator"
 
         //TODO: add package prefix to these names as indicated at https://developer.android.com/reference/android/content/Intent#putExtra(java.lang.String,%20android.os.Parcelable)
         const val ARG_ACCOUNT_TYPE: String = "ACCOUNT_TYPE"

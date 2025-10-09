@@ -26,6 +26,7 @@ import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
 
 @Keep
+@Suppress("unused")
 class NobleAppBehavior : AppBehavior() {
     override fun isOnlineResource(record: MBRecord?): Boolean? {
         if (record == null) return null
@@ -57,6 +58,6 @@ class NobleAppBehavior : AppBehavior() {
     }
 
     companion object {
-        private val TAG = NobleAppBehavior::class.java.simpleName
+        private const val TAG = "NobleAppBehavior"
     }
 }

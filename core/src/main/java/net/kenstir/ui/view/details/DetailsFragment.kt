@@ -337,7 +337,7 @@ class DetailsFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = DetailsFragment::class.java.simpleName
+        private const val TAG = "Details"
 
         fun create(record: BibRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
             Log.d(TAG, "${record?.id}: create DetailsFragment")

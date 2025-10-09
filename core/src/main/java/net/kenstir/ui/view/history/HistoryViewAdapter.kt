@@ -113,6 +113,6 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
     }
 
     companion object {
-        private val TAG = HistoryViewAdapter::class.java.simpleName
+        private const val TAG = "HistoryViewAdapter"
     }
 }

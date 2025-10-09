@@ -26,7 +26,6 @@ import net.kenstir.ui.util.ThemeManager
 import java.io.File
 
 class Application : androidx.multidex.MultiDexApplication() {
-    private val TAG = javaClass.simpleName
 
     // Define a scope that lives as long as the application
     // Use SupervisorJob so if one child coroutine fails, others aren't cancelled
@@ -39,7 +38,7 @@ class Application : androidx.multidex.MultiDexApplication() {
 
         AppState.init(this)
         val changed = ThemeManager.applyNightMode()
-        Log.d(TAG, "applyNightMode returned $changed")
+        Log.d(TAG, "[init] applyNightMode returned $changed")
 
         App.init(this)
         deleteLegacyCacheDirectory()
@@ -56,5 +55,9 @@ class Application : androidx.multidex.MultiDexApplication() {
                 Log.d(TAG, "[init] Failed to delete volley cache directory", e)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "Application"
     }
 }

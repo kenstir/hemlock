@@ -237,7 +237,6 @@ class HoldDetailsActivity : BaseActivity() {
     }
 
     companion object {
-        private val TAG = HoldDetailsActivity::class.java.simpleName
         const val RESULT_CODE_DELETE_HOLD = 5
         const val RESULT_CODE_UPDATE_HOLD = 6
         const val RESULT_CODE_CANCEL = 7

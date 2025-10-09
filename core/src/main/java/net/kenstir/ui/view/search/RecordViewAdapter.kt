@@ -105,6 +105,6 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
     }
 
     companion object {
-        private val TAG = RecordViewAdapter::class.java.simpleName
+        private const val TAG = "RecordViewAdapter"
     }
 }

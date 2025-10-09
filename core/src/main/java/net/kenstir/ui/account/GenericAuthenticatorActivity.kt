@@ -213,7 +213,8 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
     }
 
     companion object {
-        private val TAG: String = GenericAuthenticatorActivity::class.java.simpleName
+        private const val TAG = "GenericAuthenticator"
+
         private const val PERMISSIONS_REQUEST_COARSE_LOCATION = 1
     }
 }

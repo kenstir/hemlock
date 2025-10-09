@@ -56,7 +56,6 @@ import net.kenstir.ui.util.compatEnableEdgeToEdge
 import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
-    private val TAG = javaClass.simpleName
 
     private var mProgressText: TextView? = null
     private var mProgressBar: View? = null
@@ -308,5 +307,9 @@ class LaunchActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Analytics.log(TAG, "onactivityresult: $requestCode $resultCode")
+    }
+
+    companion object {
+        private const val TAG = "LaunchActivity"
     }
 }

@@ -41,7 +41,6 @@ import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class HistoryActivity : BaseActivity() {
-    private val TAG = javaClass.simpleName
 
     private var historySummary: TextView? = null
     private var rv: RecyclerView? = null
@@ -205,5 +204,9 @@ class HistoryActivity : BaseActivity() {
                 RecordDetails.launchDetailsFlow(this@HistoryActivity, records, 0)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "HistoryActivity"
     }
 }

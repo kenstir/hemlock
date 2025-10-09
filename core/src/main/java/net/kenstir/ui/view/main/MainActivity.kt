@@ -46,7 +46,6 @@ import net.kenstir.ui.view.search.SearchActivity
 
 open class MainActivity : MainBaseActivity() {
 
-    private val TAG = javaClass.simpleName
     private var mUnreadMessageCount: Int? = null //unknown
     private var mUnreadMessageText: TextView? = null
     private var eventsButton: Button? = null
@@ -207,5 +206,9 @@ open class MainActivity : MainBaseActivity() {
         } else if (menuItemHandler != null) {
             menuItemHandler?.onItemSelected(this, id, "main_button")
         }
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }
