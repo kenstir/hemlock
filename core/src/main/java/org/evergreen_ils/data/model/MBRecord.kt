@@ -39,7 +39,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         get() = mvrObj?.getString("isbn") ?: ""
     override val pubdate: String
         get() = mvrObj?.getString("pubdate") ?: ""
-    override val description: String
+    override val physicalDescription: String
         get() = mvrObj?.getString("physical_description") ?: ""
     override val synopsis: String
         get() = mvrObj?.getString("synopsis") ?: ""

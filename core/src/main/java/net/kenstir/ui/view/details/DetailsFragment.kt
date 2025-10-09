@@ -67,6 +67,7 @@ class DetailsFragment : Fragment() {
     private var formatTextView: TextView? = null
     private var authorTextView: TextView? = null
     private var publisherTextView: TextView? = null
+    private var physicalDescriptionTextView: TextView? = null
     private var seriesTextView: TextView? = null
     private var subjectTextView: TextView? = null
     private var synopsisTextView: TextView? = null
@@ -110,6 +111,7 @@ class DetailsFragment : Fragment() {
         formatTextView = layout.findViewById(R.id.record_details_format)
         authorTextView = layout.findViewById(R.id.record_details_author)
         publisherTextView = layout.findViewById(R.id.record_details_publisher)
+        physicalDescriptionTextView = layout.findViewById(R.id.record_details_physical_description)
         seriesTextView = layout.findViewById(R.id.record_details_series_text)
         subjectTextView = layout.findViewById(R.id.record_details_subject_text)
         synopsisTextView = layout.findViewById(R.id.record_details_synopsis_text)
@@ -258,6 +260,7 @@ class DetailsFragment : Fragment() {
         authorTextView?.setText(ss, TextView.BufferType.SPANNABLE)
         authorTextView?.setOnClickListener { searchByAuthor() }
         publisherTextView?.text = record?.publishingInfo
+        physicalDescriptionTextView?.text = record?.physicalDescription
         synopsisTextView?.text = record?.synopsis
         seriesTextView?.text = record?.series
         seriesTableRow?.visibility = if (TextUtils.isEmpty(record?.series)) View.GONE else View.VISIBLE

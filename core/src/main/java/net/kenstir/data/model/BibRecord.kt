@@ -26,7 +26,7 @@ interface BibRecord: Serializable {
     val author: String
     val pubdate: String
     val publishingInfo: String
-    val description: String
+    val physicalDescription: String
     val synopsis: String
     val isbn: String
     val titleSortKey: String
