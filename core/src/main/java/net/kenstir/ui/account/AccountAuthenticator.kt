@@ -103,8 +103,8 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
                     if (libraryUrl != GatewayClient.baseUrl) {
-                        // TODO: seems like this happens when the app changes the library URL, e.g. acorn
-                        // In which case we should clear the password and prompt the user to sign in again
+                        // The app changed the server URL; don't send the old password to the new server.
+                        // This path clears the password and prompts the user to sign in again.
                         throw AuthenticationException("Server URL changed, please sign in again")
                     }
                     authToken = runBlocking {
