@@ -44,6 +44,7 @@ import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.data.model.Account
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.data.Result
+import net.kenstir.data.ShouldNotHappenException
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
@@ -72,7 +73,7 @@ class LaunchActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            rootLayout?.updatePadding(top = sysBars.top)
+            rootLayout?.updatePadding(top = sysBars.top, bottom = sysBars.bottom)
 
             insets
         }
