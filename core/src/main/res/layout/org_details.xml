@@ -85,6 +85,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day0note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -114,6 +115,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day1note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -142,6 +144,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day2note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -170,6 +173,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day3note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -198,6 +202,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day4note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -226,6 +231,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day5note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -254,6 +260,7 @@
 
                 <TextView
                     android:id="@+id/org_details_day6note"
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -276,7 +283,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <TableRow
+            <TableRow
                 android:id="@+id/org_details_closures_none_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -331,6 +338,7 @@
                     tools:text="12/24/2024 - 12/26/2024" />
 
                 <TextView
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -353,6 +361,7 @@
                     tools:text="3/29/2024 12:00 PM - 3/29/2024 8:00 PM" />
 
                 <TextView
+                    style="@style/HemlockText.PageQuaternary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
