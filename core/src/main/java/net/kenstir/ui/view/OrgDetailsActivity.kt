@@ -18,10 +18,8 @@
 package net.kenstir.ui.view
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
@@ -48,6 +46,7 @@ import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.system.EgOrg
+import kotlin.random.Random
 
 class OrgDetailsActivity : BaseActivity() {
 
@@ -187,6 +186,22 @@ class OrgDetailsActivity : BaseActivity() {
         map?.isEnabled = org?.hasAddress ?: false
     }
 
+    private fun testNote(note: String?): String? {
+        return note
+//        val junkNotes = listOf(
+//            "Closed for inventory",
+//            "Closed for staff training",
+//            "Open by appointment only",
+//            "Closed due to weather conditions",
+//            "Renovations in progress, limited services available"
+//        )
+//        return if (Random.nextInt(100) < 50) {
+//            junkNotes.random()
+//        } else {
+//            note
+//        }
+    }
+
     private fun loadHours(hours: OrgHours) {
         day0Hours?.text = hours.day0Hours
         day1Hours?.text = hours.day1Hours
@@ -195,13 +210,14 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours?.text = hours.day4Hours
         day5Hours?.text = hours.day5Hours
         day6Hours?.text = hours.day6Hours
-        day0Note?.text = hours.day0Note
-        day1Note?.text = hours.day1Note
-        day2Note?.text = hours.day2Note
-        day3Note?.text = hours.day3Note
-        day4Note?.text = hours.day4Note
-        day5Note?.text = hours.day5Note
-        day6Note?.text = hours.day6Note
+
+        day0Note?.text = testNote(hours.day0Note)
+        day1Note?.text = testNote(hours.day1Note)
+        day2Note?.text = testNote(hours.day2Note)
+        day3Note?.text = testNote(hours.day3Note)
+        day4Note?.text = testNote(hours.day4Note)
+        day5Note?.text = testNote(hours.day5Note)
+        day6Note?.text = testNote(hours.day6Note)
     }
 
     private fun loadClosures(closures: List<OrgClosure>) {
