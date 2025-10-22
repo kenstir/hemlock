@@ -6,7 +6,7 @@
         android:id="@+id/org_details_closure_item_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="28"
+        android:layout_weight="1"
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
         tools:text="02/16/2024 - 02/20/2024" />
@@ -16,7 +16,7 @@
         style="@style/HemlockText.PageQuaternary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="72"
+        android:layout_weight="1"
         android:paddingStart="8dp"
         android:paddingEnd="0dp"
         tools:text="President's Day and PINES 3.12 Upgrade" />

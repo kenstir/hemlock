@@ -220,22 +220,12 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun addClosureRows(closures: List<OrgClosure>) {
-        // First, walk through the closures to see if any have date ranges.
-        // If they do, we need to alter the layout params to make the columns look right.
-        val anyClosuresWithDateRange = closures.any {
-            it.toInfo().isDateRange
-        }
-        val dateColumnWidth = if (anyClosuresWithDateRange) 53F else 28F
-        val reasonColumnWidth = if (anyClosuresWithDateRange) 47F else 72F
-
-        // Now, add closure rows and maybe tweak the layout
         for (closure in closures) {
             val info = closure.toInfo()
 
-            // create a row, inflate its contents, and add it to the table
-            val row = TableRow(baseContext)
-            layoutInflater.inflate(R.layout.org_details_closure_item, row)
-            closuresTable.addView(row)
+            // inflate the layout into a new TableRow
+            val row = TableRow(this)
+            layoutInflater.inflate(R.layout.org_details_closure_item, row, true)
 
             // fill out the details
             val dateTextView = row.findViewById<TextView>(R.id.org_details_closure_item_date)
@@ -243,23 +233,7 @@ class OrgDetailsActivity : BaseActivity() {
             val reasonTextView = row.findViewById<TextView>(R.id.org_details_closure_item_reason)
             reasonTextView.text = info.reason
 
-            // tweak layout to give more space to the date column
-            if (anyClosuresWithDateRange) {
-                val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0F, resources.displayMetrics).toInt()
-                val height = ViewGroup.LayoutParams.MATCH_PARENT
-                dateTextView.layoutParams = TableRow.LayoutParams(width, height, dateColumnWidth)
-                reasonTextView.layoutParams = TableRow.LayoutParams(width, height, reasonColumnWidth)
-            }
-        }
-
-        // tweak header layout also
-        if (anyClosuresWithDateRange) {
-            val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0F, resources.displayMetrics).toInt()
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            val dateHeaderView = findViewById<TextView>(R.id.org_details_closures_header_date)
-            val reasonHeaderView = findViewById<TextView>(R.id.org_details_closures_header_reason)
-            dateHeaderView.layoutParams = TableRow.LayoutParams(width, height, dateColumnWidth)
-            reasonHeaderView.layoutParams = TableRow.LayoutParams(width, height, reasonColumnWidth)
+            closuresTable.addView(row)
         }
     }
 
