@@ -109,8 +109,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
 
                 // load bookbags
-                val result = App.getServiceConfig().userService.loadPatronLists(
-                    App.getAccount())
+                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
