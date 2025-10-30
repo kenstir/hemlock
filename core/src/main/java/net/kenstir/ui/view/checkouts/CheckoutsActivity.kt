@@ -176,16 +176,32 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
+        // Special toast for clicking pre-cat item
+        val selectedRecord = circRecords[position].record
+        if (selectedRecord?.isPreCat == true) {
+            Toast.makeText(this@CheckoutsActivity,
+                getString(R.string.item_is_not_cataloged),
+                Toast.LENGTH_LONG).show()
+            return
+        }
+
+        // Collect all non-pre-cat records for details view
         val records = ArrayList<BibRecord>()
         for (circRecord in circRecords) {
             circRecord.record?.let { record ->
-                if (record.id != -1) {
+                if (!record.isPreCat) {
                     records.add(record)
                 }
             }
         }
+
+        // Launch details view with only one item if any pre-cat items exist, or else the position could be off
         if (records.isNotEmpty()) {
-            RecordDetails.launchDetailsFlow(this@CheckoutsActivity, records, position)
+            if (records.size == circRecords.size) {
+                RecordDetails.launchDetailsFlow(this@CheckoutsActivity, records, position)
+            } else {
+                RecordDetails.launchDetailsFlow(this@CheckoutsActivity, arrayListOf(selectedRecord), 0)
+            }
         }
     }
 

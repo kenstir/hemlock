@@ -297,4 +297,5 @@
     <string name="title_ebooks_and_digital"><![CDATA[Ebooks & Digital]]></string>
     <string name="title_meeting_rooms">Meeting Rooms</string>
     <string name="title_museum_passes">Museum Passes</string>
+    <string name="item_is_not_cataloged">Item is not cataloged</string>
 </resources>
