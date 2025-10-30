@@ -37,6 +37,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -302,11 +303,11 @@ class PlaceHoldActivity : BaseActivity() {
             builder.create().show()
             return false
         }
-        if (notifyByPhone?.isChecked == true && TextUtils.isEmpty(phoneNumberText?.text.toString())) {
+        if (notifyByPhone?.isChecked == true && notifyByPhone?.isVisible == true && TextUtils.isEmpty(phoneNumberText?.text.toString())) {
             phoneNumberText?.error = getString(R.string.error_phone_notify_empty)
             return false
         }
-        if (notifyBySMS?.isChecked == true && TextUtils.isEmpty(smsNumberText?.text.toString())) {
+        if (notifyBySMS?.isChecked == true && notifyBySMS?.isVisible == true && TextUtils.isEmpty(smsNumberText?.text.toString())) {
             smsNumberText?.error = getString(R.string.error_sms_notify_empty)
             return false
         }
@@ -326,7 +327,7 @@ class PlaceHoldActivity : BaseActivity() {
                 partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
                 else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
-            Log.d(TAG, "[hold] placeHold: $holdType $itemId")
+            Log.d(TAG, "[holds] placeHold: $holdType $itemId")
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val options = HoldOptions(
                 holdType = holdType,
@@ -342,7 +343,7 @@ class PlaceHoldActivity : BaseActivity() {
             )
             val result = App.getServiceConfig().circService.placeHold(
                 App.getAccount(), itemId, options)
-            Log.d(TAG, "[hold] placeHold: $result")
+            Log.d(TAG, "[holds] placeHold: $result")
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
@@ -373,11 +374,11 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
         // Allow phone_notify to be set even if UX is not visible
-        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_PHONE, account?.notifyByPhone ?: false)
-        notifyByPhone?.isChecked = notify
         val savedNumber = AppState.getString(AppState.HOLD_PHONE_NUMBER, null)
         val notifyNumber = savedNumber ?: account?.phoneNumber
         phoneNumberText?.setText(notifyNumber)
+        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_PHONE, account?.notifyByPhone ?: false)
+        notifyByPhone?.isChecked = notify && !notifyNumber.isNullOrEmpty()
 
         if (isPhoneNotifyVisible) {
             notifyByPhone?.setOnCheckedChangeListener { _, isChecked ->
@@ -400,11 +401,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSControls() {
-        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
-        notifyBySMS?.isChecked = notify
         val savedNumber = AppState.getString(AppState.HOLD_SMS_NUMBER, null)
         val notifyNumber = savedNumber ?: account?.smsNumber
         smsNumberText?.setText(notifyNumber)
+        val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
+        notifyBySMS?.isChecked = notify && !notifyNumber.isNullOrEmpty()
 
         val enabled = EgOrg.smsEnabled
         if (enabled) {

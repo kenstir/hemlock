@@ -33,6 +33,7 @@ import net.kenstir.data.model.HoldRecord
 import net.kenstir.data.service.CircService
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.data.service.HoldUpdateOptions
+import net.kenstir.logging.Log
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.GatewayError
 import org.evergreen_ils.data.model.EvergreenCircRecord
@@ -44,6 +45,8 @@ import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
 
 object EvergreenCircService: CircService {
+    private const val TAG = "CircService"
+
     override suspend fun fetchCheckouts(account: Account): Result<List<CircRecord>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
@@ -166,6 +169,7 @@ object EvergreenCircService: CircService {
         val target = hold.target ?: throw GatewayError("null hold target")
         val jobs = mutableListOf<Deferred<Any>>()
         jobs.add(async {
+            Log.d(TAG, "[holds] ${hold.holdType} hold id=${hold.id} target=$target")
             when (hold.holdType) {
                 Api.HoldType.TITLE ->
                     loadTitleHoldTargetDetails(account, hold, target)
@@ -192,8 +196,7 @@ object EvergreenCircService: CircService {
     }
 
     private suspend fun loadHoldQueueStats(account: Account, hold: EvergreenHoldRecord) {
-        val id = hold.id
-        val (authToken, userID) = account.getCredentialsOrThrow()
+        val (authToken, _) = account.getCredentialsOrThrow()
         val params = paramListOf(authToken, hold.id)
         val response = GatewayClient.fetch(Api.CIRC, Api.HOLD_QUEUE_STATS, params, false)
         hold.qstatsObj = response.payloadFirstAsObject()
