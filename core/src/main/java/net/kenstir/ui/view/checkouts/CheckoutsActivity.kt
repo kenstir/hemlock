@@ -135,7 +135,7 @@ class CheckoutsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
                 val account = App.getAccount()
@@ -158,9 +158,9 @@ class CheckoutsActivity : BaseActivity() {
 
                 jobs.joinAll()
                 updateCheckoutsList(checkouts)
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
@@ -185,7 +185,7 @@ class CheckoutsActivity : BaseActivity() {
             return
         }
 
-        // Collect all non-pre-cat records for details view
+        // Filter pre-cat items from details view
         val records = ArrayList<BibRecord>()
         for (circRecord in circRecords) {
             circRecord.record?.let { record ->

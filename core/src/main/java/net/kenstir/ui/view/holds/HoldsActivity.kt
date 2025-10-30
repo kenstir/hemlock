@@ -97,13 +97,13 @@ class HoldsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
-                val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Deferred<Any>>()
+                Log.d(TAG, "[fetch] fetchData ...")
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
+                val start = System.currentTimeMillis()
+                val account = App.getAccount()
 
                 // fetchHolds
-                val result = App.getServiceConfig().circService.fetchHolds(App.getAccount())
+                val result = App.getServiceConfig().circService.fetchHolds(account)
                 if (result is Result.Error) {
                     showAlert(result.exception)
                     return@async
@@ -112,18 +112,18 @@ class HoldsActivity : BaseActivity() {
                 holdsSummary?.text = String.format(getString(R.string.n_items_on_hold), holds.size)
 
                 // fetch hold target details and queue stats
+                val jobs = mutableListOf<Deferred<Any>>()
                 for (hold in holds) {
                     jobs.add(scope.async {
-                        App.getServiceConfig().circService.loadHoldDetails(
-                            App.getAccount(), hold)
+                        App.getServiceConfig().circService.loadHoldDetails(account, hold)
                     })
                 }
 
                 jobs.map { it.await() }
                 updateHoldsList(holds)
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()

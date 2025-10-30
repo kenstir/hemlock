@@ -104,7 +104,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
                 progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
 
@@ -126,9 +126,9 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 jobs.map { it.await() }
 
                 updateList(patronLists)
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
