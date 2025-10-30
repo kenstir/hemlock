@@ -40,7 +40,7 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
     var acp: OSRFObject? = null
     override var record: BibRecord? = null
 
-    // dummy_title is used for ILLs; in these cases
+    // dummy_title is used for pre-cataloged items; in these cases
     // recordInfo.id == mvr.doc_id == -1
     override val title: String?
         get() {
@@ -51,7 +51,7 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
             return "Unknown Title"
         }
 
-    // dummy_author is used for ILLs; in these cases
+    // dummy_author is used for pre-cataloged items; in these cases
     // recordInfo.id == mvr.doc_id == -1
     override val author: String?
         get() {

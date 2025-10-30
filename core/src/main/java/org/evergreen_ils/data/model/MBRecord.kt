@@ -96,6 +96,8 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         get() = attrs?.get("icon_format")
     override val iconFormatLabel: String
         get() = EgCodedValueMap.iconFormatLabel(iconFormat) ?: ""
+    override val isPreCat: Boolean
+        get() = (id == -1)
 
     override fun hasAttributes() = (attrs != null)
     override fun hasMarc() = (marcRecord != null)

@@ -107,7 +107,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
     override val title: String
         get() = if (record != null && !TextUtils.isEmpty(record!!.title)) withPartLabel(
             record!!.title
-        ) else "Unknown title"
+        ) else "Unknown Title"
     override val author: String
         get() = if (record != null && !TextUtils.isEmpty(record!!.author)) record!!.author else ""
     override val expireTime: Date?

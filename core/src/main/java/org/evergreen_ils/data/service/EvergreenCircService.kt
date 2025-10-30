@@ -56,7 +56,7 @@ object EvergreenCircService: CircService {
     }
 
     override suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit> {
-        circRecord as? EvergreenCircRecord ?: return Result.Error(IllegalArgumentException("Expected EvergreenCircRecord, got ${circRecord::class.java.name}"))
+        if (circRecord !is EvergreenCircRecord) return Result.Error(IllegalArgumentException("Expected EvergreenCircRecord, got ${circRecord::class.java.name}"))
 
         return try {
             val circObj = fetchCircRecord(account,  circRecord.circId)
@@ -67,8 +67,13 @@ object EvergreenCircService: CircService {
             val record = MBRecord(modsObj)
             circRecord.record = record
 
-            val mraObj = EvergreenBiblioService.fetchMRA(record.id)
-            record.updateFromMRAResponse(mraObj)
+            if (record.isPreCat) {
+                val acpObj = fetchAssetCopy(targetCopy)
+                circRecord.acp = acpObj
+            } else {
+                val mraObj = EvergreenBiblioService.fetchMRA(record.id)
+                record.updateFromMRAResponse(mraObj)
+            }
 
             return Result.Success(Unit)
         } catch (e: Exception) {
@@ -77,7 +82,7 @@ object EvergreenCircService: CircService {
     }
 
     private suspend fun fetchCircRecord(account: Account, circId: Int): OSRFObject {
-        val (authToken, userID) = account.getCredentialsOrThrow()
+        val (authToken, _) = account.getCredentialsOrThrow()
         val params = paramListOf(authToken, circId)
         val response = GatewayClient.fetch(Api.CIRC, Api.CIRC_RETRIEVE, params, false)
         return response.payloadFirstAsObject()
