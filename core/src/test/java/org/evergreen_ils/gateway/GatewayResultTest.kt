@@ -193,8 +193,22 @@ class GatewayResultTest {
         assertEquals(errorMessage, objResult.exceptionOrNull()?.message)
     }
 
-    // This does happens IRL.  AFAIK it means either an empty checkout history,
-    // or the gateway is overloaded.
+    // Someday the gateway will return a timeout error instead of an empty response.
+    // Be ready for that day.
+    // See also https://bugs.launchpad.net/opensrf/+bug/2130496
+    @Test
+    fun test_failureOnTimeoutResponse() {
+        val json = """
+            {"payload":[],"debug": "Timeout Error : Request Timeout","status":408}
+            """.trimIndent()
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("Request failed with status 408: Timeout Error : Request Timeout", result.errorMessage)
+    }
+
+    // An empty payload with status 200 does happens.  It can mean an empty checkout history,
+    // or the gateway timed out receiving a response and LP#2130496 is not yet fixed.
+    // See also https://bugs.launchpad.net/opensrf/+bug/2130496
     @Test
     fun test_emptyPayload() {
         val json = """

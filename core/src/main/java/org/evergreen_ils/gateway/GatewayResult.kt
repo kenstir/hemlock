@@ -126,8 +126,10 @@ class GatewayResult {
         fun create(json: String): GatewayResult {
             return try {
                 val response = Json.decodeFromString<XGatewayResponseContent>(json)
-                if (response.status != 200)
-                    throw GatewayError("Request failed with status ${response.status}")
+                if (response.status != 200) {
+                    val detail = if (response.debug.isNullOrEmpty()) "" else ": ${response.debug}"
+                    throw GatewayError("Request failed with status ${response.status}${detail}")
+                }
                 createFromPayload(response.payload)
             } catch (ex: SerializationException) {
                 GatewayResult(GatewayError("Internal Server Error: response is not JSON"))
