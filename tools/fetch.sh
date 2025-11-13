@@ -11,14 +11,14 @@ shift $((OPTIND-1))
 case $# in
 1)
     app="$1"
-    what=sk
+    what=vers
     ;;
 2)
     app="$1"
     what="$2"
     ;;
 *)
-    echo "usage: $0 app_name [sk|require_part]"
+    echo "usage: $0 app_name [what]"
     exit 1
     ;;
 esac
@@ -49,23 +49,27 @@ test -n "$url" || {
 # construct url
 url="${url}/osrf-gateway-v1"
 case "$what" in
-require_part)
-    url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22circ.holds.ui_require_monographic_part_when_present%22%5D&param=%22ANONYMOUS%22"
+idl)
+    exec "$topdir/tools/fetch_idl.sh" "$url"
     ;;
-sk)
+*cache*|sk)
     url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22hemlock.cache_key%22%5D&param=%22ANONYMOUS%22"
+    ;;
+*vers*)
+    url="${url}?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
     ;;
 org*)
     url="${url}?service=open-ils.actor&method=open-ils.actor.org_unit.retrieve&param=\"ANONYMOUS\"&param=1"
     ;;
-*version)
-    url="${url}?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
+require_part)
+    url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22circ.holds.ui_require_monographic_part_when_present%22%5D&param=%22ANONYMOUS%22"
     ;;
 use_authoritative)
     url="${url}?service=open-ils.actor&method=opensrf.open-ils.system.use_authoritative"
     ;;
 *)
     echo >&2 "don't know about \"$what\""
+    echo >&2 "use: [ idl cache version org require_part use_authoritative ]"
     exit 1
     ;;
 esac
