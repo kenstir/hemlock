@@ -44,7 +44,6 @@ import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.data.model.Account
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.data.Result
-import net.kenstir.data.ShouldNotHappenException
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
@@ -54,6 +53,7 @@ import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.util.injectRandomFailure
 import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
@@ -126,11 +126,6 @@ class LaunchActivity : AppCompatActivity() {
         })
     }
 
-    override fun onDestroy() {
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
-        super.onDestroy()
-    }
-
     override fun onAttachedToWindow() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onAttachedToWindow()
@@ -152,7 +147,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun onLaunchSuccess() {
-        Log.d(TAG, (object{}.javaClass.enclosingMethod?.name ?: "") + " isFinishing:$isFinishing")
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         // FCM: handle background push notification
         intent.extras?.let {
@@ -175,11 +170,12 @@ class LaunchActivity : AppCompatActivity() {
         // happens, it is safe to update the UI.
         GlobalScope.launch(Dispatchers.Main) {
             try {
+                //injectRandomFailure("launchLoginFlow", 25)
                 getAccount()
                 mModel.loadServiceData(this@LaunchActivity)
             } catch (ex: Exception) {
-                Log.d(TAG, "[auth] caught", ex)
                 mProgressText?.text = ex.getCustomMessage()
+                Analytics.logFailedLaunch(ex, "launchLoginFlow")
                 onLaunchFailure()
             }
         }
@@ -200,7 +196,7 @@ class LaunchActivity : AppCompatActivity() {
         try {
             startActivity(i)
         }
-        catch (ex: ActivityNotFoundException) {
+        catch (_: ActivityNotFoundException) {
             Toast.makeText(this, "There is no email app installed", Toast.LENGTH_LONG).show()
         }
     }
@@ -208,15 +204,13 @@ class LaunchActivity : AppCompatActivity() {
     private fun loadAccountData() {
         lifecycleScope.launch {
             try {
-                if (getSession(App.getAccount())) {
-                    onLaunchSuccess()
-                } else {
-                    onLaunchFailure()
-                }
+                //injectRandomFailure("loadAccountData", 85)
+                getSession(App.getAccount())
+                onLaunchSuccess()
             } catch (ex: Exception) {
-                Analytics.logFailedLogin(ex)
                 val msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
+                Analytics.logFailedLaunch(ex, "loadAccountData")
                 onLaunchFailure()
             }
         }
@@ -248,7 +242,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
-    private suspend fun getSession(account: Account): Boolean {
+    private suspend fun getSession(account: Account) {
         mProgressText?.text = "Starting session"
 
         // authToken zen: try it once and if it fails, invalidate it and try again
@@ -289,15 +283,13 @@ class LaunchActivity : AppCompatActivity() {
         val numAccounts = AccountUtils.getAccountsByType(this).size
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
-            Analytics.logSuccessfulLogin(account.username, account.barcode,
+            Analytics.logSuccessfulLaunch(account.username, account.barcode,
                 null, EgOrg.getOrgShortNameSafe(EgOrg.consortiumID), numAccounts)
         } else {
-            Analytics.logSuccessfulLogin(account.username, account.barcode,
+            Analytics.logSuccessfulLaunch(account.username, account.barcode,
                 EgOrg.getOrgShortNameSafe(account.homeOrg),
                 EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent), numAccounts)
         }
-
-        return true
     }
 
     private suspend fun fetchSession(account: Account): Result<Unit> {

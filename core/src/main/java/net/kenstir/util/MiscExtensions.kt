@@ -18,6 +18,8 @@
 
 package net.kenstir.util
 
+import kotlin.random.Random
+
 /** custom message for particular exceptional conditions
  * Not all exception messages are suitable as is for the general public
  */
@@ -46,3 +48,12 @@ fun <T> Array<T>.indexOfOrZero(element: T?): Int =
  */
 fun <T> List<T>.indexOfFirstOrZero(predicate: (T) -> Boolean): Int =
     indexOfFirst(predicate).takeIf { it >= 0 } ?: 0
+
+/** Injects a random failure for testing purposes
+ */
+fun injectRandomFailure(where: String, percentChance: Int) {
+    val random = Random.nextInt(100)
+    if (random < percentChance) {
+        throw Exception("Random failure in $where")
+    }
+}

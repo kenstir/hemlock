@@ -73,6 +73,7 @@ object Analytics {
         const val SEARCH_FORMAT = "search_format"
         const val SEARCH_ORG_KEY = "search_org" // { home | other }
         //const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM omitted for privacy
+        const val WHERE = "where"
 
         // these need to be registered in FA as Custom Metrics
         const val NUM_ACCOUNTS = "num_accounts"
@@ -101,7 +102,7 @@ object Analytics {
     private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
     private const val LOG_BUFFER_SIZE = 64
-    const val MAX_DATA_SHOWN = 512 // max length of data shown in logResponseX
+    const val MAX_DATA_SHOWN = 256 // max length of data shown in logResponseX
     private val mEntries = ArrayDeque<String>(LOG_BUFFER_SIZE)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     val mRedactedResponseRegex = Regex("""
@@ -165,6 +166,13 @@ object Analytics {
         Log.d(tag, "caught", e)
         addToLogBuffer("err:  ${e.stackTraceToString()}")
         if (analytics) FirebaseCrashlytics.getInstance().recordException(e)
+    }
+
+    /// log exception only to the in-memory buffer, not to Crashlytics
+    /// that way, it shows up in the "Send Report to Developer" email
+    fun logExceptionToBuffer(e: Throwable) {
+        Log.d(TAG, "ex: $e")
+        addToLogBuffer("ERROR $e")
     }
 
     @JvmStatic
@@ -287,10 +295,11 @@ object Analytics {
         )
     }
 
-    // We call this event "login", but it happens after auth and after fleshing the user.
-    // NB: "session_start" seems more appropriate but that is a predefined automatic event.
-    @JvmStatic
-    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String, numAccounts: Int) {
+    // Record a successful app launch
+    // NB: We call this event "login", but it encompasses all the startup activities including
+    // loading prerequisites, authentication, and starting a session.   "session_start" might
+    // be appropriate but that is a predefined automatic event.
+    fun logSuccessfulLaunch(username: String, barcode: String?, homeOrg: String?, parentOrg: String, numAccounts: Int) {
         setUserProperties(bundleOf(
             UserProperty.HOME_ORG to homeOrg,
             UserProperty.PARENT_ORG to parentOrg
@@ -304,13 +313,15 @@ object Analytics {
         ))
     }
 
-    @JvmStatic
-    fun logFailedLogin(ex: Exception) {
+    // Record a failed app launch
+    fun logFailedLaunch(ex: Exception, where: String) {
         val c = ex.javaClass.simpleName
         val m = ex.cause?.localizedMessage ?: ex.localizedMessage ?: c
+        logExceptionToBuffer(ex)
         logEvent(
             Event.LOGIN, bundleOf(
-            Param.RESULT to m
+                Param.RESULT to m,
+                Param.WHERE to where,
         ))
     }
 

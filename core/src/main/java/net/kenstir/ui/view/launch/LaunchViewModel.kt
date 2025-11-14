@@ -28,8 +28,10 @@ import net.kenstir.ui.App
 import net.kenstir.logging.Log
 import net.kenstir.data.service.LoadStartupOptions
 import net.kenstir.data.Result
+import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgMessageMap
 import net.kenstir.util.getCustomMessage
+import net.kenstir.util.injectRandomFailure
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "LaunchViewModel"
@@ -50,9 +52,9 @@ class LaunchViewModel : ViewModel() {
     val serviceDataReady: LiveData<Boolean>
         get() = _serviceDataReady
 
-    private fun onLoadError(ex: Exception) {
+    private fun onLoadError(ex: Exception, where: String) {
         errors.incrementAndGet()
-        Log.d(TAG, "ex:$ex")
+        Analytics.logFailedLaunch(ex, where)
         try {
             _status.value = ex.getCustomMessage()
         } catch (ex: java.lang.Exception) {
@@ -72,11 +74,13 @@ class LaunchViewModel : ViewModel() {
                 _status.value = "Connecting to server"
                 errors.set(0)
 
+                //injectRandomFailure("loadServiceData", 25)
+
                 // load the IDL etc.
                 val options = LoadStartupOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
                 when (val result = App.getServiceConfig().loaderService.loadStartupPrerequisites(options)) {
                     is Result.Success -> {}
-                    is Result.Error -> { onLoadError(result.exception) ; return@async }
+                    is Result.Error -> { onLoadError(result.exception, "loadServiceData") ; return@async }
                 }
 
                 // load custom messages from resources
@@ -89,7 +93,7 @@ class LaunchViewModel : ViewModel() {
             try {
                 outerJob.await()
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] caught in loadServiceData", ex)
+                Analytics.logFailedLaunch(ex, "loadServiceData.catch")
                 _status.value = ex.message
                 _serviceDataReady.value = false
             } finally {

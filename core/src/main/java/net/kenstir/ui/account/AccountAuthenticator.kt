@@ -30,6 +30,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.util.Analytics.log
 import net.kenstir.util.Analytics.redactedString
 import net.kenstir.ui.App
+import net.kenstir.util.Analytics
 import org.evergreen_ils.gateway.GatewayClient
 
 class AccountAuthenticator(private val context: Context): AbstractAccountAuthenticator(context) {
@@ -111,13 +112,13 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                         App.getServiceConfig().authService.getAuthToken(account.name, password).get()
                     }
                 } catch (e: AuthenticationException) {
-                    //Analytics.logException(e);
+                    Analytics.logExceptionToBuffer(e);
                     am.clearPassword(account)
                     val result = Bundle()
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, e.message)
                     return result
                 } catch (e2: Exception) {
-                    //Analytics.logException(e2);
+                    Analytics.logExceptionToBuffer(e2);
                     am.clearPassword(account)
                     val result = Bundle()
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, "Sign in failed")
