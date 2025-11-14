@@ -20,35 +20,52 @@ package net.kenstir.apps.pines
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
+import androidx.core.os.bundleOf
 import net.kenstir.ui.App.REQUEST_MESSAGES
 import net.kenstir.ui.util.ActivityUtils
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.messages.MessagesActivity
+import net.kenstir.util.Analytics
 
 @Keep
+@Suppress("unused")
 class PinesMenuProvider : MenuProvider() {
     override fun onCreate(activity: Activity) {
         return
     }
 
     override fun onItemSelected(activity: Activity, id: Int, via: String): Boolean {
-        if (id == R.id.open_full_catalog_button) {
-            //Analytics.logEvent("fullcatalog_click", "via", via);
-            val url = activity.getString(R.string.ou_library_url)
-            ActivityUtils.launchURL(activity, url)
-        } else if (id == R.id.library_locator_button) {
-            //Analytics.logEvent("librarylocator_click", "via", via);
-            val url = "https://pines.georgialibraries.org/pinesLocator/locator.html"
-            ActivityUtils.launchURL(activity, url)
-        } else if (id == R.id.galileo_button) {
-            //Analytics.logEvent("galileo_click", "via", via);
-            val url = "https://www.galileo.usg.edu"
-            ActivityUtils.launchURL(activity, url)
-        } else if (id == R.id.patron_message_center) {
-            //Analytics.logEvent("messages_click", "via", "options_menu");
-            activity.startActivityForResult(Intent(activity, MessagesActivity::class.java), REQUEST_MESSAGES)
-        } else {
-            return false
+        when (id) {
+            R.id.open_full_catalog_button -> {
+                Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
+                    Analytics.Param.ACTION_NAME to "full_catalog",
+                ))
+                val url = activity.getString(R.string.ou_library_url)
+                ActivityUtils.launchURL(activity, url)
+            }
+            R.id.library_locator_button -> {
+                Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
+                    Analytics.Param.ACTION_NAME to "library_locator",
+                ))
+                val url = "https://pines.georgialibraries.org/pinesLocator/locator.html"
+                ActivityUtils.launchURL(activity, url)
+            }
+            R.id.galileo_button -> {
+                Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
+                    Analytics.Param.ACTION_NAME to "galileo",
+                ))
+                val url = "https://www.galileo.usg.edu"
+                ActivityUtils.launchURL(activity, url)
+            }
+            R.id.patron_message_center -> {
+                Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
+                    Analytics.Param.ACTION_NAME to "messages",
+                ))
+                activity.startActivityForResult(Intent(activity, MessagesActivity::class.java), REQUEST_MESSAGES)
+            }
+            else -> {
+                return false
+            }
         }
         return true
     }

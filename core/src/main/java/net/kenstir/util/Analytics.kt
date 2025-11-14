@@ -45,13 +45,13 @@ object Analytics {
         const val BOOKBAGS_CREATE_LIST = "bookbags_create_list"
         const val BOOKBAGS_DELETE_LIST = "bookbags_delete_list"
         const val BOOKBAGS_LOAD = "bookbags_load"
-        const val FEEDBACK_OPEN = "feedback_open"
         const val HOLD_CANCEL_HOLD = "hold_cancel"
         const val HOLD_PLACE_HOLD = "hold_place"
         const val HOLD_UPDATE_HOLD = "hold_update"
         //const val LOGIN = FirebaseAnalytics.Event.LOGIN // avoid builtin name so my custom dimension works
         const val LOGIN = "login_v2"
         const val MESSAGES_OPEN = "messages_open"
+        const val OTHER_ACTION = "other_action"
         const val SCAN = "barcode_scan"
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
         const val SEARCH_ADV_SEARCH = "search_advanced_search"
@@ -61,6 +61,7 @@ object Analytics {
 
     object Param {
         // these need to be registered in FA as Custom Dimensions w/ scope=Event
+        const val ACTION_NAME = "action_name"
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }

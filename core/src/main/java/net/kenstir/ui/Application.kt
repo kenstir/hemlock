@@ -32,8 +32,7 @@ class Application : androidx.multidex.MultiDexApplication() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
-        Log.d(TAG, "[init] Application.onCreate")
-        Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
+        Log.d(TAG, "[init] Application.onCreate kotlin ${KotlinVersion.CURRENT}")
         super.onCreate()
 
         AppState.init(this)

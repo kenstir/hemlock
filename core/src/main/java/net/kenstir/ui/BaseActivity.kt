@@ -33,6 +33,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -207,7 +208,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 return true
             }
             R.id.action_feedback -> {
-                Analytics.logEvent(Analytics.Event.FEEDBACK_OPEN)
+                Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
+                    Analytics.Param.ACTION_NAME to "feedback",
+                ))
                 launchURL(feedbackUrl)
                 return true
             }
