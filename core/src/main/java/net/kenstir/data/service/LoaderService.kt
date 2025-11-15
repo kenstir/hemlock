@@ -47,4 +47,12 @@ interface LoaderService {
      * In Evergreen, this includes the settings of every org and the list of SMS Carriers.
      */
     suspend fun loadPlaceHoldPrerequisites(): Result<Unit>
+
+    /**
+     * Get the client's public IP address.
+     *
+     * Many consortia are now using IP-based access control, so include this in error reports
+     * to help identify issues.
+     */
+    suspend fun fetchPublicIpAddress(): Result<String>
 }

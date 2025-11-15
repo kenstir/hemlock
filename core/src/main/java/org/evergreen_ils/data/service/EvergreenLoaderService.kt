@@ -46,14 +46,6 @@ object EvergreenLoaderService: LoaderService {
         }
     }
 
-    override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {
-        return try {
-            return Result.Success(loadPlaceHoldDataImpl())
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         GatewayClient.clientCacheKey = serviceOptions.clientCacheKey
@@ -78,6 +70,14 @@ object EvergreenLoaderService: LoaderService {
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
         Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+    }
+
+    override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {
+        return try {
+            return Result.Success(loadPlaceHoldDataImpl())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     private suspend fun loadPlaceHoldDataImpl(): Unit = coroutineScope {
@@ -150,5 +150,15 @@ object EvergreenLoaderService: LoaderService {
         val carriers = response.payloadFirstAsObjectList()
         EgSms.loadCarriers(carriers)
         Log.v(TAG, "loadSmsCarriers ... done")
+    }
+
+    override suspend fun fetchPublicIpAddress(): Result<String> {
+        return try {
+            val url = "https://api.ipify.org"
+            val ip = GatewayClient.get(url).bodyAsText()
+            Result.Success(ip)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

@@ -168,11 +168,20 @@ object Analytics {
         if (analytics) FirebaseCrashlytics.getInstance().recordException(e)
     }
 
-    /// log exception only to the in-memory buffer, not to Crashlytics
-    /// that way, it shows up in the "Send Report to Developer" email
+    /** log a message to the in-memory buffer, not to Crashlytics
+     *
+     * that way, it shows up in the "Send Report to Developer" email
+     */
+    fun logMessageToBuffer(msg: String) {
+        addToLogBuffer(msg)
+    }
+
+    /** log an exception to the in-memory buffer, not to Crashlytics
+     *
+     * that way, it shows up in the "Send Report to Developer" email
+     */
     fun logExceptionToBuffer(e: Throwable) {
-        Log.d(TAG, "ex: $e")
-        addToLogBuffer("ERROR $e")
+        logMessageToBuffer("ERROR $e")
     }
 
     @JvmStatic

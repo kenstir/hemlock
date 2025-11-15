@@ -36,6 +36,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import net.kenstir.hemlock.R
 import net.kenstir.util.Analytics
@@ -53,6 +54,7 @@ import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.showAlert
 import net.kenstir.util.injectRandomFailure
 import java.util.concurrent.TimeoutException
 
@@ -182,22 +184,33 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun sendErrorReport() {
-        val i = Intent(Intent.ACTION_SENDTO)
-        i.data = Uri.parse("mailto:") // only email apps should handle this
-        i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
-        val appInfo = App.getAppInfo(this)
-        i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
-        //TODO: append as attachment
-        i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
+        lifecycleScope.async {
+            try {
+                // ignore failure getting the IP address
+                val result = App.getServiceConfig().loaderService.fetchPublicIpAddress()
+                val ip = when (result) {
+                    is Result.Success -> result.get()
+                    is Result.Error -> "unknown"
+                }
+                Analytics.logMessageToBuffer("IP $ip")
 
-        // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
-        // calling resolveActivity requires permission.
-        // https://developer.android.com/training/package-visibility/use-cases
-        try {
-            startActivity(i)
-        }
-        catch (_: ActivityNotFoundException) {
-            Toast.makeText(this, "There is no email app installed", Toast.LENGTH_LONG).show()
+                val i = Intent(Intent.ACTION_SENDTO)
+                i.data = Uri.parse("mailto:") // only email apps should handle this
+                i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
+                val appInfo = App.getAppInfo(this@LaunchActivity)
+                i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
+                //TODO: append as attachment
+                i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
+
+                // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
+                // calling resolveActivity requires permission.
+                // https://developer.android.com/training/package-visibility/use-cases
+                startActivity(i)
+            } catch (_: ActivityNotFoundException) {
+                Toast.makeText(this@LaunchActivity, "There is no email app installed", Toast.LENGTH_LONG).show()
+            } catch (ex: Exception) {
+                Toast.makeText(this@LaunchActivity, "Error: $ex", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
