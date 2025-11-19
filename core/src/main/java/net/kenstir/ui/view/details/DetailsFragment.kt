@@ -284,6 +284,7 @@ class DetailsFragment : Fragment() {
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
+        // TODO: fix abstraction leak
         val mbRecord = record as MBRecord
         copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)

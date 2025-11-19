@@ -125,6 +125,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
     }
 
     fun totalCopies(orgID: Int?): Int {
+        // ??? ios just returns copyCounts.last().count
         for (copyCount in copyCounts.orEmpty()) {
             if (copyCount.orgId == orgID) {
                 return copyCount.count
