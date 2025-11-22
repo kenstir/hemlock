@@ -133,7 +133,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         return 0
     }
 
-    fun getFirstOnlineLocation(): String? {
+    override fun getFirstOnlineLocation(): String? {
         val l = mvrObj?.get("online_loc") as? List<*> ?: return null
         return when(l.size) {
             0 -> null

@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.data.model.MBRecord;
 
+import net.kenstir.data.model.BibRecord;
 import net.kenstir.logging.Log;
 import net.kenstir.data.model.Link;
 import org.evergreen_ils.data.model.MARCRecord;
@@ -58,7 +59,7 @@ public class AppBehavior {
     }
 
     @Nullable
-    public Boolean isOnlineResource(MBRecord record) {
+    public Boolean isOnlineResource(BibRecord record) {
         if (record == null) return null;
         if (!record.hasMetadata()) return null;
         if (!record.hasAttributes()) return null;
@@ -106,7 +107,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
+    public List<Link> getOnlineLocationsFromMARC(BibRecord record, String orgShortName) {
         MARCRecord marcRecord = record.getMarcRecord();
         if (marcRecord == null)
             return new ArrayList<>();
@@ -147,7 +148,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getOnlineLocations(MBRecord record, String orgShortName) {
+    public List<Link> getOnlineLocations(BibRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         String onlineLoc = record.getFirstOnlineLocation();
         if (TextUtils.isEmpty(onlineLoc))

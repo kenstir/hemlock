@@ -17,6 +17,7 @@
 package net.kenstir.apps.acorn
 
 import androidx.annotation.Keep
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log
 import net.kenstir.ui.AppBehavior
@@ -59,7 +60,7 @@ class AcornAppBehavior : AppBehavior() {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
 
-    override fun getOnlineLocations(record: MBRecord, orgShortName: String): List<Link> {
+    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
 }

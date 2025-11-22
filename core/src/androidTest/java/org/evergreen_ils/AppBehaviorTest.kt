@@ -18,14 +18,14 @@
 package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.evergreen_ils.gateway.OSRFObject
-import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.data.jsonMapOf
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord
 import org.evergreen_ils.data.model.MARCXMLParser
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.system.EgOrg
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -35,7 +35,7 @@ class TestAppBehavior: AppBehavior() {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
 
-    override fun getOnlineLocations(record: MBRecord, orgShortName: String): List<Link> {
+    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
 }
