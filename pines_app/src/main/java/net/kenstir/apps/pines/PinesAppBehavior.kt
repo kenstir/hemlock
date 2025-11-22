@@ -32,7 +32,6 @@ class PinesAppBehavior : AppBehavior() {
 
     override fun trimLinkTitle(s: String): String {
         return when (s) {
-            null -> ""
             "null" -> ""
             else -> s
         }

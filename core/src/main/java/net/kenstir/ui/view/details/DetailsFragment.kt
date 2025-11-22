@@ -196,9 +196,9 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val record = this.record ?: return
+        val org = EgOrg.findOrg(orgID) ?: return
 
-        val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
+        val links = App.getBehavior().getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
