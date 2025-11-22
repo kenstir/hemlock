@@ -226,6 +226,7 @@ class DetailsFragment : Fragment() {
             return
         }
 
+        // TODO: fix abstraction leak and potential crash
         val mbRecord = record as MBRecord
         val org = EgOrg.findOrg(orgID)
         val links = App.getBehavior().getOnlineLocations(mbRecord, org!!.shortname)
@@ -284,7 +285,7 @@ class DetailsFragment : Fragment() {
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
-        // TODO: fix abstraction leak
+        // TODO: fix abstraction leak and potential crash
         val mbRecord = record as MBRecord
         copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
