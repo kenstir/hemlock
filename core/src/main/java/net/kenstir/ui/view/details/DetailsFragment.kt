@@ -195,6 +195,8 @@ class DetailsFragment : Fragment() {
     }
 
     private fun launchOnlineAccess() {
+        val record = this.record ?: return
+
         val org = EgOrg.findOrg(orgID)
         val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
         if (links.isEmpty()) return // TODO: alert

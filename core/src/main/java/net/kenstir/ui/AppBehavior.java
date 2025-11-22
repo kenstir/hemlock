@@ -41,7 +41,7 @@ public class AppBehavior {
     public AppBehavior() {
     }
 
-    protected String trimTrailing(String s, char c) {
+    protected String trimTrailing(@NonNull String s, char c) {
         StringBuilder sb = new StringBuilder(s);
         while (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {
             sb.setLength(sb.length() - 1);
@@ -49,7 +49,7 @@ public class AppBehavior {
         return sb.toString();
     }
 
-    private boolean isOnlineFormat(String icon_format_label) {
+    private boolean isOnlineFormat(@Nullable String icon_format_label) {
         if (TextUtils.isEmpty(icon_format_label))
             return false;
         if (icon_format_label.equals("Picture"))
@@ -72,17 +72,17 @@ public class AppBehavior {
     }
 
     /** Trims the link text for a better mobile UX */
-    protected String trimLinkTitle(String s) {
+    protected String trimLinkTitle(@NonNull String s) {
         return s;
     }
 
     // Is this MARC datafield a URI visible to this org?
-    protected boolean isVisibleToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
+    protected boolean isVisibleToOrg(MARCRecord.MARCDatafield df, @NonNull String orgShortName) {
         return true;
     }
 
     // Implements the above interface for catalogs that use Located URIs
-    protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, String orgShortName) {
+    protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, @NonNull String orgShortName) {
         List<String> subfield9s = new ArrayList<>();
         for (MARCRecord.MARCSubfield sf : df.subfields) {
             if (TextUtils.equals(sf.code, "9")) {
@@ -106,7 +106,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getOnlineLocationsFromMARC(BibRecord record, String orgShortName) {
+    public List<Link> getOnlineLocationsFromMARC(BibRecord record, @NonNull String orgShortName) {
         MARCRecord marcRecord = record.getMarcRecord();
         if (marcRecord == null)
             return new ArrayList<>();
@@ -115,7 +115,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getLinksFromMARCRecord(MARCRecord marcRecord, String orgShortName) {
+    public List<Link> getLinksFromMARCRecord(MARCRecord marcRecord, @NonNull String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         for (MARCRecord.MARCDatafield df: marcRecord.datafields) {
             Log.d("marc", "tag="+df.tag+" ind1="+df.ind1+" ind2="+df.ind2);
@@ -147,7 +147,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getOnlineLocations(BibRecord record, String orgShortName) {
+    public List<Link> getOnlineLocations(BibRecord record, @NonNull String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         String onlineLoc = record.getFirstOnlineLocation();
         if (TextUtils.isEmpty(onlineLoc))

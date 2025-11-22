@@ -22,5 +22,5 @@ package net.kenstir.util
  */
 inline fun <T, reified U : T> T.requireType(): U =
     this as? U ?: throw IllegalArgumentException(
-        "Expected ${U::class.java.simpleName}, got ${this!!::class.java.simpleName}"
+        "Expected ${U::class.java.simpleName}, got ${this?.javaClass?.simpleName ?: "null"}"
     )

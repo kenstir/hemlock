@@ -30,7 +30,7 @@ class PinesAppBehavior : AppBehavior() {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
 
-    override fun trimLinkTitle(s: String?): String {
+    override fun trimLinkTitle(s: String): String {
         return when (s) {
             null -> ""
             "null" -> ""

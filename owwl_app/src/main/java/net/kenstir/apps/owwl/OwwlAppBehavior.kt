@@ -25,11 +25,11 @@ import net.kenstir.ui.AppBehavior
 @Keep
 @Suppress("unused")
 class OwwlAppBehavior : AppBehavior() {
-    override fun trimLinkTitle(s: String?): String {
+    override fun trimLinkTitle(s: String): String {
         return trimTrailing(s, '.').trim()
     }
 
-    override fun getOnlineLocations(record: BibRecord, orgShortName: String?): List<Link> {
+    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
 }
