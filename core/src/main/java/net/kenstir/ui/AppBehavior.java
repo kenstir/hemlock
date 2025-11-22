@@ -19,19 +19,18 @@ package net.kenstir.ui;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.system.EgOrg;
-import org.evergreen_ils.data.model.MBRecord;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.kenstir.data.model.BibRecord;
-import net.kenstir.logging.Log;
 import net.kenstir.data.model.Link;
+import net.kenstir.logging.Log;
+
 import org.evergreen_ils.data.model.MARCRecord;
+import org.evergreen_ils.system.EgOrg;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /** AppBehavior - customizable app behaviors
  * <p>

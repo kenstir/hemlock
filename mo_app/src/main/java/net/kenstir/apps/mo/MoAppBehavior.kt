@@ -21,7 +21,6 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
-import org.evergreen_ils.data.model.MBRecord
 
 @Keep
 @Suppress("unused")
