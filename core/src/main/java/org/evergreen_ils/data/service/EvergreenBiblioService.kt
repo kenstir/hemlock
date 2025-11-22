@@ -28,6 +28,11 @@ import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
 
+inline fun <reified T : BibRecord> BibRecord.requireType(): T =
+    this as? T ?: throw IllegalArgumentException(
+        "Expected ${T::class.java.simpleName}, got ${this::class.java.simpleName}"
+    )
+
 object EvergreenBiblioService: BiblioService {
 
     override fun imageUrl(record: BibRecord, size: ImageSize): String? {
@@ -39,8 +44,7 @@ object EvergreenBiblioService: BiblioService {
     }
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
-        val record = bibRecord as? MBRecord
-            ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
+        val record: MBRecord = bibRecord.requireType()
 
         return try {
             Result.Success(loadRecordDetailsImpl(record, needMARC))
@@ -50,8 +54,7 @@ object EvergreenBiblioService: BiblioService {
     }
 
     override suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit> {
-        val record = bibRecord as? MBRecord
-            ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
+        val record: MBRecord = bibRecord.requireType()
 
         return try {
             val mraObj = fetchMRA(record.id)
