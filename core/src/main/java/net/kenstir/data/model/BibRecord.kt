@@ -44,4 +44,6 @@ interface BibRecord: Serializable {
     fun hasMarc(): Boolean
     fun hasMetadata(): Boolean
     fun getAttr(attrName: String?): String?
+    fun getFirstOnlineLocation(): String?
+    fun totalCopies(orgID: Int?): Int
 }

@@ -17,11 +17,11 @@
 package net.kenstir.apps.acorn
 
 import androidx.annotation.Keep
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log
 import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
-import org.evergreen_ils.data.model.MBRecord
 
 @Keep
 @Suppress("unused")
@@ -31,12 +31,12 @@ class AcornAppBehavior : AppBehavior() {
         return onlineFormatCodes.contains(icon_format_code)
     }
 
-    override fun isOnlineResource(record: MBRecord?): Boolean? {
+    override fun isOnlineResource(record: BibRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null
         if (!record.hasAttributes()) return null
 
-        val iconFormatCode = record.iconFormat
+        val iconFormatCode = record.getAttr("icon_format")
         if (record.getAttr("item_form") == "o") {
             Log.d("isOnlineResource", "title:" + record.title + " item_form:o icon_format:" + iconFormatCode + "-> true")
             return true
@@ -46,7 +46,7 @@ class AcornAppBehavior : AppBehavior() {
         // https://acorn.biblio.org/eg/opac/record/2891957
         // (search Bethel Public Library for "potter prisoner" ebook)
         // so we use this check as a backstop
-        return isOnlineFormatCode(record.iconFormat)
+        return isOnlineFormatCode(iconFormatCode)
     }
 
     override fun trimLinkTitle(s: String): String {
@@ -59,7 +59,7 @@ class AcornAppBehavior : AppBehavior() {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
 
-    override fun getOnlineLocations(record: MBRecord, orgShortName: String): List<Link> {
+    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
 }

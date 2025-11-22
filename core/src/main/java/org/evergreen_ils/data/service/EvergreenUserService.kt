@@ -26,6 +26,7 @@ import net.kenstir.data.model.PatronCharges
 import net.kenstir.data.model.PatronList
 import net.kenstir.logging.Log
 import net.kenstir.data.service.UserService
+import net.kenstir.util.requireType
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.BookBag
 import org.evergreen_ils.data.model.EvergreenPatronMessage
@@ -46,17 +47,16 @@ object EvergreenUserService: UserService {
 
     override suspend fun loadUserSession(account: Account): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
 
             val sessionResponse =
-                GatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(account.authToken), false)
-            account.loadSession(sessionResponse.payloadFirstAsObject())
+                GatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(accountImpl.authToken), false)
+            accountImpl.loadSession(sessionResponse.payloadFirstAsObject())
 
             val settings = listOf("card", "settings")
-            val params = paramListOf(account.authToken, account.id, settings)
+            val params = paramListOf(accountImpl.authToken, accountImpl.id, settings)
             val userSettingsResponse = GatewayClient.fetch(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, params, false)
-            account.loadFleshedUserSettings(userSettingsResponse.payloadFirstAsObject())
+            accountImpl.loadFleshedUserSettings(userSettingsResponse.payloadFirstAsObject())
 
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -66,10 +66,9 @@ object EvergreenUserService: UserService {
 
     override suspend fun deleteSession(account: Account): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
 
-            val params = paramListOf(account.authToken)
+            val params = paramListOf(accountImpl.authToken)
             val response = GatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_DELETE, params, false)
             // the response is the authToken; we read it but we don't need it
             response.payloadFirstAsString()
@@ -81,13 +80,12 @@ object EvergreenUserService: UserService {
 
     override suspend fun loadPatronLists(account: Account): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
 
-            val (authToken, userID) = account.getCredentialsOrThrow()
+            val (authToken, userID) = accountImpl.getCredentialsOrThrow()
             val params = paramListOf(authToken, userID, Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG)
             val response = GatewayClient.fetch(Api.ACTOR, Api.CONTAINERS_BY_CLASS, params, false)
-            account.loadLists(response.payloadFirstAsObjectList())
+            accountImpl.loadLists(response.payloadFirstAsObjectList())
             return Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
@@ -96,16 +94,14 @@ object EvergreenUserService: UserService {
 
     override suspend fun loadPatronListItems(account: Account, patronList: PatronList): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
-            val bookBag = patronList as? BookBag
-                ?: throw IllegalArgumentException("Expected BookBag, got ${patronList::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
+            val bookBag: BookBag = patronList.requireType()
 
-            val (authToken, _) = account.getCredentialsOrThrow()
+            val (authToken, _) = accountImpl.getCredentialsOrThrow()
 
             // query first to find visible items; CONTAINER_FLESH returns the contents including
             // items that are marked deleted
-            val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
+            val query = "container(bre,bookbag,${bookBag.id},${accountImpl.authToken})"
             val queryResult = EvergreenSearchService.fetchMulticlassQuery(query, 999, false)
             if (queryResult is Result.Error) return queryResult
             bookBag.initVisibleIdsFromQuery(queryResult.get())
@@ -122,10 +118,9 @@ object EvergreenUserService: UserService {
 
     override suspend fun createPatronList(account: Account, name: String, description: String): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
 
-            val (authToken, userID) = account.getCredentialsOrThrow()
+            val (authToken, userID) = accountImpl.getCredentialsOrThrow()
             val param = OSRFObject(netClass = "cbreb", map = jsonMapOf(
                 "btype" to Api.CONTAINER_BUCKET_TYPE_BOOKBAG,
                 "name" to name,
@@ -146,10 +141,9 @@ object EvergreenUserService: UserService {
 
     override suspend fun deletePatronList(account: Account, listId: Int): Result<Unit> {
         return try {
-            account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val accountImpl: EvergreenAccount = account.requireType()
 
-            val (authToken, _) = account.getCredentialsOrThrow()
+            val (authToken, _) = accountImpl.getCredentialsOrThrow()
             val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, listId)
             val response = GatewayClient.fetch(Api.ACTOR, Api.CONTAINER_FULL_DELETE, params, false)
             // payload contains the listId as a string, we read it but we don't need it

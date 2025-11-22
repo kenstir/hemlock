@@ -15,27 +15,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.pines
+package net.kenstir.apps.owwl
 
 import androidx.annotation.Keep
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
 
 @Keep
 @Suppress("unused")
-class PinesAppBehavior : AppBehavior() {
-    override fun isVisibleToOrg(df: MARCDatafield, orgShortName: String): Boolean {
-        return isVisibleViaLocatedURI(df, orgShortName)
-    }
-
+class OwwlAppBehavior : AppBehavior() {
     override fun trimLinkTitle(s: String): String {
-        return when (s) {
-            null -> ""
-            "null" -> ""
-            else -> s
-        }
+        return trimTrailing(s, '.').trim()
     }
 
     override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {

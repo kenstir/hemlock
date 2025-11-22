@@ -54,7 +54,6 @@ import net.kenstir.ui.view.search.CopyInformationActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 import net.kenstir.util.getCopySummary
-import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.system.EgOrg
 
 class DetailsFragment : Fragment() {
@@ -196,8 +195,10 @@ class DetailsFragment : Fragment() {
     }
 
     private fun launchOnlineAccess() {
+        val record = this.record ?: return
+
         val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(record as MBRecord, org!!.shortname)
+        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
@@ -218,7 +219,9 @@ class DetailsFragment : Fragment() {
     private fun updateButtonViews() {
         Log.d(TAG, "${record?.id}: updateButtonViews: title:${record?.title}")
 
-        if (record?.isDeleted == true) {
+        val record = this.record ?: return
+
+        if (record.isDeleted) {
             placeHoldButton?.isEnabled = false
             showCopiesButton?.isEnabled = false
             onlineAccessButton?.isEnabled = false
@@ -226,13 +229,12 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        val mbRecord = record as MBRecord
         val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(mbRecord, org!!.shortname)
-        val numCopies = mbRecord.totalCopies(orgID) ?: 0
+        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
+        val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
-        Log.d(TAG, "${record?.id}: updateButtonViews: title:${record?.title} links:${links.size} copies:${numCopies}")
+        Log.d(TAG, "${record.id}: updateButtonViews: title:${record.title} links:${links.size} copies:${numCopies}")
         if (links.isEmpty()) {
             onlineAccessButton?.isEnabled = false
             onlineAccessButton?.visibility = View.GONE
@@ -284,10 +286,9 @@ class DetailsFragment : Fragment() {
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
-        val mbRecord = record as MBRecord
         copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            App.getBehavior().isOnlineResource(mbRecord) ?: false -> {
+            App.getBehavior().isOnlineResource(record) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = Uri.parse(onlineLocation)

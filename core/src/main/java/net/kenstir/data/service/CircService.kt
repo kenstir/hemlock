@@ -35,7 +35,7 @@ interface CircService {
     /**
      * Fetches the details for a circ record.
      */
-    suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit>
+    suspend fun loadCheckoutDetails(account: Account, record: CircRecord): Result<Unit>
 
     /**
      * Renews a checkout.
@@ -67,7 +67,7 @@ interface CircService {
     /**
     * Fetches the details for a hold record.
     */
-    suspend fun loadHoldDetails(account: Account, holdRecord: HoldRecord): Result<Unit>
+    suspend fun loadHoldDetails(account: Account, record: HoldRecord): Result<Unit>
 
     /**
      * Fetches the parts available to place a hold.

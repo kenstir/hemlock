@@ -20,7 +20,7 @@ package net.kenstir.apps.noble
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import org.evergreen_ils.data.model.MBRecord
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
@@ -28,7 +28,7 @@ import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
 @Keep
 @Suppress("unused")
 class NobleAppBehavior : AppBehavior() {
-    override fun isOnlineResource(record: MBRecord?): Boolean? {
+    override fun isOnlineResource(record: BibRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null
         if (!record.hasAttributes()) return null
@@ -53,7 +53,7 @@ class NobleAppBehavior : AppBehavior() {
         return true
     }
 
-    override fun getOnlineLocations(record: MBRecord, orgShortName: String): List<Link> {
+    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
 
