@@ -28,9 +28,12 @@ import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
 
-inline fun <reified T : BibRecord> BibRecord.requireType(): T =
-    this as? T ?: throw IllegalArgumentException(
-        "Expected ${T::class.java.simpleName}, got ${this::class.java.simpleName}"
+/**
+ * Casts this object to the specified type [U], or throws an [IllegalArgumentException] if the cast is not possible.
+ */
+inline fun <T, reified U : T> T.requireType(): U =
+    this as? U ?: throw IllegalArgumentException(
+        "Expected ${U::class.java.simpleName}, got ${this!!::class.java.simpleName}"
     )
 
 object EvergreenBiblioService: BiblioService {
