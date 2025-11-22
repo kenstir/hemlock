@@ -34,6 +34,7 @@ import net.kenstir.data.service.CircService
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.data.service.HoldUpdateOptions
 import net.kenstir.logging.Log
+import net.kenstir.util.requireType
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.GatewayError
 import org.evergreen_ils.data.model.EvergreenCircRecord
@@ -58,10 +59,10 @@ object EvergreenCircService: CircService {
         }
     }
 
-    override suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit> {
-        if (circRecord !is EvergreenCircRecord) return Result.Error(IllegalArgumentException("Expected EvergreenCircRecord, got ${circRecord::class.java.name}"))
-
+    override suspend fun loadCheckoutDetails(account: Account, record: CircRecord): Result<Unit> {
         return try {
+            val circRecord: EvergreenCircRecord = record.requireType()
+
             val circObj = fetchCircRecord(account,  circRecord.circId)
             circRecord.circ = circObj
 
@@ -121,18 +122,17 @@ object EvergreenCircService: CircService {
     }
 
     override suspend fun loadHistoryDetails(historyRecord: HistoryRecord): Result<Unit> {
-        historyRecord as? EvergreenHistoryRecord ?: return Result.Error(IllegalArgumentException("Expected EvergreenHistoryRecord, got ${historyRecord::class.java.name}"))
-
-        if (historyRecord.record != null) {
-            // already loaded
-            return Result.Success(Unit)
-        }
-
         return try {
-            val targetCopy = historyRecord.targetCopy ?: throw GatewayError("circ item has no target_copy")
+            val recordImpl: EvergreenHistoryRecord = historyRecord.requireType()
+            if (recordImpl.record != null) {
+                // already loaded
+                return Result.Success(Unit)
+            }
+
+            val targetCopy = recordImpl.targetCopy ?: throw GatewayError("circ item has no target_copy")
             val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
             val record = MBRecord(modsObj)
-            historyRecord.record = record
+            recordImpl.record = record
 //
 //            val mraObj = EvergreenBiblioService.fetchMRA(record.id)
 //            record.updateFromMRAResponse(mraObj)
@@ -154,11 +154,9 @@ object EvergreenCircService: CircService {
         }
     }
 
-    override suspend fun loadHoldDetails(account: Account, holdRecord: HoldRecord): Result<Unit> {
-        if (holdRecord !is EvergreenHoldRecord) {
-            return Result.Error(IllegalArgumentException("Expected EvergreenHoldRecord, got ${holdRecord::class.java.name}"))
-        }
+    override suspend fun loadHoldDetails(account: Account, record: HoldRecord): Result<Unit> {
         return try {
+            val holdRecord: EvergreenHoldRecord = record.requireType()
             Result.Success(loadHoldDetailsImpl(account, holdRecord))
         } catch (e: Exception) {
             Result.Error(e)

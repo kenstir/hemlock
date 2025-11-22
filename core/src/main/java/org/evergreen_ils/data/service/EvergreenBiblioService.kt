@@ -21,20 +21,13 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.BiblioService
 import net.kenstir.data.service.ImageSize
+import net.kenstir.util.requireType
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.EvergreenCopyCount
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
-
-/**
- * Casts this object to the specified type [U], or throws an [IllegalArgumentException] if the cast is not possible.
- */
-inline fun <T, reified U : T> T.requireType(): U =
-    this as? U ?: throw IllegalArgumentException(
-        "Expected ${U::class.java.simpleName}, got ${this!!::class.java.simpleName}"
-    )
 
 object EvergreenBiblioService: BiblioService {
 
@@ -47,9 +40,8 @@ object EvergreenBiblioService: BiblioService {
     }
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
-        val record: MBRecord = bibRecord.requireType()
-
         return try {
+            val record: MBRecord = bibRecord.requireType()
             Result.Success(loadRecordDetailsImpl(record, needMARC))
         } catch (e: Exception) {
             Result.Error(e)
@@ -57,9 +49,8 @@ object EvergreenBiblioService: BiblioService {
     }
 
     override suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit> {
-        val record: MBRecord = bibRecord.requireType()
-
         return try {
+            val record: MBRecord = bibRecord.requireType()
             val mraObj = fetchMRA(record.id)
             record.updateFromMRAResponse(mraObj)
             Result.Success(Unit)
@@ -69,10 +60,8 @@ object EvergreenBiblioService: BiblioService {
     }
 
     override suspend fun loadRecordCopyCounts(bibRecord: BibRecord, orgId: Int): Result<Unit> {
-        val record = bibRecord as? MBRecord
-            ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
-
         return try {
+            val record: MBRecord = bibRecord.requireType()
             Result.Success(loadRecordCopyCountImpl(record, orgId))
         } catch (e: Exception) {
             Result.Error(e)
