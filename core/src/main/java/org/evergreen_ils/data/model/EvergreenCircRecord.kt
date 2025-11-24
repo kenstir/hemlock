@@ -32,10 +32,6 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
 
     constructor(circId: Int) : this(null, circId)
 
-    enum class CircType {
-        OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED
-    }
-
     var mvr: OSRFObject? = null
     var acp: OSRFObject? = null
     override var record: BibRecord? = null
