@@ -118,7 +118,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:enabled="true" />
+                    android:enabled="true"
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
 
             <TableRow
@@ -142,7 +143,8 @@
                     <CheckBox
                         android:id="@+id/hold_enable_phone_notification"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/target_min_height" />
 
                     <EditText
                         android:id="@+id/hold_phone_notify"
@@ -176,7 +178,8 @@
                     <CheckBox
                         android:id="@+id/hold_enable_sms_notification"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/target_min_height" />
 
                     <EditText
                         android:id="@+id/hold_sms_notify"
@@ -246,7 +249,8 @@
                     android:id="@+id/hold_suspend_hold"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
 
             <TableRow

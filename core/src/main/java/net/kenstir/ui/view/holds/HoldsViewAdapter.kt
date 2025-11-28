@@ -47,6 +47,10 @@ class HoldsViewAdapter(
             formatText.text = record.formatLabel
             statusText.text = record.getHoldStatus(itemView.resources)
             editButton.setOnClickListener { onEditClick(record) }
+            editButton.contentDescription = itemView.resources.getString(
+                R.string.edit_hold_description,
+                record.title
+            )
         }
     }
 
