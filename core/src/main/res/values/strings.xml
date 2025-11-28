@@ -29,7 +29,6 @@
     <string name="barcode_title">Show Card</string>
     <string name="barcode_description">Barcode</string>
     <string name="barcode_text_description">Barcode numbers</string>
-    <string name="barcode_expiration_date_description">Card expiration date</string>
     <string name="barcode_expires_msg">Expires %1$s</string>
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
