@@ -168,6 +168,7 @@ open class MainActivity : MainBaseActivity() {
         mUnreadMessageText = layout.findViewById<View>(R.id.badge_text) as TextView
         val button = layout.findViewById<View>(R.id.badge_icon_button) as ImageButton
         button.setOnClickListener { onOptionsItemSelected(item) }
+        button.contentDescription = getString(R.string.menu_messages)
     }
 
     private fun updateUnreadMessagesText() {
