@@ -19,11 +19,11 @@ fi
 
 set -e
 
-versionCode=$(egrep versionCode $gradle_file | awk '{print $NF}')
+versionCode=$(grep -E '^\s*versionCode' $gradle_file | awk '{print $NF}')
 echo "Found versionCode=$versionCode"
 test -n "$versionCode"
 
-versionName=$(egrep versionName $gradle_file | awk '{print $NF}')
+versionName=$(grep -E '^\s*versionName' $gradle_file | awk '{print $NF}')
 versionName=${versionName//\"/}
 echo "Found versionName=$versionName"
 test -n "$versionName"
