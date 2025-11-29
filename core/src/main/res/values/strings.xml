@@ -298,4 +298,5 @@
     <string name="title_museum_passes">Museum Passes</string>
     <string name="item_is_not_cataloged">Item is not cataloged</string>
     <string name="edit_hold_description">Edit hold on %1$s</string>
+    <string name="remove_item_description">Remove %1$s</string>
 </resources>

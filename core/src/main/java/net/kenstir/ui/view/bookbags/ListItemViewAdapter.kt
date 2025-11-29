@@ -46,6 +46,8 @@ class ListItemViewAdapter(
             author.text = record?.author
             pubdate.text = record?.pubdate
             removeButton.setOnClickListener { onRemoveItem(item) }
+            removeButton.contentDescription =
+                itemView.resources.getString(R.string.remove_item_description, record?.title)
         }
     }
 
