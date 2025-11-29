@@ -102,7 +102,7 @@ object Analytics {
     private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
     private const val LOG_BUFFER_SIZE = 64
-    const val MAX_DATA_SHOWN = 384 // max length of data shown in logResponseX
+    const val MAX_DATA_SHOWN = 512 // max length of data shown in logResponseX
     private val mEntries = ArrayDeque<String>(LOG_BUFFER_SIZE)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     val mRedactedResponseRegex = Regex("""

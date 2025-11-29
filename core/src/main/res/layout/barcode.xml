@@ -63,7 +63,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal|center"
             android:background="@color/white"
-            android:contentDescription="@string/barcode_expiration_date_description"
             android:gravity="bottom|center_horizontal|center"
             android:paddingLeft="16dp"
             android:paddingTop="0dp"

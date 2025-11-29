@@ -29,7 +29,6 @@
     <string name="barcode_title">Show Card</string>
     <string name="barcode_description">Barcode</string>
     <string name="barcode_text_description">Barcode numbers</string>
-    <string name="barcode_expiration_date_description">Card expiration date</string>
     <string name="barcode_expires_msg">Expires %1$s</string>
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
@@ -298,4 +297,6 @@
     <string name="title_meeting_rooms">Meeting Rooms</string>
     <string name="title_museum_passes">Museum Passes</string>
     <string name="item_is_not_cataloged">Item is not cataloged</string>
+    <string name="edit_hold_description">Edit hold on %1$s</string>
+    <string name="remove_item_description">Remove %1$s</string>
 </resources>

@@ -43,7 +43,7 @@ object EvergreenOrgService: OrgService {
     }
 
     suspend fun loadOrgSettingsImpl(orgID: Int) {
-        Log.d(TAG, "loading org settings for org $orgID ...")
+        Log.d(TAG, "[orgs] id:$orgID load settings ...")
         val org = EgOrg.findOrg(orgID) as? EvergreenOrganization
             ?: throw IllegalArgumentException("Org $orgID not found")
         if (org.settingsLoaded)
@@ -62,7 +62,7 @@ object EvergreenOrgService: OrgService {
         val response = GatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, paramListOf(orgID, settings, Api.ANONYMOUS), true)
         val obj = response.payloadFirstAsObject()
         org.loadSettings(obj)
-        Log.d(TAG, "loading org settings for org $orgID ... done")
+        Log.d(TAG, "[orgs] id:$orgID load settings ... done")
     }
 
     override suspend fun loadOrgDetails(account: Account, orgID: Int): Result<Unit> {
