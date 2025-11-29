@@ -14,25 +14,23 @@ if [ ! -r secret/keystore.properties ]; then
     exit 1
 fi
 
-### find manifest
+### find gradle_file
 
-manifest="${project}/src/main/AndroidManifest.xml"
-if [ ! -f "$manifest" ]; then
-    echo "No such file: $manifest"
+gradle_file="${project}/build.gradle"
+if [ ! -f "$gradle_file" ]; then
+    echo "No such file: $gradle_file"
     exit 1
 fi
 
-### scrape versionCode / versionName from the manifest
+### scrape versionCode / versionName
 
 set -e
 
-versionCode=$(egrep android:versionCode $manifest)
-versionCode=${versionCode#*\"}
-versionCode=${versionCode%\"*}
+versionCode=$(egrep versionCode $gradle_file | awk '{print $NF}')
 echo "Found versionCode=$versionCode"
 test -n "$versionCode"
 
-versionName=$(egrep android:versionName $manifest)
+versionName=$(egrep versionName $gradle_file | awk '{print $NF}')
 versionName=${versionName#*\"}
 versionName=${versionName%\"*}
 echo "Found versionName=$versionName"
@@ -70,7 +68,7 @@ esac
 
 ### make the tag
 
-#git commit core/build.gradle "$manifest" -m "$msg" || true
+#git commit core/build.gradle "$gradle_file" -m "$msg" || true
 #git tag -a -m "$msg" $tag
 #git push
 #git push origin $tag
