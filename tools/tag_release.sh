@@ -7,28 +7,25 @@ fi
 app="$1"
 project=${app}_app
 
-### find manifest
+### find gradle_file
 
-manifest="${project}/src/main/AndroidManifest.xml"
-if [ ! -f "$manifest" ]; then
-    echo "No such file: $manifest"
+gradle_file="${project}/build.gradle"
+if [ ! -f "$gradle_file" ]; then
+    echo "No such file: $gradle_file"
     exit 1
 fi
 
-### scrape versionCode / versionName from the manifest
+### scrape versionCode / versionName
 
 set -e
 
-versionCode=$(egrep android:versionCode $manifest)
-versionCode=${versionCode#*\"}
-versionCode=${versionCode%\"*}
-echo versionCode=$versionCode
+versionCode=$(grep -E '^\s*versionCode' "$gradle_file" | awk '{print $NF}')
+echo "Found versionCode=$versionCode"
 test -n "$versionCode"
 
-versionName=$(egrep android:versionName $manifest)
-versionName=${versionName#*\"}
-versionName=${versionName%\"*}
-echo versionName=$versionName
+versionName=$(grep -E '^\s*versionName' "$gradle_file" | awk '{print $NF}')
+versionName=${versionName//\"/}
+echo "Found versionName=$versionName"
 test -n "$versionName"
 
 ### tag it
