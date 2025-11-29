@@ -27,9 +27,9 @@ android {
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // versionName is Major.Minor.Patch.Build where Build starts with 1
-        versionCode 154
+        // format: Major.Minor.Patch.Build where Build starts with 1
         versionName "4.4.0.1"
+        versionCode 154
     }
     signingConfigs {
         release {

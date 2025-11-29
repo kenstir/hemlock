@@ -31,8 +31,7 @@ echo "Found versionCode=$versionCode"
 test -n "$versionCode"
 
 versionName=$(egrep versionName $gradle_file | awk '{print $NF}')
-versionName=${versionName#*\"}
-versionName=${versionName%\"*}
+versionName=${versionName//\"/}
 echo "Found versionName=$versionName"
 test -n "$versionName"
 
