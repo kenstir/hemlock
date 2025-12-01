@@ -1,5 +1,5 @@
 * Improve accessibility throughout the app (#57)
-  Review and fixed items reported by Accessibility Scanner, including
+  Review and fix items reported by Accessibility Scanner, including
   - touch target minimum heights
   - content descriptions for TalkBack
 * Remember search options, hold options, and list sort options across app launches
