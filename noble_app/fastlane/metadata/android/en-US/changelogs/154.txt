@@ -1,0 +1,8 @@
+* Improve accessibility throughout the app (#57)
+  Review and fixed items reported by Accessibility Scanner, including
+  - touch target minimum heights
+  - content descriptions for TalkBack
+* Add physical description to Item Details
+* Add Hours of Operation notes to Library Info
+* Bug fixes and performance improvements
+* noble: Use custom Pay Charges URL

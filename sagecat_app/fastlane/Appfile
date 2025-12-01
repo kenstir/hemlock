@@ -1,0 +1,2 @@
+json_key_file("../secret/sagecat-fastlane.json")
+package_name("net.kenstir.apps.sagecat")
