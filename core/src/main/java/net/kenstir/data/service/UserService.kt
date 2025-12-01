@@ -24,7 +24,14 @@ import net.kenstir.data.model.PatronCharges
 import net.kenstir.data.model.PatronList
 
 interface UserService {
+    /**
+     * creates an Account object for the given username and authToken
+     */
     fun makeAccount(username: String, authToken: String): Account
+
+    fun payFinesUrl(account: Account): String
+    fun isPayFinesEnabled(account: Account): Boolean
+
     suspend fun loadUserSession(account: Account): Result<Unit>
     suspend fun deleteSession(account: Account): Result<Unit>
 

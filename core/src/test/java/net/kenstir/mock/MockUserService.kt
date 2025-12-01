@@ -29,6 +29,14 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
+    override fun payFinesUrl(account: Account): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun isPayFinesEnabled(account: Account): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun loadUserSession(account: Account): Result<Unit> {
         TODO("Not yet implemented")
     }

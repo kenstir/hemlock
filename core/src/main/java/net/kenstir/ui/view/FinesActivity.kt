@@ -39,15 +39,12 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.isNullOrPreCat
-import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.system.EgOrg
-import java.net.URLEncoder
 import java.text.DecimalFormat
 
 private const val TAG = "FinesActivity"
@@ -136,18 +133,15 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun updatePayFinesButtonVisibility() {
-        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        val account = App.getAccount()
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-                && homeOrg?.isPaymentAllowed == true) {
+            && App.getServiceConfig().userService.isPayFinesEnabled(account))
+        {
             payFinesButton?.visibility = View.VISIBLE
-            payFinesButton?.setOnClickListener {
-                val username = App.getAccount().username
-                val password = AccountUtils.getPassword(this@FinesActivity, username)
-                val url = (GatewayClient.baseUrl
-                        + "/eg/opac/login"
-                        + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"))
-                launchURL(url)
+            val url = resources.getString(R.string.ou_pay_fines_url).ifEmpty {
+                App.getServiceConfig().userService.payFinesUrl(account)
             }
+            payFinesButton?.setOnClickListener { launchURL(url) }
         } else {
             payFinesButton?.visibility = View.GONE
         }
