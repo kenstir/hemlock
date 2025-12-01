@@ -39,15 +39,12 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.isNullOrPreCat
-import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.system.EgOrg
-import java.net.URLEncoder
 import java.text.DecimalFormat
 
 private const val TAG = "FinesActivity"
