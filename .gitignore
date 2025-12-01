@@ -31,3 +31,7 @@ fm_IDL.*
 /captures
 google-services.json
 version.*
+
+# Fastlane
+**/fastlane/README.md
+**/report.xml

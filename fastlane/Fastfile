@@ -1,0 +1,72 @@
+#-----------------------------------------
+# SHARED fastlane config
+#
+# usage: import "../../fastlane/Fastfile"
+#-----------------------------------------
+
+
+#-----------------------------------------
+# funcs
+
+# Returns absolute path to repo root
+def get_repo_root
+  File.expand_path("..", __dir__)
+end
+
+def find_aab_for(project)
+  repo_root = get_repo_root()
+  aab = Dir.glob("#{repo_root}/#{project}/build/outputs/bundle/release/*_app-release.aab").first
+  UI.user_error!("No such file: #{repo_root}/#{project}/build/outputs/bundle/release/*_app-release.aab") unless aab
+  aab
+end
+
+# Returns full path to the current project's AAB
+def find_aab
+  find_aab_for(get_project())
+end
+
+# Returns name of the current project, e.g. "hemlock_app"
+# (curiously one level up from the project's Fastfile)
+def get_project
+  File.basename(File.expand_path("..", Dir.pwd))
+end
+
+#-----------------------------------------
+# lanes
+
+desc "Run all the tests"
+lane :test do
+  Dir.chdir("..") do
+    sh("bash ./tools/jdkrun.sh ./gradlew test")
+    sh("bash ./tools/jdkrun.sh ./gradlew connectedAndroidTest")
+  end
+end
+
+desc "Dump vars for testing"
+lane :dumpvars do
+  repo_root = get_repo_root()
+  UI.message("repo_root:   #{repo_root}")
+
+  project = get_project()
+  UI.message("project:     #{project}")
+
+  aab = find_aab()
+  UI.message("aab:         #{aab}")
+end
+
+desc "Submit a new build to the open testing channel"
+lane :beta do
+  # Change to x_app/ from x_app/fastlane/
+  Dir.chdir("..") do
+    sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
+  end
+  upload_to_play_store(
+    aab: find_aab(),
+    track: "beta",
+    release_status: "completed",
+    skip_upload_metadata: true,
+    skip_upload_changelogs: false,
+    skip_upload_images: true,
+    skip_upload_screenshots: true
+  )
+end

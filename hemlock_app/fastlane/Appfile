@@ -1,0 +1,2 @@
+json_key_file("../secret/hemlock-fastlane.json")
+package_name("net.kenstir.apps.hemlock")

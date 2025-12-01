@@ -29,7 +29,7 @@ android {
 
         // format: Major.Minor.Patch.Build where Build starts with 1
         versionName "4.4.0.1"
-        versionCode 154
+        versionCode 104
     }
     signingConfigs {
         release {

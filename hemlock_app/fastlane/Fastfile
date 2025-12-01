@@ -1,0 +1,39 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+import "../../fastlane/Fastfile"
+
+#-----------------------------------------
+# funcs
+
+# Returns the absolute path of this file's parent dir
+def get_local_dir
+  File.expand_path("..", __dir__)
+end
+
+#-----------------------------------------
+# lanes
+
+desc "Dump vars for testing"
+lane :local_dumpvars do
+  # local_dir = get_local_dir()
+  # UI.message("local_dir:   #{local_dir}")
+
+  repo_root = get_repo_root()
+  UI.message("repo_root:   #{repo_root}")
+
+  project = get_project()
+  UI.message("project:     #{project}")
+
+  aab = find_aab()
+  UI.message("aab:         #{aab}")
+end
