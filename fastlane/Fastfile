@@ -54,12 +54,23 @@ lane :dumpvars do
   UI.message("aab:         #{aab}")
 end
 
-desc "Submit a new build to the open testing channel"
-lane :beta do
-  # Change to x_app/ from x_app/fastlane/
+desc "Create a release AAB"
+lane :make_release do
+  # 2025-12-01: bundleRelease failed for acorn through fastlane
+  # but worked for noble
   Dir.chdir("..") do
     sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
   end
+end
+
+desc "Submit a new build to the open testing channel"
+lane :beta do
+  # 2025-12-01: bundleRelease failed for acorn through fastlane
+  # Change to x_app/ from x_app/fastlane/
+  #Dir.chdir("..") do
+  #  sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
+  #end
+
   upload_to_play_store(
     aab: find_aab(),
     track: "beta",
