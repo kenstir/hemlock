@@ -36,6 +36,7 @@ import org.evergreen_ils.data.model.EvergreenAccount
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgOrg
 import java.util.Date
 
 object EvergreenUserService: UserService {
@@ -43,6 +44,16 @@ object EvergreenUserService: UserService {
 
     override fun makeAccount(username: String, authToken: String): Account {
         return EvergreenAccount(username, authToken)
+    }
+
+    override fun payFinesUrl(account: Account): String {
+        return GatewayClient.baseUrl + "/eg/opac/myopac/charges"
+    }
+
+    override fun isPayFinesEnabled(account: Account): Boolean {
+        val account: EvergreenAccount = account.requireType()
+        val homeOrg = EgOrg.findOrg(account.homeOrg)
+        return homeOrg?.isPaymentAllowed == true
     }
 
     override suspend fun loadUserSession(account: Account): Result<Unit> {

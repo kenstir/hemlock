@@ -42,6 +42,9 @@
     <string name="ou_details_link_query" />
     <!-- if non-empty, the URL fragment to add to Item Details /eg/opac/record/6276882#awards -->
     <string name="ou_details_link_fragment" />
+    <!-- Custom URL for Pay Fines, leave empty for Evergreen default -->
+    <string name="ou_pay_fines_url" />
+
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">true</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
@@ -85,6 +88,7 @@
     <bool name="ou_enable_events_button">false</bool>
     <!-- true only for the Hemlock generic app; used for analytics -->
     <bool name="ou_is_generic_app">false</bool>
+
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
     <!-- max number of upcoming closures to display -->

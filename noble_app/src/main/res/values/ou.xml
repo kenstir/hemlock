@@ -11,6 +11,9 @@
     <string name="ou_behavior_provider">net.kenstir.apps.noble.NobleAppBehavior</string>
     <string name="ou_main_activity">net.kenstir.ui.view.main.MainGridActivity</string>
     <string name="ou_sort_by">poprel</string>
+    <string name="ou_barcode_format">Codabar</string>
+    <string name="ou_pay_fines_url">https://catalog.noblenet.org/MyAccount/Fines</string>
+
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_enable_copy_info_web_links">false</bool>
     <bool name="ou_enable_pay_fines">true</bool>
@@ -18,6 +21,6 @@
     <bool name="ou_show_online_access_hostname">false</bool>
     <bool name="ou_always_popup_online_links">true</bool>
     <bool name="ou_enable_analytics">true</bool>
-    <string name="ou_barcode_format">Codabar</string>
+
     <integer name="ou_search_limit">100</integer>
 </resources>
