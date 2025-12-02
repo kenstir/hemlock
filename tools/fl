@@ -1,0 +1,4 @@
+#!/bin/sh
+export JAVA_HOME=/c/Program\ Files/Android/Android\ Studio/jbr
+exec bundle exec fastlane "$@"
+#exec fastlane "$@"
