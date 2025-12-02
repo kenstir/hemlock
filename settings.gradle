@@ -10,12 +10,12 @@ include ':owwl_app'
 include ':pines_app'
 include ':sagecat_app'
 
-// include hemlock-pro-assets if it exists
-def dir = new File('hemlock-pro-assets')
+// include pro-assets if it exists
+def dir = new File('pro-assets')
 if (dir.exists()) {
   include ':' + dir
 }
-include ':hemlock-assets'
+include ':free-assets'
 
 dependencyResolutionManagement {
   repositories {

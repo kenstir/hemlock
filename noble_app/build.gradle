@@ -76,5 +76,5 @@ dependencies {
     })
     testImplementation 'junit:junit:4.13.2'
 
-    implementation project(path: ':hemlock-assets')
+    implementation project(path: ':free-assets')
 }

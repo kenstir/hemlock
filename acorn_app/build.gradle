@@ -79,9 +79,9 @@ dependencies {
     })
     testImplementation 'junit:junit:4.13.2'
 
-    // include hemlock-pro-assets if it exists
-    def dir = new File('hemlock-pro-assets')
+    // include pro-assets if it exists
+    def dir = new File('pro-assets')
     if (dir.exists()) {
-        implementation project(path: ':hemlock-pro-assets')
+        implementation project(path: ':pro-assets')
     }
 }
