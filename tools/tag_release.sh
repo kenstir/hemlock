@@ -35,7 +35,7 @@ set -ex
 tag=${app}_v${versionCode}
 msg="${tag} (${versionName})"
 
-git commit core/build.gradle "$manifest" -m "$msg" || true
+git commit "$gradle_file" -m "$msg" || true
 git tag -a -m "$msg" $tag
 git push
 git push origin $tag
