@@ -61,8 +61,13 @@ echo "Built signed bundle at $bundle"
 cp "$bundle" ~/Downloads/
 echo "Copied to ~/Downloads/"
 case "$OSTYPE" in
-darwin*) open ~/Downloads;;
-*) explorer "$HOMEDRIVE$HOMEPATH\\Downloads";
+darwin*)
+    open ~/Downloads
+    ;;
+*)
+    # guard against explorer non-zero exit
+    explorer "$HOMEDRIVE$HOMEPATH\\Downloads" </dev/null &>/dev/null &
+    ;;
 esac
 
 ### make the tag

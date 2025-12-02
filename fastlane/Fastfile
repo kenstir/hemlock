@@ -52,25 +52,24 @@ lane :dumpvars do
 
   aab = find_aab()
   UI.message("aab:         #{aab}")
+
+  ENV.each do |key, value|
+    UI.message("   #{key}=#{value}")
+  end
 end
 
 desc "Create a release AAB"
 lane :make_release do
-  # 2025-12-01: bundleRelease failed for acorn through fastlane
-  # but worked for noble
-  Dir.chdir("..") do
-    sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
+  project = get_project()
+  # 2025-12-01: ../gradlew bundleRelease fails for acorn,cwmars
+  #             but ./gradlew :cwmars:bundleRelease works
+  Dir.chdir("../..") do
+    sh("bash ./tools/jdkrun.sh ./gradlew :#{project}:bundleRelease")
   end
 end
 
-desc "Submit a new build to the open testing channel"
-lane :beta do
-  # 2025-12-01: bundleRelease failed for acorn through fastlane
-  # Change to x_app/ from x_app/fastlane/
-  #Dir.chdir("..") do
-  #  sh("bash ../tools/jdkrun.sh ../gradlew bundleRelease")
-  #end
-
+desc "Upload release AAB to the open testing channel"
+lane :upload_beta do
   upload_to_play_store(
     aab: find_aab(),
     track: "beta",
@@ -80,4 +79,10 @@ lane :beta do
     skip_upload_images: true,
     skip_upload_screenshots: true
   )
+end
+
+desc "Make release AAB + upload to the open testing channel"
+lane :beta do
+  make_release
+  upload_beta
 end

@@ -1,2 +1,2 @@
-json_key_file("secret/cwmars-fastlane.json")
+json_key_file("../secret/cwmars-fastlane.json")
 package_name("org.cwmars")
