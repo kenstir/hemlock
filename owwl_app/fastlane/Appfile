@@ -1,0 +1,2 @@
+json_key_file("../secret/owwl-fastlane.json")
+package_name("net.kenstir.apps.owwl")

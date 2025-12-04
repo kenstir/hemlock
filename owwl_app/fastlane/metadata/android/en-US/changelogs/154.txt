@@ -1,0 +1,15 @@
+New:
+* Improve accessibility throughout the app (#57)
+
+  Review and fix items reported by Accessibility Scanner, including
+  - touch target minimum heights
+  - content descriptions for TalkBack
+
+* Add physical description to Item Details
+* Add Hours of Operation notes to Library Info
+* Remember search options, hold options, and list sort options across app launches
+
+Fixes:
+* Fixed rare crash in Item Details
+* Fixed an issue where Retry button was obscured when 3-button navigation is enabled
+* Fixed an issue where checked out precat item had "Unknown Title"
