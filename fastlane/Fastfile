@@ -28,13 +28,53 @@ end
 # Returns name of the current project, e.g. "hemlock_app"
 # (curiously one level up from the project's Fastfile)
 def get_project
-  File.basename(File.expand_path("..", Dir.pwd))
+  project = File.basename(File.expand_path("..", Dir.pwd))
+  UI.message("project = #{project}")
+  if not project.end_with?("_app")
+    UI.user_error!("must be run from the x_app project subdirectory")
+  end
+  project
+end
+
+# Returns [tag, message] for use in annotated tag
+def get_tag_info
+  app = get_project().delete_suffix("_app")
+  UI.message("app: #{app}")
+
+  versionCode, versionName = get_version_info("../../version.gradle")
+  UI.message("versionCode: #{versionCode}")
+  UI.message("versionName: #{versionName}")
+
+  tag = "#{app}_v#{versionCode}"
+  msg = "#{tag} (#{versionName})"
+
+  return tag, msg
+end
+
+# Returns [versionCode, versionString] scraped from version.gradle
+def get_version_info(path = "../version.gradle")
+  content = File.read(path)
+
+  m = content.match(/(globalVersionCode\s*=\s*)(\d+)/)
+  UI.user_error!("\"globlVersionCode\" not found in #{path}") unless m
+
+  versionCode = m[2]
+
+  m = content.match(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/)
+  UI.user_error!("\"globlVersionName\" not found in #{path}") unless m
+
+  major  = m[2]
+  minor  = m[3]
+  patch  = m[4]
+  versionName = "#{major}.#{minor}.#{patch}"
+
+  return versionCode, versionName
 end
 
 def increment_version_code(path = "../version.gradle")
   content = File.read(path)
 
-  new_content = content.gsub(/(globalVersionCode = *)(\d+)/) do
+  new_content = content.gsub(/(globalVersionCode\s*=\s*)(\d+)/) do
     prefix = Regexp.last_match(1)
     number = Regexp.last_match(2).to_i + 1
     "#{prefix}#{number}"
@@ -46,7 +86,7 @@ end
 def increment_version_string(part = :patch, path = "../version.gradle")
   content = File.read(path)
 
-  new_content = content.gsub(/(VersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/) do
+  new_content = content.gsub(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/) do
     prefix = Regexp.last_match(1)
     major  = Regexp.last_match(2).to_i
     minor  = Regexp.last_match(3).to_i
@@ -125,8 +165,24 @@ end
 
 desc "Make release AAB + upload to the open testing channel"
 lane :beta do
+  #ensure_git_status_clean
+  tag, msg = get_tag_info()
+  if git_tag_exists(tag: tag, remote: true)
+    UI.user_error!("tag already exists: #{tag}")
+  end
+  UI.message("tag: #{tag}")
+  UI.message("msg: #{msg}")
+
   make_release
+
   upload_beta
+
+  add_git_tag(
+    tag: tag,
+    message: msg,
+    grouping: nil
+  )
+  push_git_tags(tag: tag)
 end
 
 lane :bump_version_major do
