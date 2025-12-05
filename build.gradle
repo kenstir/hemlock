@@ -35,6 +35,8 @@ if (secretGradleFile.exists()) {
     apply from: secretGradleFile
 }
 
+apply from: rootProject.file('version.gradle')
+
 allprojects {
     repositories {
         google()

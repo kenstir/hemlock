@@ -31,6 +31,48 @@ def get_project
   File.basename(File.expand_path("..", Dir.pwd))
 end
 
+def increment_version_code(path = "../version.gradle")
+  content = File.read(path)
+
+  new_content = content.gsub(/(globalVersionCode = *)(\d+)/) do
+    prefix = Regexp.last_match(1)
+    number = Regexp.last_match(2).to_i + 1
+    "#{prefix}#{number}"
+  end
+
+  File.write(path, new_content)
+end
+
+def increment_version_string(part = :patch, path = "../version.gradle")
+  content = File.read(path)
+
+  new_content = content.gsub(/(VersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/) do
+    prefix = Regexp.last_match(1)
+    major  = Regexp.last_match(2).to_i
+    minor  = Regexp.last_match(3).to_i
+    patch  = Regexp.last_match(4).to_i
+    suffix = Regexp.last_match(5)
+
+    case part.to_sym
+    when :major
+      major += 1
+      minor = 0
+      patch = 0
+    when :minor
+      minor += 1
+      patch = 0
+    when :patch
+      patch += 1
+    else
+      raise ArgumentError, "part must be :major, :minor, or :patch"
+    end
+
+    "#{prefix}#{major}.#{minor}.#{patch}#{suffix}"
+  end
+
+  File.write(path, new_content)
+end
+
 #-----------------------------------------
 # lanes
 
@@ -85,4 +127,20 @@ desc "Make release AAB + upload to the open testing channel"
 lane :beta do
   make_release
   upload_beta
+end
+
+lane :bump_version_major do
+  increment_version_string(:major)
+end
+
+lane :bump_version_minor do
+  increment_version_string(:minor)
+end
+
+lane :bump_version_patch do
+  increment_version_string(:patch)
+end
+
+lane :bump_version_code do
+  increment_version_code
 end

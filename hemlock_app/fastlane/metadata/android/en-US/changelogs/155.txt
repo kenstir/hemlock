@@ -1,0 +1,1 @@
+* internal: Factor out version.gradle and maintain with fastlane

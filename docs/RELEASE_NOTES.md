@@ -1,3 +1,8 @@
+## 4.4.1
+
+### Fixes
+* internal: Factor out version.gradle and maintain with fastlane
+
 ## 4.4.0
 
 ### New

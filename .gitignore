@@ -30,7 +30,6 @@ fm_IDL.*
 /*/release
 /captures
 google-services.json
-version.*
 
 # Fastlane
 **/fastlane/README.md
