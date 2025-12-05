@@ -1,4 +1,25 @@
-#!/bin/sh
-export JAVA_HOME=/c/Program\ Files/Android/Android\ Studio/jbr
+#!/bin/bash -
+#
+# fl - fastlane wrapper
+#
+# usage:
+#       fl [app] args...
+#
+#       if APP is the name of an app subproject, fl will 'cd' to
+#       ${app}_app before executing 'fastlane args...'
+
+# Setting JAVA_HOME is another way to make gradlew work, but for now use tools/jdkrun.sh
+#export JAVA_HOME=/c/Program\ Files/Android/Android\ Studio/jbr
+
+# If $1 is the name of an app, shift it off and cd to subdir
+if [ $# -gt 0 ]; then
+    app="$1"
+    if [ -d "${app}_app" ]; then
+        cd "${app}_app"
+        shift
+    fi
+fi
+
+# Roll em
 exec bundle exec fastlane "$@"
 #exec fastlane "$@"
