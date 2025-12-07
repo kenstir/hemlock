@@ -19,13 +19,19 @@ package net.kenstir.ui.util
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
 import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayError
 import net.kenstir.util.getCustomMessage
+import androidx.core.net.toUri
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
@@ -66,4 +72,33 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
  */
 fun Activity.compatEnableEdgeToEdge() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
+}
+
+/** Launches a URL in the system browser.
+ *
+ * If no browser is installed, shows a Toast message.
+ *
+ * @param url The URL to launch.
+ * @param requestId Optional request ID for startActivityForResult.  If null, uses startActivity.
+ */
+fun Activity.launchURL(url: String?, requestId: Int? = null) {
+    if (url.isNullOrEmpty()) {
+        Toast.makeText(this, R.string.msg_null_url, Toast.LENGTH_LONG).show()
+        return
+    }
+
+    // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
+    // calling resolveActivity requires permission.
+    // https://developer.android.com/training/package-visibility/use-cases
+    val uri = url.toUri()
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    try {
+        if (requestId != null) {
+            startActivityForResult(intent, requestId)
+        } else {
+            startActivity(intent)
+        }
+    } catch (_: ActivityNotFoundException) {
+        Toast.makeText(this, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
+    }
 }

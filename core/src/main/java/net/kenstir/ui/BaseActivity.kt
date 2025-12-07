@@ -48,6 +48,7 @@ import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
+import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.BarcodeActivity
 import net.kenstir.ui.view.checkouts.CheckoutsActivity
@@ -328,27 +329,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         logout()
         AccountUtils.removeAllAccounts(this) {
             App.restartApp(this)
-        }
-    }
-
-    // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
-    // calling resolveActivity requires permission.
-    // https://developer.android.com/training/package-visibility/use-cases
-    fun launchURL(url: String?, requestId: Int? = null) {
-        if (url.isNullOrEmpty()) {
-            Toast.makeText(this, R.string.msg_null_url, Toast.LENGTH_LONG).show()
-            return
-        }
-        val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            if (requestId != null) {
-                startActivityForResult(intent, requestId)
-            } else {
-                startActivity(intent)
-            }
-        } catch (_: ActivityNotFoundException) {
-            Toast.makeText(this, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
         }
     }
 

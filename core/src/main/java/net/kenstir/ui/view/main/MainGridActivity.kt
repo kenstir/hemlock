@@ -30,6 +30,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.util.GridButton
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchURL
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity

@@ -16,27 +16,26 @@
  */
 package net.kenstir.ui.util
 
-import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-import net.kenstir.hemlock.R
+import android.os.Bundle
+import android.os.Parcel
+import net.kenstir.logging.Log
 
-object ActivityUtils {
+/**
+ * Utility functions that depend on the Android platform, i.e. must be tested on an emulator.
+ */
+object Utils {
+    private const val TAG = "Utils"
+
     @JvmStatic
-    // TODO: Move to ActivityExtensions.kt once there are no Java usages.
-    fun launchURL(activity: Activity, url: String?) {
-        if (url.isNullOrEmpty()) {
-            Toast.makeText(activity, R.string.msg_null_url, Toast.LENGTH_LONG).show()
-            return
-        }
-        val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
+    fun logBundleSize(source: String, bundle: Bundle?) {
+        val parcel = Parcel.obtain()
         try {
-            activity.startActivity(intent)
-        } catch (_: ActivityNotFoundException) {
-            Toast.makeText(activity, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
+            bundle?.writeToParcel(parcel, 0)
+            val size = parcel.dataSize()
+            Log.d(TAG, "[bundle] size = $size bytes ($source)")
+        } finally {
+            parcel.recycle()
         }
     }
+
 }

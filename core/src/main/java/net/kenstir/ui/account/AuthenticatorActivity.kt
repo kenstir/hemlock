@@ -37,8 +37,9 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.Library
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
-import net.kenstir.ui.util.ActivityUtils.launchURL
+import net.kenstir.ui.util.Utils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
@@ -111,7 +112,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         }
         forgotPasswordButton?.setOnClickListener {
             val url = getString(R.string.ou_library_url) + "/eg/opac/password_reset"
-            launchURL(this@AuthenticatorActivity, url)
+            launchURL(url)
         }
 
         val msg = savedInstanceState?.getString(STATE_ALERT_MESSAGE)
@@ -145,6 +146,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         if (alertMessage != null) {
             outState.putString(STATE_ALERT_MESSAGE, alertMessage)
         }
+        Utils.logBundleSize("AuthenticatorActivity", outState)
     }
 
     @Deprecated("Deprecated in Java")

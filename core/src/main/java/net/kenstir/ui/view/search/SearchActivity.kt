@@ -59,6 +59,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.SpinnerStringOption
+import net.kenstir.ui.util.Utils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
@@ -160,6 +161,7 @@ class SearchActivity : BaseActivity() {
         App.getAccount().id?.let { id ->
             outState.putInt(Key.ACCOUNT_ID, id)
         }
+        Utils.logBundleSize("SearchActivity", outState)
     }
 
     override fun onDestroy() {

@@ -35,6 +35,7 @@ import net.kenstir.data.Result
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.view.BarcodeActivity
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity

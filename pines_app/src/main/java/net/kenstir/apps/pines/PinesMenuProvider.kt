@@ -22,7 +22,8 @@ import android.content.Intent
 import androidx.annotation.Keep
 import androidx.core.os.bundleOf
 import net.kenstir.ui.App.REQUEST_MESSAGES
-import net.kenstir.ui.util.ActivityUtils
+import net.kenstir.ui.util.Utils
+import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.messages.MessagesActivity
 import net.kenstir.util.Analytics
@@ -41,21 +42,21 @@ class PinesMenuProvider : MenuProvider() {
                     Analytics.Param.ACTION_NAME to "full_catalog",
                 ))
                 val url = activity.getString(R.string.ou_library_url)
-                ActivityUtils.launchURL(activity, url)
+                activity.launchURL(url)
             }
             R.id.library_locator_button -> {
                 Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
                     Analytics.Param.ACTION_NAME to "library_locator",
                 ))
                 val url = "https://pines.georgialibraries.org/pinesLocator/locator.html"
-                ActivityUtils.launchURL(activity, url)
+                activity.launchURL(url)
             }
             R.id.galileo_button -> {
                 Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
                     Analytics.Param.ACTION_NAME to "galileo",
                 ))
                 val url = "https://www.galileo.usg.edu"
-                ActivityUtils.launchURL(activity, url)
+                activity.launchURL(url)
             }
             R.id.patron_message_center -> {
                 Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(

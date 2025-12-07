@@ -47,6 +47,8 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
+import net.kenstir.ui.util.Utils
+import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
@@ -98,6 +100,7 @@ class DetailsFragment : Fragment() {
         outState.putInt(Key.POSITION, position!!)
         outState.putInt(Key.TOTAL, total!!)
         super.onSaveInstanceState(outState)
+        Utils.logBundleSize("DetailsFragment", outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -191,7 +194,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun launchURL(url: String) {
-        (activity as? BaseActivity)?.launchURL(url)
+        activity?.launchURL(url)
     }
 
     private fun launchOnlineAccess() {

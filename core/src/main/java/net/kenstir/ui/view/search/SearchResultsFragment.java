@@ -27,6 +27,7 @@ import net.kenstir.hemlock.R;
 import net.kenstir.ui.App;
 import net.kenstir.data.model.BibRecord;
 import net.kenstir.ui.util.ItemClickSupport;
+import net.kenstir.ui.util.Utils;
 
 import java.util.List;
 
@@ -134,6 +135,7 @@ public class SearchResultsFragment extends Fragment {
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+        Utils.logBundleSize("SearchResultsFragment", savedInstanceState);
     }
 
     public void notifyDatasetChanged() {
