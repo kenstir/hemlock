@@ -21,7 +21,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
+import android.os.Bundle
+import android.os.Parcel
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -32,6 +33,7 @@ import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayError
 import net.kenstir.util.getCustomMessage
 import androidx.core.net.toUri
+import net.kenstir.util.Analytics
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
@@ -100,5 +102,22 @@ fun Activity.launchURL(url: String?, requestId: Int? = null) {
         }
     } catch (_: ActivityNotFoundException) {
         Toast.makeText(this, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
+    }
+}
+
+/** Log the size of a Bundle in bytes for debugging purposes.
+ */
+fun Activity.logBundleSize(bundle: Bundle?) {
+    // don't bother for now in release builds
+    if (!Analytics.isDebuggable(this)) return
+
+    val parcel = Parcel.obtain()
+    try {
+        bundle?.writeToParcel(parcel, 0)
+        val size = parcel.dataSize()
+        val source = this.javaClass.simpleName
+        Log.d("Extensions", "[bundle] size = $size bytes ($source)")
+    } finally {
+        parcel.recycle()
     }
 }

@@ -22,7 +22,6 @@ import android.content.Intent
 import androidx.annotation.Keep
 import androidx.core.os.bundleOf
 import net.kenstir.ui.App.REQUEST_MESSAGES
-import net.kenstir.ui.util.Utils
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.messages.MessagesActivity

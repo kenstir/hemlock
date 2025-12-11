@@ -38,8 +38,8 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.Utils
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.util.setMargins
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.OrgDetailsActivity
@@ -125,7 +125,7 @@ class CopyInformationActivity : BaseActivity() {
         super.onSaveInstanceState(outState)
         outState.putSerializable(Key.RECORD_INFO, record)
         outState.putInt(Key.ORG_ID, orgID)
-        Utils.logBundleSize("CopyInformationActivity", outState)
+        logBundleSize(outState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
