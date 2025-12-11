@@ -75,5 +75,5 @@ dependencies {
     })
     testImplementation 'junit:junit:4.13.2'
 
-    implementation project(path: ':free-assets')
+    implementation project(path: ':assets:opensource')
 }

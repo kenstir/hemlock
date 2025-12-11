@@ -10,12 +10,12 @@ include ':owwl_app'
 include ':pines_app'
 include ':sagecat_app'
 
-// include pro-assets if it exists
-def dir = new File('pro-assets')
+// include pro assets if directory exists
+def dir = new File('assets/pro')
 if (dir.exists()) {
-  include ':' + dir
+  include ':assets:pro'
 }
-include ':free-assets'
+include ':assets:opensource'
 
 dependencyResolutionManagement {
   repositories {

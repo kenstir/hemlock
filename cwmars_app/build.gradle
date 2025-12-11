@@ -75,9 +75,9 @@ dependencies {
     })
     testImplementation 'junit:junit:4.13.2'
 
-    // include pro-assets if it exists
-    def dir = new File('pro-assets')
+    // include pro assets if directory exists
+    def dir = new File('assets/pro')
     if (dir.exists()) {
-        implementation project(path: ':pro-assets')
+        implementation project(path: ':assets:pro')
     }
 }

@@ -11,17 +11,18 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/acorn_app" />
+            <option value="$PROJECT_DIR$/assets" />
+            <option value="$PROJECT_DIR$/assets/opensource" />
+            <option value="$PROJECT_DIR$/assets/pro" />
             <option value="$PROJECT_DIR$/cool_app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/cwmars_app" />
-            <option value="$PROJECT_DIR$/free-assets" />
             <option value="$PROJECT_DIR$/hemlock_app" />
             <option value="$PROJECT_DIR$/indiana_app" />
             <option value="$PROJECT_DIR$/mo_app" />
             <option value="$PROJECT_DIR$/noble_app" />
             <option value="$PROJECT_DIR$/owwl_app" />
             <option value="$PROJECT_DIR$/pines_app" />
-            <option value="$PROJECT_DIR$/pro-assets" />
             <option value="$PROJECT_DIR$/sagecat_app" />
           </set>
         </option>
