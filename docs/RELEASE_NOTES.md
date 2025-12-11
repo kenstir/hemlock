@@ -2,6 +2,7 @@
 
 ### Fixes
 * internal: Factor out version.gradle and maintain with fastlane
+* internal: Upgrade to AGP 8.13.2
 
 ## 4.4.0
 
