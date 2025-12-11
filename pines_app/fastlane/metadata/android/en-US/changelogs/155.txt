@@ -1,7 +1,2 @@
 * Improve accessibility throughout the app (#57)
-  Review and fix items reported by Accessibility Scanner, including
-  - touch target minimum heights
-  - content descriptions for TalkBack
 * Bug fixes and performance improvements
-* Fixed issue where Upcoming Closure was not shown if it had no Reason for
-  Closure.  Now it displays with "No reason provided".

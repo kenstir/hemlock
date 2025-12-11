@@ -1,7 +1,5 @@
 * Improve accessibility throughout the app (#57)
 * Add physical description to Item Details
 * Add Hours of Operation notes to Library Info
+* Pay Charges link now goes to new NOBLE catalog
 * Bug fixes and performance improvements
-* noble: Pay Charges link now goes to new NOBLE catalog
-* Fixed issue where Upcoming Closure was not shown if it had no Reason for
-  Closure.  Now it displays with "No reason provided".

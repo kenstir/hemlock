@@ -1,6 +1,8 @@
 ## 4.4.1
 
 ### Fixes
+* Fixed issue where Upcoming Closure was not shown if Reason for Closure
+  was missing.  Now it displays with "No reason provided".
 * internal: Factor out version.gradle and maintain with fastlane
 * internal: Upgrade to AGP 8.13.2
 
@@ -35,8 +37,8 @@
 * Add Hours of Operation notes to Library Info
 
 ### Fixes
-* Fixed an issue where Retry button was obscured when 3-button navigation is enabled
-* Fixed an issue where checked out precat item had "Unknown Title"
+* Fixed issue where Retry button was obscured when 3-button navigation is enabled
+* Fixed issue where checked out precat item had "Unknown Title"
 * internal: Upgrade to Android Studio Narwhal 4 Feature Drop | 2025.1.4
 
 ## 4.2.0
