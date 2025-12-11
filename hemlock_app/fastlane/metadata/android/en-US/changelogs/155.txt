@@ -1,1 +1,2 @@
-* internal: Factor out version.gradle and maintain with fastlane
+* Fixed issue where Upcoming Closure was not shown if it had no Reason for
+  Closure.  Now it displays with "No reason provided".

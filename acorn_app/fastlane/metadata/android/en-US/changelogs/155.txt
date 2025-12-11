@@ -1,0 +1,11 @@
+* Improve accessibility throughout the app (#57)
+  Review and fix items reported by Accessibility Scanner, including
+  - touch target minimum heights
+  - content descriptions for TalkBack
+* Remember search options, hold options, and list sort options across app launches
+  Add just once/always dialog when changing pickup org
+* Add physical description to Item Details
+* Add Hours of Operation notes to Library Info
+* Bug fixes and performance improvements
+* Fixed issue where Upcoming Closure was not shown if it had no Reason for
+  Closure.  Now it displays with "No reason provided".

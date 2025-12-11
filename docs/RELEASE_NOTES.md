@@ -8,12 +8,11 @@
 ### New
 * Improve accessibility throughout the app (#57)
 
-  Review and fix items reported by Accessibility Scanner, including
-  - touch target minimum heights
+  Review and fix items reported by Accessibility Scanner, including - touch target minimum heights
   - content descriptions for TalkBack
 
 ### Fixes
-* noble: Fixed URL used by Pay All Charges button
+* noble: Pay Charges link now goes to new NOBLE catalog
 
 ## 4.3.1
 

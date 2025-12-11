@@ -52,7 +52,7 @@ class EvergreenOrgClosure(
         }
         return OrgClosureInfo(
             dateString = dateString,
-            reason = reason ?: "",
+            reason = reason,
             isDateRange = isDateRange
         )
     }
@@ -64,8 +64,8 @@ class EvergreenOrgClosure(
             for (obj in objList) {
                 val start = obj.getDate("close_start")
                 val end = obj.getDate("close_end")
-                val reason = obj.getString("reason")
-                if (start != null && end != null && reason != null && end > now) {
+                if (start != null && end != null && end > now) {
+                    val reason = obj.getString("reason") ?: "No reason provided"
                     ret.add(EvergreenOrgClosure(start, end, reason, obj))
                 }
             }

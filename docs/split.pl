@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# usage: cat RELEASE_NOTES_A_LA*.md | perl split.pl
+# usage: cat RELEASE_NOTES.md | perl split.pl
 
 use warnings;
 use strict;
