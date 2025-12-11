@@ -60,13 +60,14 @@ def get_version_info(path = "../version.gradle")
 
   versionCode = m[2]
 
-  m = content.match(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/)
+  m = content.match(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)\.(\d+)(")/)
   UI.user_error!("\"globlVersionName\" not found in #{path}") unless m
 
   major  = m[2]
   minor  = m[3]
   patch  = m[4]
-  versionName = "#{major}.#{minor}.#{patch}"
+  build  = m[5]
+  versionName = "#{major}.#{minor}.#{patch}.#{build}"
 
   return versionCode, versionName
 end
@@ -86,12 +87,13 @@ end
 def increment_version_string(part = :patch, path = "../version.gradle")
   content = File.read(path)
 
-  new_content = content.gsub(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)(")/) do
+  new_content = content.gsub(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)\.(\d+)(")/) do
     prefix = Regexp.last_match(1)
     major  = Regexp.last_match(2).to_i
     minor  = Regexp.last_match(3).to_i
     patch  = Regexp.last_match(4).to_i
-    suffix = Regexp.last_match(5)
+    build  = Regexp.last_match(5).to_i
+    suffix = Regexp.last_match(6)
 
     case part.to_sym
     when :major
@@ -103,11 +105,13 @@ def increment_version_string(part = :patch, path = "../version.gradle")
       patch = 0
     when :patch
       patch += 1
+    when :build
+      build += 1
     else
       raise ArgumentError, "part must be :major, :minor, or :patch"
     end
 
-    "#{prefix}#{major}.#{minor}.#{patch}#{suffix}"
+    "#{prefix}#{major}.#{minor}.#{patch}.#{build}#{suffix}"
   end
 
   File.write(path, new_content)
@@ -197,6 +201,19 @@ lane :bump_version_patch do
   increment_version_string(:patch)
 end
 
+lane :bump_version_build do
+  increment_version_string(:build)
+end
+
 lane :bump_version_code do
   increment_version_code
+end
+
+lane :print_build_info do
+  versionCode, versionName = get_version_info("../version.gradle")
+  UI.message("versionCode: #{versionCode}")
+  UI.message("versionName: #{versionName}")
+end
+lane :v do
+  print_build_info
 end
