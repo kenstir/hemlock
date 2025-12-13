@@ -4,6 +4,7 @@
 # usage: import "../../fastlane/Fastfile"
 #-----------------------------------------
 
+require_relative './lib/get_active_users'
 
 #-----------------------------------------
 # funcs
@@ -287,3 +288,16 @@ lane :v do
 end
 
 #-----------------------------------------
+# Firebase Analytics
+
+lane :print_active_users do
+  app = get_project().delete_suffix("_app")
+  active_users = get_active_28d_users(app)
+
+  ios = active_users['iOS']
+  android = active_users['Android']
+  total = ios + android
+  msg("active_28d_users_ios:     #{ios}")
+  msg("active_28d_users_android: #{android}")
+  msg("active_28d_users_total:   #{total}")
+end
