@@ -25,7 +25,7 @@ def find_aab
   find_aab_for(get_project())
 end
 
-# Returns name of the current project, e.g. "hemlock_app"
+# Returns name of the current project, e.g. "hemlock_app" or errors
 # (curiously one level up from the project's Fastfile)
 def get_project
   project = File.basename(File.expand_path("..", Dir.pwd))
@@ -118,15 +118,7 @@ def increment_version_string(part = :patch, path = "../version.gradle")
 end
 
 #-----------------------------------------
-# lanes
-
-desc "Run all the tests"
-lane :test do
-  Dir.chdir("..") do
-    sh("bash ./tools/jdkrun.sh ./gradlew test")
-    sh("bash ./tools/jdkrun.sh ./gradlew connectedAndroidTest")
-  end
-end
+# debug
 
 desc "Dump vars for testing"
 lane :dumpvars do
@@ -141,6 +133,17 @@ lane :dumpvars do
 
   ENV.each do |key, value|
     UI.message("   #{key}=#{value}")
+  end
+end
+
+#-----------------------------------------
+# building and releasing
+
+desc "Run all the tests"
+lane :test do
+  Dir.chdir("..") do
+    sh("bash ./tools/jdkrun.sh ./gradlew test")
+    sh("bash ./tools/jdkrun.sh ./gradlew connectedAndroidTest")
   end
 end
 
@@ -189,6 +192,51 @@ lane :beta do
   push_git_tags(tag: tag)
 end
 
+lane :show_version_codes do
+  app = get_project().delete_suffix("_app")
+  versionCode, versionName = get_version_info("../../version.gradle")
+  beta_versions = google_play_track_version_codes(track: "beta")
+  prod_versions = google_play_track_version_codes(track: "production")
+
+  UI.message("app:           #{app}")
+  UI.message("versionCode:   #{versionCode}")
+  UI.message("beta_versions: #{beta_versions}")
+  UI.message("prod_versions: #{prod_versions}")
+end
+
+desc "Promote beta app to production"
+lane :promote_beta do
+  app = get_project().delete_suffix("_app")
+  versionCode, versionName = get_version_info("../../version.gradle")
+  beta_versions = google_play_track_version_codes(track: "beta")
+  prod_versions = google_play_track_version_codes(track: "production")
+
+  UI.message("app:           #{app}")
+  UI.message("versionCode:   #{versionCode}")
+  UI.message("beta_versions: #{beta_versions}")
+  UI.message("prod_versions: #{prod_versions}")
+
+  UI.user_error!("More than 1 beta version") unless beta_versions.length == 1
+  UI.user_error!("More than 1 prod version") unless prod_versions.length == 1
+  beta_version = beta_versions.first
+  prod_version = prod_versions.first
+
+  if beta_version == prod_version
+    UI.message("same version")
+    next
+  end
+
+  upload_to_play_store(
+    track: "beta",
+    track_promote_to: "production",
+    rollout: "1.0",
+    version_code: beta_version
+  )
+end
+
+#-----------------------------------------
+# maintaining version numbers
+
 lane :bump_version_major do
   increment_version_string(:major)
 end
@@ -217,3 +265,5 @@ end
 lane :v do
   print_build_info
 end
+
+#-----------------------------------------
