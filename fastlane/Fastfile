@@ -117,6 +117,11 @@ def increment_version_string(part = :patch, path = "../version.gradle")
   File.write(path, new_content)
 end
 
+# Prints a message with a prefix so it can be easily scraped
+def msg(msg)
+  UI.message("kcx: #{msg}")
+end
+
 #-----------------------------------------
 # debug
 
@@ -134,6 +139,11 @@ lane :dumpvars do
   ENV.each do |key, value|
     UI.message("   #{key}=#{value}")
   end
+end
+
+desc "noop for timing"
+lane :noop do
+  msg("noop")
 end
 
 #-----------------------------------------
@@ -192,18 +202,6 @@ lane :beta do
   push_git_tags(tag: tag)
 end
 
-lane :show_version_codes do
-  app = get_project().delete_suffix("_app")
-  versionCode, versionName = get_version_info("../../version.gradle")
-  beta_versions = google_play_track_version_codes(track: "beta")
-  prod_versions = google_play_track_version_codes(track: "production")
-
-  UI.message("app:           #{app}")
-  UI.message("versionCode:   #{versionCode}")
-  UI.message("beta_versions: #{beta_versions}")
-  UI.message("prod_versions: #{prod_versions}")
-end
-
 desc "Promote beta app to production"
 lane :promote_beta do
   app = get_project().delete_suffix("_app")
@@ -234,6 +232,28 @@ lane :promote_beta do
   )
 end
 
+lane :show_version_codes do
+  app = get_project().delete_suffix("_app")
+  versionCode, versionName = get_version_info("../../version.gradle")
+  beta_versions = google_play_track_version_codes(track: "beta")
+  prod_versions = google_play_track_version_codes(track: "production")
+
+  msg("app:           #{app}")
+  msg("versionCode:   #{versionCode}")
+  msg("beta_versions: #{beta_versions}")
+  msg("prod_versions: #{prod_versions}")
+end
+
+lane :show_all_version_codes do
+  # fastlane is weird in that it operates with cwd of fastlane/
+  Dir.glob("../*_app/fastlane").each do |project_fastlane|
+    Dir.chdir(project_fastlane) do
+      UI.message("Chdir #{Dir.pwd}")
+      show_version_codes
+    end
+  end
+end
+
 #-----------------------------------------
 # maintaining version numbers
 
@@ -259,8 +279,8 @@ end
 
 lane :print_build_info do
   versionCode, versionName = get_version_info("../version.gradle")
-  UI.message("versionCode: #{versionCode}")
-  UI.message("versionName: #{versionName}")
+  msg("versionCode: #{versionCode}")
+  msg("versionName: #{versionName}")
 end
 lane :v do
   print_build_info

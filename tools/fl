@@ -11,6 +11,8 @@
 # Setting JAVA_HOME is another way to make gradlew work, but for now use tools/jdkrun.sh
 #export JAVA_HOME=/c/Program\ Files/Android/Android\ Studio/jbr
 
+export FASTLANE_SKIP_ACTION_SUMMARY=1
+
 # If $1 is the name of an app, shift it off and cd to subdir
 if [ $# -gt 0 ]; then
     app="$1"
@@ -20,6 +22,6 @@ if [ $# -gt 0 ]; then
     fi
 fi
 
-# Roll em
+# 'bundle exec' is only slightly faster, but it does eliminate a warning
 exec bundle exec fastlane "$@"
 #exec fastlane "$@"
