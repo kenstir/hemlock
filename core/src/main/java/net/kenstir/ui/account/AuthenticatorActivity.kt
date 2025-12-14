@@ -43,7 +43,6 @@ import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.util.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
-    val REQ_SIGNUP: Int = 1
     protected var accountManager: AccountManager? = null
     protected val scope = lifecycleScope
 
@@ -149,18 +148,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         logBundleSize(outState)
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Analytics.log(TAG,"onActivityResult> requestCode=$requestCode resultCode=$resultCode")
-        // The sign up activity returned that the user has successfully created
-        // an account
-        if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK && data != null) {
-            onAuthSuccess(data)
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     fun submit() {
         Analytics.log(TAG, "submit>")
 
@@ -238,6 +225,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             Analytics.log(TAG,
                 "onAuthSuccess> userdata, name=$library_name url=$library_url")
         }
+        // TODO: move to background thread to fix ANR (e.g. withContext(Dispatchers.IO) { ... })
         if (accountManager!!.addAccountExplicitly(account, accountPassword, userdata)) {
             Analytics.log(TAG, "onAuthSuccess> true, setAuthToken " + Analytics.redactedString(authtoken))
             // Not setting the auth token will cause another call to the server
