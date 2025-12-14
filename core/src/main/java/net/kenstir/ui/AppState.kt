@@ -37,7 +37,7 @@ object AppState {
     const val HOLD_SMS_CARRIER_ID = "sms_carrier_id"
     const val HOLD_SMS_NUMBER = "sms_number"
     const val LAUNCH_COUNT = "launch_count"
-    const val LIBRARY_URL = "library_url"
+    const val LIBRARY_URL_OBSOLETE = "library_url" // no longer used
     const val LIBRARY_NAME = "library_name"
     const val NIGHT_MODE = "night_mode"
     const val NOTIFICATIONS_DENY_COUNT = "notifications_deny_count"
@@ -46,8 +46,8 @@ object AppState {
     const val SEARCH_OPTIONS_ARE_VISIBLE = "search_options_visible"
     const val SEARCH_ORG_SHORT_NAME = "search_org"
 
-    // increment PREFS_VERSION every time you make a breaking change to the persistent pref storage
-    private const val PREFS_VERSION = 2
+    // increment PREFS_SCHEMA_VERSION every time you make a breaking change to the persistent pref storage
+    private const val PREFS_SCHEMA_VERSION = 3
     private const val VERSION = "version"
     private var initialized = false
     private lateinit var prefs: SharedPreferences
@@ -61,16 +61,15 @@ object AppState {
 
         // set default values unless already set
         var version = prefs.getInt(VERSION, 0)
-        if (version < PREFS_VERSION) {
-            prefs.edit(commit = true) {
-                version = PREFS_VERSION
-                putInt(VERSION, PREFS_VERSION)
-                putString(LIBRARY_URL, context.getString(R.string.ou_library_url))
+        if (version < PREFS_SCHEMA_VERSION) {
+            prefs.edit {
+                version = PREFS_SCHEMA_VERSION
+                putInt(VERSION, PREFS_SCHEMA_VERSION)
+                remove(LIBRARY_URL_OBSOLETE)
                 putString(LIBRARY_NAME, context.getString(R.string.ou_library_name))
             }
         }
         Log.d(TAG, "version=$version")
-        Log.d(TAG, "library_url=" + getString(LIBRARY_URL))
         Log.d(TAG, "library_name=" + getString(LIBRARY_NAME))
     }
 
