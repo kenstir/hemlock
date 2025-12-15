@@ -203,15 +203,22 @@ lane :beta do
   push_git_tags(tag: tag)
 end
 
+# Returns local, beta, prod_version_code
+def get_version_codes
+  local, _ = get_version_info("../../version.gradle")
+  beta = google_play_track_version_codes(track: "beta")
+  prod = google_play_track_version_codes(track: "production")
+
+  return local, beta, prod
+end
+
 desc "Promote beta app to production"
 lane :promote_beta do
   app = get_project().delete_suffix("_app")
-  versionCode, versionName = get_version_info("../../version.gradle")
-  beta_versions = google_play_track_version_codes(track: "beta")
-  prod_versions = google_play_track_version_codes(track: "production")
+  local_version, beta_versions, prod_versions = get_version_codes()
 
   UI.message("app:           #{app}")
-  UI.message("versionCode:   #{versionCode}")
+  UI.message("local_version: #{local_version}")
   UI.message("beta_versions: #{beta_versions}")
   UI.message("prod_versions: #{prod_versions}")
 
@@ -225,6 +232,10 @@ lane :promote_beta do
     next
   end
 
+  if not UI.confirm("Promote to production?")
+    next
+  end
+
   upload_to_play_store(
     track: "beta",
     track_promote_to: "production",
@@ -233,17 +244,15 @@ lane :promote_beta do
   )
 end
 
-desc "Query the Play Store for the version codes in beta and production channels"
+desc "Query Play Store for live version codes"
 lane :query_version_codes do
   app = get_project().delete_suffix("_app")
-  local_version, _ = get_version_info("../../version.gradle")
-  beta_versions = google_play_track_version_codes(track: "beta")
-  prod_versions = google_play_track_version_codes(track: "production")
+  local_version, beta_versions, prod_versions = get_version_codes()
 
-  msg("app:           #{app}")
-  msg("local_version: #{local_version}")
-  msg("beta_versions: #{beta_versions}")
-  msg("prod_versions: #{prod_versions}")
+  UI.message("app:           #{app}")
+  UI.message("local_version: #{local_version}")
+  UI.message("beta_versions: #{beta_versions}")
+  UI.message("prod_versions: #{prod_versions}")
 end
 
 desc "Show version codes for all apps"
