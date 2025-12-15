@@ -1,9 +1,12 @@
 // version name format: Major.Minor.Patch.Build where Build starts with 1
 //
 // to bump:
+//
 //     tools/fl bump_version_major
 //     tools/fl bump_version_minor
 //     tools/fl bump_version_patch
+//     tools/fl bump_version_build
+//
 //     tools/fl bump_version_code
 //
 ext.globalVersionName = "4.4.1.1"

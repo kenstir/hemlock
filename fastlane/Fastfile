@@ -158,7 +158,7 @@ lane :test do
   end
 end
 
-desc "Create a release AAB"
+desc "Create release AAB (called from beta)"
 lane :make_release do
   project = get_project()
   # 2025-12-01: ../gradlew bundleRelease fails for acorn,cwmars
@@ -168,7 +168,7 @@ lane :make_release do
   end
 end
 
-desc "Upload release AAB to the open testing channel"
+desc "Upload release AAB to the beta channel (called from beta)"
 lane :upload_beta do
   upload_to_play_store(
     aab: find_aab(),
@@ -181,7 +181,7 @@ lane :upload_beta do
   )
 end
 
-desc "Make release AAB + upload to the open testing channel"
+desc "Make release AAB + upload to the beta channel"
 lane :beta do
   #ensure_git_status_clean
   tag, msg = get_tag_info()
@@ -233,19 +233,21 @@ lane :promote_beta do
   )
 end
 
-lane :show_version_codes do
+desc "Query the Play Store for the version codes in beta and production channels"
+lane :query_version_codes do
   app = get_project().delete_suffix("_app")
-  versionCode, versionName = get_version_info("../../version.gradle")
+  local_version, _ = get_version_info("../../version.gradle")
   beta_versions = google_play_track_version_codes(track: "beta")
   prod_versions = google_play_track_version_codes(track: "production")
 
   msg("app:           #{app}")
-  msg("versionCode:   #{versionCode}")
+  msg("local_version: #{local_version}")
   msg("beta_versions: #{beta_versions}")
   msg("prod_versions: #{prod_versions}")
 end
 
-lane :show_all_version_codes do
+desc "Show version codes for all apps"
+lane :query_all_version_codes do
   # fastlane is weird in that it operates with cwd of fastlane/
   Dir.glob("../*_app/fastlane").each do |project_fastlane|
     Dir.chdir(project_fastlane) do
@@ -258,31 +260,39 @@ end
 #-----------------------------------------
 # maintaining version numbers
 
+desc "Bump major number in version.gradle"
 lane :bump_version_major do
   increment_version_string(:major)
 end
 
+desc "Bump minor number in version.gradle"
 lane :bump_version_minor do
   increment_version_string(:minor)
 end
 
+desc "Bump patch number in version.gradle"
 lane :bump_version_patch do
   increment_version_string(:patch)
 end
 
+desc "Bump build number in version.gradle"
 lane :bump_version_build do
   increment_version_string(:build)
 end
 
+desc "Bump version code in version.gradle"
 lane :bump_version_code do
   increment_version_code
 end
 
+desc "Print the version numbers from version.gradle"
 lane :print_build_info do
   versionCode, versionName = get_version_info("../version.gradle")
   msg("versionCode: #{versionCode}")
   msg("versionName: #{versionName}")
 end
+
+desc "alias for print_build_info"
 lane :v do
   print_build_info
 end
@@ -290,13 +300,17 @@ end
 #-----------------------------------------
 # Firebase Analytics
 
-lane :print_active_users do
+desc "Query Google Analytics for the active users"
+lane :query_active_users do
   app = get_project().delete_suffix("_app")
   active_users = get_active_28d_users(app)
+  UI.important("active_users: #{active_users}")
 
-  ios = active_users['iOS']
-  android = active_users['Android']
+  ios = active_users.key?('iOS') ? active_users['iOS'] : 0
+  android = active_users.key?('Android') ? active_users['Android'] : 0
+  UI.important("android = #{android}")
   total = ios + android
+
   msg("active_28d_users_ios:     #{ios}")
   msg("active_28d_users_android: #{android}")
   msg("active_28d_users_total:   #{total}")
