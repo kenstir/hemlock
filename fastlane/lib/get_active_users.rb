@@ -1,18 +1,10 @@
-require "google/analytics/data/v1beta"
-require "JSON"
-
-# Parses json file and returns the contents
-def read_json_file(path)
-  str = File.read(path)
-  data = JSON.parse(str)
-  return data
-end
+require 'google/analytics/data/v1beta'
 
 # Returns hash of {'iOS': i, 'Android': j}
 def get_active_28d_users(app)
   root = get_repo_root()
   info_file = "#{root}/secret/#{app}-info.json"
-  creds_file = "#{root}/secret/#{app}-fastlane.json"
+  key_file = "#{root}/secret/#{app}-fastlane.json"
 
   info = read_json_file(info_file)
   #puts("info: #{info}")
@@ -21,7 +13,7 @@ def get_active_28d_users(app)
   #puts("id: #{fa_property_id}")
 
   client = ::Google::Analytics::Data::V1beta::AnalyticsData::Client.new do |config|
-    config.credentials = creds_file
+    config.credentials = key_file
   end
 
   request = ::Google::Analytics::Data::V1beta::RunReportRequest.new(

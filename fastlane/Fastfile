@@ -5,9 +5,18 @@
 #-----------------------------------------
 
 require_relative './lib/get_active_users'
+require 'pp'
+require 'JSON'
 
 #-----------------------------------------
 # funcs
+
+# Returns list of all app projects that have a fastlane
+def get_all_apps
+  # fastlane is weird in that it operates with cwd of ./fastlane/
+  apps = Dir.glob("../*_app/fastlane")
+    .map { |p| File.basename(File.dirname(p)).sub(/_app\z/, "") }
+end
 
 # Returns absolute path to repo root
 def get_repo_root
@@ -121,6 +130,13 @@ end
 # Prints a message with a prefix so it can be easily scraped
 def msg(msg)
   UI.message("kcx: #{msg}")
+end
+
+# Parses json file and returns the contents
+def read_json_file(path)
+  str = File.read(path)
+  data = JSON.parse(str)
+  return data
 end
 
 #-----------------------------------------
@@ -253,16 +269,39 @@ lane :query_version_codes do
   UI.message("local_version: #{local_version}")
   UI.message("beta_versions: #{beta_versions}")
   UI.message("prod_versions: #{prod_versions}")
+  pp Actions.lane_context
 end
 
 desc "Show version codes for all apps"
 lane :query_all_version_codes do
-  # fastlane is weird in that it operates with cwd of fastlane/
-  Dir.glob("../*_app/fastlane").each do |project_fastlane|
-    Dir.chdir(project_fastlane) do
-      UI.message("Chdir #{Dir.pwd}")
-      show_version_codes
-    end
+  get_all_apps().each do |app|
+    root = get_repo_root()
+    info_file = "#{root}/secret/#{app}-info.json"
+    key_file = "#{root}/secret/#{app}-fastlane.json"
+
+    info = read_json_file(info_file)
+    package_name = info.key?('package_name') ? info['package_name'] : "net.kenstir.apps.#{app}"
+
+    local_version, _ = get_version_info("../version.gradle")
+
+    # NB: If we omit package_name and json_key, the Supply client is
+    # reused, returning info for the wrong project and exhausing the
+    # project's request quota.
+    beta_versions = google_play_track_version_codes(
+      track: "beta",
+      package_name: package_name,
+      json_key: key_file
+    )
+    prod_versions = google_play_track_version_codes(
+      track: "production",
+      package_name: package_name,
+      json_key: key_file
+    )
+
+    UI.message("app:           #{app}")
+    UI.message("local_version: #{local_version}")
+    UI.message("beta_versions: #{beta_versions}")
+    UI.message("prod_versions: #{prod_versions}")
   end
 end
 
@@ -313,13 +352,14 @@ desc "Query Google Analytics for the active users"
 lane :query_active_users do
   app = get_project().delete_suffix("_app")
   active_users = get_active_28d_users(app)
-  UI.important("active_users: #{active_users}")
+  #UI.important("active_users: #{active_users}")
 
   ios = active_users.key?('iOS') ? active_users['iOS'] : 0
   android = active_users.key?('Android') ? active_users['Android'] : 0
-  UI.important("android = #{android}")
+  #UI.important("android = #{android}")
   total = ios + android
 
+  msg("app:                      #{app}")
   msg("active_28d_users_ios:     #{ios}")
   msg("active_28d_users_android: #{android}")
   msg("active_28d_users_total:   #{total}")
