@@ -348,7 +348,7 @@ end
 #-----------------------------------------
 # Firebase Analytics
 
-desc "Query Google Analytics for the active users"
+desc "Query Google Analytics for active users stats"
 lane :query_active_users do
   app = get_project().delete_suffix("_app")
   active_users = get_active_28d_users(app)
