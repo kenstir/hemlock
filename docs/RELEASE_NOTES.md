@@ -1,3 +1,13 @@
+## 4.5.0
+
+### New
+* noble: Enable part holds
+
+### Fixed
+* internal: Remove unused library_url from SharedPrefs
+* internal: Fastlane improvements
+* internal: Add fallback splash_title.png to hemlock, indiana, mo, noble, sagecat
+
 ## 4.4.1
 
 ### Fixes

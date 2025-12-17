@@ -3,4 +3,5 @@
     <string name="title_fines">Charges</string>
     <string name="button_pay_fines">Pay all charges</string>
     <string name="balance_owed">Charges</string>
+    <string name="label_hold_any_part">Complete set</string>
 </resources>
