@@ -1,0 +1,1 @@
+* Fix ANR (App Not Responding) errors by moving account actions off main thread

@@ -4,7 +4,7 @@
 * noble: Enable part holds
 
 ### Fixed
-* Fix ANR by moving addAccountExplicitly off main thread
+* Fix ANR (App Not Responding) errors by moving account actions off main thread
 * cwmars: Use "Complete set" instead of "Any part"
 * internal: Add fallback drawable/splash_title.png to try to fix Resources$NotFoundException
 * internal: Remove unused library_url from SharedPrefs
