@@ -51,24 +51,24 @@ def get_tag_info
   app = get_project().delete_suffix("_app")
   UI.message("app: #{app}")
 
-  versionCode, versionName = get_version_info("../../version.gradle")
-  UI.message("versionCode: #{versionCode}")
-  UI.message("versionName: #{versionName}")
+  version_code, version_name = get_version_info("../../version.gradle")
+  UI.message("version_code: #{version_code}")
+  UI.message("version_name: #{version_name}")
 
-  tag = "#{app}_v#{versionCode}"
-  msg = "#{tag} (#{versionName})"
+  tag = "#{app}_v#{version_code}"
+  msg = "#{tag} (#{version_name})"
 
   return tag, msg
 end
 
-# Returns [versionCode, versionString] scraped from version.gradle
+# Returns [version_code, versionString] scraped from version.gradle
 def get_version_info(path = "../version.gradle")
   content = File.read(path)
 
   m = content.match(/(globalVersionCode\s*=\s*)(\d+)/)
   UI.user_error!("\"globlVersionCode\" not found in #{path}") unless m
 
-  versionCode = m[2]
+  version_code = m[2]
 
   m = content.match(/(globalVersionName\s*=\s*")(\d+)\.(\d+)\.(\d+)\.(\d+)(")/)
   UI.user_error!("\"globlVersionName\" not found in #{path}") unless m
@@ -77,9 +77,9 @@ def get_version_info(path = "../version.gradle")
   minor  = m[3]
   patch  = m[4]
   build  = m[5]
-  versionName = "#{major}.#{minor}.#{patch}.#{build}"
+  version_name = "#{major}.#{minor}.#{patch}.#{build}"
 
-  return versionCode, versionName
+  return version_code, version_name
 end
 
 def increment_version_code(path = "../version.gradle")
@@ -298,10 +298,10 @@ lane :query_all_version_codes do
       json_key: key_file
     )
 
-    UI.message("app:           #{app}")
-    UI.message("local_version: #{local_version}")
-    UI.message("beta_versions: #{beta_versions}")
-    UI.message("prod_versions: #{prod_versions}")
+    msg("app:           #{app}")
+    msg("local_version: #{local_version}")
+    msg("beta_versions: #{beta_versions}")
+    msg("prod_versions: #{prod_versions}")
   end
 end
 
@@ -311,33 +311,38 @@ end
 desc "Bump major number in version.gradle"
 lane :bump_version_major do
   increment_version_string(:major)
+  print_build_info
 end
 
 desc "Bump minor number in version.gradle"
 lane :bump_version_minor do
   increment_version_string(:minor)
+  print_build_info
 end
 
 desc "Bump patch number in version.gradle"
 lane :bump_version_patch do
   increment_version_string(:patch)
+  print_build_info
 end
 
 desc "Bump build number in version.gradle"
 lane :bump_version_build do
   increment_version_string(:build)
+  print_build_info
 end
 
 desc "Bump version code in version.gradle"
 lane :bump_version_code do
   increment_version_code
+  print_build_info
 end
 
 desc "Print the version numbers from version.gradle"
 lane :print_build_info do
-  versionCode, versionName = get_version_info("../version.gradle")
-  msg("versionCode: #{versionCode}")
-  msg("versionName: #{versionName}")
+  version_code, version_name = get_version_info("../version.gradle")
+  msg("version_code: #{version_code}")
+  msg("version_name: #{version_name}")
 end
 
 desc "alias for print_build_info"
