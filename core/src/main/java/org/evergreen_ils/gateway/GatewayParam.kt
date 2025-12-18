@@ -54,7 +54,7 @@ object XGatewayParamSerializer : kotlinx.serialization.KSerializer<XGatewayParam
                 encoder.encodeSerializableValue(OSRFObject.serializer(), OSRFObject(jsonDict))
             }
             is OSRFObject -> {
-                encoder.encodeSerializableValue(OSRFObject.serializer(), value.value as OSRFObject)
+                encoder.encodeSerializableValue(OSRFObject.serializer(), value.value)
             }
             is List<*> -> {
                 val jsonArray = value.value.map { XGatewayParam(it) }

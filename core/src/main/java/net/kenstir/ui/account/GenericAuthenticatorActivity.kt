@@ -42,6 +42,7 @@ import net.kenstir.util.Analytics
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.gateway.GatewayClient
 
+@OptIn(kotlinx.serialization.InternalSerializationApi::class)
 @Serializable
 data class DirectoryEntry(
     @SerialName("short_name") val shortName: String,
