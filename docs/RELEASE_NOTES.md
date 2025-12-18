@@ -4,8 +4,12 @@
 * noble: Enable part holds
 
 ### Fixed
+* Fix ANR by moving addAccountExplicitly off main thread
+* cwmars: Use "Complete set" instead of "Any part"
+* internal: Add fallback drawable/splash_title.png to try to fix Resources$NotFoundException
 * internal: Remove unused library_url from SharedPrefs
 * internal: Fastlane improvements
+* internal: Upgrade to fastlane 2.230.0
 * internal: Add fallback splash_title.png to hemlock, indiana, mo, noble, sagecat
 
 ## 4.4.1
