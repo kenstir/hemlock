@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -51,11 +50,11 @@ import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.BarcodeActivity
-import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.bookbags.BookBagsActivity
+import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.main.MainActivity
 import net.kenstir.ui.view.messages.MessagesActivity

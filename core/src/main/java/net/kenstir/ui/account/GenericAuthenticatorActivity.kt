@@ -100,7 +100,9 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val client = GatewayClient.client
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
-                onLibrariesLoaded()
+
+                val existingAccounts = AccountUtilsAsync.getAccountsByType(this@GenericAuthenticatorActivity)
+                onLibrariesLoaded(existingAccounts)
                 Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
@@ -164,11 +166,9 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         }
     }
 
-    private fun onLibrariesLoaded() {
+    private fun onLibrariesLoaded(existingAccounts: List<android.accounts.Account>) {
         // if the user has any existing accounts, then we can select a reasonable default library
         var defaultLibrary: Library? = null
-        val existingAccounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
-        Log.d(Const.AUTH_TAG, "[auth] found ${existingAccounts.size} existing accounts")
         if (existingAccounts.isNotEmpty()) {
             defaultLibrary = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
                 existingAccounts[0])

@@ -29,7 +29,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -40,6 +43,7 @@ import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.account.AccountUtilsAsync
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
 
@@ -231,8 +235,10 @@ open class MainBaseActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val item = menu.findItem(R.id.action_switch_account)
-        val numAccounts = AccountUtils.getAccountsByType(this).size
-        item?.isEnabled = (numAccounts > 1)
+        scope.launch {
+            val numAccounts = AccountUtilsAsync.getAccountsByType(this@MainBaseActivity).size
+            item?.isEnabled = (numAccounts > 1)
+        }
         return true
     }
 

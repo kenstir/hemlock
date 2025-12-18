@@ -52,10 +52,8 @@ import net.kenstir.ui.account.await
 import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
-import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.account.AccountUtilsAsync
 import net.kenstir.ui.util.compatEnableEdgeToEdge
-import net.kenstir.ui.util.showAlert
-import net.kenstir.util.injectRandomFailure
 import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
@@ -234,19 +232,18 @@ class LaunchActivity : AppCompatActivity() {
     // needs an Activity.
     private suspend fun getAccount() {
         // get auth token
-        val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
+        val future = AccountUtilsAsync.getAuthTokenFuture(this)
+        Log.d(TAG, "[auth] getAuthTokenFuture ... await")
         val bnd = future.await(3_600_000) // long to allow authenticator activity
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
-        if (bnd == null)
-            throw TimeoutException()
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
-        val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
+        val library = AccountUtilsAsync.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         App.setLibrary(library)
         val account = App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
@@ -261,10 +258,10 @@ class LaunchActivity : AppCompatActivity() {
         var sessionResult = fetchSession(account)
         Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         if (sessionResult is Result.Error) {
-            AccountUtils.invalidateAuthToken(this, account.authToken)
+            AccountUtilsAsync.invalidateAuthToken(this, account.authToken)
             account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
-            val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
+            val future = AccountUtilsAsync.getAuthTokenForAccountFuture(this, account.username)
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... await")
             val bnd = future.await(3_600_000) // long to allow authenticator activity
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
@@ -292,7 +289,7 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // record analytics
-        val numAccounts = AccountUtils.getAccountsByType(this).size
+        val numAccounts = AccountUtilsAsync.getAccountsByType(this).size
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
