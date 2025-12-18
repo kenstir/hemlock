@@ -30,7 +30,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import net.kenstir.hemlock.R
 import net.kenstir.util.Analytics
 import net.kenstir.data.Result
@@ -169,8 +171,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             try {
                 var authtoken: String? = null
                 var errorMessage = "Login failed"
-                val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
-                val data = Bundle()
 
                 val result = App.getServiceConfig().authService.getAuthToken(username, password)
                 when (result) {
@@ -182,6 +182,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                     }
                 }
 
+                val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
+                val data = Bundle()
                 data.putString(AccountManager.KEY_ACCOUNT_NAME, username)
                 data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)
                 data.putString(AccountManager.KEY_AUTHTOKEN, authtoken)
@@ -191,14 +193,14 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
 
                 val intent = Intent()
                 intent.putExtras(data)
-                onAuthSuccess(intent)
+                addLocalAccount(intent)
             } catch (ex: Exception) {
                 showAlert(ex)
             }
         }
     }
 
-    private fun onAuthSuccess(intent: Intent) {
+    private suspend fun addLocalAccount(intent: Intent) = withContext(Dispatchers.IO) {
         val accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)!!
         val accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)!!
         val accountPassword = intent.getStringExtra(PARAM_USER_PASS)
@@ -211,7 +213,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 + " library_name=" + library_name
                 + " library_url=" + library_url))
 
-        //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
         Analytics.log(TAG, "onAuthSuccess> addAccountExplicitly " + Analytics.redactedString(accountName))
         val authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN)
         val authtokenType = authTokenType
@@ -225,7 +226,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             Analytics.log(TAG,
                 "onAuthSuccess> userdata, name=$library_name url=$library_url")
         }
-        // TODO: move to background thread to fix ANR (e.g. withContext(Dispatchers.IO) { ... })
+
         if (accountManager!!.addAccountExplicitly(account, accountPassword, userdata)) {
             Analytics.log(TAG, "onAuthSuccess> true, setAuthToken " + Analytics.redactedString(authtoken))
             // Not setting the auth token will cause another call to the server
