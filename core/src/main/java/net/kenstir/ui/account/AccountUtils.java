@@ -125,18 +125,6 @@ public class AccountUtils {
         return am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null);
     }
 
-    public static Bundle getAuthToken(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.d(Const.AUTH_TAG, "getAuthToken");
-        if (runningOnUIThread())
-            return new Bundle();
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
-        AccountManagerFuture<Bundle> future = am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
-        Bundle bnd = future.getResult();
-        Log.d(Const.AUTH_TAG, "getAuthToken returns "+bnd);
-        return bnd;
-    }
-
     public static AccountManagerFuture<Bundle> getAuthTokenFuture(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
         Log.d(Const.AUTH_TAG, "getAuthTokenFuture");
         final AccountManager am = AccountManager.get(activity);
@@ -150,11 +138,6 @@ public class AccountUtils {
         final Account[] availableAccounts = am.getAccountsByType(accountType);
         Log.d(Const.AUTH_TAG, "getAccountsByType found " + availableAccounts.length + " accounts");
         return availableAccounts;
-    }
-
-    public static boolean haveMoreThanOneAccount(Activity activity) {
-        Account[] availableAccounts = getAccountsByType(activity);
-        return availableAccounts.length > 1;
     }
 
     public static void addAccount(final Activity activity, final Runnable runnable) {
