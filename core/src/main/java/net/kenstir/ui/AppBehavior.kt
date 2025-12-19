@@ -130,8 +130,10 @@ open class AppBehavior {
     open fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
         val links = ArrayList<Link>()
         val onlineLoc = record.getFirstOnlineLocation()
-        if (TextUtils.isEmpty(onlineLoc)) return links
-        links.add(Link(onlineLoc!!, ""))
+        if (onlineLoc.isNullOrEmpty()) {
+            return links
+        }
+        links.add(Link(onlineLoc, ""))
         return links
     }
 }
