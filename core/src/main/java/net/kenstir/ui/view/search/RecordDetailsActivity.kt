@@ -34,6 +34,7 @@ import net.kenstir.ui.App
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
 
@@ -68,6 +69,11 @@ class RecordDetailsActivity : BaseActivity() {
         mPager = findViewById(R.id.main_content_view)
         mPager?.adapter = SearchFragmentAdapter(supportFragmentManager)
         mPager?.currentItem = recordPosition
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        this.logBundleSize(outState)
     }
 
     private fun finishWithIntent() {

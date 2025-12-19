@@ -95,12 +95,12 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         outState.putSerializable(Key.RECORD_INFO, record)
         outState.putInt(Key.ORG_ID, orgID)
         outState.putInt(Key.POSITION, position!!)
         outState.putInt(Key.TOTAL, total!!)
-        super.onSaveInstanceState(outState)
-        activity?.logBundleSize(outState)
+        activity?.logBundleSize(outState, "DetailsFragment")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
