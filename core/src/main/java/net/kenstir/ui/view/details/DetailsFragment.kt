@@ -233,7 +233,7 @@ class DetailsFragment : Fragment() {
         }
 
         val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
+        val links = if (org != null) App.getBehavior().getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
