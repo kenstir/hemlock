@@ -24,23 +24,22 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.data.model.BibRecord
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
+import org.evergreen_ils.system.EgOrg
 
 class RecordDetailsActivity : BaseActivity() {
-    private var mPager: ViewPager? = null
+    private var mPager: ViewPager2? = null
     private val records = ArrayList<BibRecord>()
     private var orgID = 1
     private var numResults = 0
@@ -68,13 +67,14 @@ class RecordDetailsActivity : BaseActivity() {
         val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
         numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
         mPager = findViewById(R.id.main_content_view)
-        mPager?.adapter = SearchFragmentAdapter(supportFragmentManager)
-        mPager?.currentItem = recordPosition
+        mPager?.adapter = SearchFragmentAdapter(this)
+        mPager?.setCurrentItem(recordPosition, false)
+
+        // This makes paging through results smoother, because adjacent pages are preloaded.
+        mPager?.offscreenPageLimit = 1
 
         // Fix TransactionTooLargeException attempt 1: disable saving ViewPager state
         // This works, but it has the side effect of losing the current page on rotation.
-//        val limit = mPager?.offscreenPageLimit ?: 0
-//        Log.d("RecordDetails", "offscreenPageLimit=$limit")
 //        mPager?.isSaveEnabled = false
     }
 
@@ -111,15 +111,13 @@ class RecordDetailsActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    internal inner class SearchFragmentAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(
-        fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
-        override fun getItem(position: Int): Fragment {
-            return DetailsFragment.create(records[position], orgID, position, numResults)
+    internal inner class SearchFragmentAdapter(activity: BaseActivity) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int {
+            return records.size
         }
 
-        override fun getCount(): Int {
-            return records.size
+        override fun createFragment(position: Int): Fragment {
+            return DetailsFragment.create(records[position], orgID, position, numResults)
         }
     }
 }
