@@ -29,7 +29,6 @@ import androidx.viewpager2.widget.ViewPager2
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.data.model.BibRecord
-import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
@@ -72,20 +71,11 @@ class RecordDetailsActivity : BaseActivity() {
 
         // This makes paging through results smoother, because adjacent pages are preloaded.
         mPager?.offscreenPageLimit = 1
-
-        // Fix TransactionTooLargeException attempt 1: disable saving ViewPager state
-        // This works, but it has the side effect of losing the current page on rotation.
-//        mPager?.isSaveEnabled = false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         this.logBundleSize(outState)
-
-        // Fix TransactionTooLargeException attempt 2: delete viewHierarchy state
-        // This also works, but has the same side effect as above.
-//        outState.remove("android:viewHierarchyState")
-//        this.logBundleSize(outState, "RecordDetailsActivity")
     }
 
     private fun finishWithIntent() {
