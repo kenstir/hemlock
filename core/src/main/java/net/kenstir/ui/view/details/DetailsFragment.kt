@@ -100,7 +100,7 @@ class DetailsFragment : Fragment() {
         outState.putInt(Key.ORG_ID, orgID)
         outState.putInt(Key.POSITION, position!!)
         outState.putInt(Key.TOTAL, total!!)
-        activity?.logBundleSize(outState, "DetailsFragment")
+        //activity?.logBundleSize(outState, "DetailsFragment")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
