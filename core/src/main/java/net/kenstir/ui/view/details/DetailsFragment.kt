@@ -21,7 +21,6 @@ package net.kenstir.ui.view.details
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -61,8 +60,8 @@ import org.evergreen_ils.system.EgOrg
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
     private var orgID: Int = EgOrg.consortiumID
-    private var position: Int? = null
-    private var total: Int? = null
+    private var position: Int = 0
+    private var total: Int = 0
 
     private var titleTextView: TextView? = null
     private var formatTextView: TextView? = null
@@ -98,8 +97,8 @@ class DetailsFragment : Fragment() {
         super.onSaveInstanceState(outState)
         outState.putSerializable(Key.RECORD_INFO, record)
         outState.putInt(Key.ORG_ID, orgID)
-        outState.putInt(Key.POSITION, position!!)
-        outState.putInt(Key.TOTAL, total!!)
+        outState.putInt(Key.POSITION, position)
+        outState.putInt(Key.TOTAL, total)
         //activity?.logBundleSize(outState, "DetailsFragment")
     }
 
@@ -129,14 +128,14 @@ class DetailsFragment : Fragment() {
         subjectTableRow = layout.findViewById(R.id.record_details_subject_row)
         isbnTableRow = layout.findViewById(R.id.record_details_isbn_row)
 
-        pagerHeader.text = String.format(getString(R.string.record_of), position!! + 1, total)
+        pagerHeader.text = String.format(getString(R.string.record_of), position + 1, total)
         copySummaryTextView?.text = ""
         initButtons()
 
         // Start async load
         record?.let {
             val url = App.getServiceConfig().biblioService.imageUrl(it, ImageSize.MEDIUM)
-            Log.d(TAG, "${it.id}: setimageurl $url on ${recordImage}")
+            //Log.d(TAG, "${it.id}: load $url")
             recordImage?.load(url)
             fetchData(it)
         }
@@ -294,7 +293,7 @@ class DetailsFragment : Fragment() {
             App.getBehavior().isOnlineResource(record) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
-                    val uri = Uri.parse(onlineLocation)
+                    val uri = onlineLocation.toUri()
                     uri.host
                 } else {
                     ""
