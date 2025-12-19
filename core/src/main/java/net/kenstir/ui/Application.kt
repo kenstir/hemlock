@@ -17,7 +17,6 @@
 
 package net.kenstir.ui
 
-import com.gu.toolargetool.TooLargeTool
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,8 +42,8 @@ class Application : androidx.multidex.MultiDexApplication() {
         App.init(this)
         deleteLegacyCacheDirectory()
 
-        // Debugging TransactionTooLarge issues
-        TooLargeTool.startLogging(this)
+        // useful for debugging TransactionTooLargeException
+        //TooLargeTool.startLogging(this)
     }
 
     private fun deleteLegacyCacheDirectory() {

@@ -84,6 +84,6 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
 
-    // debugging TransactionTooLargeException crashes
-    implementation 'com.gu.android:toolargetool:0.3.0'
+    // useful for debugging TransactionTooLargeException
+    //implementation 'com.gu.android:toolargetool:0.3.0'
 }
