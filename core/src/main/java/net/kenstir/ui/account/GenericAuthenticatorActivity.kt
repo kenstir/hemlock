@@ -137,7 +137,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             }
         }
         if (defaultLibraryIndex != null) {
-            librarySpinner!!.setSelection(defaultLibraryIndex)
+            librarySpinner?.setSelection(defaultLibraryIndex)
         }
     }
 
@@ -186,9 +186,9 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             l.add(directoryName)
         }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, l)
-        librarySpinner!!.adapter = adapter
+        librarySpinner?.adapter = adapter
         if (defaultLibraryIndex != null) {
-            librarySpinner!!.setSelection(defaultLibraryIndex)
+            librarySpinner?.setSelection(defaultLibraryIndex)
         } else {
             requestPermission()
         }
