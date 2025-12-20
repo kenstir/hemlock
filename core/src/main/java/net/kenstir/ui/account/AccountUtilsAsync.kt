@@ -71,10 +71,4 @@ object AccountUtilsAsync {
     ) = withContext(Dispatchers.IO) {
         AccountUtils.invalidateAuthToken(context, authToken)
     }
-
-//    suspend fun removeAllAccounts(
-//        context: Context
-//    ) = withContext(Dispatchers.IO) {
-//        throw NotImplementedError("removeAllAccounts is not yet implemented in AccountUtilsAsync")
-//    }
 }
