@@ -89,8 +89,8 @@
     <!-- true only for the Hemlock generic app; used for analytics -->
     <bool name="ou_is_generic_app">false</bool>
 
-    <!-- max number of results to return from Search -->
-    <integer name="ou_search_limit">200</integer>
+    <!-- max number of search results to display -->
+    <integer name="ou_search_limit">100</integer>
     <!-- max number of upcoming closures to display -->
     <integer name="ou_upcoming_closures_limit">5</integer>
 
