@@ -41,6 +41,9 @@ class Application : androidx.multidex.MultiDexApplication() {
 
         App.init(this)
         deleteLegacyCacheDirectory()
+
+        // useful for debugging TransactionTooLargeException
+        //TooLargeTool.startLogging(this)
     }
 
     private fun deleteLegacyCacheDirectory() {

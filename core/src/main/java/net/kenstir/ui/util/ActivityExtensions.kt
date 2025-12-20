@@ -107,7 +107,7 @@ fun Activity.launchURL(url: String?, requestId: Int? = null) {
 
 /** Log the size of a Bundle in bytes for debugging purposes.
  */
-fun Activity.logBundleSize(bundle: Bundle?) {
+fun Activity.logBundleSize(bundle: Bundle?, source: String? = null) {
     // don't bother for now in release builds
     if (!Analytics.isDebuggable(this)) return
 
@@ -115,7 +115,7 @@ fun Activity.logBundleSize(bundle: Bundle?) {
     try {
         bundle?.writeToParcel(parcel, 0)
         val size = parcel.dataSize()
-        val source = this.javaClass.simpleName
+        val source = source ?: this.javaClass.simpleName
         Log.d("Extensions", "[bundle] size = $size bytes ($source)")
     } finally {
         parcel.recycle()
