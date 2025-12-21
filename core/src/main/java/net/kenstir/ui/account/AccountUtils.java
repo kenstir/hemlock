@@ -83,24 +83,6 @@ public class AccountUtils {
         am.clearPassword(account);
     }
 
-    public static AccountManagerFuture<Bundle> getAuthTokenForAccountFuture(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenForAccountFuture "+account_name);
-        if (TextUtils.isEmpty(account_name)) {
-            return null;
-        }
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
-        final Account account = new Account(account_name, accountType);
-        return am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null);
-    }
-
-    public static AccountManagerFuture<Bundle> getAuthTokenFuture(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenFuture");
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
-        return am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
-    }
-
     public static ArrayList<Account> getAccountsByType(Context context) {
         final AccountManager am = AccountManager.get(context);
         final String accountType = context.getString(R.string.ou_account_type);
@@ -110,25 +92,6 @@ public class AccountUtils {
 //            Log.d(Const.AUTH_TAG, "[auth] getAccountsByType called on UI thread!");
 //        }
         return new ArrayList<>(Arrays.asList(availableAccounts));
-    }
-
-    public static void addAccount(final Activity activity, final Runnable runnable) {
-        Log.d(Const.AUTH_TAG, "[auth] addAccount");
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
-        am.addAccount(accountType, Const.AUTHTOKEN_TYPE, null, null, activity, new AccountManagerCallback<Bundle>() {
-            @Override
-            public void run(AccountManagerFuture<Bundle> future) {
-                try {
-                    Bundle bnd = future.getResult();
-                    final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.d(Const.AUTH_TAG, "[auth] added account bnd=" + bnd);
-                    activity.runOnUiThread(runnable);
-                } catch (Exception e) {
-                    Log.d(Const.AUTH_TAG, "[auth] failed to add account", e);
-                }
-            }
-        }, null);
     }
 
     public static void removeAllAccounts(final Activity activity, final Runnable runnable) {

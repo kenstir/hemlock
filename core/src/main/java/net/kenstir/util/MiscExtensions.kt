@@ -25,9 +25,14 @@ import kotlin.random.Random
  */
 fun Exception.getCustomMessage(): String {
     when (this) {
+        is android.accounts.OperationCanceledException -> return "Cancelled"
+        is java.util.concurrent.CancellationException -> return "Cancelled"
         is java.util.concurrent.TimeoutException -> return "Timeout"
         is java.net.SocketTimeoutException -> return "Timeout"
         is java.io.InterruptedIOException -> return "Timeout"
+    }
+    if (this is java.lang.IllegalStateException && cause is android.accounts.OperationCanceledException) {
+        return "Cancelled"
     }
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"

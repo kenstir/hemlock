@@ -18,28 +18,19 @@
 package net.kenstir.ui.account
 
 import android.accounts.AccountManagerFuture
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Future
-import java.util.concurrent.TimeoutException
+import java.util.concurrent.TimeUnit
 
-@Suppress("BlockingMethodInNonBlockingContext")
-suspend fun <T> Future<T>.await(timeoutMs: Int = 30_000): T {
-    val start = System.currentTimeMillis()
-    while (!isDone) {
-        if (System.currentTimeMillis() - start > timeoutMs)
-            throw TimeoutException()
-        delay(50)
-    }
-    return get()
+suspend fun <T> Future<T>.await(timeoutMs: Long = 30_000): T = withContext(Dispatchers.IO) {
+    get(timeoutMs, TimeUnit.MILLISECONDS)
 }
 
-@Suppress("BlockingMethodInNonBlockingContext")
-suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Int = 30_000): T {
-    val start = System.currentTimeMillis()
-    while (!isDone) {
-        if (System.currentTimeMillis() - start > timeoutMs)
-            throw TimeoutException()
-        delay(50)
-    }
-    return result
+suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Long = 30_000): T = withContext(Dispatchers.IO) {
+    getResult(timeoutMs, TimeUnit.MILLISECONDS)
+}
+
+suspend fun <T> AccountManagerFuture<T>.awaitResult(): T = withContext(Dispatchers.IO) {
+    getResult()
 }

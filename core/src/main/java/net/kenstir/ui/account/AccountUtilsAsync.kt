@@ -19,7 +19,6 @@ package net.kenstir.ui.account
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.accounts.AccountManagerCallback
 import android.accounts.AccountManagerFuture
 import android.app.Activity
 import android.content.Context
@@ -27,9 +26,8 @@ import android.os.Bundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kenstir.data.model.Library
-import net.kenstir.logging.Log.d
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import net.kenstir.hemlock.R
+import net.kenstir.logging.Log
 
 /**
  * Wrappers for AccountUtils functions to move AccountManager calls off the main thread.
@@ -38,23 +36,49 @@ import java.util.concurrent.TimeUnit
  * see ANRs caused by slow Binder transactions to AccountManager.
  */
 object AccountUtilsAsync {
+    suspend fun addAccount(
+        activity: Activity
+    ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
+        Log.d(Const.AUTH_TAG, "[auth] addAccount")
+        val am = AccountManager.get(activity)
+        val accountType = activity.getString(R.string.ou_account_type)
+        am.addAccount(accountType,
+            Const.AUTHTOKEN_TYPE,
+            null,
+            null,
+            activity,
+            null,
+            null)
+    }
+
     suspend fun getAccountsByType(
         context: Context
     ): List<Account> = withContext(Dispatchers.IO) {
         AccountUtils.getAccountsByType(context)
     }
 
-    suspend fun getAuthTokenFuture(
+    /** Convenience helper to get an auth token, presenting an account chooser or adding an account if needed.
+     *
+     * See [AccountManager.getAuthTokenByFeatures]
+     */
+    suspend fun getAuthTokenConvenienceHelper(
         activity: Activity
     ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
-        AccountUtils.getAuthTokenFuture(activity)
+        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenFuture")
+        val am = AccountManager.get(activity)
+        val accountType = activity.getString(R.string.ou_account_type)
+        am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null)
     }
 
-    suspend fun getAuthTokenForAccountFuture(
+    suspend fun getAuthToken(
         activity: Activity,
         accountName: String
     ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
-        AccountUtils.getAuthTokenForAccountFuture(activity, accountName)
+        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenForAccountFuture $accountName")
+        val am = AccountManager.get(activity)
+        val accountType = activity.getString(R.string.ou_account_type)
+        val account = Account(accountName, accountType)
+        am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null)
     }
 
     suspend fun getLibraryForAccount(

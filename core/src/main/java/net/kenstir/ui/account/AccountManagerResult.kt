@@ -19,6 +19,7 @@ package net.kenstir.ui.account
 
 data class AccountManagerResult (
         val accountName: String?,
+        val accountType: String?,
         val authToken: String?,
         val errorMessage: String?
 ) {

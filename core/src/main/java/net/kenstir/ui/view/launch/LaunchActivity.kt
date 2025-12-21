@@ -48,13 +48,12 @@ import net.kenstir.data.Result
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.ui.account.await
 import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtilsAsync
+import net.kenstir.ui.account.awaitResult
 import net.kenstir.ui.util.compatEnableEdgeToEdge
-import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -232,11 +231,11 @@ class LaunchActivity : AppCompatActivity() {
     // needs an Activity.
     private suspend fun getAccount() {
         // get auth token
-        Log.d(TAG, "[auth] getAuthTokenFuture ...")
-        val future = AccountUtilsAsync.getAuthTokenFuture(this)
-        Log.d(TAG, "[auth] getAuthTokenFuture ... await")
-        val bnd = future.await(3_600_000) // long to allow authenticator activity
-        Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
+        Log.d(TAG, "[auth] getAuthTokenConvenienceHelper ...")
+        val future = AccountUtilsAsync.getAuthTokenConvenienceHelper(this)
+        Log.d(TAG, "[auth] getAuthTokenConvenienceHelper ... await")
+        val bnd = future.awaitResult()
+        Log.d(TAG, "[auth] getAuthTokenConvenienceHelper ... $bnd")
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)
@@ -260,11 +259,11 @@ class LaunchActivity : AppCompatActivity() {
         if (sessionResult is Result.Error) {
             AccountUtilsAsync.invalidateAuthToken(this, account.authToken)
             account.authToken = null
-            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
-            val future = AccountUtilsAsync.getAuthTokenForAccountFuture(this, account.username)
-            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... await")
-            val bnd = future.await(3_600_000) // long to allow authenticator activity
-            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
+            Log.d(TAG, "[auth] getAuthToken ...")
+            val future = AccountUtilsAsync.getAuthToken(this, account.username)
+            Log.d(TAG, "[auth] getAuthToken ... await")
+            val bnd = future.awaitResult()
+            Log.d(TAG, "[auth] getAuthToken ... $bnd")
             val accountManagerResult = bnd.getAccountManagerResult()
             if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
                 throw Exception(accountManagerResult.failureMessage)

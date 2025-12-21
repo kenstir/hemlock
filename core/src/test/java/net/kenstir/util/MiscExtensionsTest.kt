@@ -23,10 +23,19 @@ import org.junit.Test
 class MiscExtensionsTest {
 
     @Test
-    fun test_Exception_customMessage_basic() {
+    fun test_Exception_customMessage() {
         assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())
+        assertEquals("Cancelled", java.util.concurrent.CancellationException().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
+
+        // the nested exception [ex3] happens if you click away from the AccountManager account picker
+        val ex1 = java.util.concurrent.CancellationException()
+        val ex2 = android.accounts.OperationCanceledException(null, ex1)
+        val ex3 = java.lang.IllegalStateException(null, ex2)
+        assertEquals("Cancelled", ex3.getCustomMessage())
+        assertEquals("Cancelled", ex2.getCustomMessage())
+        assertEquals("Cancelled", ex1.getCustomMessage())
     }
 
     @Test

@@ -41,9 +41,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.account.AccountUtilsAsync
+import net.kenstir.ui.account.awaitResult
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
@@ -280,9 +283,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.action_add_account -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
                 invalidateOptionsMenu()
-                AccountUtils.addAccount(this) {
-                    App.restartApp(this@BaseActivity)
-                }
+                addAccountAndRestart()
                 return true
             }
             R.id.action_clear_all_accounts -> {
@@ -312,6 +313,21 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 return false
             }
             else -> return false
+        }
+    }
+
+    private fun addAccountAndRestart() {
+        scope.async {
+            try {
+                val future = AccountUtilsAsync.addAccount(this@BaseActivity)
+                future.awaitResult()
+                App.restartApp(this@BaseActivity)
+            } catch (_: android.accounts.OperationCanceledException) {
+                // user cancelled, do nothing
+            } catch (ex: Exception) {
+                Log.d(TAG, "[menu] addAccountAndRestart: caught", ex)
+                showAlert(ex)
+            }
         }
     }
 
