@@ -83,17 +83,6 @@ public class AccountUtils {
         am.clearPassword(account);
     }
 
-    public static ArrayList<Account> getAccountsByType(Context context) {
-        final AccountManager am = AccountManager.get(context);
-        final String accountType = context.getString(R.string.ou_account_type);
-        final Account[] availableAccounts = am.getAccountsByType(accountType);
-        Log.d(Const.AUTH_TAG, "[auth] getAccountsByType found " + availableAccounts.length + " accounts");
-//        if (runningOnUIThread()) {
-//            Log.d(Const.AUTH_TAG, "[auth] getAccountsByType called on UI thread!");
-//        }
-        return new ArrayList<>(Arrays.asList(availableAccounts));
-    }
-
     public static void removeAllAccounts(final Activity activity, final Runnable runnable) {
         Log.d(Const.AUTH_TAG, "[auth] removeAllAccounts");
         final AccountManager am = AccountManager.get(activity);

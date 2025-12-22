@@ -19,15 +19,17 @@ package net.kenstir.ui.account
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.accounts.AccountManagerFuture
+import android.accounts.AccountManagerCallback
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import net.kenstir.data.model.Library
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import kotlin.coroutines.resumeWithException
 
 /**
  * Wrappers for AccountUtils functions to move AccountManager calls off the main thread.
@@ -38,47 +40,90 @@ import net.kenstir.logging.Log
 object AccountUtilsAsync {
     suspend fun addAccount(
         activity: Activity
-    ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
+    ): Bundle = suspendCancellableCoroutine { cont ->
         Log.d(Const.AUTH_TAG, "[auth] addAccount")
         val am = AccountManager.get(activity)
         val accountType = activity.getString(R.string.ou_account_type)
+        val callback = AccountManagerCallback<Bundle> { future ->
+            try {
+                val result = future.result
+                cont.resume(result) { cause, _, _ -> }
+            } catch (e: Exception) {
+                cont.resumeWithException(e)
+            }
+        }
         am.addAccount(accountType,
             Const.AUTHTOKEN_TYPE,
             null,
             null,
             activity,
-            null,
+            callback,
             null)
     }
 
     suspend fun getAccountsByType(
         context: Context
     ): List<Account> = withContext(Dispatchers.IO) {
-        AccountUtils.getAccountsByType(context)
+        val am = AccountManager.get(context)
+        val accountType: String? = context.getString(R.string.ou_account_type)
+        val availableAccounts = am.getAccountsByType(accountType)
+        Log.d(Const.AUTH_TAG, "[auth] getAccountsByType found ${availableAccounts.size} accounts")
+        availableAccounts.toList()
     }
 
-    /** Convenience helper to get an auth token, presenting an account chooser or adding an account if needed.
+    /** Convenience helper: if 1 account, get an auth token; if more, show account chooser; if none, add account.
      *
      * See [AccountManager.getAuthTokenByFeatures]
      */
-    suspend fun getAuthTokenConvenienceHelper(
+    suspend fun getAuthTokenHelper(
         activity: Activity
-    ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
-        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenFuture")
+    ): Bundle = suspendCancellableCoroutine { cont ->
+        Log.d(Const.AUTH_TAG, "[auth] getAuthTokenByFeatures")
         val am = AccountManager.get(activity)
         val accountType = activity.getString(R.string.ou_account_type)
-        am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null)
+        val callback = AccountManagerCallback<Bundle> { future ->
+            try {
+                val result = future.result
+                cont.resume(result) { cause, _, _ -> }
+            } catch (e: Exception) {
+                cont.resumeWithException(e)
+            }
+        }
+        am.getAuthTokenByFeatures(
+            accountType,
+            Const.AUTHTOKEN_TYPE,
+            null,
+            activity,
+            null,
+            null,
+            callback,
+            null
+        )
     }
 
     suspend fun getAuthToken(
         activity: Activity,
         accountName: String
-    ): AccountManagerFuture<Bundle> = withContext(Dispatchers.IO) {
+    ): Bundle = suspendCancellableCoroutine { cont ->
         Log.d(Const.AUTH_TAG, "[auth] getAuthTokenForAccountFuture $accountName")
         val am = AccountManager.get(activity)
         val accountType = activity.getString(R.string.ou_account_type)
         val account = Account(accountName, accountType)
-        am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null)
+        val callback = AccountManagerCallback<Bundle> { future ->
+            try {
+                val result = future.result
+                cont.resume(result) { cause, _, _ -> }
+            } catch (e: Exception) {
+                cont.resumeWithException(e)
+            }
+        }
+        am.getAuthToken(
+            account,
+            Const.AUTHTOKEN_TYPE,
+            null,
+            activity,
+            callback,
+            null)
     }
 
     suspend fun getLibraryForAccount(

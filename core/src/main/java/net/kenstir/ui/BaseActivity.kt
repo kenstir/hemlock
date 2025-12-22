@@ -46,7 +46,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.account.AccountUtilsAsync
-import net.kenstir.ui.account.awaitResult
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
@@ -319,13 +318,13 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun addAccountAndRestart() {
         scope.async {
             try {
-                val future = AccountUtilsAsync.addAccount(this@BaseActivity)
-                future.awaitResult()
+                val bnd = AccountUtilsAsync.addAccount(this@BaseActivity)
+                Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
                 App.restartApp(this@BaseActivity)
             } catch (_: android.accounts.OperationCanceledException) {
                 // user cancelled, do nothing
             } catch (ex: Exception) {
-                Log.d(TAG, "[menu] addAccountAndRestart: caught", ex)
+                Log.d(TAG, "[auth] addAccountAndRestart: caught", ex)
                 showAlert(ex)
             }
         }
