@@ -29,6 +29,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.widget.TextViewCompat
 import net.kenstir.hemlock.R
@@ -44,41 +45,41 @@ class BusyOverlay(val activity: Activity) {
         val dp = { value: Int -> (value * density).toInt() }
 
         // Helper to resolve theme attributes (colors)
-        fun resolveColorAttr(attr: Int): Int {
+        fun resolveColorAttr(attr: Int, fallback: Int): Int {
             val typedValue = TypedValue()
-            activity.theme.resolveAttribute(attr, typedValue, true)
-            return typedValue.data
+            return if (activity.theme.resolveAttribute(attr, typedValue, true)) {
+                typedValue.data
+            } else {
+                ContextCompat.getColor(activity, fallback)
+            }
         }
 
-        // Pulling colors from Theme.AppCompat.DayNight
-        val surfaceColor = resolveColorAttr(com.google.android.material.R.attr.colorSurface)
-        val textColor = resolveColorAttr(android.R.attr.textColorPrimary)
-        val colorPrimary = resolveColorAttr(androidx.appcompat.R.attr.colorPrimary)
+        // Use colorBackgroundFloating for the card background to match Dialogs
+        val surfaceColor = resolveColorAttr(androidx.appcompat.R.attr.colorBackgroundFloating, android.R.color.white)
+        val textColor = resolveColorAttr(android.R.attr.textColorPrimary, android.R.color.black)
 
         // Create a container
         busyOverlay = FrameLayout(activity).apply {
             layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            // Dim the background using a theme-appropriate semi-transparent black
-            setBackgroundColor(Color.argb(150, 0, 0, 0))
+            // Dim the background using a semi-transparent black
+            setBackgroundColor(Color.argb(0xa0, 0, 0, 0))
             isClickable = true
             isFocusable = true
             alpha = 0f
 
-            // 1. The "Dialog Card"
+            // a card-like container for the progress bar and text
             val card = LinearLayout(activity).apply {
                 layoutParams = FrameLayout.LayoutParams(
-                    dp(280), // Standard dialog width
+                    dp(360),
                     WRAP_CONTENT,
                     Gravity.CENTER
                 )
-                orientation = LinearLayout.HORIZONTAL // Horizontal look like modern ProgressDialogs
+                orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
                 setPadding(dp(24), dp(24), dp(24), dp(24))
-
-                // Background: White with rounded corners
                 background = GradientDrawable().apply {
                     setColor(surfaceColor)
-                    cornerRadius = dp(12).toFloat()
+                    cornerRadius = dp(2).toFloat()
                 }
                 elevation = dp(12).toFloat()
             }

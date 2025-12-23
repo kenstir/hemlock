@@ -294,8 +294,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
             R.id.action_clear_all_accounts -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                //maybeLogoutAndClearAccounts()
-                withAsyncBusy("Searching catalog") { delay(2000) }
+                maybeLogoutAndClearAccounts()
                 return true
             }
             R.id.action_logout -> {
