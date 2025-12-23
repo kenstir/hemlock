@@ -25,24 +25,36 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.core.widget.TextViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
+import kotlinx.coroutines.yield
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
@@ -113,11 +125,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         mainContentView = findViewById(R.id.main_content_view)
 
         setSupportActionBar(toolbar)
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     /** Set up the window insets listener to adjust padding for system bars */
@@ -289,7 +296,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.action_add_account -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
                 invalidateOptionsMenu()
-                addAccountAndRestart()
+                withAsyncBusy { addAccountAndRestart() }
                 return true
             }
             R.id.action_clear_all_accounts -> {
@@ -299,7 +306,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
             R.id.action_logout -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                logoutAndRestart()
+                withAsyncBusy { logoutAndRestart() }
                 return true
             }
             R.id.action_messages -> {
@@ -321,77 +328,43 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    /*
-    fun withBusyUI(msg: String, block: suspend () -> Unit) {
-        scope.async {
-            try {
-                progress?.show(this@BaseActivity, msg)
-                block()
-            } catch (ex: Exception) {
-                Log.d(TAG, "[busyui] caught", ex)
-                showAlert(ex)
-            } finally {
-                progress?.dismiss()
-            }
-        }
-    }
-    */
-
-    private fun addAccountAndRestart() {
-        scope.async {
-            try {
-                val bnd = AccountUtils.addAccount(this@BaseActivity)
-                Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
-                // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
-                App.restartApp(this@BaseActivity)
-            } catch (_: android.accounts.OperationCanceledException) {
-                // user cancelled, do nothing
-            } catch (ex: Exception) {
-                Log.d(TAG, "[auth] addAccountAndRestart: caught", ex)
-                showAlert(ex)
-            }
+    suspend fun addAccountAndRestart() {
+        try {
+            val bnd = AccountUtils.addAccount(this@BaseActivity)
+            Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
+            // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
+            App.restartApp(this@BaseActivity)
+        } catch (_: android.accounts.OperationCanceledException) {
+            // user cancelled, do nothing
+//        } catch (ex: Exception) {
+//            Log.d(TAG, "[auth] addAccountAndRestart: caught", ex)
+//            showAlert(ex)
         }
     }
 
-    fun logoutAndRestart() {
-        scope.async {
-            try {
-                logout()
-                App.restartApp(this@BaseActivity)
-            } catch (ex: Exception) {
-                Log.d(TAG, "[auth] logoutAndRestart: caught", ex)
-                showAlert(ex)
-            }
-        }
+    suspend fun logoutAndRestart() {
+        logout()
+        App.restartApp(this@BaseActivity)
     }
 
     private fun maybeLogoutAndClearAccounts() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(R.string.clear_accounts_alert_title)
-                .setMessage(R.string.clear_accounts_alert_message)
-                .setPositiveButton(android.R.string.ok) { _, _ -> logoutAndClearAccounts() }
-                .setNegativeButton(android.R.string.cancel, null)
-            builder.create().show()
-        } else {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
             showAlert(getString(R.string.android_too_old_message))
+            return
         }
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.clear_accounts_alert_title)
+            .setMessage(R.string.clear_accounts_alert_message)
+            .setPositiveButton(android.R.string.ok) { _, _ -> withAsyncBusy { logoutAndClearAccounts() } }
+            .setNegativeButton(android.R.string.cancel, null)
+        builder.create().show()
     }
 
-    private fun logoutAndClearAccounts() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            //val progress = ProgressDialogSupport(this)
-            scope.async {
-                try {
-                    logout()
-                    AccountUtils.removeAllAccounts(this@BaseActivity)
-                    App.restartApp(this@BaseActivity)
-                } catch (ex: Exception) {
-                    Log.d(TAG, "[auth] logoutAndClearAccounts: caught", ex)
-                    showAlert(ex)
-                }
-            }
-        }
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    private suspend fun logoutAndClearAccounts() {
+        logout()
+        AccountUtils.removeAllAccounts(this@BaseActivity)
+        App.restartApp(this@BaseActivity)
     }
 
     suspend fun logout() {
@@ -425,12 +398,96 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun sendEmail(to: String?) {
         if (to == null) return
         val url = "mailto:$to"
-        val uri = Uri.parse(url)
+        val uri = url.toUri()
         val intent = Intent(Intent.ACTION_SENDTO, uri)
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             e.message?.let { showAlert(it) }
+        }
+    }
+
+    private var loadingOverlay: FrameLayout? = null
+
+    suspend fun withBusy(msg: String, block: suspend () -> Unit) {
+        try {
+            //progress?.show(this@BaseActivity, msg)
+            showBusyOverlay(msg)
+            // yield to allow UI to render before starting work
+            yield()
+            block()
+        } catch (ex: Exception) {
+            Log.d(TAG, "[busy] caught", ex)
+            showAlert(ex)
+        } finally {
+            //progress?.dismiss()
+            hideBusyOverlay()
+        }
+    }
+
+    fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
+        scope.async {
+            try {
+                //progress?.show(this@BaseActivity, msg)
+                showBusyOverlay(msg)
+                // yield to allow UI to render before starting work
+                yield()
+                block()
+            } catch (ex: Exception) {
+                Log.d(TAG, "[busy] caught", ex)
+                showAlert(ex)
+            } finally {
+                //progress?.dismiss()
+                hideBusyOverlay()
+            }
+        }
+    }
+
+    fun showBusyOverlay(msg: String = "Loading...") {
+        if (loadingOverlay != null) return
+
+        val rootLayout = findViewById<ViewGroup>(android.R.id.content)
+
+        // Create a container
+        loadingOverlay = FrameLayout(this).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            setBackgroundColor("#A0000000".toColorInt()) // Semi-transparent black
+            isClickable = true
+            isFocusable = true
+
+            val container = LinearLayout(this@BaseActivity).apply {
+                layoutParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER)
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+            }
+
+            // Create the ProgressBar
+            val progressBar = ProgressBar(this@BaseActivity, null, 0, R.style.HemlockCircularProgressBar).apply {
+                layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+            }
+
+            val textView = TextView(this@BaseActivity).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    WRAP_CONTENT, WRAP_CONTENT).apply {
+                    bottomMargin = 8
+                }
+                text = msg
+                TextViewCompat.setTextAppearance(this, R.style.HemlockText_PagePrimary)
+           }
+
+            container.addView(textView)
+            container.addView(progressBar)
+            addView(container)
+        }
+
+        rootLayout.addView(loadingOverlay)
+    }
+
+    fun hideBusyOverlay() {
+        val rootLayout = findViewById<ViewGroup>(android.R.id.content)
+        loadingOverlay?.let {
+            rootLayout.removeView(it)
+            loadingOverlay = null
         }
     }
 

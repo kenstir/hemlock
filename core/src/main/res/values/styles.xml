@@ -204,6 +204,11 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
+    <style name="HemlockCircularProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateTint">@color/accent</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
     <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/material_grey_100</item>
         <item name="colorPrimary">@color/primary</item>
