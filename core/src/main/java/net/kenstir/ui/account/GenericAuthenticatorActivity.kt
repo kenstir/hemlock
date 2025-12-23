@@ -101,7 +101,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
 
-                val existingAccounts = AccountUtilsKt.getAccountsByType(this@GenericAuthenticatorActivity)
+                val existingAccounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
                 onLibrariesLoaded(existingAccounts)
                 Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
@@ -170,7 +170,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         // if the user has any existing accounts, then we can select a reasonable default library
         var defaultLibrary: Library? = null
         if (existingAccounts.isNotEmpty()) {
-            defaultLibrary = AccountUtilsKt.getLibraryForAccountBlocking(this@GenericAuthenticatorActivity,
+            defaultLibrary = AccountUtils.getLibraryForAccountBlocking(this@GenericAuthenticatorActivity,
                 existingAccounts[0].name, existingAccounts[0].type)
             Log.d(Const.AUTH_TAG, "[auth] defaultLibrary=$defaultLibrary")
         }

@@ -40,7 +40,7 @@ import net.kenstir.logging.Log.TAG_PERM
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.account.AccountUtilsKt
+import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
 
@@ -233,7 +233,7 @@ open class MainBaseActivity : BaseActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val item = menu.findItem(R.id.action_switch_account)
         scope.launch {
-            val numAccounts = AccountUtilsKt.getAccountsByType(this@MainBaseActivity).size
+            val numAccounts = AccountUtils.getAccountsByType(this@MainBaseActivity).size
             item?.isEnabled = (numAccounts > 1)
         }
         return true

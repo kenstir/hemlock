@@ -51,7 +51,7 @@ import kotlin.coroutines.resumeWithException
  * - unsafe: has caused ANRs when called on the main thread
  * - unknown: not yet implicated in ANRs, may need to be revisited later
  */
-object AccountUtilsKt {
+object AccountUtils {
 
     /** Calls [AccountManager.addAccount] and awaits the result
      *

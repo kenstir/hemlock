@@ -45,7 +45,7 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.account.AccountUtilsKt
+import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
@@ -333,7 +333,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun addAccountAndRestart() {
         scope.async {
             try {
-                val bnd = AccountUtilsKt.addAccount(this@BaseActivity)
+                val bnd = AccountUtils.addAccount(this@BaseActivity)
                 Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
                 // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
                 App.restartApp(this@BaseActivity)
@@ -377,7 +377,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             scope.async {
                 try {
                     logout()
-                    AccountUtilsKt.removeAllAccounts(this@BaseActivity)
+                    AccountUtils.removeAllAccounts(this@BaseActivity)
                     App.restartApp(this@BaseActivity)
                 } catch (ex: Exception) {
                     Log.d(TAG, "[auth] logoutAndClearAccounts: caught", ex)
@@ -391,8 +391,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Log.d(TAG, "[auth] logout")
         val account = App.getAccount()
         App.getServiceConfig().userService.deleteSession(account)
-        AccountUtilsKt.invalidateAuthToken(this, account.authToken)
-        AccountUtilsKt.clearPassword(this, account.username)
+        AccountUtils.invalidateAuthToken(this, account.authToken)
+        AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()
     }
 
