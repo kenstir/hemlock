@@ -45,6 +45,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -293,7 +294,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
             R.id.action_clear_all_accounts -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                maybeLogoutAndClearAccounts()
+                //maybeLogoutAndClearAccounts()
+                withAsyncBusy("Searching catalog") { delay(2000) }
                 return true
             }
             R.id.action_logout -> {

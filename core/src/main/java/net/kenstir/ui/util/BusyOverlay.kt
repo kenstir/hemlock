@@ -18,6 +18,9 @@
 package net.kenstir.ui.util
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -37,39 +40,69 @@ class BusyOverlay(val activity: Activity) {
         if (busyOverlay != null) return
 
         val rootLayout = activity.findViewById<ViewGroup>(android.R.id.content)
+        val density = activity.resources.displayMetrics.density
+        val dp = { value: Int -> (value * density).toInt() }
+
+        // Helper to resolve theme attributes (colors)
+        fun resolveColorAttr(attr: Int): Int {
+            val typedValue = TypedValue()
+            activity.theme.resolveAttribute(attr, typedValue, true)
+            return typedValue.data
+        }
+
+        // Pulling colors from Theme.AppCompat.DayNight
+        val surfaceColor = resolveColorAttr(com.google.android.material.R.attr.colorSurface)
+        val textColor = resolveColorAttr(android.R.attr.textColorPrimary)
+        val colorPrimary = resolveColorAttr(androidx.appcompat.R.attr.colorPrimary)
 
         // Create a container
         busyOverlay = FrameLayout(activity).apply {
             layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            setBackgroundColor("#A0000000".toColorInt()) // Semi-transparent black
+            // Dim the background using a theme-appropriate semi-transparent black
+            setBackgroundColor(Color.argb(150, 0, 0, 0))
             isClickable = true
             isFocusable = true
+            alpha = 0f
 
-            // Create inner layout with ProgressBar and TextView
-            val container = LinearLayout(activity).apply {
-                layoutParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER)
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER
+            // 1. The "Dialog Card"
+            val card = LinearLayout(activity).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    dp(280), // Standard dialog width
+                    WRAP_CONTENT,
+                    Gravity.CENTER
+                )
+                orientation = LinearLayout.HORIZONTAL // Horizontal look like modern ProgressDialogs
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(dp(24), dp(24), dp(24), dp(24))
+
+                // Background: White with rounded corners
+                background = GradientDrawable().apply {
+                    setColor(surfaceColor)
+                    cornerRadius = dp(12).toFloat()
+                }
+                elevation = dp(12).toFloat()
             }
+
             val progressBar = ProgressBar(activity, null, 0, R.style.HemlockCircularProgressBar).apply {
                 layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             }
+
             val textView = TextView(activity).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    WRAP_CONTENT, WRAP_CONTENT).apply {
-                    bottomMargin = 8
+                layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                    marginStart = dp(20)
                 }
                 text = msg
                 TextViewCompat.setTextAppearance(this, R.style.HemlockText_PagePrimary)
             }
 
             // Add views to container
-            container.addView(textView)
-            container.addView(progressBar)
-            addView(container)
+            card.addView(progressBar)
+            card.addView(textView)
+            addView(card)
         }
 
         rootLayout.addView(busyOverlay)
+        busyOverlay?.animate()?.alpha(1f)?.setDuration(200)?.start()
     }
 
     fun hideOverlay() {
