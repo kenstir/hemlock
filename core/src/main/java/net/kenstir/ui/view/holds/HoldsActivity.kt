@@ -46,7 +46,6 @@ class HoldsActivity : BaseActivity() {
     private var adapter: HoldsViewAdapter? = null
     private var holdRecords = mutableListOf<HoldRecord>()
     private var holdsSummary: TextView? = null
-    private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +66,6 @@ class HoldsActivity : BaseActivity() {
         ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             showItemDetails(position)
         }
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

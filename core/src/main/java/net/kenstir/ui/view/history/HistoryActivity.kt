@@ -46,7 +46,6 @@ class HistoryActivity : BaseActivity() {
     private var rv: RecyclerView? = null
     private var adapter: HistoryViewAdapter? = null
     private var items = ArrayList<HistoryRecord>()
-    private var progress: ProgressDialogSupport? = null
     private var contextMenuInfo: ContextMenuItemInfo? = null
 
     private class ContextMenuItemInfo(val position: Int, val item: HistoryRecord) : ContextMenu.ContextMenuInfo {

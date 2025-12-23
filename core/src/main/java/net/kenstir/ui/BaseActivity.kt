@@ -48,6 +48,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
@@ -74,6 +75,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
+    protected var progress: ProgressDialogSupport? = null
     protected var isRestarting = false
     val scope = lifecycleScope
 
@@ -111,6 +113,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         mainContentView = findViewById(R.id.main_content_view)
 
         setSupportActionBar(toolbar)
+    }
+
+    override fun onDestroy() {
+        progress?.dismiss()
+        super.onDestroy()
     }
 
     /** Set up the window insets listener to adjust padding for system bars */

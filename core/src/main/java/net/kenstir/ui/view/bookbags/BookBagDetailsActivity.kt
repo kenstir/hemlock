@@ -54,7 +54,6 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private var rv: RecyclerView? = null
     private var adapter: ListItemViewAdapter? = null
-    private var progress: ProgressDialogSupport? = null
     private lateinit var patronList: PatronList
     private var items = ArrayList<ListItem>()
     private var bookBagName: TextView? = null
@@ -105,11 +104,6 @@ class BookBagDetailsActivity : BaseActivity() {
         }
 
         initSortBy()
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

@@ -72,7 +72,6 @@ class OrgDetailsActivity : BaseActivity() {
     private var phone: Button? = null
     private var map: Button? = null
     private var address: TextView? = null
-    private var progress: ProgressDialogSupport? = null
 
     private var orgID: Int? = null
     private var org: Organization? = null
@@ -124,11 +123,6 @@ class OrgDetailsActivity : BaseActivity() {
         initOrgSpinner()
         initHoursViews(hoursHeader, hoursTable)
         initButtons()
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

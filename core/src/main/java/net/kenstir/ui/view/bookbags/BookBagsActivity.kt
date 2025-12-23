@@ -46,7 +46,6 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
     private var rv: RecyclerView? = null
     private var adapter: BookBagViewAdapter? = null
     private var items = mutableListOf<PatronList>()
-    private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,11 +71,6 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
             intent.putExtra(Key.PATRON_LIST, items[position])
             startActivityForResult(intent, 0)
         }
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

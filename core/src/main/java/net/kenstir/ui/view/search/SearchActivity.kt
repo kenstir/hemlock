@@ -82,7 +82,6 @@ class SearchActivity : BaseActivity() {
     private var searchFormatSpinner: Spinner? = null
     private var searchResultsSummary: TextView? = null
     private var searchResultsFragment: SearchResultsFragment? = null
-    private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
@@ -162,11 +161,6 @@ class SearchActivity : BaseActivity() {
             outState.putInt(Key.ACCOUNT_ID, id)
         }
         logBundleSize(outState)
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

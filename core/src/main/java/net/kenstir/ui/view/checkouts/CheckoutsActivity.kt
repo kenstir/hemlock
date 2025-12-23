@@ -51,7 +51,6 @@ class CheckoutsActivity : BaseActivity() {
     private var rv: RecyclerView? = null
     private var adapter: CheckoutsViewAdapter? = null
     private var circRecords = mutableListOf<CircRecord>()
-    private var progress: ProgressDialogSupport? = null
     private var checkoutsSummary: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,11 +73,6 @@ class CheckoutsActivity : BaseActivity() {
         ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             onItemClick(position)
         }
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {
