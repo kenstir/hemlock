@@ -57,7 +57,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
@@ -110,8 +109,6 @@ class SearchActivity : BaseActivity() {
         setupActionBar()
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
-
-        progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated
         val lastAccountId = savedInstanceState?.getInt(Key.ACCOUNT_ID)
@@ -252,7 +249,7 @@ class SearchActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
+                busy.showOverlay(getString(R.string.searching_catalog_message))
 
                 // check searchText is not blank
                 if (searchText.isBlank()) {
@@ -288,7 +285,7 @@ class SearchActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchSearchResults ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                busy.hideOverlay()
             }
         }
     }
