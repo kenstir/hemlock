@@ -51,7 +51,7 @@ import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
-import net.kenstir.ui.account.AccountUtilsAsync
+import net.kenstir.ui.account.AccountUtilsKt
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 
 class LaunchActivity : AppCompatActivity() {
@@ -231,7 +231,7 @@ class LaunchActivity : AppCompatActivity() {
     private suspend fun getAccount() {
         // get auth token
         Log.d(TAG, "[auth] getAuthTokenHelper ...")
-        val bnd = AccountUtilsAsync.getAuthTokenHelper(this)
+        val bnd = AccountUtilsKt.getAuthTokenHelper(this)
         Log.d(TAG, "[auth] getAuthTokenHelper ... $bnd")
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
@@ -239,7 +239,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
-        val library = AccountUtilsAsync.getLibraryForAccount(applicationContext, result.accountName, accountType)
+        val library = AccountUtilsKt.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         App.setLibrary(library)
         val account = App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
@@ -254,10 +254,10 @@ class LaunchActivity : AppCompatActivity() {
         var sessionResult = fetchSession(account)
         Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         if (sessionResult is Result.Error) {
-            AccountUtilsAsync.invalidateAuthToken(this, account.authToken)
+            AccountUtilsKt.invalidateAuthToken(this, account.authToken)
             account.authToken = null
             Log.d(TAG, "[auth] getAuthToken ...")
-            val bnd = AccountUtilsAsync.getAuthToken(this, account.username)
+            val bnd = AccountUtilsKt.getAuthToken(this, account.username)
             Log.d(TAG, "[auth] getAuthToken ... $bnd")
             val accountManagerResult = bnd.getAccountManagerResult()
             if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
@@ -283,7 +283,7 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // record analytics
-        val numAccounts = AccountUtilsAsync.getAccountsByType(this).size
+        val numAccounts = AccountUtilsKt.getAccountsByType(this).size
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,

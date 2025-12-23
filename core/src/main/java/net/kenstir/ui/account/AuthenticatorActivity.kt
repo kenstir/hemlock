@@ -201,6 +201,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     // Run AccountManager operations off the main thread to avoid ANR errors
+    // TODO: factor out addAccountExplicitly to AccountUtilsKt
     private suspend fun addLocalAccount(intent: Intent) = withContext(Dispatchers.IO) {
         val accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)!!
         val accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)!!

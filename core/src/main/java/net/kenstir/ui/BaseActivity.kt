@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -44,8 +45,7 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.account.AccountUtils
-import net.kenstir.ui.account.AccountUtilsAsync
+import net.kenstir.ui.account.AccountUtilsKt
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ThemeManager
@@ -287,13 +287,12 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
             R.id.action_clear_all_accounts -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                maybeLogoutAndClearAllAccounts()
+                maybeLogoutAndClearAccounts()
                 return true
             }
             R.id.action_logout -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                logout()
-                App.restartApp(this)
+                logoutAndRestart()
                 return true
             }
             R.id.action_messages -> {
@@ -315,11 +314,28 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    /*
+    fun withBusyUI(msg: String, block: suspend () -> Unit) {
+        scope.async {
+            try {
+                progress?.show(this@BaseActivity, msg)
+                block()
+            } catch (ex: Exception) {
+                Log.d(TAG, "[busyui] caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
+            }
+        }
+    }
+    */
+
     private fun addAccountAndRestart() {
         scope.async {
             try {
-                val bnd = AccountUtilsAsync.addAccount(this@BaseActivity)
+                val bnd = AccountUtilsKt.addAccount(this@BaseActivity)
                 Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
+                // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
                 App.restartApp(this@BaseActivity)
             } catch (_: android.accounts.OperationCanceledException) {
                 // user cancelled, do nothing
@@ -330,20 +346,54 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun maybeLogoutAndClearAllAccounts() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.clear_accounts_alert_title)
-            .setMessage(R.string.clear_accounts_alert_message)
-            .setPositiveButton(android.R.string.ok) { _, _ -> clearAllAccounts() }
-            .setNegativeButton(android.R.string.cancel, null)
-        builder.create().show()
+    fun logoutAndRestart() {
+        scope.async {
+            try {
+                logout()
+                App.restartApp(this@BaseActivity)
+            } catch (ex: Exception) {
+                Log.d(TAG, "[auth] logoutAndRestart: caught", ex)
+                showAlert(ex)
+            }
+        }
     }
 
-    private fun clearAllAccounts() {
-        logout()
-        AccountUtils.removeAllAccounts(this) {
-            App.restartApp(this)
+    private fun maybeLogoutAndClearAccounts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.clear_accounts_alert_title)
+                .setMessage(R.string.clear_accounts_alert_message)
+                .setPositiveButton(android.R.string.ok) { _, _ -> logoutAndClearAccounts() }
+                .setNegativeButton(android.R.string.cancel, null)
+            builder.create().show()
+        } else {
+            showAlert(getString(R.string.android_too_old_message))
         }
+    }
+
+    private fun logoutAndClearAccounts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            //val progress = ProgressDialogSupport(this)
+            scope.async {
+                try {
+                    logout()
+                    AccountUtilsKt.removeAllAccounts(this@BaseActivity)
+                    App.restartApp(this@BaseActivity)
+                } catch (ex: Exception) {
+                    Log.d(TAG, "[auth] logoutAndClearAccounts: caught", ex)
+                    showAlert(ex)
+                }
+            }
+        }
+    }
+
+    suspend fun logout() {
+        Log.d(TAG, "[auth] logout")
+        val account = App.getAccount()
+        App.getServiceConfig().userService.deleteSession(account)
+        AccountUtilsKt.invalidateAuthToken(this, account.authToken)
+        AccountUtilsKt.clearPassword(this, account.username)
+        account.clearAuthToken()
     }
 
     open fun launchMap(address: String?) {
@@ -381,17 +431,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun onReload() {
     }
 
-    fun logout() {
-        Log.d(TAG, "[auth] logout")
-        val account = App.getAccount()
-        // TODO: call UserService.deleteSession(account)
-        AccountUtils.invalidateAuthToken(this, account.authToken)
-        AccountUtils.clearPassword(this, account.username)
-        account.clearAuthToken()
-    }
-
     companion object {
-
         private const val TAG = "BaseActivity"
 
         fun getAppVersionCode(context: Context): String {

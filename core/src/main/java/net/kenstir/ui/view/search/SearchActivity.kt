@@ -449,8 +449,7 @@ class SearchActivity : BaseActivity() {
             }
             R.id.action_logout -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                logout()
-                App.restartApp(this)
+                logoutAndRestart()
                 return true
             }
             R.id.action_barcode_search -> {
