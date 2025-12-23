@@ -25,30 +25,21 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.core.widget.TextViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
@@ -60,6 +51,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
+import net.kenstir.ui.util.BusyOverlay
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
@@ -78,7 +70,6 @@ import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
 
-
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -88,6 +79,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var progress: ProgressDialogSupport? = null
+    protected val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
     val scope = lifecycleScope
 
@@ -407,87 +399,31 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private var loadingOverlay: FrameLayout? = null
-
     suspend fun withBusy(msg: String, block: suspend () -> Unit) {
         try {
-            //progress?.show(this@BaseActivity, msg)
-            showBusyOverlay(msg)
-            // yield to allow UI to render before starting work
-            yield()
+            busy.showOverlay(msg)
+            yield() // allow UI to render before starting work
             block()
         } catch (ex: Exception) {
             Log.d(TAG, "[busy] caught", ex)
             showAlert(ex)
         } finally {
-            //progress?.dismiss()
-            hideBusyOverlay()
+            busy.hideOverlay()
         }
     }
 
     fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
         scope.async {
             try {
-                //progress?.show(this@BaseActivity, msg)
-                showBusyOverlay(msg)
-                // yield to allow UI to render before starting work
-                yield()
+                busy.showOverlay(msg)
+                yield() // allow UI to render before starting work
                 block()
             } catch (ex: Exception) {
                 Log.d(TAG, "[busy] caught", ex)
                 showAlert(ex)
             } finally {
-                //progress?.dismiss()
-                hideBusyOverlay()
+                busy.hideOverlay()
             }
-        }
-    }
-
-    fun showBusyOverlay(msg: String = "Loading...") {
-        if (loadingOverlay != null) return
-
-        val rootLayout = findViewById<ViewGroup>(android.R.id.content)
-
-        // Create a container
-        loadingOverlay = FrameLayout(this).apply {
-            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            setBackgroundColor("#A0000000".toColorInt()) // Semi-transparent black
-            isClickable = true
-            isFocusable = true
-
-            val container = LinearLayout(this@BaseActivity).apply {
-                layoutParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER)
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER
-            }
-
-            // Create the ProgressBar
-            val progressBar = ProgressBar(this@BaseActivity, null, 0, R.style.HemlockCircularProgressBar).apply {
-                layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-            }
-
-            val textView = TextView(this@BaseActivity).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    WRAP_CONTENT, WRAP_CONTENT).apply {
-                    bottomMargin = 8
-                }
-                text = msg
-                TextViewCompat.setTextAppearance(this, R.style.HemlockText_PagePrimary)
-           }
-
-            container.addView(textView)
-            container.addView(progressBar)
-            addView(container)
-        }
-
-        rootLayout.addView(loadingOverlay)
-    }
-
-    fun hideBusyOverlay() {
-        val rootLayout = findViewById<ViewGroup>(android.R.id.content)
-        loadingOverlay?.let {
-            rootLayout.removeView(it)
-            loadingOverlay = null
         }
     }
 
