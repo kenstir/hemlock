@@ -1,11 +1,22 @@
+## 4.6.0 - UNRELEASED
+
+### New
+
+### Fixed
+* Fixed ANR (App Not Responding) errors by moving account management operations
+  off main thread
+* internal: Migrate to ViewPager2 to mitigate TransactionTooLargeException
+* internal: Limit search to 100 results to mitigate TransactionTooLargeException
+* internal: Fixed NPE seen once in updateButtonViews
+
 ## 4.5.0
 
 ### New
 * noble: Enable part holds
+* cwmars: Use "Complete set" instead of "Any part"
 
 ### Fixed
-* Fix ANR (App Not Responding) errors by moving account actions off main thread
-* cwmars: Use "Complete set" instead of "Any part"
+* Fixed ANR (App Not Responding) error when adding account
 * internal: Add fallback drawable/splash_title.png to try to fix Resources$NotFoundException
 * internal: Remove unused library_url from SharedPrefs
 * internal: Fastlane improvements
