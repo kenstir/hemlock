@@ -9,5 +9,5 @@
 //
 //     tools/fl bump_version_code
 //
-ext.globalVersionName = "4.5.0.2"
-ext.globalVersionCode = 157
+ext.globalVersionName = "4.5.0.4"
+ext.globalVersionCode = 159
