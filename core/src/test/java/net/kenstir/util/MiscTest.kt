@@ -17,8 +17,10 @@
 
 package net.kenstir.util
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.coroutines.cancellation.CancellationException
 
 class MiscTest {
 
@@ -43,5 +45,17 @@ class MiscTest {
         assertTrue(c != a)
         assertTrue(c == d)
         assertTrue(c == e)
+    }
+
+    @Test
+    fun test_cancellation_exception() {
+        val ce = CancellationException("Test cancellation")
+        var caughtWhere = 0
+        try {
+            throw ce
+        } catch (e: Exception) {
+            caughtWhere = 1
+        }
+        assertEquals(1, caughtWhere)
     }
 }
