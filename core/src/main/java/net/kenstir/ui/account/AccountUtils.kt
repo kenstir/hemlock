@@ -37,19 +37,19 @@ import kotlin.coroutines.resumeWithException
 /**
  * Wrappers for AccountManager functions
  *
- * Fixing ANRs caused by slow Binder transactions to AccountManager.
+ * Fixing ANRs caused by slow Binder transactions to AccountManager (AM).
  *
- * Strategy:
- * - calls that return Futures are wrapped in suspendCancellableCoroutine to await
+ * Implementation Strategy:
+ * - AM calls that return Futures are wrapped in suspendCancellableCoroutine to await
  *   the single-shot callback
- * - calls which are known causes of ANRs are wrapped in withContext(Dispatchers.IO)
+ * - AM calls which are known sources of ANRs are wrapped in withContext(Dispatchers.IO)
  * - other calls are left on the calling thread for now
  *
- * These functions are annotated with the following attributes:
+ * These functions are marked with an ANR-safety attribute with one of the following values:
  * - safe-await: uses suspendCancellableCoroutine to await a callback from AccountManager
- * - safe-io: uses withContext(Dispatchers.IO) to run on a background thread
- * - unsafe: has caused ANRs when called on the main thread
- * - unknown: not yet implicated in ANRs, may need to be revisited later
+ * - safe-io:    uses withContext(Dispatchers.IO) to run on a background thread
+ * - unsafe:     has caused ANRs when called on the main thread
+ * - unknown:    not yet implicated in ANRs, may need to be revisited later
  */
 object AccountUtils {
 
@@ -166,7 +166,7 @@ object AccountUtils {
      * using [AccountManager.getAuthTokenByFeatures], which creates the account but does not
      * tell us the URL of the selected library.
      *
-     * ANR-Safety: unsafe, has caused ANRs in the past
+     * ANR-Safety: unsafe, getUserData has caused ANRs in the past
      */
     fun getLibraryForAccountBlocking(
         context: Context,
@@ -180,14 +180,12 @@ object AccountUtils {
         // For custom apps, libraryUrl and libraryName come from the resources.
         // For the generic Hemlock app, they are stored as user data in the AccountManager.
         var libraryUrl = context.getString(R.string.ou_library_url)
-        Log.d(Const.AUTH_TAG, "[auth]    libraryUrl from resources: $libraryUrl")
-        if (TextUtils.isEmpty(libraryUrl)) {
+        if (libraryUrl.isEmpty()) {
             libraryUrl = am.getUserData(account, Const.KEY_LIBRARY_URL)
             Log.d(Const.AUTH_TAG, "[auth]    libraryUrl from user data: $libraryUrl")
         }
         var libraryName = context.getString(R.string.ou_library_name)
-        Log.d(Const.AUTH_TAG, "[auth]    libraryName from resources: $libraryName")
-        if (TextUtils.isEmpty(libraryName)) {
+        if (libraryName.isEmpty()) {
             libraryName = am.getUserData(account, Const.KEY_LIBRARY_NAME)
             Log.d(Const.AUTH_TAG, "[auth]    libraryName from user data: $libraryName")
         }
