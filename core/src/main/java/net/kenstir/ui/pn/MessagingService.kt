@@ -22,6 +22,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -40,6 +41,7 @@ class MessagingService: FirebaseMessagingService() {
             remoteMessage.data[PushNotification.TYPE_KEY],
             remoteMessage.data[PushNotification.USERNAME_KEY])
         Log.d(TAG_FCM, "[fcm] foreground notification: $notification")
+        val id = remoteMessage.messageId
         sendNotification(notification)
     }
 
@@ -49,12 +51,19 @@ class MessagingService: FirebaseMessagingService() {
 
     /**
      * Create and show a simple notification containing the received FCM message.
+     *
+     * Put extra information in the intent to help the app navigate to the right activity,
+     * if the user taps on the notification after the app goes to the background.
      */
     private fun sendNotification(notification: PushNotification) {
         val requestCode = 0
         val clazz = BaseActivity.activityForNotificationType(notification)
 
         val intent = Intent(this, clazz)
+        intent.putExtra(PushNotification.TYPE_KEY, notification.type.channelId)
+        notification.username?.let {
+            intent.putExtra(PushNotification.USERNAME_KEY, it)
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this,

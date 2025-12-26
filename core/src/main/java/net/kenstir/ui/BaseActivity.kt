@@ -17,6 +17,7 @@
 
 package net.kenstir.ui
 
+import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -324,14 +325,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     suspend fun addAccountAndRestart() {
         try {
             val bnd = AccountUtils.addAccount(this@BaseActivity)
-            Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
-            // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
-            App.restartApp(this@BaseActivity)
+            val accountName = bnd.getString(AccountManager.KEY_ACCOUNT_NAME)
+            Log.d(TAG, "[auth] addAccountAndRestart: added $accountName")
+            App.restartAppWithAccount(this@BaseActivity, accountName)
         } catch (_: android.accounts.OperationCanceledException) {
             // user cancelled, do nothing
-//        } catch (ex: Exception) {
-//            Log.d(TAG, "[auth] addAccountAndRestart: caught", ex)
-//            showAlert(ex)
         }
     }
 
