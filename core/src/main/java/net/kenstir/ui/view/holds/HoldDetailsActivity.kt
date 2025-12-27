@@ -63,7 +63,6 @@ class HoldDetailsActivity : BaseActivity() {
     private var expireDate: Date? = null
     private var thawDate: Date? = null
     private var selectedOrgPos = 0
-    private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,11 +158,6 @@ class HoldDetailsActivity : BaseActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-    }
-
-    override fun onDestroy() {
-        if (progress != null) progress!!.dismiss()
-        super.onDestroy()
     }
 
     private fun cancelHold(record: EvergreenHoldRecord) {

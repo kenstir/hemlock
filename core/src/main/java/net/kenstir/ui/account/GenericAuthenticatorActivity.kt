@@ -101,8 +101,16 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
 
-                val existingAccounts = AccountUtilsAsync.getAccountsByType(this@GenericAuthenticatorActivity)
-                onLibrariesLoaded(existingAccounts)
+                val existingAccounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
+                val numAccountsByLibrary = mutableMapOf<Library, Int>()
+                for (account in existingAccounts) {
+                    val library = AccountUtils.getLibraryForAccountBlocking(
+                        this@GenericAuthenticatorActivity, account.name, account.type)
+                    val count = numAccountsByLibrary[library] ?: 0
+                    numAccountsByLibrary[library] = count + 1
+                }
+
+                onDataLoaded(existingAccounts, numAccountsByLibrary)
                 Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
@@ -166,12 +174,18 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         }
     }
 
-    private fun onLibrariesLoaded(existingAccounts: List<android.accounts.Account>) {
-        // if the user has any existing accounts, then we can select a reasonable default library
+    private fun onDataLoaded(existingAccounts: List<android.accounts.Account>,
+                             numAccountsByLibrary: Map<Library, Int>) {
+        // if the user has any existing accounts, then choose the library with the most existing accounts
         var defaultLibrary: Library? = null
         if (existingAccounts.isNotEmpty()) {
-            defaultLibrary = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
-                existingAccounts[0])
+            var maxCount = 0
+            for ((library, count) in numAccountsByLibrary) {
+                if (count > maxCount) {
+                    defaultLibrary = library
+                    maxCount = count
+                }
+            }
             Log.d(Const.AUTH_TAG, "[auth] defaultLibrary=$defaultLibrary")
         }
 

@@ -21,7 +21,10 @@ import android.accounts.AccountManager
 import android.os.Bundle
 
 fun Bundle.getAccountManagerResult(): AccountManagerResult {
-    return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
+    return AccountManagerResult(
+        getString(AccountManager.KEY_ACCOUNT_NAME),
+        getString(AccountManager.KEY_ACCOUNT_TYPE),
         getString(AccountManager.KEY_AUTHTOKEN),
-        getString(AccountManager.KEY_ERROR_MESSAGE))
+        getString(AccountManager.KEY_ERROR_MESSAGE)
+    )
 }

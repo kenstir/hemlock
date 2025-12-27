@@ -60,7 +60,6 @@ class FinesActivity : BaseActivity() {
     private var charges: PatronCharges? = null
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
-    private var progress: ProgressDialogSupport? = null
     private var decimalFormatter: DecimalFormat? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,11 +83,6 @@ class FinesActivity : BaseActivity() {
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
         updatePayFinesButtonState(false)
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

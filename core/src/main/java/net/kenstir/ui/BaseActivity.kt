@@ -23,15 +23,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -41,11 +44,16 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.yield
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
+import net.kenstir.ui.util.BusyOverlay
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
@@ -63,7 +71,6 @@ import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
 
-
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -72,6 +79,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
+    protected var progress: ProgressDialogSupport? = null
+    protected val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
     val scope = lifecycleScope
 
@@ -280,20 +289,17 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.action_add_account -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
                 invalidateOptionsMenu()
-                AccountUtils.addAccount(this) {
-                    App.restartApp(this@BaseActivity)
-                }
+                withAsyncBusy { addAccountAndRestart() }
                 return true
             }
             R.id.action_clear_all_accounts -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                maybeLogoutAndClearAllAccounts()
+                maybeLogoutAndClearAccounts()
                 return true
             }
             R.id.action_logout -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                logout()
-                App.restartApp(this)
+                withAsyncBusy { logoutAndRestart() }
                 return true
             }
             R.id.action_messages -> {
@@ -315,20 +321,52 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun maybeLogoutAndClearAllAccounts() {
+    suspend fun addAccountAndRestart() {
+        try {
+            val bnd = AccountUtils.addAccount(this@BaseActivity)
+            Log.d(TAG, "[auth] addAccountAndRestart: added account, bnd=$bnd")
+            // TODO: restartAppWithNewAccount(bnd.getString(AccountManager.KEY_ACCOUNT_NAME))
+            App.restartApp(this@BaseActivity)
+        } catch (_: android.accounts.OperationCanceledException) {
+            // user cancelled, do nothing
+//        } catch (ex: Exception) {
+//            Log.d(TAG, "[auth] addAccountAndRestart: caught", ex)
+//            showAlert(ex)
+        }
+    }
+
+    suspend fun logoutAndRestart() {
+        logout()
+        App.restartApp(this@BaseActivity)
+    }
+
+    private fun maybeLogoutAndClearAccounts() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            showAlert(getString(R.string.android_too_old_message))
+            return
+        }
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.clear_accounts_alert_title)
             .setMessage(R.string.clear_accounts_alert_message)
-            .setPositiveButton(android.R.string.ok) { _, _ -> clearAllAccounts() }
+            .setPositiveButton(android.R.string.ok) { _, _ -> withAsyncBusy { logoutAndClearAccounts() } }
             .setNegativeButton(android.R.string.cancel, null)
         builder.create().show()
     }
 
-    private fun clearAllAccounts() {
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    private suspend fun logoutAndClearAccounts() {
         logout()
-        AccountUtils.removeAllAccounts(this) {
-            App.restartApp(this)
-        }
+        AccountUtils.removeAllAccounts(this@BaseActivity)
+        App.restartApp(this@BaseActivity)
+    }
+
+    suspend fun logout() {
+        Log.d(TAG, "[auth] logout")
+        val account = App.getAccount()
+        App.getServiceConfig().userService.deleteSession(account)
+        AccountUtils.invalidateAuthToken(this, account.authToken)
+        AccountUtils.clearPassword(this, account.username)
+        account.clearAuthToken()
     }
 
     open fun launchMap(address: String?) {
@@ -353,7 +391,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun sendEmail(to: String?) {
         if (to == null) return
         val url = "mailto:$to"
-        val uri = Uri.parse(url)
+        val uri = url.toUri()
         val intent = Intent(Intent.ACTION_SENDTO, uri)
         try {
             startActivity(intent)
@@ -362,21 +400,39 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    suspend fun withBusy(msg: String, block: suspend () -> Unit) {
+        try {
+            busy.showOverlay(msg)
+            yield() // allow UI to render before starting work
+            block()
+        } catch (ex: Exception) {
+            Log.d(TAG, "[busy] caught", ex)
+            showAlert(ex)
+        } finally {
+            busy.hideOverlay()
+        }
+    }
+
+    fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
+        scope.async {
+            try {
+                busy.showOverlay(msg)
+                yield() // allow UI to render before starting work
+                block()
+            } catch (ex: Exception) {
+                Log.d(TAG, "[busy] caught", ex)
+                showAlert(ex)
+            } finally {
+                busy.hideOverlay()
+            }
+        }
+    }
+
     /** template method that should be overridden in derived activities that want pull-to-refresh */
     fun onReload() {
     }
 
-    fun logout() {
-        Log.d(TAG, "[auth] logout")
-        val account = App.getAccount()
-        // TODO: call UserService.deleteSession(account)
-        AccountUtils.invalidateAuthToken(this, account.authToken)
-        AccountUtils.clearPassword(this, account.username)
-        account.clearAuthToken()
-    }
-
     companion object {
-
         private const val TAG = "BaseActivity"
 
         fun getAppVersionCode(context: Context): String {

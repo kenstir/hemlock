@@ -95,7 +95,6 @@ class PlaceHoldActivity : BaseActivity() {
     private var ignoreNextOrgSelection = false // ignore initial onItemSelected callback
     private var selectedSMSPos = 0
     private var ignoreNextSMSSelection = false // ignore initial onItemSelected callback
-    private var progress: ProgressDialogSupport? = null
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
@@ -156,11 +155,6 @@ class PlaceHoldActivity : BaseActivity() {
         // because most items do not have parts.
         //initSMSControls()
         initPartControls()
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {

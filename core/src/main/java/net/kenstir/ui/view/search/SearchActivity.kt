@@ -57,7 +57,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
@@ -82,7 +81,6 @@ class SearchActivity : BaseActivity() {
     private var searchFormatSpinner: Spinner? = null
     private var searchResultsSummary: TextView? = null
     private var searchResultsFragment: SearchResultsFragment? = null
-    private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
@@ -111,8 +109,6 @@ class SearchActivity : BaseActivity() {
         setupActionBar()
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
-
-        progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated
         val lastAccountId = savedInstanceState?.getInt(Key.ACCOUNT_ID)
@@ -162,11 +158,6 @@ class SearchActivity : BaseActivity() {
             outState.putInt(Key.ACCOUNT_ID, id)
         }
         logBundleSize(outState)
-    }
-
-    override fun onDestroy() {
-        progress?.dismiss()
-        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {
@@ -258,7 +249,7 @@ class SearchActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
+                busy.showOverlay(getString(R.string.searching_catalog_message))
 
                 // check searchText is not blank
                 if (searchText.isBlank()) {
@@ -294,7 +285,7 @@ class SearchActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchSearchResults ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                busy.hideOverlay()
             }
         }
     }
@@ -449,8 +440,7 @@ class SearchActivity : BaseActivity() {
             }
             R.id.action_logout -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
-                logout()
-                App.restartApp(this)
+                withAsyncBusy { logoutAndRestart() }
                 return true
             }
             R.id.action_barcode_search -> {
