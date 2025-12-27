@@ -5,6 +5,8 @@
 ### Fixed
 * Fixed ANR (App Not Responding) errors by moving account management operations
   off main thread
+* Fixed "Add account" to automatically choose the new account when restarting
+* Fixed bug where the app exited when pressing Back after starting from a notification
 * internal: Migrate to ViewPager2 to mitigate TransactionTooLargeException
 * internal: Limit search to 100 results to mitigate TransactionTooLargeException
 * internal: Fixed NPE seen once in updateButtonViews
