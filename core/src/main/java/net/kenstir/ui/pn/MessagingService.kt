@@ -41,7 +41,6 @@ class MessagingService: FirebaseMessagingService() {
             remoteMessage.data[PushNotification.TYPE_KEY],
             remoteMessage.data[PushNotification.USERNAME_KEY])
         Log.d(TAG_FCM, "[fcm] foreground notification: $notification")
-        val id = remoteMessage.messageId
         sendNotification(notification)
     }
 
@@ -53,7 +52,7 @@ class MessagingService: FirebaseMessagingService() {
      * Create and show a simple notification containing the received FCM message.
      *
      * Put extra information in the intent to help the app navigate to the right activity,
-     * if the user taps on the notification after the app goes to the background.
+     * if the user taps on the notification after the app goes to the background (NOT WORKING).
      */
     private fun sendNotification(notification: PushNotification) {
         val requestCode = 0
