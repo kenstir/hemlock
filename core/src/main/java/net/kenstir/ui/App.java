@@ -20,6 +20,7 @@ package net.kenstir.ui;
 import static net.kenstir.ui.account.AuthenticatorActivity.ARG_ACCOUNT_NAME;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -28,6 +29,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.TaskStackBuilder;
 
 import net.kenstir.hemlock.R;
 import net.kenstir.ui.util.CoilImageLoader;
@@ -172,9 +174,24 @@ public class App {
         Analytics.log(TAG, "[init][fcm] startAppFromPushNotification");
         setStarted(true);
         updateLaunchCount();
-        Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass);
-        activity.startActivity(intent);
-        activity.finish();
+
+        Intent mainIntent = getMainActivityIntent(activity)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent pendingIntent = TaskStackBuilder.create(activity.getApplicationContext())
+                .addNextIntent(mainIntent)
+                .addNextIntent(intent)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        try {
+            assert pendingIntent != null;
+            pendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            Analytics.logException(e);
+        }
     }
 
     public static Intent getMainActivityIntent(Activity activity) {
