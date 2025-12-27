@@ -17,6 +17,8 @@
 
 package net.kenstir.ui;
 
+import static net.kenstir.ui.account.AuthenticatorActivity.ARG_ACCOUNT_NAME;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -144,9 +146,14 @@ public class App {
      * </code>
      */
     public static void restartApp(Activity activity) {
-        Analytics.log(TAG, "[init] restartApp");
+        restartAppWithAccount(activity, null);
+    }
+
+    public static void restartAppWithAccount(Activity activity, @Nullable String accountName) {
+        Analytics.log(TAG, "[init] restartApp " + (accountName != null ? "with " + accountName : ""));
         Intent i = new Intent(activity.getApplicationContext(), LaunchActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra(ARG_ACCOUNT_NAME, accountName);
         activity.startActivity(i);
         activity.finish();
     }
@@ -162,7 +169,7 @@ public class App {
 
     /** Start app from a push notification */
     public static void startAppFromPushNotification(Activity activity, Class<? extends BaseActivity> targetActivityClass) {
-        Analytics.log(TAG, "[init] startAppFromPushNotification");
+        Analytics.log(TAG, "[init][fcm] startAppFromPushNotification");
         setStarted(true);
         updateLaunchCount();
         Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass);

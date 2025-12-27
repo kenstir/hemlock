@@ -17,6 +17,7 @@
 
 package net.kenstir.ui.pn
 
+import android.content.Intent
 import android.os.Bundle
 
 // The `channelId` string is used when registering the notification channels.
@@ -50,6 +51,12 @@ class PushNotification(val title: String?, val body: String?, val type: Notifica
 
     fun isNotGeneral(): Boolean {
         return type != NotificationType.GENERAL
+    }
+
+    fun addExtrasToIntent(intent: Intent) {
+        intent.putExtra(TYPE_KEY, type.channelId)
+        if (!username.isNullOrEmpty())
+            intent.putExtra(USERNAME_KEY, username)
     }
 
     override fun toString(): String {
