@@ -153,10 +153,11 @@ public class App {
 
     public static void restartAppWithAccount(Activity activity, @Nullable String accountName) {
         Analytics.log(TAG, "[init] restartApp " + (accountName != null ? "with " + accountName : ""));
-        Intent i = new Intent(activity.getApplicationContext(), LaunchActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.putExtra(ARG_ACCOUNT_NAME, accountName);
-        activity.startActivity(i);
+        Intent intent = new Intent(activity.getApplicationContext(), LaunchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (accountName != null)
+            intent.putExtra(ARG_ACCOUNT_NAME, accountName);
+        activity.startActivity(intent);
         activity.finish();
     }
 
@@ -175,20 +176,22 @@ public class App {
         setStarted(true);
         updateLaunchCount();
 
+        // Start the app with a back stack, so if the user presses Back, the app does not exit.
         Intent mainIntent = getMainActivityIntent(activity)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
         Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PendingIntent pendingIntent = TaskStackBuilder.create(activity.getApplicationContext())
                 .addNextIntent(mainIntent)
                 .addNextIntent(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
         try {
-            assert pendingIntent != null;
-            pendingIntent.send();
+            if (pendingIntent != null) {
+                pendingIntent.send();
+            } else {
+                activity.startActivity(intent);
+                activity.finish();
+            }
         } catch (PendingIntent.CanceledException e) {
             Analytics.logException(e);
         }

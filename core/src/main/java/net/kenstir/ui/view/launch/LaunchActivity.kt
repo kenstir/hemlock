@@ -81,9 +81,10 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        savedInstanceState?.dumpContents("[init][fcm]", "onCreate.state")
         super.onCreate(savedInstanceState)
 
-        intent.extras?.dumpContents("[init][fcm]", "onCreate")
+        intent.extras?.dumpContents("[init][fcm]", "onCreate.extras")
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_splash)
