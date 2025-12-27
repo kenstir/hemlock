@@ -51,7 +51,8 @@ class MessagingService: FirebaseMessagingService() {
      * Create and show a simple notification containing the received FCM message.
      *
      * Issue: if the user taps the notification after the app goes to the background,
-     * we do not start in the right Activity.  Calling addExtrasToIntent() did not work.
+     * we do not start in the right Activity.  Calling addExtrasToIntent() did not work,
+     * the extras were not present on the launch intent.
      */
     private fun sendNotification(notification: PushNotification) {
         val requestCode = 0
@@ -59,7 +60,6 @@ class MessagingService: FirebaseMessagingService() {
 
         val intent = Intent(this, clazz)
 //        notification.addExtrasToIntent(intent)
-//        intent.extras?.dumpBundleContents("[fcm]", "sendNotification")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this,
