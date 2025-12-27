@@ -20,7 +20,7 @@ package net.kenstir.ui.util
 import android.os.Bundle
 import net.kenstir.logging.Log
 
-fun Bundle.dumpContents(tag: String, msg: String) {
+fun Bundle.dumpBundleContents(tag: String, msg: String) {
     val keys = keySet()
     Log.d("Misc", "$tag $msg Bundle contents:")
     for (key in keys) {

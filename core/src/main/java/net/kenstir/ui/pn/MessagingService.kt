@@ -29,7 +29,6 @@ import com.google.firebase.messaging.RemoteMessage
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.dumpContents
 
 class MessagingService: FirebaseMessagingService() {
 
@@ -59,8 +58,8 @@ class MessagingService: FirebaseMessagingService() {
         val clazz = BaseActivity.activityForNotificationType(notification)
 
         val intent = Intent(this, clazz)
-        notification.addExtrasToIntent(intent)
-        intent.extras?.dumpContents("[fcm]", "sendNotification")
+//        notification.addExtrasToIntent(intent)
+//        intent.extras?.dumpBundleContents("[fcm]", "sendNotification")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this,
