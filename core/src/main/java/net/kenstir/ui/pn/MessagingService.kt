@@ -59,17 +59,14 @@ class MessagingService: FirebaseMessagingService() {
         val clazz = BaseActivity.activityForNotificationType(notification)
 
         val intent = Intent(this, clazz)
-        intent.putExtra(PushNotification.TYPE_KEY, notification.type.channelId)
-        notification.username?.let {
-            intent.putExtra(PushNotification.USERNAME_KEY, it)
-        }
+        notification.addExtrasToIntent(intent)
         intent.extras?.dumpContents("[fcm]", "sendNotification")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this,
             requestCode,
             intent,
-            PendingIntent.FLAG_IMMUTABLE// TODO: or PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -82,7 +79,7 @@ class MessagingService: FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notificationId = 0
+        val notificationId = notification.hashCode()
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }
