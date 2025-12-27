@@ -48,11 +48,12 @@ import net.kenstir.data.Result
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.account.AuthenticatorActivity.Companion.ARG_ACCOUNT_NAME
+import net.kenstir.ui.account.getAccountManagerResult
+import net.kenstir.ui.util.dumpContents
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 
 class LaunchActivity : AppCompatActivity() {
@@ -81,6 +82,8 @@ class LaunchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onCreate(savedInstanceState)
+
+        intent.extras?.dumpContents("[init][fcm]", "onCreate")
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_splash)
@@ -125,6 +128,15 @@ class LaunchActivity : AppCompatActivity() {
         })
     }
 
+//    override fun onNewIntent(intent: Intent?) {
+//        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+//        super.onNewIntent(intent)
+//        intent?.extras?.dumpContents("[init][fcm]", "onNewIntent")
+//        intent?.let {
+//            this.intent = it
+//        }
+//    }
+
     override fun onAttachedToWindow() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onAttachedToWindow()
@@ -149,6 +161,7 @@ class LaunchActivity : AppCompatActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         // FCM: handle launch from push notification
+        intent.extras?.dumpContents("[init][fcm]", "onLaunchSuccess")
         if (intent.hasExtra("google.message_id") ||
             intent.hasExtra(PushNotification.TYPE_KEY))
         {

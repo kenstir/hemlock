@@ -22,7 +22,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -30,6 +29,7 @@ import com.google.firebase.messaging.RemoteMessage
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.dumpContents
 
 class MessagingService: FirebaseMessagingService() {
 
@@ -64,12 +64,13 @@ class MessagingService: FirebaseMessagingService() {
         notification.username?.let {
             intent.putExtra(PushNotification.USERNAME_KEY, it)
         }
+        intent.extras?.dumpContents("[fcm]", "sendNotification")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this,
             requestCode,
             intent,
-            PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_IMMUTABLE// TODO: or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

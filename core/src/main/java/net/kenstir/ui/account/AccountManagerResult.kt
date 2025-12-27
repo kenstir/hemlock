@@ -17,6 +17,9 @@
 
 package net.kenstir.ui.account
 
+import android.accounts.AccountManager
+import android.os.Bundle
+
 data class AccountManagerResult (
         val accountName: String?,
         val accountType: String?,
@@ -27,4 +30,13 @@ data class AccountManagerResult (
         get() = accountName.isNullOrEmpty() || authToken.isNullOrEmpty()
     val failureMessage: String
         get() = errorMessage ?: "Login failed"
+}
+
+fun Bundle.getAccountManagerResult(): AccountManagerResult {
+    return AccountManagerResult(
+        getString(AccountManager.KEY_ACCOUNT_NAME),
+        getString(AccountManager.KEY_ACCOUNT_TYPE),
+        getString(AccountManager.KEY_AUTHTOKEN),
+        getString(AccountManager.KEY_ERROR_MESSAGE)
+    )
 }
