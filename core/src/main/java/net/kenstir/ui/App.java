@@ -17,7 +17,10 @@
 
 package net.kenstir.ui;
 
+import static net.kenstir.ui.account.AuthenticatorActivity.ARG_ACCOUNT_NAME;
+
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -26,6 +29,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.TaskStackBuilder;
 
 import net.kenstir.hemlock.R;
 import net.kenstir.ui.util.CoilImageLoader;
@@ -144,10 +148,16 @@ public class App {
      * </code>
      */
     public static void restartApp(Activity activity) {
-        Analytics.log(TAG, "[init] restartApp");
-        Intent i = new Intent(activity.getApplicationContext(), LaunchActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(i);
+        restartAppWithAccount(activity, null);
+    }
+
+    public static void restartAppWithAccount(Activity activity, @Nullable String accountName) {
+        Analytics.log(TAG, "[init] restartApp " + (accountName != null ? "with " + accountName : ""));
+        Intent intent = new Intent(activity.getApplicationContext(), LaunchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (accountName != null)
+            intent.putExtra(ARG_ACCOUNT_NAME, accountName);
+        activity.startActivity(intent);
         activity.finish();
     }
 
@@ -162,12 +172,29 @@ public class App {
 
     /** Start app from a push notification */
     public static void startAppFromPushNotification(Activity activity, Class<? extends BaseActivity> targetActivityClass) {
-        Analytics.log(TAG, "[init] startAppFromPushNotification");
+        Analytics.log(TAG, "[init][fcm] startAppFromPushNotification");
         setStarted(true);
         updateLaunchCount();
-        Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass);
-        activity.startActivity(intent);
-        activity.finish();
+
+        // Start the app with a back stack, so if the user presses Back, the app does not exit.
+        Intent mainIntent = getMainActivityIntent(activity)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = TaskStackBuilder.create(activity.getApplicationContext())
+                .addNextIntent(mainIntent)
+                .addNextIntent(intent)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        try {
+            if (pendingIntent != null) {
+                pendingIntent.send();
+            } else {
+                activity.startActivity(intent);
+                activity.finish();
+            }
+        } catch (PendingIntent.CanceledException e) {
+            Analytics.logException(e);
+        }
     }
 
     public static Intent getMainActivityIntent(Activity activity) {

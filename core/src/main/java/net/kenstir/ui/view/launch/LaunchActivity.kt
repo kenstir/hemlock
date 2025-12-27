@@ -48,10 +48,11 @@ import net.kenstir.data.Result
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.account.AuthenticatorActivity.Companion.ARG_ACCOUNT_NAME
+import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 
 class LaunchActivity : AppCompatActivity() {
@@ -147,14 +148,19 @@ class LaunchActivity : AppCompatActivity() {
     private fun onLaunchSuccess() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
-        // FCM: handle background push notification
-        intent.extras?.let {
-            val notification = PushNotification(it)
-            Log.d(TAG_FCM, "[fcm] notification: $notification")
-            if (notification.isNotGeneral()) {
-                val targetActivityClass = activityForNotificationType(notification)
-                App.startAppFromPushNotification(this, targetActivityClass)
-                return
+        // FCM: handle launch from push notification
+        //intent.extras?.dumpBundleContents("[init][fcm]", "onLaunchSuccess")
+        if (intent.hasExtra("google.message_id") ||
+            intent.hasExtra(PushNotification.TYPE_KEY))
+        {
+            intent.extras?.let {
+                val notification = PushNotification(it)
+                Log.d(TAG_FCM, "[fcm] launch notification: $notification")
+                if (notification.isNotGeneral()) {
+                    val targetActivityClass = activityForNotificationType(notification)
+                    App.startAppFromPushNotification(this, targetActivityClass)
+                    return
+                }
             }
         }
 
@@ -162,6 +168,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun launchLoginFlow() {
+        val accountName = intent.getStringExtra(ARG_ACCOUNT_NAME)
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         // Use GlobalScope so this coroutine isn't canceled when the AuthenticatorActivity is
         // started and this activity is destroyed.  Use Dispatchers.Main so that if an exception
@@ -169,7 +176,7 @@ class LaunchActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 //injectRandomFailure("launchLoginFlow", 25)
-                getAccount()
+                getAccount(accountName)
                 mModel.loadServiceData(this@LaunchActivity)
             } catch (ex: Exception) {
                 mProgressText?.text = ex.getCustomMessage()
@@ -228,11 +235,14 @@ class LaunchActivity : AppCompatActivity() {
     // Here we use the AccountManager to get an auth token, maybe creating or selecting an
     // account along the way.  We have to do that here and not in a ViewModel because it
     // needs an Activity.
-    private suspend fun getAccount() {
-        // get auth token
-        Log.d(TAG, "[auth] getAuthTokenHelper ...")
-        val bnd = AccountUtils.getAuthTokenHelper(this)
-        Log.d(TAG, "[auth] getAuthTokenHelper ... $bnd")
+    private suspend fun getAccount(accountName: String?) {
+        // get auth token, for the specified account if given
+        val bnd = when (accountName) {
+            null -> AccountUtils.getAuthTokenHelper(this)
+            else -> AccountUtils.getAuthToken(this, accountName)
+        }
+        Log.d(TAG, "[auth] bnd: $bnd")
+
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)

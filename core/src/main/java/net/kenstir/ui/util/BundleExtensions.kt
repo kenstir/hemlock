@@ -15,16 +15,15 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.ui.account
+package net.kenstir.ui.util
 
-import android.accounts.AccountManager
 import android.os.Bundle
+import net.kenstir.logging.Log
 
-fun Bundle.getAccountManagerResult(): AccountManagerResult {
-    return AccountManagerResult(
-        getString(AccountManager.KEY_ACCOUNT_NAME),
-        getString(AccountManager.KEY_ACCOUNT_TYPE),
-        getString(AccountManager.KEY_AUTHTOKEN),
-        getString(AccountManager.KEY_ERROR_MESSAGE)
-    )
+fun Bundle.dumpBundleContents(tag: String, msg: String) {
+    val keys = keySet()
+    Log.d("Misc", "$tag $msg Bundle contents:")
+    for (key in keys) {
+        Log.d("Misc", "$tag  $key: ${this.get(key)}")
+    }
 }
