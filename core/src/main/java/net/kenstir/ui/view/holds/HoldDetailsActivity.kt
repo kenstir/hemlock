@@ -186,10 +186,8 @@ class HoldDetailsActivity : BaseActivity() {
     private fun updateHold(record: EvergreenHoldRecord) {
         scope.async {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
-            var expireDateApi: String? = null
-            var thawDateApi: String? = null
-            if (expireDate != null) expireDateApi = OSRFUtils.formatDate(expireDate)
-            if (thawDate != null) thawDateApi = OSRFUtils.formatDate(thawDate)
+            val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
+            val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
             val holdId = record.ahrObj.getInt("id") ?: 0
             val orgId = EgOrg.visibleOrgs[selectedOrgPos].id

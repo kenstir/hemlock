@@ -20,6 +20,7 @@ package org.evergreen_ils.util;
 import android.annotation.SuppressLint;
 
 import net.kenstir.data.ShouldNotHappenException;
+import net.kenstir.logging.Log;
 import net.kenstir.util.Analytics;
 
 import java.text.DateFormat;
@@ -41,52 +42,47 @@ public class OSRFUtils {
     public static final String OUTPUT_DATE_TIME_PATTERN = "MM/dd/yyyy h:mm a";
 
     /** format ISO date+time string to pass to API methods */
-    public static String formatDate(Date date) {
+    public static @NonNull String formatDate(@NonNull Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
         return df.format(date);
     }
 
     /** format ISO date string yyyy-MM-dd to pass to API methods */
-    public static String formatDateAsDayOnly(Date date) {
+    public static @NonNull String formatDateAsDayOnly(@NonNull Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DAY_ONLY_PATTERN);
         return df.format(date);
     }
 
     /** parse ISO date+time string returned from API methods */
-    public static Date parseDate(@Nullable String dateString) {
-
-        if (dateString == null)
+    public static @Nullable Date parseDate(@Nullable String dateString) {
+        Log.d("Utils", "[kcx] parseDate: dateString="+dateString);
+        if (dateString == null || dateString.isEmpty())
             return null;
 
-        Date date;
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
 
         try {
-            date = df.parse(dateString);
+            return df.parse(dateString);
         } catch (ParseException e) {
             Analytics.logException(e);
-            date = new Date();
+            return null;
         }
-
-        return date;
     }
 
     /** parse time string HH:MM:SS returned from API */
     public static @Nullable
     Date parseHours(String hoursString) {
-        if (hoursString == null)
+        Log.d("Utils", "[kcx] parseHours: hoursString="+hoursString);
+        if (hoursString == null || hoursString.isEmpty())
             return null;
 
-        Date date;
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_HOURS_PATTERN);
 
         try {
-            date = df.parse(hoursString);
+            return df.parse(hoursString);
         } catch (ParseException e) {
-            date = new Date();
+            return null;
         }
-
-        return date;
     }
 
     public static @NonNull String formatHoursForOutput(@NonNull Date date) {
@@ -109,6 +105,7 @@ public class OSRFUtils {
     /** Parses bool from string returned from API methods
      */
     public static @NonNull Boolean parseBoolean(Object obj) {
+        Log.d("Utils", "[kcx] parseBoolean: obj="+obj);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         } else if (obj instanceof String) {
@@ -127,6 +124,7 @@ public class OSRFUtils {
      */
     @Nullable
     public static Integer parseInt(Object o, Integer defaultValue) {
+        Log.d("Utils", "[kcx] parseInt: o="+o+" defaultValue="+defaultValue);
         if (o == null) {
             return defaultValue;
         } else if (o instanceof Integer) {
@@ -150,6 +148,7 @@ public class OSRFUtils {
     }
 
     public static @NonNull List<Integer> parseIdsListAsInt(Object o) {
+        Log.d("Utils", "[kcx] parseIdsListAsInt: o="+o);
         ArrayList<Integer> ret = new ArrayList<>();
         if (o instanceof List) {
             for (Object elem: (List<?>) o) {
