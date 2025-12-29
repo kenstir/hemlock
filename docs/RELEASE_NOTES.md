@@ -7,6 +7,7 @@
   off main thread
 * Fixed "Add account" to automatically choose the new account when restarting
 * Fixed bug where the app exited when pressing Back after starting from a notification
+* internal: Upgrade to Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 1
 * internal: Migrate to ViewPager2 to mitigate TransactionTooLargeException
 * internal: Limit search to 100 results to mitigate TransactionTooLargeException
 * internal: Fixed NPE seen once in updateButtonViews

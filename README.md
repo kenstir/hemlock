@@ -21,9 +21,10 @@ Quick start for developers
 1. Get the correct version of [Android Studio](https://developer.android.com/studio/index.html). 
    This branch is built using
    ```
-   Android Studio Narwhal 4 Feature Drop | 2025.1.4
+   Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 1
    ```
-2. Directory `core/` contains the shared code and resources, `cwmars_app/` the code and resources needed to customize it for the C/W MARS system.
+2. Module `core` contains shared code and resources, and there is one module per target app,
+   e.g. `cwmars_app`.
 3. Profit. C'mon, you know better. This is Open Source.
 
 History of this app
