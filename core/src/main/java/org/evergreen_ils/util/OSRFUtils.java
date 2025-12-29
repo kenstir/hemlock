@@ -89,25 +89,26 @@ public class OSRFUtils {
         return date;
     }
 
-    public static String formatHoursForOutput(@NonNull Date date) {
+    public static @NonNull String formatHoursForOutput(@NonNull Date date) {
         // Use the default locale instead of fixed AM/PM, even though
         // this will make the tests break when run in a non-US locale.
         DateFormat timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         return timeFormatter.format(date);
     }
 
-    public static String formatDateForOutput(@NonNull Date date) {
+    public static @NonNull String formatDateForOutput(@NonNull Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(OUTPUT_DATE_PATTERN);
         return df.format(date);
     }
 
-    public static String formatDateTimeForOutput(@NonNull Date date) {
+    public static @NonNull String formatDateTimeForOutput(@NonNull Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(OUTPUT_DATE_TIME_PATTERN);
         return df.format(date);
     }
 
-    // parse bool string returned from API methods
-    public static Boolean parseBoolean(Object obj) {
+    /** Parses bool from string returned from API methods
+     */
+    public static @NonNull Boolean parseBoolean(Object obj) {
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         } else if (obj instanceof String) {
@@ -119,8 +120,8 @@ public class OSRFUtils {
     }
 
     /**
-     * Return o as an Integer
-     *
+     * Returns o as an Integer
+     * <p>
      * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
