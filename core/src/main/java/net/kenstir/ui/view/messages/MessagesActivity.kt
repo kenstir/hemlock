@@ -23,6 +23,7 @@ import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
@@ -36,7 +37,6 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
-import net.kenstir.ui.view.search.DividerItemDecoration
 
 const val MESSAGE_DELETE = 0
 const val MESSAGE_MARK_READ = 1
@@ -68,7 +68,7 @@ class MessagesActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         adapter = MessageViewAdapter(items)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         initClickListener()
     }

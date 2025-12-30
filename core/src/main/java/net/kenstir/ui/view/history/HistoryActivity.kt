@@ -24,6 +24,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -37,7 +38,6 @@ import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class HistoryActivity : BaseActivity() {
@@ -67,7 +67,7 @@ class HistoryActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         adapter = HistoryViewAdapter(items)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         initClickListener()
     }
