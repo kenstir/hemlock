@@ -119,4 +119,18 @@ class OSRFUtilsTest {
         assertNull(OSRFUtils.parseInt("null"))
         assertEquals(1, OSRFUtils.parseInt("", 1))
     }
+
+    @Test
+    fun test_parseIdsList() {
+        // normal cases
+        assertEquals(arrayListOf<Int>(), OSRFUtils.parseIdsListAsInt(arrayListOf<String>()))
+        assertEquals(arrayListOf<Int>(487, 488), OSRFUtils.parseIdsListAsInt(arrayListOf<String>("487", "488")))
+
+        // have never seen this but it looks sound
+        assertEquals(arrayListOf<Int>(487, 488), OSRFUtils.parseIdsListAsInt(arrayListOf<Int>(487, 488)))
+
+        // edge cases
+        assertEquals(arrayListOf<Int>(), OSRFUtils.parseIdsListAsInt(null))
+        assertEquals(arrayListOf<Int>(), OSRFUtils.parseIdsListAsInt("junk"))
+    }
 }
