@@ -104,8 +104,8 @@ open class AppBehavior {
             d("marc", "tag=" + df.tag + " ind1=" + df.ind1 + " ind2=" + df.ind2)
             if (df.isOnlineLocation
                 && isVisibleToOrg(df, orgShortName)) {
-                val href = df.getUri()
-                val text = df.getLinkText()
+                val href = df.uri
+                val text = df.linkText
                 if (href != null && text != null) {
                     val link = Link(href, trimLinkTitle(text))
                     // Filter duplicate links
