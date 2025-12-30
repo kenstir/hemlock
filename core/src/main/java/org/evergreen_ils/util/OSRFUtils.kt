@@ -47,7 +47,7 @@ object OSRFUtils {
 
     /** parse ISO date+time string returned from API methods  */
     fun parseDate(dateString: String?): Date? {
-        Log.d("Utils", "[kcx] parseDate: dateString=$dateString")
+        //Log.d("Utils", "[dbg] parseDate: dateString=$dateString")
         if (dateString == null || dateString.isEmpty()) return null
 
         @SuppressLint("SimpleDateFormat") val df = SimpleDateFormat(API_DATE_PATTERN)
@@ -62,7 +62,7 @@ object OSRFUtils {
 
     /** parse time string HH:MM:SS returned from API  */
     fun parseHours(hoursString: String?): Date? {
-        Log.d("Utils", "[kcx] parseHours: hoursString=$hoursString")
+        //Log.d("Utils", "[dbg] parseHours: hoursString=$hoursString")
         if (hoursString == null || hoursString.isEmpty()) return null
 
         @SuppressLint("SimpleDateFormat") val df = SimpleDateFormat(API_HOURS_PATTERN)
@@ -94,7 +94,7 @@ object OSRFUtils {
     /** Parses bool from string returned from API methods
      */
     fun parseBoolean(obj: Any?): Boolean {
-        Log.d("Utils", "[kcx] parseBoolean: obj=$obj")
+        //Log.d("Utils", "[dbg] parseBoolean: obj=$obj")
         if (obj is Boolean) {
             return obj
         } else if (obj is String) {
@@ -132,7 +132,7 @@ object OSRFUtils {
     }
 
     fun parseIdsListAsInt(o: Any?): List<Int> {
-        Log.d("Utils", "[kcx] parseIdsListAsInt: o=$o")
+        //Log.d("Utils", "[dbg] parseIdsListAsInt: o=$o")
         val ret = mutableListOf<Int>()
         if (o is List<*>) {
             for (elem in o) {
