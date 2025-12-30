@@ -23,7 +23,6 @@ package org.evergreen_ils.data.model
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CircRecord
 import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.util.TextUtils
 import org.evergreen_ils.gateway.OSRFObject
 import java.text.DateFormat
 import java.util.*
@@ -40,10 +39,12 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
     // recordInfo.id == mvr.doc_id == -1
     override val title: String?
         get() {
-            if (!TextUtils.isEmpty(record?.title))
-                return record?.title
-            if (!TextUtils.isEmpty(acp?.getString("dummy_title")))
-                return acp?.getString("dummy_title")
+            val title = record?.title
+            if (!title.isNullOrEmpty())
+                return title
+            val dummyTitle = acp?.getString("dummy_title")
+            if (!dummyTitle.isNullOrEmpty())
+                return dummyTitle
             return "Unknown Title"
         }
 
@@ -51,10 +52,12 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
     // recordInfo.id == mvr.doc_id == -1
     override val author: String?
         get() {
-            if (!TextUtils.isEmpty(record?.author))
-                return record?.author
-            if (!TextUtils.isEmpty(acp?.getString("dummy_author")))
-                return acp?.getString("dummy_author")
+            val author = record?.author
+            if (!author.isNullOrEmpty())
+                return author
+            val dummyAuthor = acp?.getString("dummy_author")
+            if (!dummyAuthor.isNullOrEmpty())
+                return dummyAuthor
             return ""
         }
 

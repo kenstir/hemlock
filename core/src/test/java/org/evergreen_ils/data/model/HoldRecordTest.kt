@@ -37,7 +37,7 @@ class HoldRecordTest {
                 "pickup_lib" to 69,
                 "shelf_expire_time" to null,
                 "sms_notify" to "5085551212",
-                "target" to "4190606",
+                "target" to 4190606,
                 "thaw_date" to null,
                 "transit" to null
             )
@@ -58,11 +58,36 @@ class HoldRecordTest {
         assertEquals(4190606, hold.target)
         assertEquals("5085551212", hold.smsNotify)
 
-        // assertions on record / hold queue
-        assertEquals("Unknown Title", hold.title)
-        assertEquals("", hold.author)
         assertNull(hold.partLabel)
         assertNull(hold.status)
+    }
+
+    @Test
+    fun test_holdTitleWithAndWithoutRecord() {
+        val ahrObj = OSRFObject(
+            jsonMapOf(
+                "id" to 14154079,
+                "hold_type" to "T",
+                "pickup_lib" to 69,
+                "target" to 4190606,
+            )
+        )
+        val hold = EvergreenHoldRecord(ahrObj)
+
+        assertEquals("Unknown Title", hold.title)
+        assertEquals("", hold.author)
+
+        val mvrObj = OSRFObject(
+            jsonMapOf(
+                "doc_id" to 4190606,
+                "title" to "The Great Gatsby",
+                "author" to "Fitzgerald, F. Scott"
+            )
+        )
+        hold.record = MBRecord(mvrObj)
+
+        assertEquals("The Great Gatsby", hold.title)
+        assertEquals("Fitzgerald, F. Scott", hold.author)
     }
 
     @Test
