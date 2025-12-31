@@ -3,14 +3,17 @@
 ### New
 
 ### Fixed
-* Fixed ANR (App Not Responding) errors by moving account management operations
-  off main thread
+* Fixed accessibility issues where author and copy info text links were too small
+* Fixed ANR (App Not Responding) errors by moving account operations off main thread
 * Fixed "Add account" to automatically choose the new account when restarting
 * Fixed bug where the app exited when pressing Back after starting from a notification
+
+### Internal
 * internal: Upgrade to Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 1
 * internal: Migrate to ViewPager2 to mitigate TransactionTooLargeException
 * internal: Limit search to 100 results to mitigate TransactionTooLargeException
 * internal: Fixed NPE seen once in updateButtonViews
+* internal: Convert more Java to Kotlin and remove local copies of library code
 
 ## 4.5.0
 
