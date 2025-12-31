@@ -42,12 +42,10 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.system.EgOrg
-import kotlin.random.Random
 
 class OrgDetailsActivity : BaseActivity() {
 
@@ -117,8 +115,6 @@ class OrgDetailsActivity : BaseActivity() {
 
         val hoursHeader: View? = findViewById(R.id.org_details_opening_hours_header)
         val hoursTable: View? = findViewById(R.id.org_details_opening_hours_table)
-
-        progress = ProgressDialogSupport()
 
         initOrgSpinner()
         initHoursViews(hoursHeader, hoursTable)
@@ -273,7 +269,7 @@ class OrgDetailsActivity : BaseActivity() {
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()
-                progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
+                showBusy(R.string.msg_loading_details)
 
                 Log.d(TAG, "[fetch] fetchData ... orgID=$orgID")
 
@@ -299,7 +295,7 @@ class OrgDetailsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }

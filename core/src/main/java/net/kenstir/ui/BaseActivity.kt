@@ -42,11 +42,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -54,7 +54,7 @@ import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.BusyOverlay
-import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.ProgressDialogFragment
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
@@ -80,7 +80,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
-    protected var progress: ProgressDialogSupport? = null
     protected val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
     val scope = lifecycleScope
@@ -400,30 +399,46 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     suspend fun withBusy(msg: String, block: suspend () -> Unit) {
         try {
-            busy.showOverlay(msg)
+            showBusy(msg)
             yield() // allow UI to render before starting work
             block()
         } catch (ex: Exception) {
             Log.d(TAG, "[busy] caught", ex)
             showAlert(ex)
         } finally {
-            busy.hideOverlay()
+            hideBusy()
         }
     }
 
     fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
         scope.async {
             try {
-                busy.showOverlay(msg)
+                showBusy(msg)
                 yield() // allow UI to render before starting work
                 block()
             } catch (ex: Exception) {
                 Log.d(TAG, "[busy] caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hideOverlay()
+                hideBusy()
             }
         }
+    }
+
+    fun showBusy(resId: Int) {
+        showBusy(getString(resId))
+    }
+
+    fun showBusy(msg: String) {
+        busy.show(msg)
+//        if (supportFragmentManager.findFragmentByTag("progress") != null) return
+//        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, "progress")
+    }
+
+    fun hideBusy() {
+        busy.hide()
+//        val f = supportFragmentManager.findFragmentByTag("progress") as? DialogFragment
+//        f?.dismissAllowingStateLoss()
     }
 
     /** template method that should be overridden in derived activities that want pull-to-refresh */

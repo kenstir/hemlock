@@ -26,17 +26,16 @@ import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.ui.Key
-import net.kenstir.ui.util.showAlert
-import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
+import net.kenstir.data.model.PatronMessage
+import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.showAlert
 
 const val MESSAGE_DELETE = 0
 const val MESSAGE_MARK_READ = 1
@@ -63,8 +62,6 @@ class MessagesActivity : BaseActivity() {
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
 
-        progress = ProgressDialogSupport()
-
         rv = findViewById(R.id.recycler_view)
         adapter = MessageViewAdapter(items)
         rv?.adapter = adapter
@@ -85,7 +82,7 @@ class MessagesActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@MessagesActivity, getString(R.string.msg_retrieving_data))
+                busy.show(getString(R.string.msg_retrieving_data))
 
                 // fetch messages
                 val result = App.getServiceConfig().userService.fetchPatronMessages(
@@ -102,7 +99,7 @@ class MessagesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                busy.hide()
             }
         }
     }

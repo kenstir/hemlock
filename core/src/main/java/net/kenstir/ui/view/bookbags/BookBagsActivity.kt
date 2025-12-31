@@ -37,7 +37,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
@@ -59,8 +58,6 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
 
         // prevent soft keyboard from popping up when the activity starts
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
-        progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)
         adapter = BookBagViewAdapter(items)
@@ -100,7 +97,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
+                showBusy(getString(R.string.msg_retrieving_lists))
 
                 // load bookbags
                 val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
@@ -125,7 +122,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }
@@ -151,10 +148,10 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
 
     private fun createBookBag(name: String, description: String) {
         scope.async {
-            progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
+            showBusy(getString(R.string.msg_creating_list))
             val result = App.getServiceConfig().userService.createPatronList(
                 App.getAccount(), name, description)
-            progress?.dismiss()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
             ))

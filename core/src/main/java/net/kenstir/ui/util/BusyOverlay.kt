@@ -30,14 +30,17 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColorInt
 import androidx.core.widget.TextViewCompat
 import net.kenstir.hemlock.R
 
 class BusyOverlay(val activity: Activity) {
     private var busyOverlay: FrameLayout? = null
 
-    fun showOverlay(msg: String) {
+    fun show(resId: Int) {
+        show(activity.getString(resId))
+    }
+
+    fun show(msg: String) {
         if (busyOverlay != null) return
 
         val rootLayout = activity.findViewById<ViewGroup>(android.R.id.content)
@@ -106,7 +109,7 @@ class BusyOverlay(val activity: Activity) {
         busyOverlay?.animate()?.alpha(1f)?.setDuration(200)?.start()
     }
 
-    fun hideOverlay() {
+    fun hide() {
         val rootLayout = activity.findViewById<ViewGroup>(android.R.id.content)
         busyOverlay?.let {
             rootLayout.removeView(it)

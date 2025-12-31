@@ -35,7 +35,6 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
@@ -60,8 +59,6 @@ class HistoryActivity : BaseActivity() {
         setupActionBar()
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
-
-        progress = ProgressDialogSupport()
 
         historySummary = findViewById(R.id.history_items_summary)
         rv = findViewById(R.id.recycler_view)
@@ -130,7 +127,7 @@ class HistoryActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@HistoryActivity, getString(R.string.msg_retrieving_data))
+                busy.show(getString(R.string.msg_retrieving_data))
 
                 // fetch history
                 val result = App.getServiceConfig().circService.fetchCheckoutHistory(
@@ -145,7 +142,7 @@ class HistoryActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                busy.hide()
             }
         }
     }

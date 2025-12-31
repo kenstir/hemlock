@@ -249,7 +249,7 @@ class SearchActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                busy.showOverlay(getString(R.string.searching_catalog_message))
+                busy.show(getString(R.string.searching_catalog_message))
 
                 // check searchText is not blank
                 if (searchText.isBlank()) {
@@ -285,7 +285,7 @@ class SearchActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchSearchResults ... caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hideOverlay()
+                busy.hide()
             }
         }
     }
@@ -511,7 +511,7 @@ class SearchActivity : BaseActivity() {
         val moduleInstallRequest = ModuleInstallRequest.newBuilder()
             .addApi(scanner)
             .build()
-        progress?.show(this@SearchActivity, getString(R.string.msg_installing_scanner_module))
+        busy.show(getString(R.string.msg_installing_scanner_module))
         moduleInstallClient.installModules(moduleInstallRequest)
             .addOnSuccessListener {
                 this.startScanningWithClient(scanner)
@@ -520,7 +520,7 @@ class SearchActivity : BaseActivity() {
                 this.onScannerFailure(it)
             }
             .addOnCompleteListener {
-                progress?.dismiss()
+                busy.hide()
                 Log.logElapsedTime(TAG, start, "[scanner] module install done")
             }
     }
