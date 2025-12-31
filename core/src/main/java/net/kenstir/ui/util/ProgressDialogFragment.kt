@@ -19,9 +19,11 @@ package net.kenstir.ui.util
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
@@ -37,23 +39,40 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val density = resources.displayMetrics.density
+        val progressSize = (density * 48).toInt()
+        val padding = (density * 16).toInt()
+        val gap = (density * 12).toInt()
+
         val progressBar = ProgressBar(requireContext()).apply {
             isIndeterminate = true
-            val size = (resources.displayMetrics.density * 48).toInt()
-            layoutParams = FrameLayout.LayoutParams(size, size)
+            layoutParams = LinearLayout.LayoutParams(progressSize, progressSize).apply {
+                gravity = Gravity.CENTER_VERTICAL
+            }
         }
 
-        val container = FrameLayout(requireContext()).apply {
-            val pad = (resources.displayMetrics.density * 20).toInt()
-            setPadding(pad, pad, pad, pad)
-            addView(progressBar, ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        val container = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(padding, padding, padding, padding)
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            addView(progressBar)
         }
 
         val message = arguments?.getString(ARG_MESSAGE)
+        if (!message.isNullOrBlank()) {
+            val tv = TextView(requireContext()).apply {
+                text = message
+                setPadding(gap, 0, 0, 0)
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                    gravity = Gravity.CENTER_VERTICAL
+                }
+            }
+            container.addView(tv)
+        }
+
         val builder = AlertDialog.Builder(requireContext())
             .setView(container)
-
-        if (!message.isNullOrBlank()) builder.setMessage(message)
 
         val dialog = builder.create()
         dialog.setCanceledOnTouchOutside(false)
