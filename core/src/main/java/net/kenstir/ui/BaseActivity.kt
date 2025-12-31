@@ -53,7 +53,6 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
-import net.kenstir.ui.util.BusyOverlay
 import net.kenstir.ui.util.ProgressDialogFragment
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
@@ -80,7 +79,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
-    private val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
     val scope = lifecycleScope
 
@@ -430,13 +428,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun showBusy(msg: String) {
-//        busy.show(msg)
         if (supportFragmentManager.findFragmentByTag("progress") != null) return
         ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, "progress")
     }
 
     fun hideBusy() {
-//        busy.hide()
         val f = supportFragmentManager.findFragmentByTag("progress") as? DialogFragment
         f?.dismissAllowingStateLoss()
     }
