@@ -2,6 +2,8 @@
 <resources>
     <!-- touch target min height recommended by accessibility scanner -->
     <dimen name="target_min_height">48dp</dimen>
+    <!-- 48dp feels big for spannable text -->
+    <dimen name="spannable_text_min_height">32dp</dimen>
     <!-- accessibility scanner recommends min 48dp, that feels big for spinner items -->
     <dimen name="spinner_min_height">48dp</dimen>
     <dimen name="spinner_item_min_height">32dp</dimen>
