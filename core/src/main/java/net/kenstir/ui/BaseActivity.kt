@@ -80,7 +80,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
-    protected val busy: BusyOverlay = BusyOverlay(this)
+    private val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
     val scope = lifecycleScope
 
@@ -430,15 +430,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun showBusy(msg: String) {
-        busy.show(msg)
-//        if (supportFragmentManager.findFragmentByTag("progress") != null) return
-//        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, "progress")
+//        busy.show(msg)
+        if (supportFragmentManager.findFragmentByTag("progress") != null) return
+        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, "progress")
     }
 
     fun hideBusy() {
-        busy.hide()
-//        val f = supportFragmentManager.findFragmentByTag("progress") as? DialogFragment
-//        f?.dismissAllowingStateLoss()
+//        busy.hide()
+        val f = supportFragmentManager.findFragmentByTag("progress") as? DialogFragment
+        f?.dismissAllowingStateLoss()
     }
 
     /** template method that should be overridden in derived activities that want pull-to-refresh */
