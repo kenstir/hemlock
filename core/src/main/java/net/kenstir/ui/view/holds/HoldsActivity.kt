@@ -22,6 +22,7 @@ package net.kenstir.ui.view.holds
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -37,7 +38,6 @@ import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
 
 class HoldsActivity : BaseActivity() {
@@ -62,7 +62,7 @@ class HoldsActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         adapter = HoldsViewAdapter(holdRecords) { editHold(it) }
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             showItemDetails(position)
         }

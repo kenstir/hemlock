@@ -272,11 +272,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getExpireDate(): String? {
-        return if (expireDate != null) OSRFUtils.formatDate(expireDate) else null
+        return expireDate?.let { OSRFUtils.formatDate(it) }
     }
 
     private fun getThawDate(): String? {
-        return if (thawDate != null) OSRFUtils.formatDate(thawDate) else null
+        return thawDate?.let { OSRFUtils.formatDate(it) }
     }
 
     private fun placeHoldPreFlightCheck(): Boolean {

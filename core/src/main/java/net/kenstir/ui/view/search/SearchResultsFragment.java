@@ -18,6 +18,7 @@ package net.kenstir.ui.view.search;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import android.view.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,7 +75,7 @@ public class SearchResultsFragment extends Fragment {
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL));
 
         ItemClickSupport cs = ItemClickSupport.addTo(mRecyclerView);
         cs.setOnItemClickListener((recyclerView, position, v) -> {

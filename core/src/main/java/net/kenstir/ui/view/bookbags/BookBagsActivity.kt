@@ -25,6 +25,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -39,7 +40,6 @@ import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.util.Analytics
 
 class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListener {
@@ -65,7 +65,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
         rv = findViewById(R.id.recycler_view)
         adapter = BookBagViewAdapter(items)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra(Key.PATRON_LIST, items[position])

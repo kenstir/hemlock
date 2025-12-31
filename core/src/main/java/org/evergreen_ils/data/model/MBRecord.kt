@@ -23,7 +23,6 @@ import net.kenstir.util.titleSortKey
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.util.TextUtils
 
 class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord {
     constructor(mvrObj: OSRFObject) : this(mvrObj.getInt("doc_id") ?: -1, mvrObj)
@@ -73,17 +72,15 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
 
     override val publishingInfo: String
         get() {
-            val s = TextUtils.join(" ", arrayOf<String>(
-                pubdate,
-                mvrObj?.getString("publisher") ?: ""))
-            return s.trim()
+            return listOfNotNull(pubdate, mvrObj?.getString("publisher"))
+                .joinToString(" ")
         }
     override val series: String
         get() {
-            val seriesList = mvrObj?.get("series") as? List<String?>
+            val seriesList = mvrObj?.get("series") as? List<*>
             return when (seriesList) {
                 null -> ""
-                else -> TextUtils.join("\n", seriesList)
+                else -> seriesList.joinToString("\n")
             }
         }
     override val subject: String
@@ -107,7 +104,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         isDeleted = breObj.getBoolean("deleted")
         try {
             val marcxml = breObj.getString("marc")
-            if (!TextUtils.isEmpty(marcxml)) {
+            if (!marcxml.isNullOrEmpty()) {
                 val parser = MARCXMLParser(marcxml)
                 marcRecord = parser.parse()
             }

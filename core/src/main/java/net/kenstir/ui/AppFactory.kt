@@ -14,26 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.ui
 
-package net.kenstir.ui;
+import android.content.res.Resources
+import android.text.TextUtils
+import net.kenstir.hemlock.R
+import net.kenstir.util.Analytics.logException
 
-import android.content.res.Resources;
-import android.text.TextUtils;
-
-import net.kenstir.hemlock.R;
-import net.kenstir.util.Analytics;
-
-public class AppFactory {
-    static public AppBehavior makeBehavior(Resources resources) {
-        String clazzName = resources.getString(R.string.ou_behavior_provider);
+object AppFactory {
+    @JvmStatic
+    fun makeBehavior(resources: Resources): AppBehavior {
+        val clazzName = resources.getString(R.string.ou_behavior_provider)
         if (!TextUtils.isEmpty(clazzName)) {
             try {
-                Class clazz = Class.forName(clazzName);
-                return (AppBehavior) clazz.newInstance();
-            } catch (Exception e) {
-                Analytics.logException(e);
+                val clazz = Class.forName(clazzName)
+                return clazz.newInstance() as AppBehavior
+            } catch (e: Exception) {
+                logException(e)
             }
         }
-        return new AppBehavior();
+        return AppBehavior()
     }
 }

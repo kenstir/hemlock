@@ -27,6 +27,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -91,7 +92,7 @@ class CopyInformationActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         adapter = CopyInformationViewAdapter(copyInfoRecords, groupCopiesBySystem)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         initClickListener()
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView

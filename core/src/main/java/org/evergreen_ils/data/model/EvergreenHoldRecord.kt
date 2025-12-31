@@ -31,7 +31,6 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.util.OSRFUtils
 import net.kenstir.util.JsonUtils
 import org.evergreen_ils.Api
-import org.evergreen_ils.util.TextUtils
 import org.evergreen_ils.gateway.OSRFObject
 import java.text.DateFormat
 import java.util.*
@@ -105,11 +104,19 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
     }
 
     override val title: String
-        get() = if (record != null && !TextUtils.isEmpty(record!!.title)) withPartLabel(
-            record!!.title
-        ) else "Unknown Title"
+        get() {
+            val title = record?.title
+            if (!title.isNullOrEmpty())
+                return withPartLabel(title)
+            return "Unknown Title"
+        }
     override val author: String
-        get() = if (record != null && !TextUtils.isEmpty(record!!.author)) record!!.author else ""
+        get() {
+            val author = record?.author
+            if (!author.isNullOrEmpty())
+                return author
+            return ""
+        }
     override val expireTime: Date?
         get() = ahrObj.getDate("expire_time")
     override val shelfExpireTime: Date?
