@@ -169,7 +169,7 @@ class PlaceHoldActivity : BaseActivity() {
                 Log.d(TAG, "[async] fetchData ...")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Result<Unit>>>()
-                busy.show(getString(R.string.msg_loading_place_hold))
+                showBusy(R.string.msg_loading_place_hold)
                 placeHold?.isEnabled = false
 
                 val serviceConfig = App.getServiceConfig()
@@ -202,7 +202,7 @@ class PlaceHoldActivity : BaseActivity() {
                 Log.d(TAG, "[async] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hide()
+                hideBusy()
             }
         }
     }
@@ -321,7 +321,7 @@ class PlaceHoldActivity : BaseActivity() {
                 else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
             Log.d(TAG, "[holds] placeHold: $holdType $itemId")
-            busy.show("Placing hold")
+            showBusy(R.string.msg_placing_hold)
             val options = HoldOptions(
                 holdType = holdType,
                 emailNotify = notifyByEmail?.isChecked == true,
@@ -337,7 +337,7 @@ class PlaceHoldActivity : BaseActivity() {
             val result = App.getServiceConfig().circService.placeHold(
                 App.getAccount(), itemId, options)
             Log.d(TAG, "[holds] placeHold: $result")
-            busy.hide()
+            hideBusy()
             when (result) {
                 is Result.Success -> {
                     logPlaceHoldResult(Analytics.Value.OK)

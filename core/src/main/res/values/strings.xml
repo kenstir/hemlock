@@ -227,6 +227,7 @@
     <string name="msg_retrieving_data">Retrieving data</string>
     <string name="format">Format</string>
     <string name="msg_loading_holds">Loading holds</string>
+    <string name="msg_placing_hold">Placing hold</string>
     <string name="msg_canceling_hold">Canceling hold</string>
     <string name="msg_updating_hold">Updating hold</string>
     <string name="msg_updated_hold">Hold updated</string>

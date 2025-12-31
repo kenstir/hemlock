@@ -129,7 +129,7 @@ class CheckoutsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                busy.show(getString(R.string.msg_retrieving_data))
+                showBusy(R.string.msg_retrieving_data)
                 val account = App.getAccount()
                 val circService = App.getServiceConfig().circService
 
@@ -155,7 +155,7 @@ class CheckoutsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hide()
+                hideBusy()
             }
         }
     }
@@ -200,10 +200,10 @@ class CheckoutsActivity : BaseActivity() {
     private fun renewItem(record: CircRecord) {
         scope.async {
             record.targetCopy?.let {
-                busy.show(getString(R.string.msg_renewing_item))
+                showBusy(R.string.msg_renewing_item)
                 val result = App.getServiceConfig().circService.renewCheckout(
                     App.getAccount(), it)
-                busy.hide()
+                hideBusy()
                 when (result) {
                     is Result.Success -> {
                         Toast.makeText(this@CheckoutsActivity,

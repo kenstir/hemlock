@@ -90,7 +90,7 @@ class HoldsActivity : BaseActivity() {
         scope.async {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
-                busy.show(getString(R.string.msg_loading_holds))
+                showBusy(R.string.msg_loading_holds)
                 val start = System.currentTimeMillis()
                 val account = App.getAccount()
 
@@ -118,7 +118,7 @@ class HoldsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hide()
+                hideBusy()
             }
         }
     }

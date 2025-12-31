@@ -95,7 +95,7 @@ class FinesActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                showBusy(getString(R.string.msg_retrieving_fines))
+                showBusy(R.string.msg_retrieving_fines)
                 Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()

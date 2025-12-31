@@ -82,7 +82,7 @@ class MessagesActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                busy.show(getString(R.string.msg_retrieving_data))
+                showBusy(R.string.msg_retrieving_data)
 
                 // fetch messages
                 val result = App.getServiceConfig().userService.fetchPatronMessages(
@@ -99,7 +99,7 @@ class MessagesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hide()
+                hideBusy()
             }
         }
     }

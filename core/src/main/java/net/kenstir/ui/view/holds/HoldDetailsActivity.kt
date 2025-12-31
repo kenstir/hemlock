@@ -159,12 +159,12 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun cancelHold(record: EvergreenHoldRecord) {
         scope.async {
-            busy.show(getString(R.string.msg_canceling_hold))
+            showBusy(R.string.msg_canceling_hold)
 
             val holdId = record.ahrObj.getInt("id") ?: 0
             val result = App.getServiceConfig().circService.cancelHold(
                 App.getAccount(), holdId)
-            busy.hide()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
             ))
@@ -182,7 +182,7 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun updateHold(record: EvergreenHoldRecord) {
         scope.async {
-            busy.show(getString(R.string.msg_updating_hold))
+            showBusy(R.string.msg_updating_hold)
             val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
             val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
@@ -196,7 +196,7 @@ class HoldDetailsActivity : BaseActivity() {
             )
             val result = App.getServiceConfig().circService.updateHold(
                 App.getAccount(), holdId, holdOptions)
-            busy.hide()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),
                 Analytics.Param.HOLD_SUSPEND_KEY to suspendHold!!.isChecked,
