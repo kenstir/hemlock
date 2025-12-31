@@ -97,7 +97,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                showBusy(getString(R.string.msg_retrieving_lists))
+                showBusy(R.string.msg_retrieving_lists)
 
                 // load bookbags
                 val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
@@ -148,7 +148,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
 
     private fun createBookBag(name: String, description: String) {
         scope.async {
-            showBusy(getString(R.string.msg_creating_list))
+            showBusy(R.string.msg_creating_list)
             val result = App.getServiceConfig().userService.createPatronList(
                 App.getAccount(), name, description)
             hideBusy()

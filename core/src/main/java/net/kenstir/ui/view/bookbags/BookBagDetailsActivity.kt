@@ -223,7 +223,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun deleteList() {
         scope.async {
-            showBusy(getString(R.string.msg_deleting_list))
+            showBusy(R.string.msg_deleting_list)
             val id = patronList.id
             val result = App.getServiceConfig().userService.deletePatronList(
                 App.getAccount(), id)
@@ -305,7 +305,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun removeItemFromList(item: ListItem) {
         scope.async {
-            showBusy(getString(R.string.msg_removing_list_item))
+            showBusy(R.string.msg_removing_list_item)
             val result = App.getServiceConfig().userService.removeItemFromPatronList(
                 App.getAccount(), patronList.id, item.id)
             hideBusy()
