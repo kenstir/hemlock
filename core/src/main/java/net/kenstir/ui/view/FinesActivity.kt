@@ -114,9 +114,6 @@ class FinesActivity : BaseActivity() {
                         App.getAccount())
                     onChargesResult(result)
                 })
-                jobs.add(scope.async {
-                    delay(1000)
-                })
 
                 jobs.map { it.await() }
                 Log.logElapsedTime(TAG, start, "[fetch] fetchData ... done")
