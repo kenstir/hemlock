@@ -22,10 +22,8 @@
     <string name="hold_items_title">Holds</string>
     <string name="hold_place_title">Place Hold</string>
     <string name="hold_details_title">Hold Details</string>
-    <string name="title_fines">Fines</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place hold</string>
-    <string name="button_pay_fines">Pay fines</string>
     <string name="barcode_title">Show Card</string>
     <string name="barcode_description">Barcode</string>
     <string name="barcode_text_description">Barcode numbers</string>
@@ -147,10 +145,13 @@
     <string name="label_checkout_date">Checkout date: %s</string>
     <string name="label_returned_date">Returned date: %s</string>
 
-    <!-- Fines Activity -->
+    <!-- Fines -->
+    <string name="title_fines">Fines</string>
+    <string name="msg_retrieving_fines">Retrieving fines</string>
+    <string name="button_pay_fines">Pay fines</string>
+    <string name="balance_owed">Balance Owed</string>
     <string name="total_owed">Total Owed</string>
     <string name="total_paid">Total Paid</string>
-    <string name="balance_owed">Balance Owed</string>
 
     <!-- Bookbag Activities -->
     <string name="menu_delete_bookbag">Delete list</string>
@@ -211,7 +212,6 @@
     <string name="record_synopsis">Synopsis</string>
     <string name="record_isbn">ISBN</string>
     <string name="record_online_access">Online Access</string>
-    <string name="msg_retrieving_fines">Retrieving fines</string>
     <string name="toast_max_renewals_reached">Max renewals reached</string>
     <string name="toast_thanks">Thanks!</string>
     <string name="msg_list_empty">List is empty</string>
