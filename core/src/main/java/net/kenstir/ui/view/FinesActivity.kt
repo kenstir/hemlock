@@ -31,7 +31,6 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.ChargeRecord
