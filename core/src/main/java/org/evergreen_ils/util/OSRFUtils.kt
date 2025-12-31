@@ -18,7 +18,6 @@ package org.evergreen_ils.util
 
 import android.annotation.SuppressLint
 import net.kenstir.data.ShouldNotHappenException
-import net.kenstir.logging.Log
 import net.kenstir.util.Analytics.logException
 import java.text.DateFormat
 import java.text.ParseException
@@ -98,8 +97,7 @@ object OSRFUtils {
         if (obj is Boolean) {
             return obj
         } else if (obj is String) {
-            val s = obj
-            return s == "t"
+            return obj == "t"
         } else {
             return false
         }
@@ -108,9 +106,9 @@ object OSRFUtils {
     /**
      * Returns o as an Integer
      *
-     *
      * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
-     * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
+     * Old EG versions sometimes had strings in the search result "ids" list
+     * (See [Issue 1](https://github.com/kenstir/hemlock/issues/1)).
      */
     @JvmOverloads
     fun parseInt(o: Any?, defaultValue: Int? = null): Int? {
