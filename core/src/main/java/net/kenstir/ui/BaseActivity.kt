@@ -35,6 +35,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat.ID_NULL
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -43,6 +44,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
@@ -80,6 +82,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
+    protected lateinit var busyModel: BusyViewModel
     val scope = lifecycleScope
 
     protected val feedbackUrl: String
@@ -105,6 +108,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
+
+        busyModel = ViewModelProvider(this)[BusyViewModel::class.java]
+        busyModel.state.observe(this) { state ->
+            if (state.isBusy) {
+                showBusyUI(state.message)
+            } else {
+                hideBusyUI()
+            }
+        }
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -395,23 +407,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    suspend fun withBusy(msg: String, block: suspend () -> Unit) {
-        try {
-            showBusy(msg)
-            yield() // allow UI to render before starting work
-            block()
-        } catch (ex: Exception) {
-            Log.d(TAG, "[busy] caught", ex)
-            showAlert(ex)
-        } finally {
-            hideBusy()
-        }
-    }
-
-    fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
+    fun withAsyncBusy(resId: Int = ID_NULL, block: suspend () -> Unit) {
         scope.async {
             try {
-                showBusy(msg)
+                showBusy(resId)
                 yield() // allow UI to render before starting work
                 block()
             } catch (ex: Exception) {
@@ -424,10 +423,18 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun showBusy(resId: Int) {
-        showBusy(getString(resId))
+        showBusy(if (resId == ID_NULL) "" else getString(resId))
     }
 
-    fun showBusy(msg: String) {
+    private fun showBusy(msg: String) {
+        busyModel.state.value = BusyState(true, msg)
+    }
+
+    fun hideBusy() {
+        busyModel.state.value = BusyState(false, "")
+    }
+
+    fun showBusyUI(msg: String) {
         Log.d(TAG, "[busy] showBusy: $msg")
         if (supportFragmentManager.findFragmentByTag(PROGRESS_TAG) != null) {
             Log.d(TAG, "[busy] showBusy: already showing")
@@ -436,7 +443,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, PROGRESS_TAG)
     }
 
-    fun hideBusy() {
+    fun hideBusyUI() {
         val manager = supportFragmentManager
         val f = manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment
 
@@ -445,17 +452,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             f.dismissAllowingStateLoss()
         } else if (!manager.isDestroyed && !manager.isStateSaved) {
             // This catches the case where showBusy and hideBusy are called in rapid succession.
-            manager.executePendingTransactions()
+            val pending = manager.executePendingTransactions()
+            Log.d(TAG, "[busy] hideBusy: pendingTransactions=$pending")
             (manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment)?.dismissAllowingStateLoss()
         }
-    }
-
-    override fun onDestroy() {
-        if (isChangingConfigurations) {
-            // hideBusy because, for now, any async coroutines are cancelled on rotation
-            hideBusy()
-        }
-        super.onDestroy()
     }
 
     /** template method that should be overridden in derived activities that want pull-to-refresh */
