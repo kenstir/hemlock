@@ -428,13 +428,34 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun showBusy(msg: String) {
-        if (supportFragmentManager.findFragmentByTag("progress") != null) return
-        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, "progress")
+        Log.d(TAG, "[busy] showBusy: $msg")
+        if (supportFragmentManager.findFragmentByTag(PROGRESS_TAG) != null) {
+            Log.d(TAG, "[busy] showBusy: already showing")
+            return
+        }
+        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, PROGRESS_TAG)
     }
 
     fun hideBusy() {
-        val f = supportFragmentManager.findFragmentByTag("progress") as? DialogFragment
-        f?.dismissAllowingStateLoss()
+        val manager = supportFragmentManager
+        val f = manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment
+
+        Log.d(TAG, "[busy] hideBusy: f=${f != null} fm.destroyed=${manager.isDestroyed} fm.stateSaved=${manager.isStateSaved}")
+        if (f != null) {
+            f.dismissAllowingStateLoss()
+        } else if (!manager.isDestroyed && !manager.isStateSaved) {
+            // This catches the case where showBusy and hideBusy are called in rapid succession.
+            manager.executePendingTransactions()
+            (manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment)?.dismissAllowingStateLoss()
+        }
+    }
+
+    override fun onDestroy() {
+        if (isChangingConfigurations) {
+            // hideBusy because, for now, any async coroutines are cancelled on rotation
+            hideBusy()
+        }
+        super.onDestroy()
     }
 
     /** template method that should be overridden in derived activities that want pull-to-refresh */
@@ -443,6 +464,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     companion object {
         private const val TAG = "BaseActivity"
+        private const val PROGRESS_TAG = "progress"
 
         fun getAppVersionCode(context: Context): String {
             var version = ""
