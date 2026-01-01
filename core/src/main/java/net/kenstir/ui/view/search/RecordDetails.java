@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.NonNull;
+
 import net.kenstir.ui.Key;
 import net.kenstir.data.model.BibRecord;
 
@@ -30,14 +32,14 @@ import java.util.ArrayList;
 
 public class RecordDetails {
 
-    public static void launchDetailsFlow(Context context, ArrayList<BibRecord> recordList, int recordPosition) {
+    public static void launchDetailsFlow(@NonNull Context context, ArrayList<BibRecord> recordList, int recordPosition) {
         // determine name of parent activity
         PackageManager pm = context.getPackageManager();
         String parentActivityLabel = null;
         try {
             ActivityInfo info = pm.getActivityInfo(new ComponentName(context, context.getClass().getCanonicalName()), 0);
             parentActivityLabel = context.getString(info.labelRes);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
 
         // Prevent TransactionTooLargeException by limiting the data passed via Intent.
@@ -58,12 +60,4 @@ public class RecordDetails {
         intent.putExtra(Key.TITLE, parentActivityLabel);
         context.startActivity(intent);
     }
-
-//    private static int bundleSize(Bundle bundle) {
-//        Parcel parcel = Parcel.obtain();
-//        parcel.writeBundle(bundle);
-//        int size = parcel.dataSize();
-//        parcel.recycle();
-//        return size;
-//    }
 }
