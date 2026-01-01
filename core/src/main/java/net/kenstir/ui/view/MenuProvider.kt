@@ -14,33 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.ui.view
 
-package net.kenstir.ui.view;
-
-import android.app.Activity;
-import android.text.TextUtils;
-
-import net.kenstir.util.Analytics;
+import android.app.Activity
+import net.kenstir.util.Analytics
 
 /** Interface to get extra buttons provided by the main main of a custom app.
  * Concrete implementation is provided by the app
  * and the name of that class is specified in R.string.ou_main_menu_provider .
  */
-public abstract class MenuProvider {
+abstract class MenuProvider {
+    abstract fun onCreate(activity: Activity)
+    abstract fun onItemSelected(activity: Activity, id: Int, via: String): Boolean
 
-    static public MenuProvider create(String clazzName) {
-        if (TextUtils.isEmpty(clazzName)) {
-            return null;
-        }
-        try {
-            Class clazz = Class.forName(clazzName);
-            return (MenuProvider) clazz.newInstance();
-        } catch (Exception e) {
-            Analytics.logException(e);
-            return null;
+    companion object {
+        fun create(clazzName: String): MenuProvider? {
+            if (clazzName.isEmpty()) {
+                return null
+            }
+            try {
+                val clazz = Class.forName(clazzName)
+                return clazz.newInstance() as MenuProvider
+            } catch (e: Exception) {
+                Analytics.logException(e)
+                return null
+            }
         }
     }
-
-    abstract public void onCreate(Activity activity);
-    abstract public boolean onItemSelected(Activity activity, int id, String via);
 }
