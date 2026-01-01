@@ -17,7 +17,6 @@
 package net.kenstir.ui
 
 import android.content.res.Resources
-import android.text.TextUtils
 import net.kenstir.hemlock.R
 import net.kenstir.util.Analytics.logException
 
@@ -25,7 +24,7 @@ object AppFactory {
     @JvmStatic
     fun makeBehavior(resources: Resources): AppBehavior {
         val clazzName = resources.getString(R.string.ou_behavior_provider)
-        if (!TextUtils.isEmpty(clazzName)) {
+        if (!clazzName.isEmpty()) {
             try {
                 val clazz = Class.forName(clazzName)
                 return clazz.newInstance() as AppBehavior
