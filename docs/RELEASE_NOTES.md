@@ -14,6 +14,7 @@
 * internal: Limit search to 100 results to mitigate TransactionTooLargeException
 * internal: Fixed NPE seen once in updateButtonViews
 * internal: Convert more Java to Kotlin and remove local copies of library code
+* internal: Replace deprecated ProgressDialog with Fragment + ViewModel
 
 ## 4.5.0
 

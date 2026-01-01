@@ -35,7 +35,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
@@ -58,7 +57,6 @@ class HoldsActivity : BaseActivity() {
         setupNavigationDrawer()
 
         holdsSummary = findViewById(R.id.holds_summary)
-        progress = ProgressDialogSupport()
         rv = findViewById(R.id.recycler_view)
         adapter = HoldsViewAdapter(holdRecords) { editHold(it) }
         rv?.adapter = adapter
@@ -92,7 +90,7 @@ class HoldsActivity : BaseActivity() {
         scope.async {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
-                progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
+                showBusy(R.string.msg_loading_holds)
                 val start = System.currentTimeMillis()
                 val account = App.getAccount()
 
@@ -120,7 +118,7 @@ class HoldsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }

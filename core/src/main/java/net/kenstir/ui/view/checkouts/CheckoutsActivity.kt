@@ -40,7 +40,6 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.history.HistoryActivity
@@ -64,7 +63,6 @@ class CheckoutsActivity : BaseActivity() {
         setupNavigationDrawer()
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
-        progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)
         adapter = CheckoutsViewAdapter(circRecords) { renewItem(it) }
@@ -131,7 +129,7 @@ class CheckoutsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
+                showBusy(R.string.msg_retrieving_data)
                 val account = App.getAccount()
                 val circService = App.getServiceConfig().circService
 
@@ -157,7 +155,7 @@ class CheckoutsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }
@@ -202,10 +200,10 @@ class CheckoutsActivity : BaseActivity() {
     private fun renewItem(record: CircRecord) {
         scope.async {
             record.targetCopy?.let {
-                progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
+                showBusy(R.string.msg_renewing_item)
                 val result = App.getServiceConfig().circService.renewCheckout(
                     App.getAccount(), it)
-                progress?.dismiss()
+                hideBusy()
                 when (result) {
                     is Result.Success -> {
                         Toast.makeText(this@CheckoutsActivity,

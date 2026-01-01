@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_fines">Charges</string>
+    <string name="msg_retrieving_fines">Retrieving charges</string>
     <string name="button_pay_fines">Pay all charges</string>
     <string name="balance_owed">Charges</string>
     <string name="hold_status_available">Ready for pickup at %1$s</string>

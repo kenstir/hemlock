@@ -41,28 +41,27 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics
-import net.kenstir.ui.Key
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldPart
-import net.kenstir.logging.Log
 import net.kenstir.data.service.HoldOptions
+import net.kenstir.hemlock.R
+import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
-import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.showAlert
+import net.kenstir.util.Analytics
+import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSms
+import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -116,7 +115,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         account = App.getAccount()
-        progress = ProgressDialogSupport()
+
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
         format = findViewById(R.id.hold_format)
@@ -170,7 +169,7 @@ class PlaceHoldActivity : BaseActivity() {
                 Log.d(TAG, "[async] fetchData ...")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Result<Unit>>>()
-                progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
+                showBusy(R.string.msg_loading_place_hold)
                 placeHold?.isEnabled = false
 
                 val serviceConfig = App.getServiceConfig()
@@ -203,7 +202,7 @@ class PlaceHoldActivity : BaseActivity() {
                 Log.d(TAG, "[async] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }
@@ -322,7 +321,7 @@ class PlaceHoldActivity : BaseActivity() {
                 else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
             Log.d(TAG, "[holds] placeHold: $holdType $itemId")
-            progress?.show(this@PlaceHoldActivity, "Placing hold")
+            showBusy(R.string.msg_placing_hold)
             val options = HoldOptions(
                 holdType = holdType,
                 emailNotify = notifyByEmail?.isChecked == true,
@@ -338,7 +337,7 @@ class PlaceHoldActivity : BaseActivity() {
             val result = App.getServiceConfig().circService.placeHold(
                 App.getAccount(), itemId, options)
             Log.d(TAG, "[holds] placeHold: $result")
-            progress?.dismiss()
+            hideBusy()
             when (result) {
                 is Result.Success -> {
                     logPlaceHoldResult(Analytics.Value.OK)

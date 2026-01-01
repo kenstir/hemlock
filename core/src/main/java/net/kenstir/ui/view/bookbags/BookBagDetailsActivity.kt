@@ -39,7 +39,6 @@ import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
@@ -81,7 +80,6 @@ class BookBagDetailsActivity : BaseActivity() {
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
 
-        progress = ProgressDialogSupport()
         patronList = intent.getSerializableExtra(Key.PATRON_LIST) as PatronList
 
         bookBagName = findViewById(R.id.bookbag_name)
@@ -161,7 +159,7 @@ class BookBagDetailsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
+                showBusy(R.string.msg_retrieving_list_contents)
 
                 // load bookBag contents
                 val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), patronList)
@@ -180,7 +178,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }
@@ -225,11 +223,11 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun deleteList() {
         scope.async {
-            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
+            showBusy(R.string.msg_deleting_list)
             val id = patronList.id
             val result = App.getServiceConfig().userService.deletePatronList(
                 App.getAccount(), id)
-            progress?.dismiss()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
             ))
@@ -307,10 +305,10 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun removeItemFromList(item: ListItem) {
         scope.async {
-            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
+            showBusy(R.string.msg_removing_list_item)
             val result = App.getServiceConfig().userService.removeItemFromPatronList(
                 App.getAccount(), patronList.id, item.id)
-            progress?.dismiss()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
             ))

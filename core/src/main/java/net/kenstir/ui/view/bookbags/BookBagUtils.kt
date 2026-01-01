@@ -27,7 +27,6 @@ import net.kenstir.data.model.PatronList
 import net.kenstir.util.Analytics
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 
 object BookBagUtils {
@@ -42,9 +41,8 @@ object BookBagUtils {
 
     private fun addRecordToList(activity: BaseActivity, bookBag: PatronList, info: BibRecord) {
         activity.scope.async {
-            val progress = ProgressDialogSupport()
             try {
-                progress.show(activity, activity.getString(R.string.adding_to_list_message))
+                activity.showBusy(R.string.adding_to_list_message)
 
                 val result = App.getServiceConfig().userService.addItemToPatronList(
                     App.getAccount(),
@@ -63,7 +61,7 @@ object BookBagUtils {
             } catch (ex: Exception) {
                 activity.showAlert(ex)
             } finally {
-                progress.dismiss()
+                activity.hideBusy()
             }
         }
     }

@@ -35,6 +35,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat.ID_NULL
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -42,19 +43,19 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
-import net.kenstir.ui.util.BusyOverlay
-import net.kenstir.ui.util.ProgressDialogSupport
+import net.kenstir.ui.util.ProgressDialogFragment
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
@@ -80,9 +81,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected var navView: NavigationView? = null
     protected var mainContentView: View? = null
     protected var menuItemHandler: MenuProvider? = null
-    protected var progress: ProgressDialogSupport? = null
-    protected val busy: BusyOverlay = BusyOverlay(this)
     protected var isRestarting = false
+    protected lateinit var busyModel: BusyViewModel
     val scope = lifecycleScope
 
     protected val feedbackUrl: String
@@ -93,7 +93,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        Log.d(TAG, "[init] BaseActivity onCreate")
         super.onCreate(savedInstanceState)
 
         if (!App.isStarted()) {
@@ -108,6 +107,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
+
+        busyModel = ViewModelProvider(this)[BusyViewModel::class.java]
+        busyModel.state.observe(this) { state ->
+            if (state.isBusy) {
+                showBusyUI(state.message)
+            } else {
+                hideBusyUI()
+            }
+        }
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -398,31 +406,54 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    suspend fun withBusy(msg: String, block: suspend () -> Unit) {
-        try {
-            busy.showOverlay(msg)
-            yield() // allow UI to render before starting work
-            block()
-        } catch (ex: Exception) {
-            Log.d(TAG, "[busy] caught", ex)
-            showAlert(ex)
-        } finally {
-            busy.hideOverlay()
-        }
-    }
-
-    fun withAsyncBusy(msg: String = "", block: suspend () -> Unit) {
+    fun withAsyncBusy(resId: Int = ID_NULL, block: suspend () -> Unit) {
         scope.async {
             try {
-                busy.showOverlay(msg)
+                showBusy(resId)
                 yield() // allow UI to render before starting work
                 block()
             } catch (ex: Exception) {
                 Log.d(TAG, "[busy] caught", ex)
                 showAlert(ex)
             } finally {
-                busy.hideOverlay()
+                hideBusy()
             }
+        }
+    }
+
+    fun showBusy(resId: Int) {
+        showBusy(if (resId == ID_NULL) "" else getString(resId))
+    }
+
+    private fun showBusy(msg: String) {
+        busyModel.state.value = BusyState(true, msg)
+    }
+
+    fun hideBusy() {
+        busyModel.state.value = BusyState(false, "")
+    }
+
+    private fun showBusyUI(msg: String) {
+        Log.d(TAG, "[busy] showBusy: $msg")
+        if (supportFragmentManager.findFragmentByTag(PROGRESS_TAG) != null) {
+            Log.d(TAG, "[busy] showBusy: already showing")
+            return
+        }
+        ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, PROGRESS_TAG)
+    }
+
+    private fun hideBusyUI() {
+        val manager = supportFragmentManager
+        val f = manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment
+
+        Log.d(TAG, "[busy] hideBusy: f=${f != null} fm.destroyed=${manager.isDestroyed} fm.stateSaved=${manager.isStateSaved}")
+        if (f != null) {
+            f.dismissAllowingStateLoss()
+        } else if (!manager.isDestroyed && !manager.isStateSaved) {
+            // This catches the case where showBusy and hideBusy are called in rapid succession.
+            val pending = manager.executePendingTransactions()
+            Log.d(TAG, "[busy] hideBusy: pendingTransactions=$pending")
+            (manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment)?.dismissAllowingStateLoss()
         }
     }
 
@@ -432,6 +463,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     companion object {
         private const val TAG = "BaseActivity"
+        private const val PROGRESS_TAG = "progress"
 
         fun getAppVersionCode(context: Context): String {
             var version = ""

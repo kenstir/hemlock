@@ -37,20 +37,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics
-import net.kenstir.ui.Key
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.service.HoldUpdateOptions
+import net.kenstir.hemlock.R
 import net.kenstir.ui.App
-import org.evergreen_ils.data.model.EvergreenHoldRecord
-import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.showAlert
+import net.kenstir.util.Analytics
+import org.evergreen_ils.data.model.EvergreenHoldRecord
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -73,8 +72,6 @@ class HoldDetailsActivity : BaseActivity() {
         setupActionBar()
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
-
-        progress = ProgressDialogSupport()
 
         val record = intent.getSerializableExtra(Key.HOLD_RECORD) as EvergreenHoldRecord
 
@@ -162,12 +159,12 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun cancelHold(record: EvergreenHoldRecord) {
         scope.async {
-            progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
+            showBusy(R.string.msg_canceling_hold)
 
             val holdId = record.ahrObj.getInt("id") ?: 0
             val result = App.getServiceConfig().circService.cancelHold(
                 App.getAccount(), holdId)
-            progress?.dismiss()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
             ))
@@ -185,7 +182,7 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun updateHold(record: EvergreenHoldRecord) {
         scope.async {
-            progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
+            showBusy(R.string.msg_updating_hold)
             val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
             val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
@@ -199,7 +196,7 @@ class HoldDetailsActivity : BaseActivity() {
             )
             val result = App.getServiceConfig().circService.updateHold(
                 App.getAccount(), holdId, holdOptions)
-            progress?.dismiss()
+            hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),
                 Analytics.Param.HOLD_SUSPEND_KEY to suspendHold!!.isChecked,

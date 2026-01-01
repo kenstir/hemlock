@@ -39,7 +39,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
@@ -78,7 +77,6 @@ class FinesActivity : BaseActivity() {
         totalPaid = findViewById(R.id.fines_total_paid)
         balanceOwed = findViewById(R.id.fines_balance_owed)
         payFinesButton = findViewById(R.id.pay_fines)
-        progress = ProgressDialogSupport()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
@@ -96,7 +94,7 @@ class FinesActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
+                showBusy(R.string.msg_retrieving_fines)
                 Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
@@ -122,7 +120,7 @@ class FinesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ... caught", ex)
                 showAlert(ex)
             } finally {
-                progress?.dismiss()
+                hideBusy()
             }
         }
     }
