@@ -93,7 +93,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        Log.d(TAG, "[init] BaseActivity onCreate")
         super.onCreate(savedInstanceState)
 
         if (!App.isStarted()) {
@@ -434,7 +433,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         busyModel.state.value = BusyState(false, "")
     }
 
-    fun showBusyUI(msg: String) {
+    private fun showBusyUI(msg: String) {
         Log.d(TAG, "[busy] showBusy: $msg")
         if (supportFragmentManager.findFragmentByTag(PROGRESS_TAG) != null) {
             Log.d(TAG, "[busy] showBusy: already showing")
@@ -443,7 +442,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         ProgressDialogFragment.newInstance(msg).show(supportFragmentManager, PROGRESS_TAG)
     }
 
-    fun hideBusyUI() {
+    private fun hideBusyUI() {
         val manager = supportFragmentManager
         val f = manager.findFragmentByTag(PROGRESS_TAG) as? DialogFragment
 
