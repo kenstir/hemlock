@@ -113,13 +113,17 @@ object Analytics {
     fun initialize(context: Context) {
         if (initialized) return
 
+        mAnalytics = FirebaseAnalytics.getInstance(context)
+
         val setting: String? = Settings.System.getString(context.contentResolver, "firebase.test.lab")
         runningInTestLab = (setting == "true")
 
         if (wantAnalytics(context)) {
             analytics = true
-            if (mAnalytics == null)
-                mAnalytics = FirebaseAnalytics.getInstance(context)
+        } else {
+            Log.d(TAG, "Disabling Crashlytics")
+            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
+            analytics = false
         }
 
         initialized = true
