@@ -45,7 +45,6 @@ import net.kenstir.util.Analytics;
 
 import java.io.File;
 
-// TODO: This functionality could be moved to our custom Application class
 public class App {
     private static final String TAG = "App";
 
@@ -57,7 +56,7 @@ public class App {
 
     private static AppBehavior behavior = null;
     private static Library library = null;
-    private static Account account = null;
+    private static @NonNull Account account = Account.Companion.getNoAccount();
     private static String fcmNotificationToken = null;
 
     private static ServiceConfig mServiceConfig = null;
@@ -223,11 +222,11 @@ public class App {
         mStarted = flag;
     }
 
-    public static Account getAccount() {
+    public static @NonNull Account getAccount() {
         return account;
     }
 
-    public static void setAccount(Account account) {
+    public static void setAccount(@NonNull Account account) {
         App.account = account;
     }
 
