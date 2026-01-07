@@ -110,15 +110,15 @@ public class App {
         mInitialized = true;
     }
 
-    public static AppBehavior getBehavior() {
+    public static @NonNull AppBehavior getBehavior() {
         return behavior;
     }
 
-    public static Library getLibrary() {
+    public static @NonNull Library getLibrary() {
         return library;
     }
 
-    public static void setLibrary(Library library) {
+    public static void setLibrary(@NonNull Library library) {
         App.library = library;
         // TODO: set baseUrl via Service method in the data layer
         GatewayClient.baseUrl = library.getUrl();
