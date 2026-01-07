@@ -23,8 +23,6 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -134,7 +132,7 @@ public class App {
     public static void startApp(Activity activity) {
         Analytics.log(TAG, "[init] startApp");
         setStarted(true);
-        updateLaunchCount();
+        AppState.incrementLaunchCount();
         Intent intent = getMainActivityIntent(activity);
         activity.startActivity(intent);
         activity.finish();
@@ -144,7 +142,7 @@ public class App {
     public static void startAppFromPushNotification(Activity activity, Class<? extends BaseActivity> targetActivityClass) {
         Analytics.log(TAG, "[init][fcm] startAppFromPushNotification");
         setStarted(true);
-        updateLaunchCount();
+        AppState.incrementLaunchCount();
 
         // Start the app with a back stack, so if the user presses Back, the app does not exit.
         Intent mainIntent = getMainActivityIntent(activity)
@@ -178,11 +176,6 @@ public class App {
             }
         }
         return new Intent(activity.getApplicationContext(), MainActivity.class);
-    }
-
-    static void updateLaunchCount() {
-        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
-        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
     }
 
     public static boolean isStarted() {

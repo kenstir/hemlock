@@ -133,6 +133,12 @@ object AppState {
         }
     }
 
+    @JvmStatic
+    fun incrementLaunchCount() {
+        val count = getInt(LAUNCH_COUNT, 0)
+        setInt(LAUNCH_COUNT, count + 1)
+    }
+
     fun clearTestPreferences() {
         val keysToRemove = prefs.all.keys.filter { it.startsWith("test_") }
         prefs.edit {
