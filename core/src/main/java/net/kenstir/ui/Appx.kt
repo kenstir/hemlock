@@ -20,6 +20,7 @@ package net.kenstir.ui
 import android.content.Context
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Library
+import net.kenstir.data.service.ServiceConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 
@@ -29,10 +30,15 @@ object Appx {
     lateinit var account: Account
     lateinit var behavior: AppBehavior
     lateinit var library: Library
+    lateinit var svc: ServiceConfig
 
     fun init(context: Context) {
         val isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test)
         Log.d(TAG, "[init] App.init isAndroidTest=$isAndroidTest")
+
         behavior = AppFactory.makeBehavior(context.resources)
+        if (!this::svc.isInitialized) {
+            svc = ServiceConfig()
+        }
     }
 }

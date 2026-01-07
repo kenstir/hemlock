@@ -56,8 +56,6 @@ public class App {
     private static @NonNull Account account = Account.Companion.getNoAccount();
     private static String fcmNotificationToken = null;
 
-    private static ServiceConfig mServiceConfig = null;
-
     // TODO: factor out LoaderService.makeHttpClient()
     public static void configureHttpClient(Context context) {
         GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
@@ -73,9 +71,6 @@ public class App {
         boolean isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test);
         Log.d(TAG, "[init] App.init isAndroidTest=" + isAndroidTest);
         configureHttpClient(context);
-        if (mServiceConfig == null) {
-            mServiceConfig = new ServiceConfig();
-        }
         mInitialized = true;
     }
 
@@ -188,14 +183,5 @@ public class App {
 
     public static void setAccount(@NonNull Account account) {
         App.account = account;
-    }
-
-    @NonNull
-    public static ServiceConfig getServiceConfig() {
-        return mServiceConfig;
-    }
-
-    public static void setServiceConfig(@NonNull ServiceConfig serviceConfig) {
-        App.mServiceConfig = serviceConfig;
     }
 }
