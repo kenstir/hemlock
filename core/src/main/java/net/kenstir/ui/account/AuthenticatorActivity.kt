@@ -82,8 +82,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         setContentViewImpl()
         adjustPaddingForEdgeToEdge()
 
-        App.init(this)
-
         accountManager = AccountManager.get(baseContext)
 
         val accountName = intent.getStringExtra(ARG_ACCOUNT_NAME)

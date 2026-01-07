@@ -37,7 +37,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.ui.Key
 import net.kenstir.util.Analytics
-import net.kenstir.util.Analytics.initialize
 import java.util.Locale
 import java.util.StringTokenizer
 
@@ -47,11 +46,13 @@ class AdvancedSearchActivity: AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initialize(this)
+
         if (!App.isStarted()) {
             App.restartApp(this)
             return
         }
+
+        Analytics.initialize(this)
 
         setContentView(R.layout.advanced_search)
 

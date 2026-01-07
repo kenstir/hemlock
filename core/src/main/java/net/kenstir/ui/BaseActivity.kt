@@ -103,7 +103,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         isRestarting = false
 
         Analytics.initialize(this)
-        App.init(this)
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)

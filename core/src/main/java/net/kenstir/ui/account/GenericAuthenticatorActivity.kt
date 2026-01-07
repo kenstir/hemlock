@@ -63,7 +63,6 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Analytics.initialize(this)
 
         directoryUrl = getString(R.string.evergreen_libraries_url)
 

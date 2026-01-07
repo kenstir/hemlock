@@ -35,10 +35,12 @@ class Application : androidx.multidex.MultiDexApplication() {
         Log.d(TAG, "[init] Application.onCreate kotlin ${KotlinVersion.CURRENT}")
         super.onCreate()
 
+        // ThemeManager requires AppState
         AppState.init(this)
         val changed = ThemeManager.applyNightMode()
         Log.d(TAG, "[init] applyNightMode returned $changed")
 
+        // Other global init
         App.init(this)
         deleteLegacyCacheDirectory()
 
@@ -46,10 +48,10 @@ class Application : androidx.multidex.MultiDexApplication() {
         //TooLargeTool.startLogging(this)
     }
 
+    /** Deletes the pre-4.0 Volley cache directory if it exists */
     private fun deleteLegacyCacheDirectory() {
         applicationScope.launch(Dispatchers.IO) {
             try {
-                // Delete the pre-4.0 cache directory if it exists
                 val volleyCacheDir = File(applicationContext.cacheDir, "volley")
                 val ok = volleyCacheDir.deleteRecursively()
                 Log.d(TAG, "[init] Deleted volley cache directory: $ok")

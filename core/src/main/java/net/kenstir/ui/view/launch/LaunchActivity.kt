@@ -87,7 +87,6 @@ class LaunchActivity : AppCompatActivity() {
         adjustPaddingForEdgeToEdge()
 
         Analytics.initialize(this)
-        App.init(this)
 
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
