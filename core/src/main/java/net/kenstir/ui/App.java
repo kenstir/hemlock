@@ -61,35 +61,6 @@ public class App {
 
     private static ServiceConfig mServiceConfig = null;
 
-    public static int getVersionCode(Context context) {
-        PackageInfo pInfo = null;
-        try {
-            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("Log", "caught", e);
-            return 0;
-        }
-    }
-
-    public static String getVersion(Context context) {
-        return Integer.toString(getVersionCode(context));
-    }
-
-    public static String getAppInfo(Context context) {
-        PackageInfo pInfo = null;
-        try {
-            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("Log", "caught", e);
-        }
-        String appName = context.getString(R.string.ou_app_label);
-        String versionName = pInfo.versionName;
-        int verCode = pInfo.versionCode;
-        String version = appName + " " + verCode + " (" + versionName + ")";
-        return version;
-    }
-
     public static void configureHttpClient(Context context) {
         GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
         GatewayClient.initHttpClient();

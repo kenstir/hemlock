@@ -53,7 +53,9 @@ import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.account.AuthenticatorActivity.Companion.ARG_ACCOUNT_NAME
 import net.kenstir.ui.account.getAccountManagerResult
+import net.kenstir.ui.util.appInfo
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.util.injectRandomFailure
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -199,7 +201,6 @@ class LaunchActivity : AppCompatActivity() {
                 val i = Intent(Intent.ACTION_SENDTO)
                 i.data = Uri.parse("mailto:") // only email apps should handle this
                 i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
-                val appInfo = App.getAppInfo(this@LaunchActivity)
                 i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
                 //TODO: append as attachment
                 i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())

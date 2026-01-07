@@ -28,6 +28,7 @@ import net.kenstir.ui.App
 import net.kenstir.logging.Log
 import net.kenstir.data.service.LoadStartupOptions
 import net.kenstir.data.Result
+import net.kenstir.ui.util.appVersionCode
 import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgMessageMap
 import net.kenstir.util.getCustomMessage
@@ -77,7 +78,7 @@ class LaunchViewModel : ViewModel() {
                 //injectRandomFailure("loadServiceData", 25)
 
                 // load the IDL etc.
-                val options = LoadStartupOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                val options = LoadStartupOptions(context.appVersionCode, context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
                 when (val result = App.getServiceConfig().loaderService.loadStartupPrerequisites(options)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception, "loadServiceData") ; return@async }
