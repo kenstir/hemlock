@@ -36,6 +36,7 @@ import net.kenstir.data.model.CopyLocationCounts
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -175,7 +176,7 @@ class CopyInformationActivity : BaseActivity() {
         scope.async {
             try {
                 val org = findOrg(orgID) ?: return@async
-                val result = App.getServiceConfig().searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
+                val result = Appx.svc.searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(result.get())
             } catch (ex: Exception) {

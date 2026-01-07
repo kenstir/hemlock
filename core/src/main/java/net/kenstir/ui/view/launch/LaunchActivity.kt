@@ -47,6 +47,7 @@ import net.kenstir.ui.pn.PushNotification
 import net.kenstir.data.Result
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
+import net.kenstir.ui.Appx
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
@@ -191,7 +192,7 @@ class LaunchActivity : AppCompatActivity() {
         lifecycleScope.async {
             try {
                 // ignore failure getting the IP address
-                val result = App.getServiceConfig().loaderService.fetchPublicIpAddress()
+                val result = Appx.svc.loaderService.fetchPublicIpAddress()
                 val ip = when (result) {
                     is Result.Success -> result.get()
                     is Result.Error -> "unknown"
@@ -252,7 +253,7 @@ class LaunchActivity : AppCompatActivity() {
         val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         App.setLibrary(library)
-        val account = App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
+        val account = Appx.svc.userService.makeAccount(result.accountName, result.authToken)
         App.setAccount(account)
     }
 
@@ -286,7 +287,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // load the home org settings, used to control visibility of Events and other buttons
         EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
-            val result = App.getServiceConfig().orgService.loadOrgSettings(org.id)
+            val result = Appx.svc.orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
@@ -306,7 +307,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private suspend fun fetchSession(account: Account): Result<Unit> {
-        return App.getServiceConfig().userService.loadUserSession(account)
+        return Appx.svc.userService.loadUserSession(account)
     }
 
     @Deprecated("Deprecated in Java")

@@ -39,6 +39,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.Library
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
+import net.kenstir.ui.Appx
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.logBundleSize
@@ -170,7 +171,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 var authtoken: String? = null
                 var errorMessage = "Login failed"
 
-                val result = App.getServiceConfig().authService.getAuthToken(username, password)
+                val result = Appx.svc.authService.getAuthToken(username, password)
                 when (result) {
                     is Result.Success -> authtoken = result.get()
                     is Result.Error -> {

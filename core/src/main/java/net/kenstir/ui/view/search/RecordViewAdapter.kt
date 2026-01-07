@@ -32,6 +32,7 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.ImageSize
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 
 /**
  * Provide views to RecyclerView with data from records.
@@ -51,19 +52,19 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
 
-            val url = App.getServiceConfig().biblioService.imageUrl(record, ImageSize.SMALL)
+            val url = Appx.svc.biblioService.imageUrl(record, ImageSize.SMALL)
             recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return
             scope.async {
                 try {
                     scope.async {
-                        App.getServiceConfig().biblioService.loadRecordDetails(record, true)
+                        Appx.svc.biblioService.loadRecordDetails(record, true)
                         loadMetadata(record)
                     }
 
                     scope.async {
-                        App.getServiceConfig().biblioService.loadRecordAttributes(record)
+                        Appx.svc.biblioService.loadRecordAttributes(record)
                         loadFormat(record)
                     }
 

@@ -30,6 +30,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.data.model.BibRecord
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
@@ -57,7 +58,7 @@ class RecordDetailsActivity : BaseActivity() {
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         var recordList = intent.getSerializableExtra(Key.RECORD_LIST) as? List<BibRecord>
         if (recordList == null)
-            recordList = App.getServiceConfig().searchService.getLastSearchResults().records
+            recordList = Appx.svc.searchService.getLastSearchResults().records
         records.clear()
         records.addAll(recordList)
 

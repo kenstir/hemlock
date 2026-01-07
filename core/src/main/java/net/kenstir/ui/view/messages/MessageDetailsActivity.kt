@@ -27,6 +27,7 @@ import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import org.evergreen_ils.data.model.EvergreenPatronMessage
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
@@ -78,7 +79,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageDeletedAndFinish() {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageDeleted(
+            val result = Appx.svc.userService.markMessageDeleted(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -90,7 +91,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageRead() {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageRead(
+            val result = Appx.svc.userService.markMessageRead(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -101,7 +102,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageUnreadAndFinish() {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageUnread(
+            val result = Appx.svc.userService.markMessageUnread(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

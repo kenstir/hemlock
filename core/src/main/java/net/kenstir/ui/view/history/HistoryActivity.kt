@@ -33,6 +33,7 @@ import net.kenstir.data.model.HistoryRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
@@ -106,12 +107,12 @@ class HistoryActivity : BaseActivity() {
         scope.async {
             try {
                 // first disable the patron setting
-                val result = App.getServiceConfig().userService.disableCheckoutHistory(
+                val result = Appx.svc.userService.disableCheckoutHistory(
                     App.getAccount())
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // then clear history
-                val clearResult = App.getServiceConfig().userService.clearCheckoutHistory(
+                val clearResult = Appx.svc.userService.clearCheckoutHistory(
                     App.getAccount())
                 if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
 
@@ -130,7 +131,7 @@ class HistoryActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_data)
 
                 // fetch history
-                val result = App.getServiceConfig().circService.fetchCheckoutHistory(
+                val result = Appx.svc.circService.fetchCheckoutHistory(
                     App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async

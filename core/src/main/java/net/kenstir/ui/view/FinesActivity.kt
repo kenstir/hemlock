@@ -38,6 +38,7 @@ import net.kenstir.data.model.PatronCharges
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
@@ -101,7 +102,7 @@ class FinesActivity : BaseActivity() {
                 val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
-                        val result = App.getServiceConfig().orgService.loadOrgSettings(homeOrg.id)
+                        val result = Appx.svc.orgService.loadOrgSettings(homeOrg.id)
                         if (result is Result.Error) {
                             throw result.exception
                         }
@@ -109,7 +110,7 @@ class FinesActivity : BaseActivity() {
                     })
                 }
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().userService.fetchPatronCharges(
+                    val result = Appx.svc.userService.fetchPatronCharges(
                         App.getAccount())
                     onChargesResult(result)
                 })
@@ -128,11 +129,11 @@ class FinesActivity : BaseActivity() {
     private fun updatePayFinesButtonVisibility() {
         val account = App.getAccount()
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-            && App.getServiceConfig().userService.isPayFinesEnabled(account))
+            && Appx.svc.userService.isPayFinesEnabled(account))
         {
             payFinesButton?.visibility = View.VISIBLE
             val url = resources.getString(R.string.ou_pay_fines_url).ifEmpty {
-                App.getServiceConfig().userService.payFinesUrl(account)
+                Appx.svc.userService.payFinesUrl(account)
             }
             payFinesButton?.setOnClickListener { launchURL(url) }
         } else {

@@ -39,6 +39,7 @@ import net.kenstir.data.Result
 import net.kenstir.logging.Log.TAG_PERM
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
@@ -220,7 +221,7 @@ open class MainBaseActivity : BaseActivity() {
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.getServiceConfig().userService.updatePushNotificationToken(
+                val updateResult = Appx.svc.userService.updatePushNotificationToken(
                     App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)

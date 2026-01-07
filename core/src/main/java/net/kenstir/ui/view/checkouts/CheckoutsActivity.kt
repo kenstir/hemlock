@@ -38,6 +38,7 @@ import net.kenstir.data.model.CircRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
@@ -113,7 +114,7 @@ class CheckoutsActivity : BaseActivity() {
     private fun enableCheckoutHistory() {
         scope.async {
             try {
-                val result = App.getServiceConfig().userService.enableCheckoutHistory(
+                val result = Appx.svc.userService.enableCheckoutHistory(
                     App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
@@ -131,7 +132,7 @@ class CheckoutsActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 showBusy(R.string.msg_retrieving_data)
                 val account = App.getAccount()
-                val circService = App.getServiceConfig().circService
+                val circService = Appx.svc.circService
 
                 // fetch checkouts
                 val result = circService.fetchCheckouts(account)
@@ -201,7 +202,7 @@ class CheckoutsActivity : BaseActivity() {
         scope.async {
             record.targetCopy?.let {
                 showBusy(R.string.msg_renewing_item)
-                val result = App.getServiceConfig().circService.renewCheckout(
+                val result = Appx.svc.circService.renewCheckout(
                     App.getAccount(), it)
                 hideBusy()
                 when (result) {

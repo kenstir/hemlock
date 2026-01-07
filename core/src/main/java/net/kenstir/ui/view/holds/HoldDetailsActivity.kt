@@ -41,6 +41,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.service.HoldUpdateOptions
 import net.kenstir.hemlock.R
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
@@ -162,7 +163,7 @@ class HoldDetailsActivity : BaseActivity() {
             showBusy(R.string.msg_canceling_hold)
 
             val holdId = record.ahrObj.getInt("id") ?: 0
-            val result = App.getServiceConfig().circService.cancelHold(
+            val result = Appx.svc.circService.cancelHold(
                 App.getAccount(), holdId)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
@@ -194,7 +195,7 @@ class HoldDetailsActivity : BaseActivity() {
                 expireTime = expireDateApi,
                 thawDate = thawDateApi,
             )
-            val result = App.getServiceConfig().circService.updateHold(
+            val result = Appx.svc.circService.updateHold(
                 App.getAccount(), holdId, holdOptions)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(

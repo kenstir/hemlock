@@ -31,6 +31,7 @@ import net.kenstir.data.model.PatronMessage
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -85,7 +86,7 @@ class MessagesActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_data)
 
                 // fetch messages
-                val result = App.getServiceConfig().userService.fetchPatronMessages(
+                val result = Appx.svc.userService.fetchPatronMessages(
                     App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
@@ -177,7 +178,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageDeleted(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageDeleted(
+            val result = Appx.svc.userService.markMessageDeleted(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -188,7 +189,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageRead(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageRead(
+            val result = Appx.svc.userService.markMessageRead(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -199,7 +200,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageUnread(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageUnread(
+            val result = Appx.svc.userService.markMessageUnread(
                 App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

@@ -26,6 +26,7 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.PatronList
 import net.kenstir.util.Analytics
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
 
@@ -44,7 +45,7 @@ object BookBagUtils {
             try {
                 activity.showBusy(R.string.adding_to_list_message)
 
-                val result = App.getServiceConfig().userService.addItemToPatronList(
+                val result = Appx.svc.userService.addItemToPatronList(
                     App.getAccount(),
                     bookBag.id,
                     info.id

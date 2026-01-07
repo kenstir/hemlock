@@ -135,7 +135,7 @@ class DetailsFragment : Fragment() {
 
         // Start async load
         record?.let {
-            val url = App.getServiceConfig().biblioService.imageUrl(it, ImageSize.MEDIUM)
+            val url = Appx.svc.biblioService.imageUrl(it, ImageSize.MEDIUM)
             //Log.d(TAG, "${it.id}: load $url")
             recordImage?.load(url)
             fetchData(it)
@@ -311,7 +311,7 @@ class DetailsFragment : Fragment() {
                 Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Any>>()
-                val biblioService = App.getServiceConfig().biblioService
+                val biblioService = Appx.svc.biblioService
 
                 jobs.add(scope.async {
                     biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))

@@ -50,6 +50,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
@@ -172,19 +173,18 @@ class PlaceHoldActivity : BaseActivity() {
                 showBusy(R.string.msg_loading_place_hold)
                 placeHold?.isEnabled = false
 
-                val serviceConfig = App.getServiceConfig()
                 jobs.add(scope.async {
-                    serviceConfig.loaderService.loadPlaceHoldPrerequisites()
+                    Appx.svc.loaderService.loadPlaceHoldPrerequisites()
                 })
 
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
-                        val result = serviceConfig.circService.fetchHoldParts(record.id)
+                        val result = Appx.svc.circService.fetchHoldParts(record.id)
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = serviceConfig.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = Appx.svc.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                         Result.Success(Unit)
@@ -334,7 +334,7 @@ class PlaceHoldActivity : BaseActivity() {
                 suspendHold = suspendHold?.isChecked == true,
                 thawDate = getThawDate()
             )
-            val result = App.getServiceConfig().circService.placeHold(
+            val result = Appx.svc.circService.placeHold(
                 App.getAccount(), itemId, options)
             Log.d(TAG, "[holds] placeHold: $result")
             hideBusy()
@@ -559,7 +559,7 @@ class PlaceHoldActivity : BaseActivity() {
         scope.async {
             try {
                 account?.let { account ->
-                    App.getServiceConfig().userService.changePickupOrg(account, newOrg.id)
+                    Appx.svc.userService.changePickupOrg(account, newOrg.id)
                 }
             } catch (ex: Exception) {
                 showAlert(ex)

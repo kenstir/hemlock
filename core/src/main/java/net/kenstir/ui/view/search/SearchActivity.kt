@@ -55,6 +55,7 @@ import net.kenstir.data.model.SearchClass
 import net.kenstir.data.service.SearchResults
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.SpinnerStringOption
@@ -174,7 +175,7 @@ class SearchActivity : BaseActivity() {
 
     private fun restoreResults() {
         haveSearched = true
-        searchResults = App.getServiceConfig().searchService.getLastSearchResults()
+        searchResults = Appx.svc.searchService.getLastSearchResults()
     }
 
     private fun initSearchButton() {
@@ -231,7 +232,7 @@ class SearchActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
+                val result = Appx.svc.userService.loadPatronLists(App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -262,9 +263,9 @@ class SearchActivity : BaseActivity() {
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
-                val queryString = App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val queryString = Appx.svc.searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
                 Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
-                val result = App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
+                val result = Appx.svc.searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true

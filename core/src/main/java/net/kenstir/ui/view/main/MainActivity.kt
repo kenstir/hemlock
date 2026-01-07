@@ -34,6 +34,7 @@ import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.view.BarcodeActivity
@@ -112,7 +113,7 @@ open class MainActivity : MainBaseActivity() {
         scope.async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
-                val result = App.getServiceConfig().userService.fetchPatronMessages(
+                val result = Appx.svc.userService.fetchPatronMessages(
                     App.getAccount())
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
