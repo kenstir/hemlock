@@ -44,6 +44,7 @@ import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
+import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.launchURL
@@ -200,7 +201,7 @@ class DetailsFragment : Fragment() {
         val record = this.record ?: return
         val org = EgOrg.findOrg(orgID) ?: return
 
-        val links = App.getBehavior().getOnlineLocations(record, org.shortname)
+        val links = Appx.behavior.getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
@@ -232,7 +233,7 @@ class DetailsFragment : Fragment() {
         }
 
         val org = EgOrg.findOrg(orgID)
-        val links = if (org != null) App.getBehavior().getOnlineLocations(record, org.shortname) else emptyList()
+        val links = if (org != null) Appx.behavior.getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
@@ -290,7 +291,7 @@ class DetailsFragment : Fragment() {
         val record = this.record ?: return
         copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            App.getBehavior().isOnlineResource(record) ?: false -> {
+            Appx.behavior.isOnlineResource(record) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = onlineLocation.toUri()

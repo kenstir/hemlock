@@ -52,13 +52,13 @@ public class App {
     public static boolean mStarted = false;
     private static boolean mInitialized = false;
 
-    private static AppBehavior behavior = null;
     private static Library library = null;
     private static @NonNull Account account = Account.Companion.getNoAccount();
     private static String fcmNotificationToken = null;
 
     private static ServiceConfig mServiceConfig = null;
 
+    // TODO: factor out LoaderService.makeHttpClient()
     public static void configureHttpClient(Context context) {
         GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
         GatewayClient.initHttpClient();
@@ -70,17 +70,13 @@ public class App {
             //Log.d(TAG, "[init] App.init already done");
             return;
         }
-        Log.d(TAG, "[init] App.init");
+        boolean isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test);
+        Log.d(TAG, "[init] App.init isAndroidTest=" + isAndroidTest);
         configureHttpClient(context);
-        behavior = AppFactory.makeBehavior(context.getResources());
         if (mServiceConfig == null) {
             mServiceConfig = new ServiceConfig();
         }
         mInitialized = true;
-    }
-
-    public static @NonNull AppBehavior getBehavior() {
-        return behavior;
     }
 
     public static @NonNull Library getLibrary() {
