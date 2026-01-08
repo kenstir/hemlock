@@ -102,7 +102,7 @@ object AppLifecycle {
                 activity.finish()
             }
         } catch (e: CanceledException) {
-            Analytics.logException(e)
+            logException(e)
         }
     }
 

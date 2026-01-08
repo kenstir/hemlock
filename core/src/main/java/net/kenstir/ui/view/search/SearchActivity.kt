@@ -203,7 +203,7 @@ class SearchActivity : BaseActivity() {
         )
         searchOrgOption = SpinnerStringOption(
             key = AppState.SEARCH_ORG_SHORT_NAME,
-            defaultValue = EgOrg.findOrg(App.account?.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
+            defaultValue = EgOrg.findOrg(App.account.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
             optionLabels = EgOrg.orgSpinnerLabels(),
             optionValues = EgOrg.spinnerShortNames()
         )
@@ -419,7 +419,6 @@ class SearchActivity : BaseActivity() {
             }
             ITEM_ADD_TO_LIST -> {
                 if (App.account.patronLists.isNotEmpty()) {
-                    //Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.account.patronLists, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
