@@ -30,7 +30,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.util.Analytics.log
 import net.kenstir.util.Analytics.redactedString
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.util.Analytics
 import org.evergreen_ils.gateway.GatewayClient
 
@@ -110,7 +109,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                         throw AuthenticationException("Server URL changed, please sign in again")
                     }
                     authToken = runBlocking {
-                        Appx.svc.authService.getAuthToken(account.name, password).get()
+                        App.svc.authService.getAuthToken(account.name, password).get()
                     }
                 } catch (e: AuthenticationException) {
                     Analytics.logExceptionToBuffer(e);

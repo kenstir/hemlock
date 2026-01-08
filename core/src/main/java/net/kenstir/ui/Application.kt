@@ -41,7 +41,7 @@ class Application : androidx.multidex.MultiDexApplication() {
         Log.d(TAG, "[init] applyNightMode returned $changed")
 
         // Other global init
-        Appx.init(this)
+        App.init(this)
         deleteLegacyCacheDirectory()
 
         // useful for debugging TransactionTooLargeException
