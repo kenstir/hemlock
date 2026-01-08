@@ -94,7 +94,7 @@ class BarcodeActivity : BaseActivity() {
     }
 
     private fun initBarcodeViews() {
-        val barcode = App.getAccount().barcode
+        val barcode = App.account.barcode
         val imageWidth = getDisplayWidth() * 8 / 10
         val imageHeight = imageWidth * 4 / 10
         val bitmap = createBitmap(barcode, imageWidth, imageHeight)
@@ -107,7 +107,7 @@ class BarcodeActivity : BaseActivity() {
         }
 
         if (resources.getBoolean(R.bool.ou_enable_barcode_expiration)) {
-            val date = App.getAccount().expireDateString
+            val date = App.account.expireDateString
             barcodeWarning?.text = resources.getString(R.string.barcode_expires_msg, date)
         } else {
             barcodeWarning?.visibility = View.GONE
@@ -145,7 +145,7 @@ class BarcodeActivity : BaseActivity() {
 
     private fun copyBarcodeToClipboard() {
         val clipboard =  getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(getString(R.string.label_barcode), App.getAccount().barcode)
+        val clip = ClipData.newPlainText(getString(R.string.label_barcode), App.account.barcode)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(this, getString(R.string.msg_barcode_copied), Toast.LENGTH_SHORT).show()
     }

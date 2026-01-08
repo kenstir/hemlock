@@ -33,16 +33,16 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics
 import net.kenstir.data.Result
 import net.kenstir.data.model.Library
+import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.util.showAlert
+import net.kenstir.util.Analytics
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     protected var accountManager: AccountManager? = null
@@ -81,8 +81,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         compatEnableEdgeToEdge()
         setContentViewImpl()
         adjustPaddingForEdgeToEdge()
-
-        App.init(this)
 
         accountManager = AccountManager.get(baseContext)
 
@@ -132,7 +130,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             submitButton?.setEnabled(false)
         } else {
             submitButton?.setEnabled(true)
-            App.setLibrary(library)
+            App.library = library
             Analytics.log(TAG, "onLibrarySelected ${library.name} ${library.url}")
         }
     }
@@ -172,7 +170,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 var authtoken: String? = null
                 var errorMessage = "Login failed"
 
-                val result = App.getServiceConfig().authService.getAuthToken(username, password)
+                val result = App.svc.authService.getAuthToken(username, password)
                 when (result) {
                     is Result.Success -> authtoken = result.get()
                     is Result.Error -> {

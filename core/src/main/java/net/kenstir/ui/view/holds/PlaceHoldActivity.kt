@@ -114,7 +114,7 @@ class PlaceHoldActivity : BaseActivity() {
         setupNavigationDrawer()
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-        account = App.getAccount()
+        account = App.account
 
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
@@ -172,19 +172,18 @@ class PlaceHoldActivity : BaseActivity() {
                 showBusy(R.string.msg_loading_place_hold)
                 placeHold?.isEnabled = false
 
-                val serviceConfig = App.getServiceConfig()
                 jobs.add(scope.async {
-                    serviceConfig.loaderService.loadPlaceHoldPrerequisites()
+                    App.svc.loaderService.loadPlaceHoldPrerequisites()
                 })
 
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
-                        val result = serviceConfig.circService.fetchHoldParts(record.id)
+                        val result = App.svc.circService.fetchHoldParts(record.id)
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = serviceConfig.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = App.svc.circService.fetchTitleHoldIsPossible(App.account, record.id, App.account.pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                         Result.Success(Unit)
@@ -246,8 +245,8 @@ class PlaceHoldActivity : BaseActivity() {
                     Analytics.Param.HOLD_NOTIFY to notifyTypes,
                     Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
                     Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
-                            EgOrg.findOrg(App.getAccount().pickupOrg),
-                            EgOrg.findOrg(App.getAccount().homeOrg)),
+                            EgOrg.findOrg(App.account.pickupOrg),
+                            EgOrg.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -334,8 +333,8 @@ class PlaceHoldActivity : BaseActivity() {
                 suspendHold = suspendHold?.isChecked == true,
                 thawDate = getThawDate()
             )
-            val result = App.getServiceConfig().circService.placeHold(
-                App.getAccount(), itemId, options)
+            val result = App.svc.circService.placeHold(
+                App.account, itemId, options)
             Log.d(TAG, "[holds] placeHold: $result")
             hideBusy()
             when (result) {
@@ -559,7 +558,7 @@ class PlaceHoldActivity : BaseActivity() {
         scope.async {
             try {
                 account?.let { account ->
-                    App.getServiceConfig().userService.changePickupOrg(account, newOrg.id)
+                    App.svc.userService.changePickupOrg(account, newOrg.id)
                 }
             } catch (ex: Exception) {
                 showAlert(ex)

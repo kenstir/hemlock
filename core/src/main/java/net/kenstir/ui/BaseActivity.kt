@@ -95,15 +95,14 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!App.isStarted()) {
-            App.restartApp(this)
+        if (!Lifecycle.isStarted) {
+            Lifecycle.restartApp(this)
             isRestarting = true
             return
         }
         isRestarting = false
 
         Analytics.initialize(this)
-        App.init(this)
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
@@ -165,7 +164,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Log.d(TAG, "[tb] title=$titleOverride main=$isMainActivity actionBar=$actionBar")
         if (actionBar == null) return
         val username =
-            if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.getAccount().displayName
+            if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.account.displayName
         actionBar.subtitle = String.format(getString(R.string.ou_activity_subtitle),
             AppState.getString(AppState.LIBRARY_NAME), username)
         titleOverride?.let { actionBar.title = it }
@@ -237,19 +236,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.eresourcesUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        return EgOrg.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.meetingRoomsUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.museumPassesUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -260,7 +259,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
-            startActivity(App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            startActivity(Lifecycle.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_search_button) {
             startActivity(Intent(this, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_checkouts_button) {
@@ -292,7 +291,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         when (id) {
             R.id.action_switch_account -> {
                 Analytics.logEvent(Analytics.Event.ACCOUNT_SWITCH)
-                App.restartApp(this)
+                Lifecycle.restartApp(this)
                 return true
             }
             R.id.action_add_account -> {
@@ -335,7 +334,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val bnd = AccountUtils.addAccount(this@BaseActivity)
             val accountName = bnd.getString(AccountManager.KEY_ACCOUNT_NAME)
             Log.d(TAG, "[auth] addAccountAndRestart: added $accountName")
-            App.restartAppWithAccount(this@BaseActivity, accountName)
+            Lifecycle.restartAppWithAccount(this@BaseActivity, accountName)
         } catch (_: android.accounts.OperationCanceledException) {
             // user cancelled, do nothing
         }
@@ -343,7 +342,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     suspend fun logoutAndRestart() {
         logout()
-        App.restartApp(this@BaseActivity)
+        Lifecycle.restartApp(this@BaseActivity)
     }
 
     private fun maybeLogoutAndClearAccounts() {
@@ -363,13 +362,13 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private suspend fun logoutAndClearAccounts() {
         logout()
         AccountUtils.removeAllAccounts(this@BaseActivity)
-        App.restartApp(this@BaseActivity)
+        Lifecycle.restartApp(this@BaseActivity)
     }
 
     suspend fun logout() {
         Log.d(TAG, "[auth] logout")
-        val account = App.getAccount()
-        App.getServiceConfig().userService.deleteSession(account)
+        val account = App.account
+        App.svc.userService.deleteSession(account)
         AccountUtils.invalidateAuthToken(this, account.authToken)
         AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()

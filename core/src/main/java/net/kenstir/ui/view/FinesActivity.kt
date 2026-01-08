@@ -98,10 +98,10 @@ class FinesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
-                val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+                val homeOrg = EgOrg.findOrg(App.account.homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
-                        val result = App.getServiceConfig().orgService.loadOrgSettings(homeOrg.id)
+                        val result = App.svc.orgService.loadOrgSettings(homeOrg.id)
                         if (result is Result.Error) {
                             throw result.exception
                         }
@@ -109,8 +109,8 @@ class FinesActivity : BaseActivity() {
                     })
                 }
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().userService.fetchPatronCharges(
-                        App.getAccount())
+                    val result = App.svc.userService.fetchPatronCharges(
+                        App.account)
                     onChargesResult(result)
                 })
 
@@ -126,13 +126,13 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun updatePayFinesButtonVisibility() {
-        val account = App.getAccount()
+        val account = App.account
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-            && App.getServiceConfig().userService.isPayFinesEnabled(account))
+            && App.svc.userService.isPayFinesEnabled(account))
         {
             payFinesButton?.visibility = View.VISIBLE
             val url = resources.getString(R.string.ou_pay_fines_url).ifEmpty {
-                App.getServiceConfig().userService.payFinesUrl(account)
+                App.svc.userService.payFinesUrl(account)
             }
             payFinesButton?.setOnClickListener { launchURL(url) }
         } else {

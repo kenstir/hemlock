@@ -34,10 +34,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import net.kenstir.data.model.SearchClass
 import net.kenstir.hemlock.R
-import net.kenstir.ui.App
+import net.kenstir.ui.Lifecycle
 import net.kenstir.ui.Key
 import net.kenstir.util.Analytics
-import net.kenstir.util.Analytics.initialize
 import java.util.Locale
 import java.util.StringTokenizer
 
@@ -47,11 +46,13 @@ class AdvancedSearchActivity: AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initialize(this)
-        if (!App.isStarted()) {
-            App.restartApp(this)
+
+        if (!Lifecycle.isStarted) {
+            Lifecycle.restartApp(this)
             return
         }
+
+        Analytics.initialize(this)
 
         setContentView(R.layout.advanced_search)
 

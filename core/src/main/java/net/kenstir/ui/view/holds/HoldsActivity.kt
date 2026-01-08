@@ -92,10 +92,10 @@ class HoldsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
                 showBusy(R.string.msg_loading_holds)
                 val start = System.currentTimeMillis()
-                val account = App.getAccount()
+                val account = App.account
 
                 // fetchHolds
-                val result = App.getServiceConfig().circService.fetchHolds(account)
+                val result = App.svc.circService.fetchHolds(account)
                 if (result is Result.Error) {
                     showAlert(result.exception)
                     return@async
@@ -107,7 +107,7 @@ class HoldsActivity : BaseActivity() {
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (hold in holds) {
                     jobs.add(scope.async {
-                        App.getServiceConfig().circService.loadHoldDetails(account, hold)
+                        App.svc.circService.loadHoldDetails(account, hold)
                     })
                 }
 

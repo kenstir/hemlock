@@ -109,7 +109,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                         throw AuthenticationException("Server URL changed, please sign in again")
                     }
                     authToken = runBlocking {
-                        App.getServiceConfig().authService.getAuthToken(account.name, password).get()
+                        App.svc.authService.getAuthToken(account.name, password).get()
                     }
                 } catch (e: AuthenticationException) {
                     Analytics.logExceptionToBuffer(e);

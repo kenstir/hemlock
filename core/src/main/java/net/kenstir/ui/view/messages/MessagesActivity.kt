@@ -85,8 +85,8 @@ class MessagesActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_data)
 
                 // fetch messages
-                val result = App.getServiceConfig().userService.fetchPatronMessages(
-                    App.getAccount())
+                val result = App.svc.userService.fetchPatronMessages(
+                    App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -177,8 +177,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageDeleted(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageDeleted(
-                App.getAccount(), message.id)
+            val result = App.svc.userService.markMessageDeleted(
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -188,8 +188,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageRead(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageRead(
-                App.getAccount(), message.id)
+            val result = App.svc.userService.markMessageRead(
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -199,8 +199,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageUnread(message: PatronMessage) {
         scope.async {
-            val result = App.getServiceConfig().userService.markMessageUnread(
-                App.getAccount(), message.id)
+            val result = App.svc.userService.markMessageUnread(
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

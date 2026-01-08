@@ -162,8 +162,8 @@ class HoldDetailsActivity : BaseActivity() {
             showBusy(R.string.msg_canceling_hold)
 
             val holdId = record.ahrObj.getInt("id") ?: 0
-            val result = App.getServiceConfig().circService.cancelHold(
-                App.getAccount(), holdId)
+            val result = App.svc.circService.cancelHold(
+                App.account, holdId)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -194,8 +194,8 @@ class HoldDetailsActivity : BaseActivity() {
                 expireTime = expireDateApi,
                 thawDate = thawDateApi,
             )
-            val result = App.getServiceConfig().circService.updateHold(
-                App.getAccount(), holdId, holdOptions)
+            val result = App.svc.circService.updateHold(
+                App.account, holdId, holdOptions)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),

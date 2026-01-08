@@ -20,14 +20,14 @@ import android.app.AlertDialog
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.PatronList
-import net.kenstir.util.Analytics
+import net.kenstir.hemlock.R
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
+import net.kenstir.util.Analytics
 
 object BookBagUtils {
     fun showAddToListDialog(activity: BaseActivity, bookBags: List<PatronList>, info: BibRecord) {
@@ -44,8 +44,8 @@ object BookBagUtils {
             try {
                 activity.showBusy(R.string.adding_to_list_message)
 
-                val result = App.getServiceConfig().userService.addItemToPatronList(
-                    App.getAccount(),
+                val result = App.svc.userService.addItemToPatronList(
+                    App.account,
                     bookBag.id,
                     info.id
                 )

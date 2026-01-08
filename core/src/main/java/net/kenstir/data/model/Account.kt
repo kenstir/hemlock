@@ -119,4 +119,8 @@ open class Account(val username: String, var authToken: String?) {
         id?.let { return it }
         throw Exception("Null userID")
     }
+
+    companion object {
+        val noAccount = Account("")
+    }
 }

@@ -32,10 +32,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import net.kenstir.data.Result
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
-import net.kenstir.data.Result
 import net.kenstir.logging.Log.TAG_PERM
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
@@ -159,7 +159,7 @@ open class MainBaseActivity : BaseActivity() {
         }
         val token = task.result
         Log.d(TAG_FCM, "[fcm] fetched token=$token")
-        App.setFcmNotificationToken(token)
+        App.fcmNotificationToken = token
         return Result.Success(Unit)
     }
 
@@ -213,15 +213,15 @@ open class MainBaseActivity : BaseActivity() {
 
             // If the current FCM token is different from the one we got from the user settings,
             // we need to update the user setting in Evergreen
-            val storedToken = App.getAccount().savedPushNotificationData
-            val storedEnabledFlag = App.getAccount().savedPushNotificationEnabled
-            val currentToken = App.getFcmNotificationToken()
+            val storedToken = App.account.savedPushNotificationData
+            val storedEnabledFlag = App.account.savedPushNotificationEnabled
+            val currentToken = App.fcmNotificationToken
             Log.d(TAG_FCM, "[fcm] stored token was: $storedToken")
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.getServiceConfig().userService.updatePushNotificationToken(
-                    App.getAccount(), currentToken)
+                val updateResult = App.svc.userService.updatePushNotificationToken(
+                    App.account, currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)
                     return@async

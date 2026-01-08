@@ -141,7 +141,7 @@ class MainGridActivity : MainBaseActivity() {
         })
 
         // Events
-        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        val homeOrg = EgOrg.findOrg(App.account.homeOrg)
         val eventsUrl = homeOrg?.eventsURL
         if (!eventsUrl.isNullOrEmpty() || forceButton["events"] == true) {
             items.add(GridButton(resources.getString(R.string.title_events),
@@ -153,7 +153,7 @@ class MainGridActivity : MainBaseActivity() {
     }
 
     fun setupBottomRowButtons() {
-        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        val homeOrg = EgOrg.findOrg(App.account.homeOrg)
 
         // E-books
         val ebooksUrl = homeOrg?.eresourcesUrl

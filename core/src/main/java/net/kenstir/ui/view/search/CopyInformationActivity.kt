@@ -175,7 +175,7 @@ class CopyInformationActivity : BaseActivity() {
         scope.async {
             try {
                 val org = findOrg(orgID) ?: return@async
-                val result = App.getServiceConfig().searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
+                val result = App.svc.searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(result.get())
             } catch (ex: Exception) {

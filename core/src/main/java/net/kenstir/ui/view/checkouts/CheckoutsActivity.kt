@@ -88,7 +88,7 @@ class CheckoutsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_history -> {
-                if (App.getAccount().circHistoryStart != null) {
+                if (App.account.circHistoryStart != null) {
                     startActivity(Intent(this, HistoryActivity::class.java))
                 } else {
                     maybeEnableHistory()
@@ -113,8 +113,8 @@ class CheckoutsActivity : BaseActivity() {
     private fun enableCheckoutHistory() {
         scope.async {
             try {
-                val result = App.getServiceConfig().userService.enableCheckoutHistory(
-                    App.getAccount())
+                val result = App.svc.userService.enableCheckoutHistory(
+                    App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -130,8 +130,8 @@ class CheckoutsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
                 val start = System.currentTimeMillis()
                 showBusy(R.string.msg_retrieving_data)
-                val account = App.getAccount()
-                val circService = App.getServiceConfig().circService
+                val account = App.account
+                val circService = App.svc.circService
 
                 // fetch checkouts
                 val result = circService.fetchCheckouts(account)
@@ -201,8 +201,8 @@ class CheckoutsActivity : BaseActivity() {
         scope.async {
             record.targetCopy?.let {
                 showBusy(R.string.msg_renewing_item)
-                val result = App.getServiceConfig().circService.renewCheckout(
-                    App.getAccount(), it)
+                val result = App.svc.circService.renewCheckout(
+                    App.account, it)
                 hideBusy()
                 when (result) {
                     is Result.Success -> {

@@ -87,7 +87,7 @@ class OrgDetailsActivity : BaseActivity() {
         orgID = if (intent.hasExtra(Key.ORG_ID)) {
             intent.getIntExtra(Key.ORG_ID, 1)
         } else {
-            App.getAccount().homeOrg
+            App.account.homeOrg
         }
         org = EgOrg.findOrg(orgID)
 
@@ -265,7 +265,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                val account = App.getAccount()
+                val account = App.account
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()
@@ -275,13 +275,13 @@ class OrgDetailsActivity : BaseActivity() {
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().orgService.loadOrgSettings(orgID)
+                    val result = App.svc.orgService.loadOrgSettings(orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
                 })
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().orgService.loadOrgDetails(account, orgID)
+                    val result = App.svc.orgService.loadOrgDetails(account, orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
