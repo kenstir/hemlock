@@ -32,7 +32,6 @@ import net.kenstir.data.model.HoldRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -96,7 +95,7 @@ class HoldsActivity : BaseActivity() {
                 val account = App.account
 
                 // fetchHolds
-                val result = Appx.svc.circService.fetchHolds(account)
+                val result = App.svc.circService.fetchHolds(account)
                 if (result is Result.Error) {
                     showAlert(result.exception)
                     return@async
@@ -108,7 +107,7 @@ class HoldsActivity : BaseActivity() {
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (hold in holds) {
                     jobs.add(scope.async {
-                        Appx.svc.circService.loadHoldDetails(account, hold)
+                        App.svc.circService.loadHoldDetails(account, hold)
                     })
                 }
 

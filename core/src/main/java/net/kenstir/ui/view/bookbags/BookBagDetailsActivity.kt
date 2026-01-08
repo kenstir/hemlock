@@ -36,7 +36,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -163,7 +162,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_list_contents)
 
                 // load bookBag contents
-                val result = Appx.svc.userService.loadPatronListItems(App.account, patronList)
+                val result = App.svc.userService.loadPatronListItems(App.account, patronList)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
@@ -186,7 +185,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     suspend fun fetchTargetDetails(item: ListItem): Result<Unit> {
         val record = item.record ?: return Result.Error(Exception("No record found for item ${item.id}"))
-        return Appx.svc.biblioService.loadRecordDetails(record,
+        return App.svc.biblioService.loadRecordDetails(record,
             resources.getBoolean(R.bool.ou_need_marc_record))
     }
 
@@ -226,7 +225,7 @@ class BookBagDetailsActivity : BaseActivity() {
         scope.async {
             showBusy(R.string.msg_deleting_list)
             val id = patronList.id
-            val result = Appx.svc.userService.deletePatronList(
+            val result = App.svc.userService.deletePatronList(
                 App.account, id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
@@ -307,7 +306,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun removeItemFromList(item: ListItem) {
         scope.async {
             showBusy(R.string.msg_removing_list_item)
-            val result = Appx.svc.userService.removeItemFromPatronList(
+            val result = App.svc.userService.removeItemFromPatronList(
                 App.account, patronList.id, item.id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(

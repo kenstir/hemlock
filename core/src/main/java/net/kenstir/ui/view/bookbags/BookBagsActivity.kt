@@ -34,7 +34,6 @@ import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -101,7 +100,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 showBusy(R.string.msg_retrieving_lists)
 
                 // load bookbags
-                val result = Appx.svc.userService.loadPatronLists(App.account)
+                val result = App.svc.userService.loadPatronLists(App.account)
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -112,7 +111,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (list in patronLists) {
                     jobs.add(scope.async {
-                        Appx.svc.userService.loadPatronListItems(App.account, list)
+                        App.svc.userService.loadPatronListItems(App.account, list)
                     })
                 }
                 jobs.map { it.await() }
@@ -150,7 +149,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
     private fun createBookBag(name: String, description: String) {
         scope.async {
             showBusy(R.string.msg_creating_list)
-            val result = Appx.svc.userService.createPatronList(
+            val result = App.svc.userService.createPatronList(
                 App.account, name, description)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(

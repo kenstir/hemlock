@@ -25,14 +25,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.logging.Log
-import net.kenstir.ui.BaseActivity
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.ImageSize
+import net.kenstir.hemlock.R
+import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
+import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.showAlert
 
 /**
  * Provide views to RecyclerView with data from records.
@@ -52,19 +51,19 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
 
-            val url = Appx.svc.biblioService.imageUrl(record, ImageSize.SMALL)
+            val url = App.svc.biblioService.imageUrl(record, ImageSize.SMALL)
             recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return
             scope.async {
                 try {
                     scope.async {
-                        Appx.svc.biblioService.loadRecordDetails(record, true)
+                        App.svc.biblioService.loadRecordDetails(record, true)
                         loadMetadata(record)
                     }
 
                     scope.async {
-                        Appx.svc.biblioService.loadRecordAttributes(record)
+                        App.svc.biblioService.loadRecordAttributes(record)
                         loadFormat(record)
                     }
 

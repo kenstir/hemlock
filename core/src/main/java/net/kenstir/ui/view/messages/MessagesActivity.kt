@@ -31,7 +31,6 @@ import net.kenstir.data.model.PatronMessage
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
@@ -86,7 +85,7 @@ class MessagesActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_data)
 
                 // fetch messages
-                val result = Appx.svc.userService.fetchPatronMessages(
+                val result = App.svc.userService.fetchPatronMessages(
                     App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
@@ -178,7 +177,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageDeleted(message: PatronMessage) {
         scope.async {
-            val result = Appx.svc.userService.markMessageDeleted(
+            val result = App.svc.userService.markMessageDeleted(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -189,7 +188,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageRead(message: PatronMessage) {
         scope.async {
-            val result = Appx.svc.userService.markMessageRead(
+            val result = App.svc.userService.markMessageRead(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -200,7 +199,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageUnread(message: PatronMessage) {
         scope.async {
-            val result = Appx.svc.userService.markMessageUnread(
+            val result = App.svc.userService.markMessageUnread(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

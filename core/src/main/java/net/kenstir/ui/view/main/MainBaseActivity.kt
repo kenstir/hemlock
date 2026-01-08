@@ -32,14 +32,13 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import net.kenstir.data.Result
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
-import net.kenstir.data.Result
 import net.kenstir.logging.Log.TAG_PERM
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
@@ -221,7 +220,7 @@ open class MainBaseActivity : BaseActivity() {
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = Appx.svc.userService.updatePushNotificationToken(
+                val updateResult = App.svc.userService.updatePushNotificationToken(
                     App.account, currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)

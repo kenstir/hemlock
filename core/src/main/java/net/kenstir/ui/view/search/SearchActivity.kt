@@ -30,43 +30,49 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.moduleinstall.*
 import com.google.android.gms.common.moduleinstall.ModuleAvailabilityResponse.AvailabilityStatus.STATUS_ALREADY_AVAILABLE
 import com.google.android.gms.common.moduleinstall.ModuleAvailabilityResponse.AvailabilityStatus.STATUS_READY_TO_DOWNLOAD
+import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics
-import net.kenstir.util.Analytics.orgDimensionKey
-import net.kenstir.ui.Key
-import net.kenstir.logging.Log
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.SearchClass
 import net.kenstir.data.service.SearchResults
+import net.kenstir.hemlock.R
+import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.AppState
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.SpinnerStringOption
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
+import net.kenstir.ui.util.showAlert
+import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
+import net.kenstir.ui.view.holds.PlaceHoldActivity
+import net.kenstir.util.Analytics
+import net.kenstir.util.Analytics.orgDimensionKey
+import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
-import net.kenstir.util.getCustomMessage
-import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
-import net.kenstir.ui.view.holds.PlaceHoldActivity
 
 const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
@@ -175,7 +181,7 @@ class SearchActivity : BaseActivity() {
 
     private fun restoreResults() {
         haveSearched = true
-        searchResults = Appx.svc.searchService.getLastSearchResults()
+        searchResults = App.svc.searchService.getLastSearchResults()
     }
 
     private fun initSearchButton() {
@@ -232,7 +238,7 @@ class SearchActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = Appx.svc.userService.loadPatronLists(App.account)
+                val result = App.svc.userService.loadPatronLists(App.account)
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -263,9 +269,9 @@ class SearchActivity : BaseActivity() {
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
-                val queryString = Appx.svc.searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val queryString = App.svc.searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
                 Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
-                val result = Appx.svc.searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
+                val result = App.svc.searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true

@@ -44,11 +44,9 @@ import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.launchURL
-import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
@@ -135,7 +133,7 @@ class DetailsFragment : Fragment() {
 
         // Start async load
         record?.let {
-            val url = Appx.svc.biblioService.imageUrl(it, ImageSize.MEDIUM)
+            val url = App.svc.biblioService.imageUrl(it, ImageSize.MEDIUM)
             //Log.d(TAG, "${it.id}: load $url")
             recordImage?.load(url)
             fetchData(it)
@@ -201,7 +199,7 @@ class DetailsFragment : Fragment() {
         val record = this.record ?: return
         val org = EgOrg.findOrg(orgID) ?: return
 
-        val links = Appx.behavior.getOnlineLocations(record, org.shortname)
+        val links = App.behavior.getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
@@ -233,7 +231,7 @@ class DetailsFragment : Fragment() {
         }
 
         val org = EgOrg.findOrg(orgID)
-        val links = if (org != null) Appx.behavior.getOnlineLocations(record, org.shortname) else emptyList()
+        val links = if (org != null) App.behavior.getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
@@ -291,7 +289,7 @@ class DetailsFragment : Fragment() {
         val record = this.record ?: return
         copySummaryTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            Appx.behavior.isOnlineResource(record) ?: false -> {
+            App.behavior.isOnlineResource(record) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = onlineLocation.toUri()
@@ -311,7 +309,7 @@ class DetailsFragment : Fragment() {
                 Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Any>>()
-                val biblioService = Appx.svc.biblioService
+                val biblioService = App.svc.biblioService
 
                 jobs.add(scope.async {
                     biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))

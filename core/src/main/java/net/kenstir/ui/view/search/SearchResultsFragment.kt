@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.data.model.BibRecord
 import net.kenstir.hemlock.R
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.util.ItemClickSupport
 
 class SearchResultsFragment : Fragment() {
@@ -46,7 +45,7 @@ class SearchResultsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDataset = Appx.svc.searchService.getLastSearchResults().records
+        mDataset = App.svc.searchService.getLastSearchResults().records
         mAdapter = RecordViewAdapter(mDataset)
     }
 

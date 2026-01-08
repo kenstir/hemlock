@@ -26,12 +26,11 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import net.kenstir.hemlock.R
-import net.kenstir.ui.Key
 import net.kenstir.data.model.BibRecord
+import net.kenstir.hemlock.R
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.view.details.DetailsFragment
@@ -58,7 +57,7 @@ class RecordDetailsActivity : BaseActivity() {
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         var recordList = intent.getSerializableExtra(Key.RECORD_LIST) as? List<BibRecord>
         if (recordList == null)
-            recordList = Appx.svc.searchService.getLastSearchResults().records
+            recordList = App.svc.searchService.getLastSearchResults().records
         records.clear()
         records.addAll(recordList)
 

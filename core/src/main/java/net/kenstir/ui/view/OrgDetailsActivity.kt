@@ -39,7 +39,6 @@ import net.kenstir.data.model.Organization
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
@@ -276,13 +275,13 @@ class OrgDetailsActivity : BaseActivity() {
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
-                    val result = Appx.svc.orgService.loadOrgSettings(orgID)
+                    val result = App.svc.orgService.loadOrgSettings(orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
                 })
                 jobs.add(scope.async {
-                    val result = Appx.svc.orgService.loadOrgDetails(account, orgID)
+                    val result = App.svc.orgService.loadOrgDetails(account, orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }

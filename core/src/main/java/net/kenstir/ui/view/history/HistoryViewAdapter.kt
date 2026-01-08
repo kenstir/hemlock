@@ -34,7 +34,6 @@ import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
 
@@ -81,7 +80,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 
         private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
             val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
-            return Appx.svc.circService.loadHistoryDetails(historyRecord)
+            return App.svc.circService.loadHistoryDetails(historyRecord)
         }
 
         private fun loadMetadata(context: Context, historyRecord: HistoryRecord) {
@@ -90,7 +89,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             author.text = historyRecord.author
 
             historyRecord.record?.let {
-                val url = Appx.svc.biblioService.imageUrl(it, ImageSize.SMALL)
+                val url = App.svc.biblioService.imageUrl(it, ImageSize.SMALL)
                 recordImage.load(url)
             }
         }

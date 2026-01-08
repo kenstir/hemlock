@@ -38,26 +38,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import net.kenstir.data.Result
+import net.kenstir.data.model.Account
 import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
-import net.kenstir.data.model.Account
-import net.kenstir.ui.pn.PushNotification
-import net.kenstir.data.Result
 import net.kenstir.ui.App
 import net.kenstir.ui.AppLifecycle
 import net.kenstir.ui.AppState
-import net.kenstir.ui.Appx
-import org.evergreen_ils.system.EgOrg
-import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.account.AuthenticatorActivity.Companion.ARG_ACCOUNT_NAME
 import net.kenstir.ui.account.getAccountManagerResult
+import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.appInfo
 import net.kenstir.ui.util.compatEnableEdgeToEdge
-import net.kenstir.util.injectRandomFailure
+import net.kenstir.util.Analytics
+import net.kenstir.util.getCustomMessage
+import org.evergreen_ils.system.EgOrg
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -193,7 +191,7 @@ class LaunchActivity : AppCompatActivity() {
         lifecycleScope.async {
             try {
                 // ignore failure getting the IP address
-                val result = Appx.svc.loaderService.fetchPublicIpAddress()
+                val result = App.svc.loaderService.fetchPublicIpAddress()
                 val ip = when (result) {
                     is Result.Success -> result.get()
                     is Result.Error -> "unknown"
@@ -253,8 +251,8 @@ class LaunchActivity : AppCompatActivity() {
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
         val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
-        Appx.library = library
-        val account = Appx.svc.userService.makeAccount(result.accountName, result.authToken)
+        App.library = library
+        val account = App.svc.userService.makeAccount(result.accountName, result.authToken)
         App.account = account
     }
 
@@ -288,7 +286,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // load the home org settings, used to control visibility of Events and other buttons
         EgOrg.findOrg(App.account.homeOrg)?.let { org ->
-            val result = Appx.svc.orgService.loadOrgSettings(org.id)
+            val result = App.svc.orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
@@ -308,7 +306,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private suspend fun fetchSession(account: Account): Result<Unit> {
-        return Appx.svc.userService.loadUserSession(account)
+        return App.svc.userService.loadUserSession(account)
     }
 
     @Deprecated("Deprecated in Java")

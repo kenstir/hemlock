@@ -22,16 +22,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.R
-import net.kenstir.ui.Key
-import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
+import net.kenstir.hemlock.R
 import net.kenstir.ui.App
-import net.kenstir.ui.Appx
-import org.evergreen_ils.data.model.EvergreenPatronMessage
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.Key
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
+import org.evergreen_ils.data.model.EvergreenPatronMessage
 import java.text.DateFormat
 
 class MessageDetailsActivity : BaseActivity() {
@@ -79,7 +78,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageDeletedAndFinish() {
         scope.async {
-            val result = Appx.svc.userService.markMessageDeleted(
+            val result = App.svc.userService.markMessageDeleted(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -91,7 +90,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageRead() {
         scope.async {
-            val result = Appx.svc.userService.markMessageRead(
+            val result = App.svc.userService.markMessageRead(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -102,7 +101,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageUnreadAndFinish() {
         scope.async {
-            val result = Appx.svc.userService.markMessageUnread(
+            val result = App.svc.userService.markMessageUnread(
                 App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

@@ -46,7 +46,7 @@ object App {
 
     fun init(context: Context) {
         val isAndroidTest = context.resources.getBoolean(R.bool.is_android_test)
-        Log.d(TAG, "[init] Appx.init isAndroidTest=$isAndroidTest")
+        Log.d(TAG, "[init] App.init isAndroidTest=$isAndroidTest")
 
         behavior = AppFactory.makeBehavior(context.resources)
         if (!this::svc.isInitialized) {
