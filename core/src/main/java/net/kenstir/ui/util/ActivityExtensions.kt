@@ -24,16 +24,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
-import net.kenstir.ui.App
-import org.evergreen_ils.gateway.GatewayError
-import net.kenstir.util.getCustomMessage
-import androidx.core.net.toUri
+import net.kenstir.ui.AppLifecycle
 import net.kenstir.util.Analytics
+import net.kenstir.util.getCustomMessage
+import org.evergreen_ils.gateway.GatewayError
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
@@ -61,7 +61,7 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
     builder.setTitle("Error")
             .setMessage(ex.getCustomMessage())
             .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton("Login Again") { _, _ -> App.restartApp(this) }
+            .setPositiveButton("Login Again") { _, _ -> AppLifecycle.restartApp(this) }
     val alertDialog = builder.create()
     alertDialog.show()
 }

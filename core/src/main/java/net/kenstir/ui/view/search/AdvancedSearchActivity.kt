@@ -34,7 +34,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import net.kenstir.data.model.SearchClass
 import net.kenstir.hemlock.R
-import net.kenstir.ui.App
+import net.kenstir.ui.AppLifecycle
 import net.kenstir.ui.Key
 import net.kenstir.util.Analytics
 import java.util.Locale
@@ -47,8 +47,8 @@ class AdvancedSearchActivity: AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!App.isStarted()) {
-            App.restartApp(this)
+        if (!AppLifecycle.isStarted) {
+            AppLifecycle.restartApp(this)
             return
         }
 

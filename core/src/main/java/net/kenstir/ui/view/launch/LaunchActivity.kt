@@ -46,6 +46,7 @@ import net.kenstir.data.model.Account
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.data.Result
 import net.kenstir.ui.App
+import net.kenstir.ui.AppLifecycle
 import net.kenstir.ui.AppState
 import net.kenstir.ui.Appx
 import org.evergreen_ils.system.EgOrg
@@ -160,13 +161,13 @@ class LaunchActivity : AppCompatActivity() {
                 Log.d(TAG_FCM, "[fcm] launch notification: $notification")
                 if (notification.isNotGeneral()) {
                     val targetActivityClass = activityForNotificationType(notification)
-                    App.startAppFromPushNotification(this, targetActivityClass)
+                    AppLifecycle.startAppFromPushNotification(this, targetActivityClass)
                     return
                 }
             }
         }
 
-        App.startApp(this)
+        AppLifecycle.startApp(this)
     }
 
     private fun launchLoginFlow() {

@@ -17,12 +17,22 @@
 
 package net.kenstir.ui
 
+import android.app.Activity
+import android.app.PendingIntent
+import android.app.PendingIntent.CanceledException
 import android.content.Context
+import android.content.Intent
+import androidx.core.app.TaskStackBuilder
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Library
 import net.kenstir.data.service.ServiceConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.account.AuthenticatorActivity
+import net.kenstir.ui.view.launch.LaunchActivity
+import net.kenstir.ui.view.main.MainActivity
+import net.kenstir.util.Analytics
+import net.kenstir.util.Analytics.logException
 
 object Appx {
     private const val TAG = "Appx"
@@ -38,12 +48,13 @@ object Appx {
         }
 
     fun init(context: Context) {
-        val isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test)
-        Log.d(TAG, "[init] App.init isAndroidTest=$isAndroidTest")
+        val isAndroidTest = context.resources.getBoolean(R.bool.is_android_test)
+        Log.d(TAG, "[init] Appx.init isAndroidTest=$isAndroidTest")
 
         behavior = AppFactory.makeBehavior(context.resources)
         if (!this::svc.isInitialized) {
             svc = ServiceConfig()
         }
     }
+
 }
