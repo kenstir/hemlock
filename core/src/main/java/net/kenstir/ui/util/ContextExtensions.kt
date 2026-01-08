@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import net.kenstir.hemlock.R
-import net.kenstir.logging.Log
+import net.kenstir.util.Analytics.logException
 
 val Context.appVersionCode: String
     get() {
@@ -29,7 +29,7 @@ val Context.appVersionCode: String
             val pInfo = packageManager.getPackageInfo(packageName, 0)
             return pInfo.versionCode.toString()
         } catch (e: PackageManager.NameNotFoundException) {
-            Log.d("Log", "caught", e)
+            logException(e)
             return "0"
         }
     }
@@ -40,7 +40,7 @@ val Context.appInfo: String
         try {
             pInfo = packageManager.getPackageInfo(packageName, 0)
         } catch (e: PackageManager.NameNotFoundException) {
-            Log.d("Log", "caught", e)
+            logException(e)
         }
         val appName: String = getString(R.string.ou_app_label)
         val versionName = pInfo?.versionName ?: "1.0.0.1"
