@@ -49,14 +49,14 @@ object App {
         Log.d(TAG, "[init] App.init isAndroidTest=$isAndroidTest")
 
         behavior = AppFactory.makeBehavior(context.resources)
+
         if (!this::svc.isInitialized) {
             svc = ServiceConfig()
         }
-
-        configureHttpClient(context)
+        configureServiceHttpClient(context)
     }
 
-    fun configureHttpClient(context: Context) {
+    private fun configureServiceHttpClient(context: Context) {
         val client = svc.loaderService.makeOkHttpClient(
             File(context.cacheDir, "okhttp")
         )
