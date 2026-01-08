@@ -30,7 +30,7 @@ import androidx.core.view.WindowCompat
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
-import net.kenstir.ui.AppLifecycle
+import net.kenstir.ui.Lifecycle
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.gateway.GatewayError
@@ -61,7 +61,7 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
     builder.setTitle("Error")
             .setMessage(ex.getCustomMessage())
             .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton("Login Again") { _, _ -> AppLifecycle.restartApp(this) }
+            .setPositiveButton("Login Again") { _, _ -> Lifecycle.restartApp(this) }
     val alertDialog = builder.create()
     alertDialog.show()
 }

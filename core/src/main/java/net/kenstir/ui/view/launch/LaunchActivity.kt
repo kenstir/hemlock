@@ -44,7 +44,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.ui.App
-import net.kenstir.ui.AppLifecycle
+import net.kenstir.ui.Lifecycle
 import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
 import net.kenstir.ui.account.AccountUtils
@@ -159,13 +159,13 @@ class LaunchActivity : AppCompatActivity() {
                 Log.d(TAG_FCM, "[fcm] launch notification: $notification")
                 if (notification.isNotGeneral()) {
                     val targetActivityClass = activityForNotificationType(notification)
-                    AppLifecycle.startAppFromPushNotification(this, targetActivityClass)
+                    Lifecycle.startAppFromPushNotification(this, targetActivityClass)
                     return
                 }
             }
         }
 
-        AppLifecycle.startApp(this)
+        Lifecycle.startApp(this)
     }
 
     private fun launchLoginFlow() {

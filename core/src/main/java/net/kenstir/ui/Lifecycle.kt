@@ -40,8 +40,8 @@ import net.kenstir.util.Analytics.logException
  * You may say to yourself, but is not documented this way, Android should
  * not be starting at a non-MAIN activity.  In practice it happens
  */
-object AppLifecycle {
-    private const val TAG = "AppLifecycle"
+object Lifecycle {
+    private const val TAG = "Lifecycle"
 
     var isStarted = false
 
