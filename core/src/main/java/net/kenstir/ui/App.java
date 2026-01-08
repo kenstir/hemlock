@@ -17,31 +17,10 @@
 
 package net.kenstir.ui;
 
-import static net.kenstir.ui.account.AuthenticatorActivity.ARG_ACCOUNT_NAME;
-
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.TaskStackBuilder;
 
-import net.kenstir.hemlock.R;
-import net.kenstir.ui.util.CoilImageLoader;
-import net.kenstir.logging.Log;
-import net.kenstir.data.service.ServiceConfig;
-import org.evergreen_ils.gateway.GatewayClient;
 import net.kenstir.data.model.Account;
-import net.kenstir.data.model.Library;
-
-import net.kenstir.ui.view.launch.LaunchActivity;
-import net.kenstir.ui.view.main.MainActivity;
-import net.kenstir.util.Analytics;
-
-import java.io.File;
 
 public class App {
     private static final String TAG = "App";
@@ -49,29 +28,8 @@ public class App {
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_MESSAGES = 10002;
 
-    public static boolean mStarted = false;
-    private static boolean mInitialized = false;
-
-    private static Library library = null;
     private static @NonNull Account account = Account.Companion.getNoAccount();
     private static String fcmNotificationToken = null;
-
-    // TODO: factor out LoaderService.makeHttpClient()
-    public static void configureHttpClient(Context context) {
-        GatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
-        GatewayClient.initHttpClient();
-        CoilImageLoader.INSTANCE.setImageLoader(context, GatewayClient.okHttpClient);
-    }
-
-    static public void init(Context context) {
-        if (mInitialized) {
-            return;
-        }
-        boolean isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test);
-        Log.d(TAG, "[init] App.init isAndroidTest=" + isAndroidTest);
-        configureHttpClient(context);
-        mInitialized = true;
-    }
 
     @Nullable
     public static String getFcmNotificationToken() {

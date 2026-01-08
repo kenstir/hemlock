@@ -41,7 +41,6 @@ class Application : androidx.multidex.MultiDexApplication() {
         Log.d(TAG, "[init] applyNightMode returned $changed")
 
         // Other global init
-        App.init(this)
         Appx.init(this)
         deleteLegacyCacheDirectory()
 

@@ -28,15 +28,23 @@ import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
 import net.kenstir.data.service.LoadStartupOptions
 import net.kenstir.data.jsonMapOf
+import okhttp3.OkHttpClient
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.idl.IDLParser
 import org.evergreen_ils.system.EgSms
+import java.io.File
 
 object EvergreenLoaderService: LoaderService {
     const val TAG = "LoaderService"
+
+    override fun makeOkHttpClient(cacheDir: File): OkHttpClient {
+        GatewayClient.cacheDirectory = cacheDir
+        GatewayClient.initHttpClient()
+        return GatewayClient.okHttpClient
+    }
 
     override fun setServiceUrl(url: String) {
         GatewayClient.baseUrl = url

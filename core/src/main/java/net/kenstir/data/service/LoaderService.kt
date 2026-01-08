@@ -18,6 +18,8 @@
 package net.kenstir.data.service
 
 import net.kenstir.data.Result
+import okhttp3.OkHttpClient
+import java.io.File
 
 data class LoadStartupOptions(
     val clientCacheKey: String,
@@ -28,6 +30,11 @@ data class LoadStartupOptions(
  * Service for loading global data
  */
 interface LoaderService {
+    /**
+     * Configures the HTTP client
+     */
+    fun makeOkHttpClient(cacheDir: File): OkHttpClient
+
     /**
      * Sets the service URL
      */

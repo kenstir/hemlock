@@ -17,22 +17,16 @@
 
 package net.kenstir.ui
 
-import android.app.Activity
-import android.app.PendingIntent
-import android.app.PendingIntent.CanceledException
 import android.content.Context
-import android.content.Intent
-import androidx.core.app.TaskStackBuilder
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Library
 import net.kenstir.data.service.ServiceConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.account.AuthenticatorActivity
-import net.kenstir.ui.view.launch.LaunchActivity
-import net.kenstir.ui.view.main.MainActivity
-import net.kenstir.util.Analytics
-import net.kenstir.util.Analytics.logException
+import net.kenstir.ui.util.CoilImageLoader.setImageLoader
+import org.evergreen_ils.gateway.GatewayClient
+import org.evergreen_ils.gateway.GatewayClient.initHttpClient
+import java.io.File
 
 object Appx {
     private const val TAG = "Appx"
@@ -55,6 +49,14 @@ object Appx {
         if (!this::svc.isInitialized) {
             svc = ServiceConfig()
         }
+
+        configureHttpClient(context)
     }
 
+    fun configureHttpClient(context: Context) {
+        val client = svc.loaderService.makeOkHttpClient(
+            File(context.cacheDir, "okhttp")
+        )
+        setImageLoader(context, client)
+    }
 }
