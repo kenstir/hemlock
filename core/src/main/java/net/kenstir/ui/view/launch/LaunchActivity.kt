@@ -252,7 +252,7 @@ class LaunchActivity : AppCompatActivity() {
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
         val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
-        App.setLibrary(library)
+        Appx.library = library
         val account = Appx.svc.userService.makeAccount(result.accountName, result.authToken)
         App.setAccount(account)
     }

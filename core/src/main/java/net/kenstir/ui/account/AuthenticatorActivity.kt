@@ -131,7 +131,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             submitButton?.setEnabled(false)
         } else {
             submitButton?.setEnabled(true)
-            App.setLibrary(library)
+            Appx.library = library
             Analytics.log(TAG, "onLibrarySelected ${library.name} ${library.url}")
         }
     }

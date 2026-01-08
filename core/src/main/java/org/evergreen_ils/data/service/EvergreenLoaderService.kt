@@ -38,6 +38,10 @@ import org.evergreen_ils.system.EgSms
 object EvergreenLoaderService: LoaderService {
     const val TAG = "LoaderService"
 
+    override fun setServiceUrl(url: String) {
+        GatewayClient.baseUrl = url
+    }
+
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
         return try {
             return Result.Success(loadStartupDataImpl(serviceOptions))

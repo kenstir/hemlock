@@ -29,8 +29,13 @@ object Appx {
 
     lateinit var account: Account
     lateinit var behavior: AppBehavior
-    lateinit var library: Library
     lateinit var svc: ServiceConfig
+
+    var library = Library("", "")
+        set(value) {
+            field = value
+            svc.loaderService.setServiceUrl(value.url)
+        }
 
     fun init(context: Context) {
         val isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test)

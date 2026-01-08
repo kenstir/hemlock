@@ -65,23 +65,12 @@ public class App {
 
     static public void init(Context context) {
         if (mInitialized) {
-            //Log.d(TAG, "[init] App.init already done");
             return;
         }
         boolean isAndroidTest = context.getResources().getBoolean(R.bool.is_android_test);
         Log.d(TAG, "[init] App.init isAndroidTest=" + isAndroidTest);
         configureHttpClient(context);
         mInitialized = true;
-    }
-
-    public static @NonNull Library getLibrary() {
-        return library;
-    }
-
-    public static void setLibrary(@NonNull Library library) {
-        App.library = library;
-        // TODO: set baseUrl via Service method in the data layer
-        GatewayClient.baseUrl = library.getUrl();
     }
 
     @Nullable

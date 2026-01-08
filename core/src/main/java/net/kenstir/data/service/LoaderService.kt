@@ -29,6 +29,11 @@ data class LoadStartupOptions(
  */
 interface LoaderService {
     /**
+     * Sets the service URL
+     */
+    fun setServiceUrl(url: String)
+
+    /**
      * Load any and all prerequisite data required for the client to function.
      * With the exception of AuthService methods, this must be called before
      * any other Service methods.
