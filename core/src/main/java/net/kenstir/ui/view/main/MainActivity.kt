@@ -104,7 +104,7 @@ open class MainActivity : MainBaseActivity() {
     }
 
     private fun homeOrgHasEvents(): Boolean {
-        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        val url = EgOrg.findOrg(App.account.homeOrg)?.eventsURL
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
     }
 
@@ -114,7 +114,7 @@ open class MainActivity : MainBaseActivity() {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
                 val result = Appx.svc.userService.fetchPatronMessages(
-                    App.getAccount())
+                    App.account)
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
                     is Result.Success ->  updateMessagesBadge(result.get())

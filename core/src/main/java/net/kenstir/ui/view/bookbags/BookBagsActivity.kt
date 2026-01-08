@@ -101,18 +101,18 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
                 showBusy(R.string.msg_retrieving_lists)
 
                 // load bookbags
-                val result = Appx.svc.userService.loadPatronLists(App.getAccount())
+                val result = Appx.svc.userService.loadPatronLists(App.account)
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
-                val patronLists = App.getAccount().patronLists
+                val patronLists = App.account.patronLists
 
                 // load bookbag items
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (list in patronLists) {
                     jobs.add(scope.async {
-                        Appx.svc.userService.loadPatronListItems(App.getAccount(), list)
+                        Appx.svc.userService.loadPatronListItems(App.account, list)
                     })
                 }
                 jobs.map { it.await() }
@@ -151,7 +151,7 @@ class BookBagsActivity : BaseActivity(), BookBagCreateDialogFragment.CreateListe
         scope.async {
             showBusy(R.string.msg_creating_list)
             val result = Appx.svc.userService.createPatronList(
-                App.getAccount(), name, description)
+                App.account, name, description)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)

@@ -164,7 +164,7 @@ class HoldDetailsActivity : BaseActivity() {
 
             val holdId = record.ahrObj.getInt("id") ?: 0
             val result = Appx.svc.circService.cancelHold(
-                App.getAccount(), holdId)
+                App.account, holdId)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -196,7 +196,7 @@ class HoldDetailsActivity : BaseActivity() {
                 thawDate = thawDateApi,
             )
             val result = Appx.svc.circService.updateHold(
-                App.getAccount(), holdId, holdOptions)
+                App.account, holdId, holdOptions)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),

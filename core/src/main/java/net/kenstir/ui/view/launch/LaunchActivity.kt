@@ -223,7 +223,7 @@ class LaunchActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 //injectRandomFailure("loadAccountData", 85)
-                getSession(App.getAccount())
+                getSession(App.account)
                 onLaunchSuccess()
             } catch (ex: Exception) {
                 val msg = ex.message ?: "Cancelled"
@@ -255,7 +255,7 @@ class LaunchActivity : AppCompatActivity() {
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         Appx.library = library
         val account = Appx.svc.userService.makeAccount(result.accountName, result.authToken)
-        App.setAccount(account)
+        App.account = account
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
@@ -287,7 +287,7 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // load the home org settings, used to control visibility of Events and other buttons
-        EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
+        EgOrg.findOrg(App.account.homeOrg)?.let { org ->
             val result = Appx.svc.orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception

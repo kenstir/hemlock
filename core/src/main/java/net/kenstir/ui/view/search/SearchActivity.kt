@@ -113,7 +113,7 @@ class SearchActivity : BaseActivity() {
 
         // clear prior search results unless this is the same user and we just rotated
         val lastAccountId = savedInstanceState?.getInt(Key.ACCOUNT_ID)
-        val accountId = App.getAccount().id
+        val accountId = App.account.id
         Log.d(TAG, "lastAccountId = $lastAccountId")
         Log.d(TAG, "accountId = $accountId")
         if (lastAccountId == null || lastAccountId != accountId) {
@@ -155,7 +155,7 @@ class SearchActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        App.getAccount().id?.let { id ->
+        App.account.id?.let { id ->
             outState.putInt(Key.ACCOUNT_ID, id)
         }
         logBundleSize(outState)
@@ -197,7 +197,7 @@ class SearchActivity : BaseActivity() {
         )
         searchOrgOption = SpinnerStringOption(
             key = AppState.SEARCH_ORG_SHORT_NAME,
-            defaultValue = EgOrg.findOrg(App.getAccount()?.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
+            defaultValue = EgOrg.findOrg(App.account?.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
             optionLabels = EgOrg.orgSpinnerLabels(),
             optionValues = EgOrg.spinnerShortNames()
         )
@@ -232,7 +232,7 @@ class SearchActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = Appx.svc.userService.loadPatronLists(App.getAccount())
+                val result = Appx.svc.userService.loadPatronLists(App.account)
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -297,8 +297,8 @@ class SearchActivity : BaseActivity() {
                 Analytics.Param.SEARCH_FORMAT to searchFormatCode,
                 Analytics.Param.SEARCH_ORG_KEY to
                         orgDimensionKey(EgSearch.selectedOrganization,
-                                EgOrg.findOrg(App.getAccount().searchOrg),
-                                EgOrg.findOrg(App.getAccount().homeOrg)),
+                                EgOrg.findOrg(App.account.searchOrg),
+                                EgOrg.findOrg(App.account.homeOrg)),
         )
         b.putAll(Analytics.searchTextStats(searchText))
         when (result) {
@@ -412,9 +412,9 @@ class SearchActivity : BaseActivity() {
                 return true
             }
             ITEM_ADD_TO_LIST -> {
-                if (App.getAccount().patronLists.isNotEmpty()) {
+                if (App.account.patronLists.isNotEmpty()) {
                     //Analytics.logEvent("lists_additem", "via", "results_long_press")
-                    showAddToListDialog(this, App.getAccount().patronLists, info.record!!)
+                    showAddToListDialog(this, App.account.patronLists, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
                 }

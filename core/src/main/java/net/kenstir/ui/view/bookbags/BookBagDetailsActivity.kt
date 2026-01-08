@@ -163,7 +163,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_list_contents)
 
                 // load bookBag contents
-                val result = Appx.svc.userService.loadPatronListItems(App.getAccount(), patronList)
+                val result = Appx.svc.userService.loadPatronListItems(App.account, patronList)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
@@ -227,7 +227,7 @@ class BookBagDetailsActivity : BaseActivity() {
             showBusy(R.string.msg_deleting_list)
             val id = patronList.id
             val result = Appx.svc.userService.deletePatronList(
-                App.getAccount(), id)
+                App.account, id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -308,7 +308,7 @@ class BookBagDetailsActivity : BaseActivity() {
         scope.async {
             showBusy(R.string.msg_removing_list_item)
             val result = Appx.svc.userService.removeItemFromPatronList(
-                App.getAccount(), patronList.id, item.id)
+                App.account, patronList.id, item.id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)

@@ -88,7 +88,7 @@ class OrgDetailsActivity : BaseActivity() {
         orgID = if (intent.hasExtra(Key.ORG_ID)) {
             intent.getIntExtra(Key.ORG_ID, 1)
         } else {
-            App.getAccount().homeOrg
+            App.account.homeOrg
         }
         org = EgOrg.findOrg(orgID)
 
@@ -266,7 +266,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                val account = App.getAccount()
+                val account = App.account
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()

@@ -93,7 +93,7 @@ class HoldsActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
                 showBusy(R.string.msg_loading_holds)
                 val start = System.currentTimeMillis()
-                val account = App.getAccount()
+                val account = App.account
 
                 // fetchHolds
                 val result = Appx.svc.circService.fetchHolds(account)

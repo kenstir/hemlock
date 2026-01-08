@@ -80,7 +80,7 @@ class MessageDetailsActivity : BaseActivity() {
     private fun markMessageDeletedAndFinish() {
         scope.async {
             val result = Appx.svc.userService.markMessageDeleted(
-                App.getAccount(), message.id)
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -92,7 +92,7 @@ class MessageDetailsActivity : BaseActivity() {
     private fun markMessageRead() {
         scope.async {
             val result = Appx.svc.userService.markMessageRead(
-                App.getAccount(), message.id)
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -103,7 +103,7 @@ class MessageDetailsActivity : BaseActivity() {
     private fun markMessageUnreadAndFinish() {
         scope.async {
             val result = Appx.svc.userService.markMessageUnread(
-                App.getAccount(), message.id)
+                App.account, message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

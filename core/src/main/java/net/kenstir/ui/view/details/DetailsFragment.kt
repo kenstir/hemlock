@@ -168,7 +168,7 @@ class DetailsFragment : Fragment() {
             //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
                 record?.let { record ->
-                    showAddToListDialog(it, App.getAccount().patronLists, record)
+                    showAddToListDialog(it, App.account.patronLists, record)
                 }
             }
         }

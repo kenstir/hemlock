@@ -46,7 +46,7 @@ object BookBagUtils {
                 activity.showBusy(R.string.adding_to_list_message)
 
                 val result = Appx.svc.userService.addItemToPatronList(
-                    App.getAccount(),
+                    App.account,
                     bookBag.id,
                     info.id
                 )

@@ -108,12 +108,12 @@ class HistoryActivity : BaseActivity() {
             try {
                 // first disable the patron setting
                 val result = Appx.svc.userService.disableCheckoutHistory(
-                    App.getAccount())
+                    App.account)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // then clear history
                 val clearResult = Appx.svc.userService.clearCheckoutHistory(
-                    App.getAccount())
+                    App.account)
                 if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
 
                 finish()
@@ -132,7 +132,7 @@ class HistoryActivity : BaseActivity() {
 
                 // fetch history
                 val result = Appx.svc.circService.fetchCheckoutHistory(
-                    App.getAccount())
+                    App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -149,7 +149,7 @@ class HistoryActivity : BaseActivity() {
     }
 
     private fun loadHistory(historyList: List<HistoryRecord>) {
-        historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
+        historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.account.circHistoryStart)
 
         items.clear()
         items.addAll(historyList)

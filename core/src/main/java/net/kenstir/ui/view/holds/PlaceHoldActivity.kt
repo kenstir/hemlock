@@ -115,7 +115,7 @@ class PlaceHoldActivity : BaseActivity() {
         setupNavigationDrawer()
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-        account = App.getAccount()
+        account = App.account
 
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
@@ -184,7 +184,7 @@ class PlaceHoldActivity : BaseActivity() {
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = Appx.svc.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = Appx.svc.circService.fetchTitleHoldIsPossible(App.account, record.id, App.account.pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                         Result.Success(Unit)
@@ -246,8 +246,8 @@ class PlaceHoldActivity : BaseActivity() {
                     Analytics.Param.HOLD_NOTIFY to notifyTypes,
                     Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
                     Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
-                            EgOrg.findOrg(App.getAccount().pickupOrg),
-                            EgOrg.findOrg(App.getAccount().homeOrg)),
+                            EgOrg.findOrg(App.account.pickupOrg),
+                            EgOrg.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -335,7 +335,7 @@ class PlaceHoldActivity : BaseActivity() {
                 thawDate = getThawDate()
             )
             val result = Appx.svc.circService.placeHold(
-                App.getAccount(), itemId, options)
+                App.account, itemId, options)
             Log.d(TAG, "[holds] placeHold: $result")
             hideBusy()
             when (result) {

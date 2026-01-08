@@ -164,7 +164,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Log.d(TAG, "[tb] title=$titleOverride main=$isMainActivity actionBar=$actionBar")
         if (actionBar == null) return
         val username =
-            if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.getAccount().displayName
+            if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.account.displayName
         actionBar.subtitle = String.format(getString(R.string.ou_activity_subtitle),
             AppState.getString(AppState.LIBRARY_NAME), username)
         titleOverride?.let { actionBar.title = it }
@@ -236,19 +236,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.eresourcesUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        return EgOrg.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.meetingRoomsUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return EgOrg.findOrg(App.getAccount().homeOrg)?.museumPassesUrl
+        return EgOrg.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -367,7 +367,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     suspend fun logout() {
         Log.d(TAG, "[auth] logout")
-        val account = App.getAccount()
+        val account = App.account
         Appx.svc.userService.deleteSession(account)
         AccountUtils.invalidateAuthToken(this, account.authToken)
         AccountUtils.clearPassword(this, account.username)
