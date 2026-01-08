@@ -36,8 +36,8 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.RecordDetails
 
 class HoldsActivity : BaseActivity() {
 
@@ -143,9 +143,7 @@ class HoldsActivity : BaseActivity() {
                 records.add(record)
             }
         }
-        if (records.isNotEmpty()) {
-            RecordDetails.launchDetailsFlow(this@HoldsActivity, records, position)
-        }
+        launchDetailsFlow(records, position)
     }
 
     companion object {

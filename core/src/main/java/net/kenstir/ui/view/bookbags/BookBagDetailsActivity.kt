@@ -40,8 +40,8 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.Analytics
 import net.kenstir.util.indexOfOrZero
 import net.kenstir.util.pubdateSortKey
@@ -98,7 +98,7 @@ class BookBagDetailsActivity : BaseActivity() {
                     records.add(it)
                 }
             }
-            RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
+            launchDetailsFlow(records, position)
         }
 
         initSortBy()

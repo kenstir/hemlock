@@ -41,9 +41,9 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.history.HistoryActivity
-import net.kenstir.ui.view.search.RecordDetails
 
 class CheckoutsActivity : BaseActivity() {
 
@@ -190,9 +190,11 @@ class CheckoutsActivity : BaseActivity() {
         // Launch details view with only one item if any pre-cat items exist, or else the position could be off
         if (records.isNotEmpty()) {
             if (records.size == circRecords.size) {
-                RecordDetails.launchDetailsFlow(this@CheckoutsActivity, records, position)
+                launchDetailsFlow(records, position)
             } else {
-                RecordDetails.launchDetailsFlow(this@CheckoutsActivity, arrayListOf(selectedRecord), 0)
+                selectedRecord?.let {
+                    launchDetailsFlow(arrayListOf(it), 0)
+                }
             }
         }
     }

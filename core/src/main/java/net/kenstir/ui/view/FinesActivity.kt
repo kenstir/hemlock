@@ -40,9 +40,9 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.isNullOrPreCat
 import org.evergreen_ils.system.EgOrg
 import java.text.DecimalFormat
@@ -201,10 +201,7 @@ class FinesActivity : BaseActivity() {
                 }
             }
         }
-        if (records.isNotEmpty()) {
-            val targetPosition = if (position > records.size - 1) records.size - 1 else position
-            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
-        }
+        launchDetailsFlow(records, position)
     }
 
     internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<ChargeRecord>(context, resourceId) {

@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
-import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HistoryRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -36,8 +35,8 @@ import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.ItemClickSupport
 import net.kenstir.ui.util.compatEnableEdgeToEdge
+import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.showAlert
-import net.kenstir.ui.view.search.RecordDetails
 
 class HistoryActivity : BaseActivity() {
 
@@ -193,11 +192,9 @@ class HistoryActivity : BaseActivity() {
     private fun viewItemAtPosition(position: Int) {
         // The history list may be quite long; just look at this one item, or else we risk
         // a TransactionTooLargeException.
-        val records = ArrayList<BibRecord>()
         items[position].record?.let { record ->
-            if (record.id != -1) {
-                records.add(record)
-                RecordDetails.launchDetailsFlow(this@HistoryActivity, records, 0)
+            if (!record.isPreCat) {
+                launchDetailsFlow(arrayListOf(record), 0)
             }
         }
     }

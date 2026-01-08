@@ -20,17 +20,22 @@ package net.kenstir.ui.util
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Parcel
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import net.kenstir.data.model.BibRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
+import net.kenstir.ui.Key
 import net.kenstir.ui.Lifecycle
+import net.kenstir.ui.view.search.RecordDetailsActivity
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.gateway.GatewayError
@@ -120,4 +125,41 @@ fun Activity.logBundleSize(bundle: Bundle?, source: String? = null) {
     } finally {
         parcel.recycle()
     }
+}
+
+/**
+ * Launches the RecordDetails activity with the given list and position.
+ */
+fun Activity.launchDetailsFlow(records: ArrayList<BibRecord>, position: Int) {
+    // discard boundary cases early
+    if (records.isEmpty()) return
+    if (position < 0 || position >= records.size) return
+
+    // determine name of parent activity
+    var parentActivityLabel: String? = null
+    try {
+        val info = packageManager.getActivityInfo(ComponentName(this, javaClass.getCanonicalName()!!), 0)
+        parentActivityLabel = getString(info.labelRes)
+    } catch (_: PackageManager.NameNotFoundException) {
+    }
+
+    // Prevent TransactionTooLargeException by limiting the data passed via Intent.
+    // In my testing, 100 records ~= 100KB, well below the limit of ~500KB.  If the
+    // list is too long, start the details flow with just the selected item.
+    val limit = 100
+    val (launchRecords, launchPosition) = when {
+        records.size > limit -> {
+            arrayListOf(records[position]) to 0
+        }
+        else -> {
+            records to position
+        }
+    }
+
+    // launch RecordDetailsActivity
+    val intent = Intent(this, RecordDetailsActivity::class.java)
+    intent.putExtra(Key.RECORD_LIST, launchRecords)
+    intent.putExtra(Key.RECORD_POSITION, launchPosition)
+    parentActivityLabel?.let { intent.putExtra(Key.TITLE, it) }
+    startActivity(intent)
 }
