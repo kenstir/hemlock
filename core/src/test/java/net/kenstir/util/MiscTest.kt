@@ -32,9 +32,9 @@ class MiscTest {
         }
     }
 
-    /** Test to convince myself that I don't need TextUtils.equals() to test equality vs. null */
+    /** Test to convince myself that I don't need TextUtils.equals() to test equality of optional Strings */
     @Test
-    fun test_equals() {
+    fun test_optionalStringEquals() {
         val a = testString("hello")
         val b = testString("hello")
         val c = testString("(null)")

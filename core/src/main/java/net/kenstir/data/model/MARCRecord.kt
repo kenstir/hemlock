@@ -16,7 +16,6 @@
  */
 package net.kenstir.data.model
 
-import android.text.TextUtils
 import java.io.Serializable
 
 class MARCRecord : Serializable {
@@ -44,7 +43,7 @@ class MARCRecord : Serializable {
         val uri: String?
             get() {
                 for (sf in subfields) {
-                    if (TextUtils.equals(sf.code, "u"))
+                    if (sf.code == "u")
                         return sf.text
                 }
                 return null
@@ -53,11 +52,11 @@ class MARCRecord : Serializable {
         val linkText: String?
             get() {
                 for (sf in subfields) {
-                    if (TextUtils.equals(sf.code, "y"))
+                    if (sf.code == "y")
                         return sf.text
                 }
                 for (sf in subfields) {
-                    if (TextUtils.equals(sf.code, "z") || TextUtils.equals(sf.code, "3"))
+                    if (sf.code == "z" || sf.code == "3")
                         return sf.text
                 }
                 return "Tap to access"
@@ -75,9 +74,9 @@ class MARCRecord : Serializable {
                     var href: String? = null
                     var text: String? = null
                     for (sf in df.subfields) {
-                        if (TextUtils.equals(sf.code, "u") && href == null)
+                        if (sf.code == "u" && href == null)
                             href = sf.text
-                        if ((TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y")) && text == null)
+                        if ((sf.code == "3" || sf.code == "y") && text == null)
                             text = sf.text
                     }
                     if (href != null && text != null) {
@@ -90,15 +89,15 @@ class MARCRecord : Serializable {
 
     companion object {
         fun isOnlineLocation(tag: String?, ind1: String?, ind2: String?): Boolean {
-            return (TextUtils.equals(tag, "856")
-                    && TextUtils.equals(ind1, "4")
-                    && (TextUtils.equals(ind2, "0")
-                    || TextUtils.equals(ind2, "1")
-                    || TextUtils.equals(ind2, "2")))
+            return (tag == "856"
+                    && ind1 == "4"
+                    && (ind2 == "0"
+                    || ind2 == "1"
+                    || ind2 == "2"))
         }
 
         fun isTitleStatement(tag: String?): Boolean {
-            return (TextUtils.equals(tag, "245"))
+            return (tag == "245")
         }
 
         @JvmStatic
