@@ -92,8 +92,7 @@ open class AppBehavior {
     }
 
     fun getOnlineLocationsFromMARC(record: BibRecord, orgShortName: String): List<Link> {
-        val marcRecord = record.marcRecord
-        if (marcRecord == null) return ArrayList()
+        val marcRecord = record.marcRecord ?: return ArrayList()
 
         return getLinksFromMARCRecord(marcRecord, orgShortName)
     }
