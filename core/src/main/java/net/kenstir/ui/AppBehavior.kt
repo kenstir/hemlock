@@ -16,7 +16,6 @@
  */
 package net.kenstir.ui
 
-import android.text.TextUtils
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log.d
@@ -26,23 +25,14 @@ import org.evergreen_ils.system.EgOrg.getOrgAncestry
 
 /** AppBehavior - customizable app behaviors
  *
- *
  * to override, create a subclass of AppBehavior in the xxx_app module,
  * and specify the name of that class in R.string.ou_behavior_provider.
  */
 open class AppBehavior {
-    protected fun trimTrailing(s: String, c: Char): String {
-        val sb = StringBuilder(s)
-        while (sb.length > 0 && sb.get(sb.length - 1) == c) {
-            sb.setLength(sb.length - 1)
-        }
-        return sb.toString()
-    }
-
-    private fun isOnlineFormat(icon_format_label: String?): Boolean {
-        if (TextUtils.isEmpty(icon_format_label)) return false
-        if (icon_format_label == "Picture") return true
-        return (icon_format_label!!.startsWith("E-")) // E-book, E-audio
+    private fun isOnlineFormat(iconFormatLabel: String?): Boolean {
+        if (iconFormatLabel.isNullOrEmpty()) return false
+        if (iconFormatLabel == "Picture") return true
+        return (iconFormatLabel.startsWith("E-")) // E-book, E-audio
     }
 
     open fun isOnlineResource(record: BibRecord?): Boolean? {
@@ -50,9 +40,9 @@ open class AppBehavior {
         if (!record.hasMetadata()) return null
         if (!record.hasAttributes()) return null
 
-        val item_form = record.getAttr("item_form")
-        if (TextUtils.equals(item_form, "o")
-            || TextUtils.equals(item_form, "s")) return true
+        val itemForm = record.getAttr("item_form")
+        if (itemForm == "o"
+            || itemForm == "s") return true
 
         return isOnlineFormat(record.iconFormatLabel)
     }
@@ -71,7 +61,7 @@ open class AppBehavior {
     protected fun isVisibleViaLocatedURI(df: MARCDatafield, orgShortName: String): Boolean {
         val subfield9s: MutableList<String?> = ArrayList<String?>()
         for (sf in df.subfields) {
-            if (TextUtils.equals(sf.code, "9")) {
+            if (sf.code == "9") {
                 subfield9s.add(sf.text)
             }
         }

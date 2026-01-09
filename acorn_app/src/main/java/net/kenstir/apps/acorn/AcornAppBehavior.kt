@@ -52,7 +52,7 @@ class AcornAppBehavior : AppBehavior() {
     override fun trimLinkTitle(s: String): String {
         val s1 = s.replace("Click here to (download|access)\\.?".toRegex(), "")
             .trim()
-        return trimTrailing(s1, '.').trim()
+        return s1.trimEnd('.').trim()
     }
 
     override fun isVisibleToOrg(df: MARCDatafield, orgShortName: String): Boolean {
