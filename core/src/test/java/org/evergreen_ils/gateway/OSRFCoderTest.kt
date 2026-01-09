@@ -27,7 +27,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class OSRFCoderTests {
+class OSRFCoderTest {
     @Before
     fun setup() {
         OSRFCoder.clearRegistry()
