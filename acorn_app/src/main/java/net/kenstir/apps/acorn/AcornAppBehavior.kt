@@ -20,12 +20,12 @@ import androidx.annotation.Keep
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log
-import net.kenstir.ui.AppBehavior
 import net.kenstir.data.model.MARCRecord.MARCDatafield
+import org.evergreen_ils.util.EvergreenAppBehavior
 
 @Keep
 @Suppress("unused")
-class AcornAppBehavior : AppBehavior() {
+class AcornAppBehavior : EvergreenAppBehavior() {
     private fun isOnlineFormatCode(icon_format_code: String?): Boolean {
         val onlineFormatCodes = listOf("ebook", "eaudio", "evideo", "emusic")
         return onlineFormatCodes.contains(icon_format_code)

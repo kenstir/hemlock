@@ -21,16 +21,16 @@ import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
-import net.kenstir.ui.AppBehavior
 import net.kenstir.data.model.MARCRecord
 import net.kenstir.data.model.MARCXMLParser
+import org.evergreen_ils.util.EvergreenAppBehavior
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgOrg
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class TestAppBehavior: AppBehavior() {
+class TestAppBehavior: EvergreenAppBehavior() {
     override fun isVisibleToOrg(df: MARCRecord.MARCDatafield, orgShortName: String): Boolean {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
