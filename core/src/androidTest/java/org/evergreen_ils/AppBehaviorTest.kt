@@ -22,7 +22,7 @@ import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
-import org.evergreen_ils.data.model.MARCRecord
+import net.kenstir.data.model.MARCRecord
 import org.evergreen_ils.data.model.MARCXMLParser
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgOrg

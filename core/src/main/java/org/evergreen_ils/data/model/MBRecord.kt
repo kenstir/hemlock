@@ -19,6 +19,7 @@ package org.evergreen_ils.data.model
 
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyCount
+import net.kenstir.data.model.MARCRecord
 import net.kenstir.util.titleSortKey
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgCodedValueMap

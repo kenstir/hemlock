@@ -21,7 +21,7 @@ import androidx.annotation.Keep
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
+import net.kenstir.data.model.MARCRecord.MARCDatafield
 
 @Keep
 @Suppress("unused")

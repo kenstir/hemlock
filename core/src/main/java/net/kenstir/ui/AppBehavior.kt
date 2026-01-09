@@ -20,8 +20,8 @@ import android.text.TextUtils
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log.d
-import org.evergreen_ils.data.model.MARCRecord
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
+import net.kenstir.data.model.MARCRecord
+import net.kenstir.data.model.MARCRecord.MARCDatafield
 import org.evergreen_ils.system.EgOrg.getOrgAncestry
 
 /** AppBehavior - customizable app behaviors

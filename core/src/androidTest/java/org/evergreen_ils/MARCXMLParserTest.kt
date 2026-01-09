@@ -18,7 +18,7 @@ package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.logging.Log
-import org.evergreen_ils.data.model.MARCRecord
+import net.kenstir.data.model.MARCRecord
 import org.evergreen_ils.data.model.MARCXMLParser
 import org.junit.Assert.*
 import org.junit.Before
