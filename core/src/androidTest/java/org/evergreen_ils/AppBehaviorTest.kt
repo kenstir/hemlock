@@ -23,7 +23,7 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.ui.AppBehavior
 import net.kenstir.data.model.MARCRecord
-import org.evergreen_ils.data.model.MARCXMLParser
+import net.kenstir.data.model.MARCXMLParser
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgOrg
 import org.junit.Assert.assertEquals

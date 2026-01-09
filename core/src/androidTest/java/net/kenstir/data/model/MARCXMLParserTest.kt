@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils
+package net.kenstir.data.model
 
 import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.logging.Log
 import net.kenstir.data.model.MARCRecord
-import org.evergreen_ils.data.model.MARCXMLParser
+import net.kenstir.data.model.MARCXMLParser
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

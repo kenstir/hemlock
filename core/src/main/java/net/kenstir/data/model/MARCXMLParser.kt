@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils.data.model
+package net.kenstir.data.model
 
-import net.kenstir.data.model.MARCRecord
 import net.kenstir.logging.Log.logElapsedTime
 import net.kenstir.data.model.MARCRecord.Companion.isDatafieldUseful
 import net.kenstir.data.model.MARCRecord.MARCDatafield
