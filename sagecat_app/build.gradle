@@ -23,12 +23,13 @@ android {
     namespace = 'net.kenstir.apps.sagecat'
     compileSdk 35
     defaultConfig {
+        applicationId 'net.kenstir.apps.sagecat'
+
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        applicationId 'net.kenstir.apps.sagecat'
         versionName rootProject.ext.globalVersionName
         versionCode rootProject.ext.globalVersionCode
     }
