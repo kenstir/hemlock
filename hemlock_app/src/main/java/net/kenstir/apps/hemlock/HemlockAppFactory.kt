@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Kenneth H. Cox
+ * Copyright (c) 2026 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,14 +15,22 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.data.service
+package net.kenstir.apps.hemlock
 
-interface ServiceConfig {
-    val loaderService: LoaderService
-    val authService: AuthService
-    val biblioService: BiblioService
-    val circService: CircService
-    val orgService: OrgService
-    val searchService: SearchService
-    val userService: UserService
+import androidx.annotation.Keep
+import net.kenstir.data.service.ServiceConfig
+import net.kenstir.ui.AppBehavior
+import net.kenstir.ui.AppFactory
+import org.evergreen_ils.data.service.EvergreenServiceConfig
+
+@Keep
+@Suppress("unused")
+class HemlockAppFactory : AppFactory() {
+    override fun makeBehavior(): AppBehavior {
+        return HemlockAppBehavior()
+    }
+
+    override fun makeServiceConfig(isAndroidTest: Boolean): ServiceConfig {
+        return EvergreenServiceConfig()
+    }
 }

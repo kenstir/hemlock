@@ -16,22 +16,14 @@
  */
 package net.kenstir.ui
 
-import android.content.res.Resources
-import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics.logException
+import net.kenstir.data.service.ServiceConfig
 
-object AppFactory {
-    @JvmStatic
-    fun makeBehavior(resources: Resources): AppBehavior {
-        val clazzName = resources.getString(R.string.ou_behavior_provider)
-        if (!clazzName.isEmpty()) {
-            try {
-                val clazz = Class.forName(clazzName)
-                return clazz.newInstance() as AppBehavior
-            } catch (e: Exception) {
-                logException(e)
-            }
-        }
-        return AppBehavior()
+open class AppFactory {
+    open fun makeBehavior(): AppBehavior {
+        throw NotImplementedError("must be overridden")
+    }
+
+    open fun makeServiceConfig(isAndroidTest: Boolean): ServiceConfig {
+        throw NotImplementedError("must be overridden")
     }
 }

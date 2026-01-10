@@ -8,7 +8,7 @@
     <string name="ou_choose_library_label">Choose your library system:</string>
     <string name="ou_app_label">Hemlock</string>
     <string name="ou_library_name"></string>
-    <string name="ou_behavior_provider">net.kenstir.apps.hemlock.HemlockAppBehavior</string>
+    <string name="app_factory_provider">net.kenstir.apps.hemlock.HemlockAppFactory</string>
     <string name="ou_feedback_url">https://docs.google.com/forms/d/e/1FAIpQLSdJ667-fEC14SN8LYBA-BxFDYErCC_jRpj3oqz-SjseH8JAKQ/viewform?entry.1598427127=%1$s</string>
     <bool name="ou_hierarchical_org_tree">false</bool>
     <bool name="ou_enable_part_holds">true</bool>

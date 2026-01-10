@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Kenneth H. Cox
+ * Copyright (c) 2026 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,14 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.data.service
+package net.kenstir.ui
 
-interface ServiceConfig {
-    val loaderService: LoaderService
-    val authService: AuthService
-    val biblioService: BiblioService
-    val circService: CircService
-    val orgService: OrgService
-    val searchService: SearchService
-    val userService: UserService
+class TestAppBehavior : AppBehavior() {
 }
