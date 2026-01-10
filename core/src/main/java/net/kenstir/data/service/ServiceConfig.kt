@@ -17,20 +17,12 @@
 
 package net.kenstir.data.service
 
-import org.evergreen_ils.data.service.EvergreenAuthService
-import org.evergreen_ils.data.service.EvergreenBiblioService
-import org.evergreen_ils.data.service.EvergreenCircService
-import org.evergreen_ils.data.service.EvergreenLoaderService
-import org.evergreen_ils.data.service.EvergreenOrgService
-import org.evergreen_ils.data.service.EvergreenSearchService
-import org.evergreen_ils.data.service.EvergreenUserService
-
-class ServiceConfig(
-    val loaderService: LoaderService = EvergreenLoaderService,
-    val authService: AuthService = EvergreenAuthService,
-    val biblioService: BiblioService = EvergreenBiblioService,
-    val circService: CircService = EvergreenCircService,
-    val orgService: OrgService = EvergreenOrgService,
-    val searchService: SearchService = EvergreenSearchService,
-    val userService: UserService = EvergreenUserService,
-)
+interface ServiceConfig {
+    val loaderService: LoaderService
+    val authService: AuthService
+    val biblioService: BiblioService
+    val circService: CircService
+    val orgService: OrgService
+    val searchService: SearchService
+    val userService: UserService
+}

@@ -24,7 +24,7 @@ import net.kenstir.data.model.PatronList
 import net.kenstir.data.model.PatronCharges
 import net.kenstir.data.service.UserService
 
-class MockUserService: UserService {
+object MockUserService: UserService {
     override fun makeAccount(username: String, authToken: String): Account {
         TODO("Not yet implemented")
     }

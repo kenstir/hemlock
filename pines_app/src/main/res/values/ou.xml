@@ -14,7 +14,7 @@
     <string name="ou_account_sign_in_message">Sign in to your PINES account</string>
     <string name="ou_library_name">PINES</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <string name="ou_behavior_provider">net.kenstir.apps.pines.PinesAppBehavior</string>
+    <string name="app_factory_provider">net.kenstir.apps.pines.PinesAppFactory</string>
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <string name="ou_barcode_format">Codabar</string>
     <string name="ou_details_link_text">More Information</string>

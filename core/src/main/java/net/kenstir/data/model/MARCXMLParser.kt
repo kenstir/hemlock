@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils.data.model
+package net.kenstir.data.model
 
 import net.kenstir.logging.Log.logElapsedTime
-import org.evergreen_ils.data.model.MARCRecord.Companion.isDatafieldUseful
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
-import org.evergreen_ils.data.model.MARCRecord.MARCSubfield
+import net.kenstir.data.model.MARCRecord.Companion.isDatafieldUseful
+import net.kenstir.data.model.MARCRecord.MARCDatafield
+import net.kenstir.data.model.MARCRecord.MARCSubfield
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory

@@ -18,12 +18,14 @@
 package net.kenstir.ui
 
 import android.content.Context
+import android.content.res.Resources
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Library
 import net.kenstir.data.service.ServiceConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.util.CoilImageLoader.setImageLoader
+import net.kenstir.util.Analytics.logException
 import java.io.File
 
 object App {
@@ -36,6 +38,7 @@ object App {
     var fcmNotificationToken: String? = null
 
     lateinit var behavior: AppBehavior
+    lateinit var factory: AppFactory
     lateinit var svc: ServiceConfig
 
     var library = Library("", "")
@@ -48,11 +51,9 @@ object App {
         val isAndroidTest = context.resources.getBoolean(R.bool.is_android_test)
         Log.d(TAG, "[init] App.init isAndroidTest=$isAndroidTest")
 
-        behavior = AppFactory.makeBehavior(context.resources)
-
-        if (!this::svc.isInitialized) {
-            svc = ServiceConfig()
-        }
+        factory = makeFactory(context.resources)
+        behavior = factory.makeBehavior()
+        svc = factory.makeServiceConfig(isAndroidTest)
         configureServiceHttpClient(context)
     }
 
@@ -61,5 +62,21 @@ object App {
             File(context.cacheDir, "okhttp")
         )
         setImageLoader(context, client)
+    }
+
+    fun makeFactory(resources: Resources): AppFactory {
+        val clazzName = resources.getString(R.string.app_factory_provider)
+        if (clazzName.isEmpty()) {
+            throw IllegalStateException("No AppFactory class configured in resources")
+        } else {
+            Log.d(TAG, "[init] Constructing $clazzName")
+            try {
+                val clazz = Class.forName(clazzName)
+                return clazz.newInstance() as AppFactory
+            } catch (e: Exception) {
+                logException(e)
+                throw IllegalStateException("Could not instantiate AppFactory: $clazzName", e)
+            }
+        }
     }
 }

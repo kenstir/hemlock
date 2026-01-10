@@ -17,7 +17,7 @@
 
 package net.kenstir.data.model
 
-import org.evergreen_ils.data.model.MARCRecord
+import net.kenstir.data.model.MARCRecord
 import java.io.Serializable
 
 interface BibRecord: Serializable {

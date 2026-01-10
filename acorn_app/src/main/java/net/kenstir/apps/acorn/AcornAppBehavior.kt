@@ -20,12 +20,12 @@ import androidx.annotation.Keep
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
 import net.kenstir.logging.Log
-import net.kenstir.ui.AppBehavior
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
+import net.kenstir.data.model.MARCRecord.MARCDatafield
+import org.evergreen_ils.util.EvergreenAppBehavior
 
 @Keep
 @Suppress("unused")
-class AcornAppBehavior : AppBehavior() {
+class AcornAppBehavior : EvergreenAppBehavior() {
     private fun isOnlineFormatCode(icon_format_code: String?): Boolean {
         val onlineFormatCodes = listOf("ebook", "eaudio", "evideo", "emusic")
         return onlineFormatCodes.contains(icon_format_code)
@@ -52,7 +52,7 @@ class AcornAppBehavior : AppBehavior() {
     override fun trimLinkTitle(s: String): String {
         val s1 = s.replace("Click here to (download|access)\\.?".toRegex(), "")
             .trim()
-        return trimTrailing(s1, '.').trim()
+        return s1.trimEnd('.').trim()
     }
 
     override fun isVisibleToOrg(df: MARCDatafield, orgShortName: String): Boolean {

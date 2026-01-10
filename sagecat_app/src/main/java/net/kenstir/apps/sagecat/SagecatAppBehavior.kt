@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Kenneth H. Cox
+ * Copyright (c) 2026 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,21 +15,12 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.owwl
+package net.kenstir.apps.sagecat
 
 import androidx.annotation.Keep
-import net.kenstir.data.model.BibRecord
-import net.kenstir.data.model.Link
 import org.evergreen_ils.util.EvergreenAppBehavior
 
 @Keep
 @Suppress("unused")
-class OwwlAppBehavior : EvergreenAppBehavior() {
-    override fun trimLinkTitle(s: String): String {
-        return s.trimEnd('.').trim()
-    }
-
-    override fun getOnlineLocations(record: BibRecord, orgShortName: String): List<Link> {
-        return getOnlineLocationsFromMARC(record, orgShortName)
-    }
+class SagecatAppBehavior : EvergreenAppBehavior() {
 }

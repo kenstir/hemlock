@@ -23,17 +23,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import net.kenstir.data.Result
-import net.kenstir.logging.Log
 import net.kenstir.data.service.LoadStartupOptions
-import net.kenstir.data.service.ServiceConfig
+import net.kenstir.logging.Log
 import org.evergreen_ils.data.model.EvergreenAccount
-import org.evergreen_ils.data.service.EvergreenAuthService
-import org.evergreen_ils.data.service.EvergreenBiblioService
-import org.evergreen_ils.data.service.EvergreenCircService
-import org.evergreen_ils.data.service.EvergreenLoaderService
-import org.evergreen_ils.data.service.EvergreenOrgService
-import org.evergreen_ils.data.service.EvergreenSearchService
-import org.evergreen_ils.data.service.EvergreenUserService
+import org.evergreen_ils.data.service.EvergreenServiceConfig
 import org.evergreen_ils.gateway.GatewayClient
 import org.junit.AfterClass
 import org.junit.Assert.assertNotNull
@@ -44,15 +37,7 @@ import java.io.File
 
 class LiveAuthServiceTest {
     companion object {
-        val serviceConfig = ServiceConfig(
-            EvergreenLoaderService,
-            EvergreenAuthService,
-            EvergreenBiblioService,
-            EvergreenCircService,
-            EvergreenOrgService,
-            EvergreenSearchService,
-            EvergreenUserService,
-        )
+        val serviceConfig = EvergreenServiceConfig()
 
         // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
         val testServer = getRequiredArg("server")

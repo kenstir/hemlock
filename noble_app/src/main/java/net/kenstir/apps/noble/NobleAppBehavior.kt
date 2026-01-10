@@ -22,12 +22,12 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.Link
-import net.kenstir.ui.AppBehavior
-import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
+import net.kenstir.data.model.MARCRecord.MARCDatafield
+import org.evergreen_ils.util.EvergreenAppBehavior
 
 @Keep
 @Suppress("unused")
-class NobleAppBehavior : AppBehavior() {
+class NobleAppBehavior : EvergreenAppBehavior() {
     override fun isOnlineResource(record: BibRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null
