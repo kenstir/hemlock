@@ -34,7 +34,7 @@ android {
         jvmTarget = '17'
     }
     buildFeatures {
-        viewBinding = true
+        viewBinding = false
         buildConfig = true
     }
     namespace = 'net.kenstir.hemlock'
