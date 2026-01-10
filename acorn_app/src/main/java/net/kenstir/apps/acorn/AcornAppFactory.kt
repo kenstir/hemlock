@@ -33,5 +33,4 @@ class AcornAppFactory : AppFactory() {
     override fun makeServiceConfig(isAndroidTest: Boolean): ServiceConfig {
         return EvergreenServiceConfig()
     }
-
 }
