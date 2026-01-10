@@ -20,15 +20,12 @@ package net.kenstir.mock
 import net.kenstir.data.service.AuthService
 import net.kenstir.data.service.BiblioService
 import net.kenstir.data.service.CircService
-import net.kenstir.data.service.LoaderService
 import net.kenstir.data.service.OrgService
 import net.kenstir.data.service.SearchService
 import net.kenstir.data.service.ServiceConfig
-import net.kenstir.data.service.UserService
 
 class MockServiceConfig : ServiceConfig {
-    override val loaderService: LoaderService
-        get() = TODO("Not yet implemented")
+    override val loaderService = MockLoaderService
     override val authService: AuthService
         get() = TODO("Not yet implemented")
     override val biblioService: BiblioService
