@@ -1,7 +1,6 @@
 include ':core'
 include ':acorn_app'
 include ':cwmars_app'
-include ':cool_app'
 include ':hemlock_app'
 include ':indiana_app'
 include ':mo_app'
