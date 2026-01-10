@@ -20,8 +20,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace = 'net.kenstir.apps.hemlock' // generated code goes here
     compileSdk 35
     defaultConfig {
+        applicationId 'net.kenstir.apps.hemlock' // play store app ID
+
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
@@ -63,7 +66,6 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace = 'net.kenstir.apps.hemlock'
 }
 
 dependencies {

@@ -20,6 +20,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace = 'net.kenstir.apps.sagecat'
     compileSdk 35
     defaultConfig {
         minSdkVersion 21
@@ -27,6 +28,7 @@ android {
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        applicationId 'net.kenstir.apps.sagecat'
         versionName rootProject.ext.globalVersionName
         versionCode rootProject.ext.globalVersionCode
     }
@@ -63,7 +65,6 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace = 'net.kenstir.apps.sagecat'
 }
 
 dependencies {

@@ -20,8 +20,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace = 'net.kenstir.apps.indiana'
     compileSdk 35
     defaultConfig {
+        applicationId 'net.kenstir.apps.indiana'
+
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
@@ -63,7 +66,6 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace = 'net.kenstir.apps.indiana'
 }
 
 dependencies {

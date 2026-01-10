@@ -20,8 +20,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace = 'net.kenstir.apps.bibliomation'
     compileSdk 35
     defaultConfig {
+        applicationId 'net.kenstir.apps.bibliomation'
+
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
@@ -66,7 +69,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    namespace = 'net.kenstir.apps.bibliomation'
 }
 
 dependencies {
