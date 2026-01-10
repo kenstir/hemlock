@@ -23,8 +23,6 @@ android {
     namespace = 'net.kenstir.apps.hemlock' // package for R class and default applicationId
     compileSdk 35
     defaultConfig {
-        //applicationId 'net.kenstir.apps.hemlock' // explicit applicationId if needed
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
@@ -32,6 +30,8 @@ android {
 
         versionName rootProject.ext.globalVersionName
         versionCode rootProject.ext.globalVersionCode
+
+        //applicationId 'net.x.id' // explicit applicationId if different from namespace
     }
     signingConfigs {
         release {
