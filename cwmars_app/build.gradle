@@ -23,8 +23,6 @@ android {
     namespace = 'org.cwmars'
     compileSdk 35
     defaultConfig {
-        applicationId 'org.cwmars'
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true

@@ -23,8 +23,6 @@ android {
     namespace = 'net.kenstir.apps.noble'
     compileSdk 35
     defaultConfig {
-        applicationId 'net.kenstir.apps.noble'
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true

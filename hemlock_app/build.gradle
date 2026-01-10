@@ -20,10 +20,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = 'net.kenstir.apps.hemlock' // generated code goes here
+    namespace = 'net.kenstir.apps.hemlock' // package for R class and default applicationId
     compileSdk 35
     defaultConfig {
-        applicationId 'net.kenstir.apps.hemlock' // play store app ID
+        //applicationId 'net.kenstir.apps.hemlock' // explicit applicationId if needed
 
         minSdkVersion 21
         targetSdkVersion 35

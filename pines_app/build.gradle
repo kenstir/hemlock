@@ -23,8 +23,6 @@ android {
     namespace = 'net.kenstir.apps.pines'
     compileSdk 35
     defaultConfig {
-        applicationId 'net.kenstir.apps.pines'
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true

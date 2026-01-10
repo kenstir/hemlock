@@ -23,8 +23,6 @@ android {
     namespace = 'net.kenstir.apps.mo'
     compileSdk 35
     defaultConfig {
-        applicationId 'net.kenstir.apps.mo'
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true

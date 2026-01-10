@@ -23,8 +23,6 @@ android {
     namespace = 'net.kenstir.apps.owwl'
     compileSdk 35
     defaultConfig {
-        applicationId 'net.kenstir.apps.owwl'
-
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled = true
