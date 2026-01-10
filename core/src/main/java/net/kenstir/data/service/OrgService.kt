@@ -19,11 +19,35 @@ package net.kenstir.data.service
 
 import net.kenstir.data.Result
 import net.kenstir.data.model.Account
+import net.kenstir.data.model.Organization
 
 /**
  * Service for loading organization (library) settings and details.
  */
 interface OrgService {
+
+    /**
+     * An ID to use for the consortium as a whole, when needed.
+     */
+    val consortiumID: Int
+
+    /**
+     * Find an org by its orgId.
+     */
+    fun findOrg(orgID: Int?): Organization?
+
+    /**
+     * Find an org and return its shortName, returning a safe default if not found.
+     */
+    fun getOrgShortNameSafe(orgID: Int?): String
+
+    /**
+     * Find an org and return its shortName, returning a safe default if not found.
+     */
+    fun getOrgNameSafe(orgID: Int?): String
+
+    /** Logs details about all loaded orgs for debugging */
+    fun dumpOrgStats()
 
     /**
      * Load org settings, e.g. eventsUrl and isPickupLocation.

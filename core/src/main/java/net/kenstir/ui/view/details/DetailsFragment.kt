@@ -54,11 +54,10 @@ import net.kenstir.ui.view.search.CopyInformationActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 import net.kenstir.util.getCopySummary
-import org.evergreen_ils.system.EgOrg
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
-    private var orgID: Int = EgOrg.CONSORTIUM_ID
+    private var orgID: Int = App.svc.orgService.consortiumID
     private var position: Int = 0
     private var total: Int = 0
 
@@ -197,7 +196,7 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val record = this.record ?: return
-        val org = EgOrg.findOrg(orgID) ?: return
+        val org = App.svc.orgService.findOrg(orgID) ?: return
 
         val links = App.behavior.getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
@@ -230,7 +229,7 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        val org = EgOrg.findOrg(orgID)
+        val org = App.svc.orgService.findOrg(orgID)
         val links = if (org != null) App.behavior.getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)

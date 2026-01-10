@@ -89,7 +89,7 @@ class OrgDetailsActivity : BaseActivity() {
         } else {
             App.account.homeOrg
         }
-        org = EgOrg.findOrg(orgID)
+        org = App.svc.orgService.findOrg(orgID)
 
         orgSpinner = findViewById(R.id.org_details_spinner)
         day0Hours = findViewById(R.id.org_details_day0hours)

@@ -208,7 +208,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logOrgStats() {
         if (Analytics.isDebuggable(this)) {
-            EgOrg.dumpOrgStats()
+            App.svc.orgService.dumpOrgStats()
         }
     }
 
@@ -241,12 +241,12 @@ class PlaceHoldActivity : BaseActivity() {
         val notifyTypes = TextUtils.join("|", notify)
         try {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
-                    Analytics.Param.RESULT to result,
-                    Analytics.Param.HOLD_NOTIFY to notifyTypes,
-                    Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
-                    Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
-                            EgOrg.findOrg(App.account.pickupOrg),
-                            EgOrg.findOrg(App.account.homeOrg)),
+                Analytics.Param.RESULT to result,
+                Analytics.Param.HOLD_NOTIFY to notifyTypes,
+                Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
+                Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
+                    App.svc.orgService.findOrg(App.account.pickupOrg),
+                    App.svc.orgService.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)

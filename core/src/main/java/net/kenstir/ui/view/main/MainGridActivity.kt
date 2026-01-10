@@ -31,7 +31,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.util.GridButton
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
-import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.BarcodeActivity
@@ -141,7 +140,7 @@ class MainGridActivity : MainBaseActivity() {
         })
 
         // Events
-        val homeOrg = EgOrg.findOrg(App.account.homeOrg)
+        val homeOrg = App.svc.orgService.findOrg(App.account.homeOrg)
         val eventsUrl = homeOrg?.eventsURL
         if (!eventsUrl.isNullOrEmpty() || forceButton["events"] == true) {
             items.add(GridButton(resources.getString(R.string.title_events),
@@ -153,7 +152,7 @@ class MainGridActivity : MainBaseActivity() {
     }
 
     fun setupBottomRowButtons() {
-        val homeOrg = EgOrg.findOrg(App.account.homeOrg)
+        val homeOrg = App.svc.orgService.findOrg(App.account.homeOrg)
 
         // E-books
         val ebooksUrl = homeOrg?.eresourcesUrl

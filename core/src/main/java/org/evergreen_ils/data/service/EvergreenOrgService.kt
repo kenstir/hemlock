@@ -34,6 +34,16 @@ import org.evergreen_ils.gateway.paramListOf
 object EvergreenOrgService: OrgService {
     const val TAG = "OrgService"
 
+    override val consortiumID = EgOrg.consortiumID
+
+    override fun findOrg(orgID: Int?) = EgOrg.findOrg(orgID)
+
+    override fun getOrgShortNameSafe(orgID: Int?) = EgOrg.getOrgShortNameSafe(orgID)
+
+    override fun getOrgNameSafe(orgID: Int?) = EgOrg.getOrgNameSafe(orgID)
+
+    override fun dumpOrgStats() = EgOrg.dumpOrgStats()
+
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {
             return Result.Success(loadOrgSettingsImpl(orgID))

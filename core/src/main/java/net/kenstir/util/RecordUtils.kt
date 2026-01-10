@@ -20,7 +20,7 @@ package net.kenstir.util
 import android.content.res.Resources
 import net.kenstir.data.model.BibRecord
 import net.kenstir.hemlock.R
-import org.evergreen_ils.system.EgOrg.getOrgNameSafe
+import net.kenstir.ui.App
 
 // Given a pubdate like "2000", "c2002", "2003-", or "2007-2014",
 // extract the first number as an Int for sorting.
@@ -67,7 +67,7 @@ fun BibRecord.getCopySummary(resources: Resources, orgID: Int?): String {
     }
     val totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total)
     return String.format(resources.getString(R.string.n_of_m_available),
-        available, totalCopies, getOrgNameSafe(orgID))
+        available, totalCopies, App.svc.orgService.getOrgNameSafe(orgID))
 }
 
 /**

@@ -43,7 +43,6 @@ import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.checkouts.CheckoutsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.search.SearchActivity
-import org.evergreen_ils.system.EgOrg
 
 open class MainActivity : MainBaseActivity() {
 
@@ -103,7 +102,7 @@ open class MainActivity : MainBaseActivity() {
     }
 
     private fun homeOrgHasEvents(): Boolean {
-        val url = EgOrg.findOrg(App.account.homeOrg)?.eventsURL
+        val url = getEventsUrl()
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
     }
 

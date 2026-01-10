@@ -44,7 +44,6 @@ import net.kenstir.ui.util.launchDetailsFlow
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.isNullOrPreCat
-import org.evergreen_ils.system.EgOrg
 import java.text.DecimalFormat
 
 private const val TAG = "FinesActivity"
@@ -98,7 +97,7 @@ class FinesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
-                val homeOrg = EgOrg.findOrg(App.account.homeOrg)
+                val homeOrg = App.svc.orgService.findOrg(App.account.homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
                         val result = App.svc.orgService.loadOrgSettings(homeOrg.id)
