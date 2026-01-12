@@ -116,7 +116,7 @@ object EvergreenLoaderService: LoaderService {
 
         // fetch the cache key org setting
         val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
-        val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
+        val params = paramListOf(EgOrg.CONSORTIUM_ID, settings, Api.ANONYMOUS)
         val obj = GatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
             .payloadFirstAsObject()
         val hemlockCacheKey = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_CACHE_KEY)

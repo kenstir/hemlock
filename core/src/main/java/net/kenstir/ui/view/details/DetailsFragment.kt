@@ -58,7 +58,7 @@ import org.evergreen_ils.system.EgOrg
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
-    private var orgID: Int = EgOrg.consortiumID
+    private var orgID: Int = EgOrg.CONSORTIUM_ID
     private var position: Int = 0
     private var total: Int = 0
 

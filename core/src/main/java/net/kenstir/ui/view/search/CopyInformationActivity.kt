@@ -53,7 +53,7 @@ import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 class CopyInformationActivity : BaseActivity() {
 
     private lateinit var record: BibRecord
-    private var orgID: Int = EgOrg.consortiumID
+    private var orgID: Int = EgOrg.CONSORTIUM_ID
     private var placeHoldButton: Button? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
     private var rv: RecyclerView? = null
@@ -86,7 +86,7 @@ class CopyInformationActivity : BaseActivity() {
             orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
             record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-            orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
+            orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.CONSORTIUM_ID)
         }
 
         rv = findViewById(R.id.recycler_view)

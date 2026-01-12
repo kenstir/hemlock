@@ -57,7 +57,7 @@ object EvergreenOrgService: OrgService {
             Api.SETTING_HEMLOCK_MEETING_ROOMS_URL,
             Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL,
         )
-        if (orgID == EgOrg.consortiumID) {
+        if (orgID == EgOrg.CONSORTIUM_ID) {
             settings.add(Api.SETTING_SMS_ENABLE)
 //            settings.add(Api.SETTING_REQUIRE_MONOGRAPHIC_PART)
 //            settings.add(Api.SETTING_UI_REQUIRE_MONOGRAPHIC_PART)

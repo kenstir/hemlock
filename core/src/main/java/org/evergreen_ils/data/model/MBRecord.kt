@@ -110,7 +110,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
                 val parser = MARCXMLParser(marcxml)
                 marcRecord = parser.parse()
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // ignore
         }
     }

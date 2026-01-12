@@ -57,7 +57,7 @@ class GatewayResult {
         error?.let { throw it }
         return try {
             payload.first() as String
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             throw GatewayError("Internal Server Error: expected string, got $type")
         }
     }
@@ -70,7 +70,7 @@ class GatewayResult {
             (payload.firstOrNull() as? OSRFObject)?.let { return it }
             (payload.firstOrNull() as? JSONDictionary)?.let { return OSRFObject(it) } // NOT HIT
             throw GatewayError("Unexpected type")
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             throw GatewayError("Internal Server Error: expected object, got $type")
         }
     }
@@ -91,7 +91,7 @@ class GatewayResult {
                 else -> payload as List<OSRFObject>
 
             }
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
@@ -103,7 +103,7 @@ class GatewayResult {
         return try {
             val first = payload.firstOrNull() as List<Any>
             first as List<OSRFObject>
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
@@ -115,7 +115,7 @@ class GatewayResult {
         return try {
             val inner = payload as List<Any>
             inner.first() as List<Any>
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
@@ -131,7 +131,7 @@ class GatewayResult {
                     throw GatewayError("Request failed with status ${response.status}${detail}")
                 }
                 createFromPayload(response.payload)
-            } catch (ex: SerializationException) {
+            } catch (_: SerializationException) {
                 GatewayResult(GatewayError("Internal Server Error: response is not JSON"))
             } catch (ex: Exception) {
                 GatewayResult(ex)
