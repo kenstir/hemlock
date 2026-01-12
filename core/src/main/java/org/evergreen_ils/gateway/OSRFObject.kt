@@ -78,10 +78,6 @@ data class OSRFObject(
         return OSRFUtils.parseDate(getString(key))
     }
 
-    fun getAny(key: String): Any? {
-        return map[key]
-    }
-
     /**
      * get the boolean value for [setting] from an org settings object `{"credit.payments.allow":{"org":49, "value":true}}`
      */

@@ -41,7 +41,7 @@ class BookBag(
 
         // ids is a list of lists of [record_id, ?, ?], e.g.:
         // [[1471992,"2","4.0"]]
-        val idList = multiclassQueryObj.get("ids") as? ArrayList<ArrayList<Any?>>
+        val idList = multiclassQueryObj["ids"] as? ArrayList<ArrayList<Any?>>
         visibleRecordIds.clear()
         idList?.mapNotNullTo(visibleRecordIds) {
             it[0] as? Int
@@ -51,7 +51,7 @@ class BookBag(
 
     fun fleshFromObject(cbrebObj: OSRFObject) {
         val newItems = ArrayList<ListItem>()
-        val fleshedItems = cbrebObj.get("items") as? ArrayList<OSRFObject> ?: ArrayList()
+        val fleshedItems = cbrebObj["items"] as? ArrayList<OSRFObject> ?: ArrayList()
         val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
         for (item in distinctItems) {
             if (!filterToVisibleRecords) {
