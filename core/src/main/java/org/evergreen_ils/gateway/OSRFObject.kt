@@ -74,6 +74,10 @@ data class OSRFObject(
         }
     }
 
+    fun getDate(key: String): Date? {
+        return OSRFUtils.parseDate(getString(key))
+    }
+
     /** Returns a list of OSRFObject associated with [key].
      *
      * Returns null if the key does not exist.
@@ -95,10 +99,6 @@ data class OSRFObject(
         } else {
             throw IllegalArgumentException("obj[$key] is not an object list: $value")
         }
-    }
-
-    fun getDate(key: String): Date? {
-        return OSRFUtils.parseDate(getString(key))
     }
 
     /**
