@@ -137,7 +137,7 @@ class HoldDetailsActivity : BaseActivity() {
         thawDateEdittext?.setOnClickListener {
             thawDatePicker?.show()
         }
-        // TODO: factor out makePickupOrgList
+        // TODO: factor out orgService.getVisibleOrgs and orgService.getSpinnerLabels
         var l = mutableListOf<String>()
         for (i in EgOrg.visibleOrgs.indices) {
             val org = EgOrg.visibleOrgs[i]
