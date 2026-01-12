@@ -73,8 +73,11 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
             res.getString(R.string.hold_status_unavailable)
         } else if (status == 4) {
             var s = res.getString(R.string.hold_status_available, pickupOrgName)
-            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelfExpireTime != null)
-                s = s + "\n" + res.getString(R.string.hold_status_expires, DateFormat.getDateInstance().format(shelfExpireTime))
+            shelfExpireTime?.let {
+                if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration)) {
+                    s = s + "\n" + res.getString(R.string.hold_status_expires, DateFormat.getDateInstance().format(it))
+                }
+            }
             s
         } else if (status == 7) {
             res.getString(R.string.hold_status_suspended)

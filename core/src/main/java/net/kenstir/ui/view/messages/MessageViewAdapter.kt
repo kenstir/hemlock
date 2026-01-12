@@ -37,7 +37,7 @@ class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.
 
         fun bindView(message: PatronMessage) {
             title.text = message.title
-            date.text = if (message.createDate != null) DateFormat.getDateInstance().format(message.createDate) else ""
+            date.text = message.createDate?.let { DateFormat.getDateInstance().format(it) } ?: ""
             body.text = message.message.trim()
             val primaryStyle = if (message.isRead) R.style.HemlockText_ListPrimary_Faded else R.style.HemlockText_ListPrimary
             val secondaryStyle = if (message.isRead) R.style.HemlockText_ListSecondary_Faded else R.style.HemlockText_ListSecondary

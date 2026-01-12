@@ -87,7 +87,7 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
 
     override val isDueSoon: Boolean
         get() {
-            if (dueDate == null) return false
+            val dueDate = dueDate ?: return false
             // this is effectively 3 days, because dueDate is at 23:59:59
             val threeDaysPrior = 4
             val cal = Calendar.getInstance()
@@ -100,9 +100,9 @@ class EvergreenCircRecord(var circ: OSRFObject?, override var circId: Int): Circ
     companion object {
         fun makeArray(circSlimObj: OSRFObject): ArrayList<CircRecord> {
             val ret = ArrayList<CircRecord>()
-            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("out")))
+            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj["out"]))
                 ret.add(EvergreenCircRecord(id))
-            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("overdue")))
+            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj["overdue"]))
                 ret.add(EvergreenCircRecord(id))
             return ret
         }

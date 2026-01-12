@@ -54,7 +54,7 @@ class MessageDetailsActivity : BaseActivity() {
         val body = findViewById<TextView>(R.id.message_body)
 
         title.text = message.title
-        date.text = if (message.createDate != null) DateFormat.getDateInstance().format(message.createDate) else ""
+        date.text = message.createDate?.let { DateFormat.getDateInstance().format(it) } ?: ""
         body.text = message.message
     }
 
@@ -109,9 +109,5 @@ class MessageDetailsActivity : BaseActivity() {
             setResult(RESULT_MESSAGE_UPDATED)
             finish()
         }
-    }
-
-    companion object {
-        private const val TAG = "MessageDetailsActivity"
     }
 }
