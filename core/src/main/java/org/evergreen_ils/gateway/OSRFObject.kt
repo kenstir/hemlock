@@ -74,6 +74,29 @@ data class OSRFObject(
         }
     }
 
+    /** Returns a list of OSRFObject associated with [key].
+     *
+     * Returns null if the key does not exist.
+     * Throws IllegalArgumentException if the key exists but is not a list,
+     * or if the list contains any items that are not OSRFObject.
+     */
+    fun getObjectList(key: String): List<OSRFObject>? {
+        // Check if exists
+        val value = this[key] ?: return null
+
+        // Check that it's a list
+        val list = value as? List<*> ?: throw IllegalArgumentException("obj[$key] is not a list: $value")
+
+        // Check all items for the expected type
+        if (list.all { it is OSRFObject }) {
+            // This cast is now safe because we've checked every item.
+            @Suppress("UNCHECKED_CAST")
+            return list as List<OSRFObject>
+        } else {
+            throw IllegalArgumentException("obj[$key] is not an object list: $value")
+        }
+    }
+
     fun getDate(key: String): Date? {
         return OSRFUtils.parseDate(getString(key))
     }
