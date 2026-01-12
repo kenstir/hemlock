@@ -77,7 +77,7 @@ class OSRFCoderTest {
         assertEquals("Hormel", obj.getString("name"))
 
         // check that "id" is an Int, not a Long.  At this time, the app is not expecting Longs
-        assertTrue(obj.getAny("id") is Int)
+        assertTrue(obj["id"] is Int)
     }
 
     // Case: decode an OSRF object when the class hasn't been registered
@@ -186,7 +186,7 @@ class OSRFCoderTest {
         val obj = GatewayResult.create(json).payloadFirstAsObject()
         assertNotNull(obj)
         assertEquals("CONS", obj?.getString("shortname"))
-        val children = obj?.getAny("children") as? List<OSRFObject>
+        val children = obj.getObjectList("children")
         assertEquals(2, children?.size)
         assertEquals("SYS1", children?.get(0)?.getString("shortname"))
     }

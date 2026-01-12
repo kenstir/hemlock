@@ -52,7 +52,7 @@ class EvergreenCopyLocationCounts(
         // in wire protocol, it is a raw payload, an array of arrays
         @JvmStatic
         fun makeArray(payload: List<Any>): List<CopyLocationCounts> {
-            var ret = mutableListOf<CopyLocationCounts>()
+            val ret = mutableListOf<CopyLocationCounts>()
             for (elem in payload) {
                 val a = elem as? List<Any> ?: continue
                 if (a.size < 6) continue

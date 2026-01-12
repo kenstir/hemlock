@@ -297,7 +297,7 @@ class LaunchActivity : AppCompatActivity() {
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
-                null, EgOrg.getOrgShortNameSafe(EgOrg.consortiumID), numAccounts)
+                null, EgOrg.getOrgShortNameSafe(EgOrg.CONSORTIUM_ID), numAccounts)
         } else {
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
                 EgOrg.getOrgShortNameSafe(account.homeOrg),

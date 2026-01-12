@@ -30,7 +30,7 @@ object EgOrg {
     var orgTypes = mutableListOf<OrgType>()
     private var orgs = mutableListOf<Organization>()
     var smsEnabled = false
-    const val consortiumID = 1
+    const val CONSORTIUM_ID = 1
     private const val TAG = "EgOrg"
 
     val allOrgs: List<Organization>
@@ -71,24 +71,24 @@ object EgOrg {
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         Log.v(TAG, "[orgs] id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
-        val children = obj.get("children") as? List<OSRFObject>
+        val children = obj.getObjectList("children")
         children?.forEach { child ->
-            val child_level = if (opacVisible) level + 1 else level
-            addOrganization(child, child_level)
+            val childLevel = if (opacVisible) level + 1 else level
+            addOrganization(child, childLevel)
         }
     }
 
-    fun loadOrgs(orgTree: OSRFObject, hierarchical_org_tree: Boolean) {
+    fun loadOrgs(orgTree: OSRFObject, useHierarchicalOrgTree: Boolean) {
         synchronized(this) {
             orgs.clear()
             addOrganization(orgTree, 0)
             // If the org tree is too big, then an indented list is unwieldy.
             // Convert it into a flat list sorted by org.name.
-            if (!hierarchical_org_tree && orgs.size > 25) {
+            if (!useHierarchicalOrgTree && orgs.size > 25) {
                 Collections.sort(orgs, Comparator<Organization> { a, b ->
                     // top-level OU appears first
-                    if (a.id == consortiumID) return@Comparator -1
-                    if (b.id == consortiumID) 1 else a.name.compareTo(b.name)
+                    if (a.id == CONSORTIUM_ID) return@Comparator -1
+                    if (b.id == CONSORTIUM_ID) 1 else a.name.compareTo(b.name)
                 })
                 for (o in orgs) {
                     o.indentedDisplayPrefix = ""

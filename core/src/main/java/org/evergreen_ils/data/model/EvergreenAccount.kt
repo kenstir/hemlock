@@ -38,7 +38,7 @@ class EvergreenAccount(username: String, authToken: String? = null): Account(use
 
         // settings is a list of objects with name and value as string;
         // construct a map of all settings, then parse out the ones we care about
-        val settings = obj.get("settings") as? List<OSRFObject>
+        val settings = obj.getObjectList("settings")
         val map = mutableMapOf<String, String>()
         settings?.forEach {
             val name = it.getString("name")

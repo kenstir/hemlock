@@ -98,65 +98,85 @@ class OSRFObjectTest {
         }
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    // Test to understand warning: Unchecked cast of Any? to List<OSRFObject>
     @Test
-    fun test_misc_uncheckedCast1() {
-        val obj = OSRFObject(
-            jsonMapOf(
-            "settings" to "0"
-        )
-        )
+    fun test_uncheckedCast_notAList() {
+        val obj = OSRFObject(jsonMapOf("settings" to "0"))
         val settings = obj.get("settings") as? List<OSRFObject>
         assertNull(settings)
-        // As Expected; as? returns null
+        // As expected; as? returns null
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    // Test to understand warning: Unchecked cast of Any? to List<OSRFObject>
     @Test
-    fun test_misc_uncheckedCast2() {
+    fun test_uncheckedCast_listContainsNonObjects() {
+        val obj = OSRFObject(jsonMapOf("settings" to arrayListOf(1, 2, 3)))
+
+        // as? returns non-null
+        val settings = obj.get("settings") as? List<OSRFObject>
+        assertNotNull(settings)
+
+        // it's a list even
+        assertEquals(3, settings?.size)
+
+        // but now comes the error; first() is not an OSRFObject and fails with ClassCastException
+        val res = kotlin.runCatching { settings?.first() }
+        assertTrue(res.isFailure)
+        val err = res.exceptionOrNull()
+        println("Exception: $err")
+        assertTrue(err is ClassCastException)
+    }
+
+    @Test
+    fun test_getObjectList_keyMissing() {
+        val obj = OSRFObject(jsonMapOf())
+        val settings = obj.getObjectList("settings")
+        assertNull(settings)
+    }
+
+    @Test
+    fun test_getObjectList_notAList() {
+        val obj = OSRFObject(jsonMapOf("settings" to "0"))
+        val res = kotlin.runCatching { obj.getObjectList("settings") }
+        assertTrue(res.isFailure)
+        val err = res.exceptionOrNull()
+        assertTrue(err is IllegalArgumentException)
+        assertEquals("obj[settings] is not a list: 0", err?.message)
+    }
+
+    @Test
+    fun test_getObjectList_listContainsNonObjects() {
+        val obj = OSRFObject(jsonMapOf("settings" to arrayListOf(1, 2, 3)))
+        val res = kotlin.runCatching { obj.getObjectList("settings") }
+        assertTrue(res.isFailure)
+        res.exceptionOrNull()?.message?.let { msg ->
+            println(msg)
+            assertTrue(msg.contains("obj[settings] is not an object list:"))
+        }
+    }
+
+    @Test
+    fun test_getObjectList_emptyList() {
         val obj = OSRFObject(
             jsonMapOf(
-            "settings" to arrayListOf(
-                OSRFObject(jsonMapOf("id" to 1)),
-                OSRFObject(jsonMapOf("id" to 2))
+                "settings" to arrayListOf<OSRFObject>()
             )
         )
+        val settings = obj.getObjectList("settings")
+        assertEquals(0, settings?.size)
+    }
+
+    @Test
+    fun test_getObjectList_ok() {
+        val obj = OSRFObject(
+            jsonMapOf(
+                "settings" to arrayListOf(
+                    OSRFObject(jsonMapOf("id" to 1)),
+                    OSRFObject(jsonMapOf("id" to 2))
+                )
+            )
         )
-        val settings = obj.get("settings") as? List<OSRFObject>
-        assertNotNull(settings)
+        val settings = obj.getObjectList("settings")
         assertEquals(2, settings?.size)
-        assertTrue(settings?.first() is OSRFObject)
-        // As Expected; as? returns non-null
-    }
-
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
-    @Test
-    fun test_misc_uncheckedCast3() {
-        val obj = OSRFObject(
-            jsonMapOf(
-            "settings" to arrayListOf(1,2,3)
-        )
-        )
-        val settings = obj.get("settings") as? List<OSRFObject>
-        assertNotNull(settings)
-//        val first = settings?.first()
-//        assertEquals(1, settings?.first())
-        // Surprising: as? returns non-null but the result is a List<Int>,
-        // first() fails with a ClassCastException.
-    }
-
-    // Try to avoid unchecked cast using filterIsInstance
-    @Test
-    fun test_misc_uncheckedCast4() {
-        val obj = OSRFObject(
-            jsonMapOf(
-            "settings" to arrayListOf(1,2,3)
-        )
-        )
-        val settings = obj.get("settings") as? List<*>
-        assertNotNull(settings)
-        val l = settings?.filterIsInstance<OSRFObject>()
-        assertEquals(0, l?.size)
-        // As Expected; as? returns List, filterIsInstance returns empty.
     }
 }
