@@ -34,7 +34,7 @@ import org.evergreen_ils.gateway.paramListOf
 object EvergreenOrgService: OrgService {
     const val TAG = "OrgService"
 
-    override val consortiumID = EgOrg.consortiumID
+    override val consortiumID = EgOrg.CONSORTIUM_ID
 
     override fun findOrg(orgID: Int?) = EgOrg.findOrg(orgID)
 

@@ -83,11 +83,7 @@ class CopyInformationActivity : BaseActivity() {
             orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
             record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-<<<<<<< HEAD
-            orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.CONSORTIUM_ID)
-=======
             orgID = intent.getIntExtra(Key.ORG_ID, App.svc.orgService.consortiumID)
->>>>>>> ed2f5ed33 (Factor out org-finding functions into OrgService)
         }
 
         rv = findViewById(R.id.recycler_view)
