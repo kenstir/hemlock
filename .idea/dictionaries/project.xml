@@ -4,9 +4,11 @@
       <w>authtoken</w>
       <w>circ</w>
       <w>datafield</w>
+      <w>eresources</w>
       <w>janejetson</w>
       <w>marcxml</w>
       <w>myopac</w>
+      <w>orgs</w>
       <w>osrf</w>
       <w>poprel</w>
       <w>rizea</w>
