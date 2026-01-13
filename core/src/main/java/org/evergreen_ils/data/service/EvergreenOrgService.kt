@@ -42,6 +42,10 @@ object EvergreenOrgService: OrgService {
 
     override fun getOrgNameSafe(orgID: Int?) = EgOrg.getOrgNameSafe(orgID)
 
+    override fun getVisibleOrgs() = EgOrg.visibleOrgs
+
+    override fun getOrgSpinnerLabels() = EgOrg.orgSpinnerLabels()
+
     override fun dumpOrgStats() = EgOrg.dumpOrgStats()
 
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {

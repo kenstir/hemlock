@@ -38,6 +38,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
+import net.kenstir.data.model.HoldRecord
 import net.kenstir.data.service.HoldUpdateOptions
 import net.kenstir.hemlock.R
 import net.kenstir.ui.App
@@ -47,8 +48,7 @@ import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
-import org.evergreen_ils.data.model.EvergreenHoldRecord
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
@@ -73,7 +73,7 @@ class HoldDetailsActivity : BaseActivity() {
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
 
-        val record = intent.getSerializableExtra(Key.HOLD_RECORD) as EvergreenHoldRecord
+        val record = intent.getSerializableExtra(Key.HOLD_RECORD) as HoldRecord
 
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)
@@ -137,16 +137,11 @@ class HoldDetailsActivity : BaseActivity() {
         thawDateEdittext?.setOnClickListener {
             thawDatePicker?.show()
         }
-        // TODO: factor out orgService.getVisibleOrgs and orgService.getSpinnerLabels
-        var l = mutableListOf<String>()
-        for (i in EgOrg.visibleOrgs.indices) {
-            val org = EgOrg.visibleOrgs[i]
-            l.add(org.spinnerLabel)
-            if (org.id == record.pickupLib) {
-                selectedOrgPos = i
-            }
-        }
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, l, true)
+
+        val orgs = App.svc.orgService.getVisibleOrgs()
+        val orgLabels = App.svc.orgService.getOrgSpinnerLabels()
+        selectedOrgPos = orgs.indexOfFirstOrZero { it.id == record.pickupLib }
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, orgLabels, true)
         orgSelector.adapter = adapter
         orgSelector.setSelection(selectedOrgPos)
         orgSelector.onItemSelectedListener = object : OnItemSelectedListener {
@@ -158,13 +153,12 @@ class HoldDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun cancelHold(record: EvergreenHoldRecord) {
+    private fun cancelHold(record: HoldRecord) {
         scope.async {
             showBusy(R.string.msg_canceling_hold)
 
-            val holdId = record.ahrObj.getInt("id") ?: 0
-            val result = App.svc.circService.cancelHold(
-                App.account, holdId)
+            val holdId = record.id
+            val result = App.svc.circService.cancelHold(App.account, holdId)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -181,14 +175,14 @@ class HoldDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun updateHold(record: EvergreenHoldRecord) {
+    private fun updateHold(record: HoldRecord) {
         scope.async {
             showBusy(R.string.msg_updating_hold)
             val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
             val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
-            val holdId = record.ahrObj.getInt("id") ?: 0
-            val orgId = EgOrg.visibleOrgs[selectedOrgPos].id
+            val holdId = record.id
+            val orgId = App.svc.orgService.getVisibleOrgs()[selectedOrgPos].id
             val holdOptions = HoldUpdateOptions(
                 pickupLib = orgId,
                 suspendHold = suspendHold!!.isChecked,

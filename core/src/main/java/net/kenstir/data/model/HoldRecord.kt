@@ -37,6 +37,7 @@ interface HoldRecord: Serializable {
     val phoneNotify: String?
     val smsNotify: String?
     val isSuspended: Boolean
+    val pickupLib: Int?
     val pickupOrgName: String
     val queuePosition: Int?
     val totalHolds: Int?

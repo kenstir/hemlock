@@ -46,6 +46,12 @@ interface OrgService {
      */
     fun getOrgNameSafe(orgID: Int?): String
 
+    /** Returns a list of all visible orgs */
+    fun getVisibleOrgs(): List<Organization>
+
+    /** Returns a list of the labels of all visible orgs for use in a Spinner */
+    fun getOrgSpinnerLabels(): List<String>
+
     /** Logs details about all loaded orgs for debugging */
     fun dumpOrgStats()
 

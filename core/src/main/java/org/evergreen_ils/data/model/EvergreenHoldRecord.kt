@@ -136,7 +136,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
         get() = ahrObj.getString("sms_notify")
     override val isSuspended: Boolean
         get() = ahrObj.getBoolean("frozen")
-    val pickupLib: Int?
+    override val pickupLib: Int?
         get() = ahrObj.getInt("pickup_lib")
     override val pickupOrgName: String
         get() = EgOrg.getOrgNameSafe(pickupLib)
