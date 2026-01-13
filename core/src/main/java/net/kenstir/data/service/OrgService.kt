@@ -45,7 +45,7 @@ interface OrgService {
     fun getOrgShortNameSafe(orgID: Int?): String
 
     /**
-     * Find an org and return its shortName, returning a safe default if not found.
+     * Find an org and return its name, returning a safe default if not found.
      */
     fun getOrgNameSafe(orgID: Int?): String
 
