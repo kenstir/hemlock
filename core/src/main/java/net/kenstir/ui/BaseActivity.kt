@@ -70,7 +70,6 @@ import net.kenstir.ui.view.main.MainActivity
 import net.kenstir.ui.view.messages.MessagesActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.util.Analytics
-import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
 
 /* Activity base class to handle common behaviours like the navigation drawer */
@@ -236,19 +235,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return EgOrg.findOrg(App.account.homeOrg)?.eresourcesUrl
+        return App.svc.orgService.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return EgOrg.findOrg(App.account.homeOrg)?.eventsURL
+        return App.svc.orgService.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return EgOrg.findOrg(App.account.homeOrg)?.meetingRoomsUrl
+        return App.svc.orgService.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return EgOrg.findOrg(App.account.homeOrg)?.museumPassesUrl
+        return App.svc.orgService.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

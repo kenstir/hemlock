@@ -28,9 +28,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.data.model.CopyLocationCounts
 import net.kenstir.hemlock.R
+import net.kenstir.ui.App
 import net.kenstir.ui.Key
 import net.kenstir.ui.view.OrgDetailsActivity
-import org.evergreen_ils.system.EgOrg
 
 class CopyInformationViewAdapter(
     private val items: List<CopyLocationCounts>,
@@ -46,17 +46,17 @@ class CopyInformationViewAdapter(
         private val spannableTextMinHeight = v.resources.getDimensionPixelSize(R.dimen.spannable_text_min_height)
 
         fun bindView(clc: CopyLocationCounts) {
-            val org = EgOrg.findOrg(clc.orgId)
+            val org = App.svc.orgService.findOrg(clc.orgId)
 
             if (groupCopiesBySystem) {
-                majorLocationText.text = EgOrg.getOrgNameSafe(org?.parent)
+                majorLocationText.text = App.svc.orgService.getOrgNameSafe(org?.parent)
                 val ss = SpannableString(org?.name)
                 ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 minorLocationText.setText(ss, TextView.BufferType.SPANNABLE)
                 minorLocationText.setOnClickListener { launchOrgDetails(org?.id) }
                 minorLocationText.setMinimumHeight(spannableTextMinHeight)
             } else {
-                majorLocationText.text = EgOrg.getOrgNameSafe(clc.orgId)
+                majorLocationText.text = App.svc.orgService.getOrgNameSafe(clc.orgId)
                 minorLocationText.visibility = View.GONE
             }
             copyCallNumberText.text = clc.callNumber

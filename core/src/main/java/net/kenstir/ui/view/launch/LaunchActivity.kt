@@ -55,7 +55,6 @@ import net.kenstir.ui.util.appInfo
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.system.EgOrg
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -285,7 +284,8 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // load the home org settings, used to control visibility of Events and other buttons
-        EgOrg.findOrg(App.account.homeOrg)?.let { org ->
+        val orgService = App.svc.orgService
+        orgService.findOrg(App.account.homeOrg)?.let { org ->
             val result = App.svc.orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
@@ -297,11 +297,11 @@ class LaunchActivity : AppCompatActivity() {
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
-                null, EgOrg.getOrgShortNameSafe(EgOrg.CONSORTIUM_ID), numAccounts)
+                null, orgService.getOrgShortNameSafe(orgService.consortiumID), numAccounts)
         } else {
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
-                EgOrg.getOrgShortNameSafe(account.homeOrg),
-                EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent), numAccounts)
+                orgService.getOrgShortNameSafe(account.homeOrg),
+                orgService.getOrgShortNameSafe(orgService.findOrg(account.homeOrg)?.parent), numAccounts)
         }
     }
 

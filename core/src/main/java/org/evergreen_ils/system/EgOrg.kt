@@ -131,19 +131,6 @@ object EgOrg {
         return visibleOrgs.map { it.shortname }
     }
 
-    // return list of spinner labels and the index at which defaultOrgId appears else (0)
-    fun orgSpinnerLabelsAndSelectedIndex(defaultOrgId: Int?): Pair<ArrayList<String>, Int> {
-        val labels: ArrayList<String> = ArrayList<String>(visibleOrgs.size)
-        var selectedIndex = 0
-        for ((index, org) in visibleOrgs.withIndex()) {
-            labels.add(org.spinnerLabel)
-            if (org.id == defaultOrgId) {
-                selectedIndex = index
-            }
-        }
-        return Pair(labels, selectedIndex)
-    }
-
     @SuppressLint("DefaultLocale")
     fun dumpOrgStats() {
         val numPickupLocations = visibleOrgs.count { it.isPickupLocation }

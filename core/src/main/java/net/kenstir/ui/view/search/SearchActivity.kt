@@ -71,7 +71,6 @@ import net.kenstir.util.Analytics
 import net.kenstir.util.Analytics.orgDimensionKey
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 
 const val ITEM_PLACE_HOLD = 0
@@ -201,11 +200,12 @@ class SearchActivity : BaseActivity() {
             optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
             optionValues = EgCodedValueMap.searchFormatSpinnerValues
         )
+        val orgService = App.svc.orgService
         searchOrgOption = SpinnerStringOption(
             key = AppState.SEARCH_ORG_SHORT_NAME,
-            defaultValue = EgOrg.findOrg(App.account.searchOrg)?.shortname ?: EgOrg.visibleOrgs[0].shortname,
-            optionLabels = EgOrg.orgSpinnerLabels(),
-            optionValues = EgOrg.spinnerShortNames()
+            defaultValue = orgService.findOrg(App.account.searchOrg)?.shortname ?: orgService.getVisibleOrgs()[0].shortname,
+            optionLabels = orgService.getOrgSpinnerLabels(),
+            optionValues = orgService.getOrgSpinnerShortNames()
         )
     }
 
@@ -298,13 +298,14 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun logSearchEvent(result: Result<SearchResults>) {
+        val orgService = App.svc.orgService
         val b = bundleOf(
-                Analytics.Param.SEARCH_CLASS to searchClass,
-                Analytics.Param.SEARCH_FORMAT to searchFormatCode,
-                Analytics.Param.SEARCH_ORG_KEY to
-                        orgDimensionKey(EgSearch.selectedOrganization,
-                                EgOrg.findOrg(App.account.searchOrg),
-                                EgOrg.findOrg(App.account.homeOrg)),
+            Analytics.Param.SEARCH_CLASS to searchClass,
+            Analytics.Param.SEARCH_FORMAT to searchFormatCode,
+            Analytics.Param.SEARCH_ORG_KEY to
+                    orgDimensionKey(EgSearch.selectedOrganization,
+                        orgService.findOrg(App.account.searchOrg),
+                        orgService.findOrg(App.account.homeOrg)),
         )
         b.putAll(Analytics.searchTextStats(searchText))
         when (result) {
@@ -340,12 +341,14 @@ class SearchActivity : BaseActivity() {
         option.spinner = orgSpinner
         orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
 
+        val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+
         // restore last selected value and monitor changes
         option.load()
-        EgSearch.selectedOrganization = EgOrg.visibleOrgs[option.selectedIndex]
+        EgSearch.selectedOrganization = visibleOrgs[option.selectedIndex]
         option.addSelectionListener { index, value ->
             Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
-            EgSearch.selectedOrganization = EgOrg.visibleOrgs[index]
+            EgSearch.selectedOrganization = visibleOrgs[index]
         }
     }
 

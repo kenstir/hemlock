@@ -59,7 +59,6 @@ import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
@@ -97,6 +96,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
+    private val visibleOrgs = App.svc.orgService.getVisibleOrgs()
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -208,7 +208,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logOrgStats() {
         if (Analytics.isDebuggable(this)) {
-            EgOrg.dumpOrgStats()
+            App.svc.orgService.dumpOrgStats()
         }
     }
 
@@ -241,12 +241,12 @@ class PlaceHoldActivity : BaseActivity() {
         val notifyTypes = TextUtils.join("|", notify)
         try {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
-                    Analytics.Param.RESULT to result,
-                    Analytics.Param.HOLD_NOTIFY to notifyTypes,
-                    Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
-                    Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
-                            EgOrg.findOrg(App.account.pickupOrg),
-                            EgOrg.findOrg(App.account.homeOrg)),
+                Analytics.Param.RESULT to result,
+                Analytics.Param.HOLD_NOTIFY to notifyTypes,
+                Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
+                Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(visibleOrgs[selectedOrgPos],
+                    App.svc.orgService.findOrg(App.account.pickupOrg),
+                    App.svc.orgService.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -278,7 +278,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun placeHoldPreFlightCheck(): Boolean {
-        val selectedOrg = EgOrg.visibleOrgs[selectedOrgPos]
+        val selectedOrg = visibleOrgs[selectedOrgPos]
         if (!selectedOrg.isPickupLocation) {
             val builder = AlertDialog.Builder(this@PlaceHoldActivity)
             builder.setTitle(getString(R.string.title_not_pickup_location))
@@ -311,7 +311,7 @@ class PlaceHoldActivity : BaseActivity() {
             return
 
         scope.async {
-            val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
+            val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
             val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             val holdType: String
             val itemId: Int
@@ -399,7 +399,7 @@ class PlaceHoldActivity : BaseActivity() {
         val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
         notifyBySMS?.isChecked = notify && !notifyNumber.isNullOrEmpty()
 
-        val enabled = EgOrg.smsEnabled
+        val enabled = App.svc.orgService.isSmsEnabled
         if (enabled) {
             notifyBySMS?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
@@ -500,10 +500,11 @@ class PlaceHoldActivity : BaseActivity() {
     // * changing it results in an JUST ONCE / ALWAYS alert
     // * ALWAYS saves it back to the account
     private fun initOrgSpinner() {
-        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, EgOrg.orgSpinnerLabels(), true)
+        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, true)
 
         val defaultId = account?.pickupOrg
-        selectedOrgPos = EgOrg.visibleOrgs.indexOfFirstOrZero { it.id == defaultId }
+        selectedOrgPos = visibleOrgs.indexOfFirstOrZero { it.id == defaultId }
         ignoreNextOrgSelection = true
         orgSpinner?.setSelection(selectedOrgPos)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
@@ -521,7 +522,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun maybeChangePickupLocation(newPos: Int) {
-        val newOrg = EgOrg.visibleOrgs[newPos]
+        val newOrg = visibleOrgs[newPos]
 
         if (newOrg.id == account?.pickupOrg) {
             // update selectedOrgPos but do not show alert
@@ -554,7 +555,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun savePickupLocation(newPos: Int) {
-        val newOrg = EgOrg.visibleOrgs[newPos]
+        val newOrg = visibleOrgs[newPos]
         scope.async {
             try {
                 account?.let { account ->

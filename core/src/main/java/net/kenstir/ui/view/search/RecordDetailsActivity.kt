@@ -35,7 +35,6 @@ import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.logBundleSize
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
-import org.evergreen_ils.system.EgOrg
 
 class RecordDetailsActivity : BaseActivity() {
     private var mPager: ViewPager2? = null
@@ -62,7 +61,7 @@ class RecordDetailsActivity : BaseActivity() {
         records.addAll(recordList)
 
         // Calculate numResults after records are loaded
-        orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.CONSORTIUM_ID)
+        orgID = intent.getIntExtra(Key.ORG_ID, App.svc.orgService.consortiumID)
         val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
         numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
         mPager = findViewById(R.id.main_content_view)

@@ -34,6 +34,25 @@ import org.evergreen_ils.gateway.paramListOf
 object EvergreenOrgService: OrgService {
     const val TAG = "OrgService"
 
+    override val consortiumID = EgOrg.CONSORTIUM_ID
+
+    override val isSmsEnabled: Boolean
+        get() = EgOrg.smsEnabled
+
+    override fun findOrg(orgID: Int?) = EgOrg.findOrg(orgID)
+
+    override fun getOrgShortNameSafe(orgID: Int?) = EgOrg.getOrgShortNameSafe(orgID)
+
+    override fun getOrgNameSafe(orgID: Int?) = EgOrg.getOrgNameSafe(orgID)
+
+    override fun getVisibleOrgs() = EgOrg.visibleOrgs
+
+    override fun getOrgSpinnerLabels() = EgOrg.orgSpinnerLabels()
+
+    override fun getOrgSpinnerShortNames() = EgOrg.spinnerShortNames()
+
+    override fun dumpOrgStats() = EgOrg.dumpOrgStats()
+
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {
             return Result.Success(loadOrgSettingsImpl(orgID))
