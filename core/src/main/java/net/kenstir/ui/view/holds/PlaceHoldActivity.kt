@@ -59,7 +59,6 @@ import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
-import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
@@ -97,6 +96,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
     private val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+    private val smsCarriers = App.svc.orgService.getSmsCarriers()
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -312,7 +312,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         scope.async {
             val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
-            val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
+            val selectedSMSCarrierID = if (smsCarriers.size > selectedSMSPos) smsCarriers[selectedSMSPos].id else -1
             val holdType: String
             val itemId: Int
             when {
@@ -427,11 +427,12 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSSpinner() {
-        smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, EgSms.spinnerLabels)
+        val spinnerLabels = App.svc.orgService.getSmsCarrierSpinnerLabels()
+        smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, spinnerLabels)
 
         val savedId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
         val defaultId = if (savedId != -1) savedId else account?.smsCarrier
-        selectedSMSPos = EgSms.carriers.indexOfFirstOrZero { it.id == defaultId }
+        selectedSMSPos = smsCarriers.indexOfFirstOrZero { it.id == defaultId }
         smsSpinner?.setSelection(selectedSMSPos)
         ignoreNextSMSSelection = true
         smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
@@ -442,7 +443,7 @@ class PlaceHoldActivity : BaseActivity() {
                 }
                 if (position == selectedSMSPos) return
                 selectedSMSPos = position
-                AppState.setInt(AppState.HOLD_SMS_CARRIER_ID, EgSms.carriers[position].id)
+                AppState.setInt(AppState.HOLD_SMS_CARRIER_ID, smsCarriers[position].id)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

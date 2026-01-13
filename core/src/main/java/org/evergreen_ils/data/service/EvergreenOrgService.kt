@@ -24,12 +24,14 @@ import net.kenstir.logging.Log
 import net.kenstir.data.Result
 import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.Account
+import net.kenstir.data.model.SMSCarrier
 import net.kenstir.data.service.OrgService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.EvergreenOrganization
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgSms
 
 object EvergreenOrgService: OrgService {
     const val TAG = "OrgService"
@@ -52,6 +54,14 @@ object EvergreenOrgService: OrgService {
     override fun getOrgSpinnerShortNames() = EgOrg.spinnerShortNames()
 
     override fun dumpOrgStats() = EgOrg.dumpOrgStats()
+
+    override fun getSmsCarriers(): List<SMSCarrier> {
+        return EgSms.carriers
+    }
+
+    override fun getSmsCarrierSpinnerLabels() = EgSms.spinnerLabels
+
+    override fun getSmsCarrierSpinnerValues() = EgSms.spinnerValues
 
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {

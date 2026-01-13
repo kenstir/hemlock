@@ -20,9 +20,11 @@ package net.kenstir.data.service
 import net.kenstir.data.Result
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Organization
+import net.kenstir.data.model.SMSCarrier
 
 /**
- * Service for loading organization (library) settings and details.
+ * Service for loading and finding information about the consortium or library system:
+ * organizations (libraries) and their settings and details.
  */
 interface OrgService {
 
@@ -60,6 +62,15 @@ interface OrgService {
 
     /** Logs details about all loaded orgs for debugging */
     fun dumpOrgStats()
+
+    /** Returns a list of SMS carriers */
+    fun getSmsCarriers(): List<SMSCarrier>
+
+    /** Returns a list of SMS carrier spinner labels */
+    fun getSmsCarrierSpinnerLabels(): List<String>
+
+    /** Returns a list of SMS carrier spinner values */
+    fun getSmsCarrierSpinnerValues(): List<String>
 
     /**
      * Load org settings, e.g. eventsUrl and isPickupLocation.
