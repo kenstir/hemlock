@@ -28,8 +28,6 @@ import android.widget.Spinner
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
-import androidx.core.util.component1
-import androidx.core.util.component2
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -45,7 +43,7 @@ import net.kenstir.ui.util.OrgArrayAdapter
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.util.indexOfFirstOrZero
 
 class OrgDetailsActivity : BaseActivity() {
 
@@ -130,14 +128,17 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val (spinnerLabels, index) = EgOrg.orgSpinnerLabelsAndSelectedIndex(orgID)
+        val orgs = App.svc.orgService.getVisibleOrgs()
+        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        val selectedOrgPos = orgs.indexOfFirstOrZero { it.id == orgID }
+
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, false)
         orgSpinner?.adapter = adapter
-        orgSpinner?.setSelection(if (index > 0) index else 0)
-        Log.d(TAG, "[fetch] setSelection $index")
+        orgSpinner?.setSelection(selectedOrgPos)
+        Log.d(TAG, "[fetch] setSelection $selectedOrgPos")
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                org = EgOrg.visibleOrgs[position]
+                org = orgs[position]
                 orgID = org?.id
                 Log.d(TAG, "[fetch] onItemSelected $position, orgID=$orgID")
                 fetchData()
