@@ -36,6 +36,9 @@ object EvergreenOrgService: OrgService {
 
     override val consortiumID = EgOrg.CONSORTIUM_ID
 
+    override val isSmsEnabled: Boolean
+        get() = EgOrg.smsEnabled
+
     override fun findOrg(orgID: Int?) = EgOrg.findOrg(orgID)
 
     override fun getOrgShortNameSafe(orgID: Int?) = EgOrg.getOrgShortNameSafe(orgID)

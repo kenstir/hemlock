@@ -31,6 +31,9 @@ interface OrgService {
      */
     val consortiumID: Int
 
+    /** Is SMS notifications enabled for all orgs? */
+    val isSmsEnabled: Boolean
+
     /**
      * Find an org by its orgId.
      */
