@@ -55,6 +55,9 @@ interface OrgService {
     /** Returns a list of the labels of all visible orgs for use in a Spinner */
     fun getOrgSpinnerLabels(): List<String>
 
+    /** Returns a list of the shortnames of all visible orgs */
+    fun getOrgSpinnerShortNames(): List<String>
+
     /** Logs details about all loaded orgs for debugging */
     fun dumpOrgStats()
 
