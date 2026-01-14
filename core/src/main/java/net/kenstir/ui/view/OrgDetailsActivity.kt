@@ -132,7 +132,7 @@ class OrgDetailsActivity : BaseActivity() {
         val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
         val selectedOrgPos = orgs.indexOfFirstOrZero { it.id == orgID }
 
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, false)
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(selectedOrgPos)
         Log.d(TAG, "[fetch] setSelection $selectedOrgPos")

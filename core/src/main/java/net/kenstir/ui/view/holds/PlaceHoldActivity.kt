@@ -502,7 +502,7 @@ class PlaceHoldActivity : BaseActivity() {
     // * ALWAYS saves it back to the account
     private fun initOrgSpinner() {
         val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
-        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, true)
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, visibleOrgs, true)
 
         val defaultId = account?.pickupOrg
         selectedOrgPos = visibleOrgs.indexOfFirstOrZero { it.id == defaultId }

@@ -336,12 +336,12 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
+        val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+
         // connect spinner to option and set adapter
         val option = searchOrgOption
         option.spinner = orgSpinner
-        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
-
-        val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, visibleOrgs, false)
 
         // restore last selected value and monitor changes
         option.load()

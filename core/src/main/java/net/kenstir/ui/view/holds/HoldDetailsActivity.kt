@@ -142,7 +142,7 @@ class HoldDetailsActivity : BaseActivity() {
         val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
         selectedOrgPos = orgs.indexOfFirstOrZero { it.id == record.pickupLib }
 
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, true)
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, true)
         orgSelector.adapter = adapter
         orgSelector.setSelection(selectedOrgPos)
         orgSelector.onItemSelectedListener = object : OnItemSelectedListener {
