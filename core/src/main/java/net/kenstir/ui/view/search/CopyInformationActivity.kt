@@ -50,7 +50,7 @@ import net.kenstir.util.getCopySummary
 class CopyInformationActivity : BaseActivity() {
 
     private lateinit var record: BibRecord
-    private var orgID: Int = App.svc.orgService.consortiumID
+    private var orgID: Int = App.svc.consortiumService.consortiumID
     private var placeHoldButton: Button? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
     private var rv: RecyclerView? = null
@@ -83,7 +83,7 @@ class CopyInformationActivity : BaseActivity() {
             orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
             record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-            orgID = intent.getIntExtra(Key.ORG_ID, App.svc.orgService.consortiumID)
+            orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortiumService.consortiumID)
         }
 
         rv = findViewById(R.id.recycler_view)
@@ -143,7 +143,7 @@ class CopyInformationActivity : BaseActivity() {
 
     private fun updateCopyInfo(copyLocationCountsList: List<CopyLocationCounts>) {
         copyInfoRecords.clear()
-        val orgService = App.svc.orgService
+        val orgService = App.svc.consortiumService
         for (clc in copyLocationCountsList) {
             val org = orgService.findOrg(clc.orgId)
             // if a branch is not opac_visible, its copies should not be visible
@@ -156,14 +156,14 @@ class CopyInformationActivity : BaseActivity() {
             copyInfoRecords.sortWith(Comparator { a, b ->
                 val aOrg = orgService.findOrg(a.orgId)
                 val bOrg = orgService.findOrg(b.orgId)
-                val aSystemName = orgService.getOrgNameSafe(aOrg?.parent)
-                val bSystemName = orgService.getOrgNameSafe(bOrg?.parent)
+                val aSystemName = orgService.findOrgNameSafe(aOrg?.parent)
+                val bSystemName = orgService.findOrgNameSafe(bOrg?.parent)
                 val compareBySystem = compareValues(aSystemName, bSystemName)
                 if (compareBySystem != 0) compareBySystem else compareValues(aOrg?.name, bOrg?.name)
             })
         } else {
             copyInfoRecords.sortWith(Comparator { a, b ->
-                compareValues(orgService.getOrgNameSafe(a.orgId), orgService.getOrgNameSafe(b.orgId))
+                compareValues(orgService.findOrgNameSafe(a.orgId), orgService.findOrgNameSafe(b.orgId))
             })
         }
         adapter?.notifyDataSetChanged()
@@ -172,7 +172,7 @@ class CopyInformationActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                val org = App.svc.orgService.findOrg(orgID) ?: return@async
+                val org = App.svc.consortiumService.findOrg(orgID) ?: return@async
                 val result = App.svc.searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(result.get())

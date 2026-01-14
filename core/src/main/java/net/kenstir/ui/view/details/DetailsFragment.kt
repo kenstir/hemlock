@@ -57,7 +57,7 @@ import net.kenstir.util.getCopySummary
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
-    private var orgID: Int = App.svc.orgService.consortiumID
+    private var orgID: Int = App.svc.consortiumService.consortiumID
     private var position: Int = 0
     private var total: Int = 0
 
@@ -196,7 +196,7 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val record = this.record ?: return
-        val org = App.svc.orgService.findOrg(orgID) ?: return
+        val org = App.svc.consortiumService.findOrg(orgID) ?: return
 
         val links = App.behavior.getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
@@ -229,7 +229,7 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        val org = App.svc.orgService.findOrg(orgID)
+        val org = App.svc.consortiumService.findOrg(orgID)
         val links = if (org != null) App.behavior.getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)

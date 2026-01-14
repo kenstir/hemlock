@@ -67,7 +67,7 @@ fun BibRecord.getCopySummary(resources: Resources, orgID: Int?): String {
     }
     val totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total)
     return String.format(resources.getString(R.string.n_of_m_available),
-        available, totalCopies, App.svc.orgService.getOrgNameSafe(orgID))
+        available, totalCopies, App.svc.consortiumService.findOrgNameSafe(orgID))
 }
 
 /**

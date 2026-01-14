@@ -284,9 +284,9 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // load the home org settings, used to control visibility of Events and other buttons
-        val orgService = App.svc.orgService
+        val orgService = App.svc.consortiumService
         orgService.findOrg(App.account.homeOrg)?.let { org ->
-            val result = App.svc.orgService.loadOrgSettings(org.id)
+            val result = App.svc.consortiumService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
@@ -297,11 +297,11 @@ class LaunchActivity : AppCompatActivity() {
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
-                null, orgService.getOrgShortNameSafe(orgService.consortiumID), numAccounts)
+                null, orgService.findOrgShortNameSafe(orgService.consortiumID), numAccounts)
         } else {
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
-                orgService.getOrgShortNameSafe(account.homeOrg),
-                orgService.getOrgShortNameSafe(orgService.findOrg(account.homeOrg)?.parent), numAccounts)
+                orgService.findOrgShortNameSafe(account.homeOrg),
+                orgService.findOrgShortNameSafe(orgService.findOrg(account.homeOrg)?.parent), numAccounts)
         }
     }
 

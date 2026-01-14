@@ -138,8 +138,8 @@ class HoldDetailsActivity : BaseActivity() {
             thawDatePicker?.show()
         }
 
-        val orgs = App.svc.orgService.getVisibleOrgs()
-        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        val orgs = App.svc.consortiumService.visibleOrgs
+        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
         selectedOrgPos = orgs.indexOfFirstOrZero { it.id == record.pickupLib }
 
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, true)
@@ -183,7 +183,7 @@ class HoldDetailsActivity : BaseActivity() {
             val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
             val holdId = record.id
-            val orgId = App.svc.orgService.getVisibleOrgs()[selectedOrgPos].id
+            val orgId = App.svc.consortiumService.visibleOrgs[selectedOrgPos].id
             val holdOptions = HoldUpdateOptions(
                 pickupLib = orgId,
                 suspendHold = suspendHold!!.isChecked,

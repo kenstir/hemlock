@@ -70,7 +70,6 @@ import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.Analytics
 import net.kenstir.util.Analytics.orgDimensionKey
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgSearch
 
 const val ITEM_PLACE_HOLD = 0
@@ -188,6 +187,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchOptions() {
+        val consortiumService = App.svc.consortiumService
         searchClassOption = SpinnerStringOption(
             key = AppState.SEARCH_CLASS,
             defaultValue = SearchClass.KEYWORD,
@@ -197,15 +197,14 @@ class SearchActivity : BaseActivity() {
         searchFormatOption = SpinnerStringOption(
             key = AppState.SEARCH_FORMAT,
             defaultValue = "",
-            optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
-            optionValues = EgCodedValueMap.searchFormatSpinnerValues
+            optionLabels = consortiumService.searchFormatSpinnerLabels,
+            optionValues = consortiumService.searchFormatSpinnerValues
         )
-        val orgService = App.svc.orgService
         searchOrgOption = SpinnerStringOption(
             key = AppState.SEARCH_ORG_SHORT_NAME,
-            defaultValue = orgService.findOrg(App.account.searchOrg)?.shortname ?: orgService.getVisibleOrgs()[0].shortname,
-            optionLabels = orgService.getOrgSpinnerLabels(),
-            optionValues = orgService.getOrgSpinnerShortNames()
+            defaultValue = consortiumService.findOrg(App.account.searchOrg)?.shortname ?: consortiumService.visibleOrgs[0].shortname,
+            optionLabels = consortiumService.orgSpinnerLabels,
+            optionValues = consortiumService.orgSpinnerShortNames
         )
     }
 
@@ -298,7 +297,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun logSearchEvent(result: Result<SearchResults>) {
-        val orgService = App.svc.orgService
+        val orgService = App.svc.consortiumService
         val b = bundleOf(
             Analytics.Param.SEARCH_CLASS to searchClass,
             Analytics.Param.SEARCH_FORMAT to searchFormatCode,
@@ -336,7 +335,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+        val visibleOrgs = App.svc.consortiumService.visibleOrgs
 
         // connect spinner to option and set adapter
         val option = searchOrgOption

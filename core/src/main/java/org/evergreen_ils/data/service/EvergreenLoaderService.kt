@@ -102,7 +102,7 @@ object EvergreenLoaderService: LoaderService {
         val jobs = mutableListOf<Deferred<Any>>()
         for (org in EgOrg.visibleOrgs) {
             jobs.add(async {
-                EvergreenOrgService.loadOrgSettings(org.id)
+                EvergreenConsortiumService.loadOrgSettings(org.id)
             })
         }
         jobs.add(async { loadSmsCarriers() })

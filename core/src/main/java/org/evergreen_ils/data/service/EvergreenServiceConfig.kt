@@ -24,7 +24,7 @@ class EvergreenServiceConfig : ServiceConfig {
     override val authService = EvergreenAuthService
     override val biblioService = EvergreenBiblioService
     override val circService = EvergreenCircService
-    override val orgService = EvergreenOrgService
+    override val consortiumService = EvergreenConsortiumService
     override val searchService = EvergreenSearchService
     override val userService = EvergreenUserService
 }

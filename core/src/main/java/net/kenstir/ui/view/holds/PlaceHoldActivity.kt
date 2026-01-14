@@ -95,8 +95,8 @@ class PlaceHoldActivity : BaseActivity() {
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
-    private val visibleOrgs = App.svc.orgService.getVisibleOrgs()
-    private val smsCarriers = App.svc.orgService.getSmsCarriers()
+    private val visibleOrgs = App.svc.consortiumService.visibleOrgs
+    private val smsCarriers = App.svc.consortiumService.smsCarriers
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -208,7 +208,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logOrgStats() {
         if (Analytics.isDebuggable(this)) {
-            App.svc.orgService.dumpOrgStats()
+            App.svc.consortiumService.dumpOrgStats()
         }
     }
 
@@ -245,8 +245,8 @@ class PlaceHoldActivity : BaseActivity() {
                 Analytics.Param.HOLD_NOTIFY to notifyTypes,
                 Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
                 Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(visibleOrgs[selectedOrgPos],
-                    App.svc.orgService.findOrg(App.account.pickupOrg),
-                    App.svc.orgService.findOrg(App.account.homeOrg)),
+                    App.svc.consortiumService.findOrg(App.account.pickupOrg),
+                    App.svc.consortiumService.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -399,7 +399,7 @@ class PlaceHoldActivity : BaseActivity() {
         val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
         notifyBySMS?.isChecked = notify && !notifyNumber.isNullOrEmpty()
 
-        val enabled = App.svc.orgService.isSmsEnabled
+        val enabled = App.svc.consortiumService.isSmsEnabled
         if (enabled) {
             notifyBySMS?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
@@ -427,7 +427,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSSpinner() {
-        val spinnerLabels = App.svc.orgService.getSmsCarrierSpinnerLabels()
+        val spinnerLabels = App.svc.consortiumService.smsCarrierSpinnerLabels
         smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, spinnerLabels)
 
         val savedId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
@@ -501,7 +501,7 @@ class PlaceHoldActivity : BaseActivity() {
     // * changing it results in an JUST ONCE / ALWAYS alert
     // * ALWAYS saves it back to the account
     private fun initOrgSpinner() {
-        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
         orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, visibleOrgs, true)
 
         val defaultId = account?.pickupOrg

@@ -46,17 +46,17 @@ class CopyInformationViewAdapter(
         private val spannableTextMinHeight = v.resources.getDimensionPixelSize(R.dimen.spannable_text_min_height)
 
         fun bindView(clc: CopyLocationCounts) {
-            val org = App.svc.orgService.findOrg(clc.orgId)
+            val org = App.svc.consortiumService.findOrg(clc.orgId)
 
             if (groupCopiesBySystem) {
-                majorLocationText.text = App.svc.orgService.getOrgNameSafe(org?.parent)
+                majorLocationText.text = App.svc.consortiumService.findOrgNameSafe(org?.parent)
                 val ss = SpannableString(org?.name)
                 ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 minorLocationText.setText(ss, TextView.BufferType.SPANNABLE)
                 minorLocationText.setOnClickListener { launchOrgDetails(org?.id) }
                 minorLocationText.setMinimumHeight(spannableTextMinHeight)
             } else {
-                majorLocationText.text = App.svc.orgService.getOrgNameSafe(clc.orgId)
+                majorLocationText.text = App.svc.consortiumService.findOrgNameSafe(clc.orgId)
                 minorLocationText.visibility = View.GONE
             }
             copyCallNumberText.text = clc.callNumber

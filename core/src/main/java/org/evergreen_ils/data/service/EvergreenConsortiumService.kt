@@ -20,48 +20,60 @@ package org.evergreen_ils.data.service
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import net.kenstir.logging.Log
 import net.kenstir.data.Result
 import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.Account
+import net.kenstir.data.model.Organization
 import net.kenstir.data.model.SMSCarrier
-import net.kenstir.data.service.OrgService
+import net.kenstir.data.service.ConsortiumService
+import net.kenstir.logging.Log
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.EvergreenOrganization
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgCodedValueMap
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 
-object EvergreenOrgService: OrgService {
-    const val TAG = "OrgService"
+object EvergreenConsortiumService: ConsortiumService {
+    const val TAG = "ConsortService"
 
     override val consortiumID = EgOrg.CONSORTIUM_ID
 
     override val isSmsEnabled: Boolean
         get() = EgOrg.smsEnabled
 
+    override val searchFormatSpinnerLabels: List<String>
+        get() = EgCodedValueMap.searchFormatSpinnerLabels
+
+    override val searchFormatSpinnerValues: List<String>
+        get() = EgCodedValueMap.searchFormatSpinnerValues
+
+    override val smsCarriers: List<SMSCarrier>
+        get() = EgSms.carriers
+
+    override val smsCarrierSpinnerLabels: List<String>
+        get() = EgSms.spinnerLabels
+
+    override val smsCarrierSpinnerValues: List<String>
+        get() = EgSms.spinnerValues
+
     override fun findOrg(orgID: Int?) = EgOrg.findOrg(orgID)
 
-    override fun getOrgShortNameSafe(orgID: Int?) = EgOrg.getOrgShortNameSafe(orgID)
+    override fun findOrgShortNameSafe(orgID: Int?) = EgOrg.getOrgShortNameSafe(orgID)
 
-    override fun getOrgNameSafe(orgID: Int?) = EgOrg.getOrgNameSafe(orgID)
+    override fun findOrgNameSafe(orgID: Int?) = EgOrg.getOrgNameSafe(orgID)
 
-    override fun getVisibleOrgs() = EgOrg.visibleOrgs
+    override val visibleOrgs: List<Organization>
+        get() = EgOrg.visibleOrgs
 
-    override fun getOrgSpinnerLabels() = EgOrg.orgSpinnerLabels()
+    override val orgSpinnerLabels: List<String>
+        get() = EgOrg.orgSpinnerLabels()
 
-    override fun getOrgSpinnerShortNames() = EgOrg.spinnerShortNames()
+    override val orgSpinnerShortNames: List<String>
+        get()  = EgOrg.spinnerShortNames()
 
     override fun dumpOrgStats() = EgOrg.dumpOrgStats()
-
-    override fun getSmsCarriers(): List<SMSCarrier> {
-        return EgSms.carriers
-    }
-
-    override fun getSmsCarrierSpinnerLabels() = EgSms.spinnerLabels
-
-    override fun getSmsCarrierSpinnerValues() = EgSms.spinnerValues
 
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {
