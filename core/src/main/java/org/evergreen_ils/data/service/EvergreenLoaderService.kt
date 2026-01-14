@@ -17,6 +17,7 @@
 
 package org.evergreen_ils.data.service
 
+import android.content.res.Resources
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -34,6 +35,7 @@ import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.idl.IDLParser
+import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.system.EgSms
 import java.io.File
 
@@ -50,15 +52,15 @@ object EvergreenLoaderService: LoaderService {
         GatewayClient.baseUrl = url
     }
 
-    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
+    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {
         return try {
-            return Result.Success(loadStartupDataImpl(serviceOptions))
+            return Result.Success(loadStartupDataImpl(serviceOptions, resources))
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions): Unit = coroutineScope {
+    private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions, resources: Resources): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         GatewayClient.clientCacheKey = serviceOptions.clientCacheKey
         GatewayClient.serverCacheKey = fetchServerCacheKey()
@@ -78,10 +80,11 @@ object EvergreenLoaderService: LoaderService {
         jobs.add(async { loadOrgTree(serviceOptions.useHierarchicalOrgTree) })
         jobs.add(async { loadCopyStatuses() })
         jobs.add(async { loadCodedValueMaps() })
+        jobs.add(async { EgMessageMap.init(resources) })
 
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
-        Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+        Log.logElapsedTime(TAG, now, "[init] loadServiceData ${jobs.size} deferreds completed")
     }
 
     override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {

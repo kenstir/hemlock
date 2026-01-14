@@ -17,6 +17,7 @@
 
 package net.kenstir.mock
 
+import android.content.res.Resources
 import net.kenstir.data.Result
 import net.kenstir.data.service.LoadStartupOptions
 import net.kenstir.data.service.LoaderService
@@ -40,7 +41,7 @@ object MockLoaderService : LoaderService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
+    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {
         TODO("Not yet implemented")
     }
 

@@ -17,6 +17,7 @@
 
 package net.kenstir.data.service
 
+import android.content.res.Resources
 import net.kenstir.data.Result
 import okhttp3.OkHttpClient
 import java.io.File
@@ -51,7 +52,7 @@ interface LoaderService {
      *
      * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
      */
-    suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit>
+    suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit>
 
     /**
      * Load any additional data that is required for the Place Hold activity.
