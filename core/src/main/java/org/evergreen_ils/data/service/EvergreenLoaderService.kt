@@ -70,9 +70,9 @@ object EvergreenLoaderService: LoaderService {
         val url = GatewayClient.getIDLUrl()
         val xml = GatewayClient.get(url).bodyAsText()
         val parser = IDLParser(xml.byteInputStream())
-        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL fetched")
+        now = Log.logElapsedTime(TAG, now, "[init] loadStartupData IDL fetched")
         parser.parse()
-        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL parsed")
+        now = Log.logElapsedTime(TAG, now, "[init] loadStartupData IDL parsed")
 
         // async: Load the rest of the data in parallel
         val jobs = mutableListOf<Deferred<Any>>()
@@ -84,7 +84,7 @@ object EvergreenLoaderService: LoaderService {
 
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
-        Log.logElapsedTime(TAG, now, "[init] loadServiceData ${jobs.size} deferreds completed")
+        Log.logElapsedTime(TAG, now, "[init] loadStartupData ${jobs.size} deferreds completed")
     }
 
     override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {
