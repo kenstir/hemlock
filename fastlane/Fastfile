@@ -219,6 +219,24 @@ lane :beta do
   push_git_tags(tag: tag)
 end
 
+desc "Tag release"
+lane :tag_release do
+  #ensure_git_status_clean
+  tag, msg = get_tag_info()
+  if git_tag_exists(tag: tag, remote: true)
+    UI.user_error!("tag already exists: #{tag}")
+  end
+  UI.message("tag: #{tag}")
+  UI.message("msg: #{msg}")
+
+  add_git_tag(
+    tag: tag,
+    message: msg,
+    grouping: nil
+  )
+  push_git_tags(tag: tag)
+end
+
 # Returns local, beta, prod_version_code
 def get_version_codes
   local, _ = get_version_info("../../version.gradle")

@@ -1,0 +1,4 @@
+* Fixed accessibility issues where author and copy info text links were too small
+* Fixed ANR (App Not Responding) errors by moving account operations off main thread
+* Fixed "Add account" to automatically choose the new account when restarting
+* Fixed bug where the app exited when pressing Back after starting from a notification
