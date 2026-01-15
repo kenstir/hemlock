@@ -42,14 +42,16 @@ import java.io.File
 object EvergreenLoaderService: LoaderService {
     const val TAG = "LoaderService"
 
+    override var serviceUrl: String
+        get() = GatewayClient.baseUrl
+        set(value) {
+            GatewayClient.baseUrl = value
+        }
+
     override fun makeOkHttpClient(cacheDir: File): OkHttpClient {
         GatewayClient.cacheDirectory = cacheDir
         GatewayClient.initHttpClient()
         return GatewayClient.okHttpClient
-    }
-
-    override fun setServiceUrl(url: String) {
-        GatewayClient.baseUrl = url
     }
 
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {

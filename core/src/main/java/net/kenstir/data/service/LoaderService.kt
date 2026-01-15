@@ -32,14 +32,14 @@ data class LoadStartupOptions(
  */
 interface LoaderService {
     /**
+     * the service URL
+     */
+    var serviceUrl: String
+
+    /**
      * Configures the HTTP client
      */
     fun makeOkHttpClient(cacheDir: File): OkHttpClient
-
-    /**
-     * Sets the service URL
-     */
-    fun setServiceUrl(url: String)
 
     /**
      * Load any and all prerequisite data required for the client to function.
