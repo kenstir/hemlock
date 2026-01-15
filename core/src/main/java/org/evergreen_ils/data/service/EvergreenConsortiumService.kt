@@ -78,7 +78,7 @@ object EvergreenConsortiumService: ConsortiumService {
         get() = EgOrg.orgSpinnerLabels()
 
     override val orgSpinnerShortNames: List<String>
-        get()  = EgOrg.spinnerShortNames()
+        get() = EgOrg.spinnerShortNames()
 
     override fun dumpOrgStats() = EgOrg.dumpOrgStats()
 
