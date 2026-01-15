@@ -126,7 +126,7 @@ data class HoldOptions(
 )
 
 /**
- * Options for placing a hold via [CircService.updateHold].
+ * Options for updating a hold via [CircService.updateHold].
  */
 data class HoldUpdateOptions(
     val pickupLib: Int,
