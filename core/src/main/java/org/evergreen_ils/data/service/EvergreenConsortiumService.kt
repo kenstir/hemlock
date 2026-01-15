@@ -33,6 +33,7 @@ import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.system.EgSms
 
 object EvergreenConsortiumService: ConsortiumService {
@@ -42,6 +43,12 @@ object EvergreenConsortiumService: ConsortiumService {
 
     override val isSmsEnabled: Boolean
         get() = EgOrg.smsEnabled
+
+    override var selectedOrganization: Organization?
+        get() = EgSearch.selectedOrganization
+        set(value) {
+            EgSearch.selectedOrganization = value
+        }
 
     override val searchFormatSpinnerLabels: List<String>
         get() = EgCodedValueMap.searchFormatSpinnerLabels

@@ -34,6 +34,9 @@ interface ConsortiumService {
     /** Is SMS notifications enabled for all orgs? */
     val isSmsEnabled: Boolean
 
+    /** last searched organization */
+    var selectedOrganization: Organization?
+
     /** search format labels for use in a Spinner */
     val searchFormatSpinnerLabels: List<String>
 
