@@ -30,6 +30,7 @@ import net.kenstir.data.model.CircRecord
 import net.kenstir.data.model.HistoryRecord
 import net.kenstir.data.model.HoldPart
 import net.kenstir.data.model.HoldRecord
+import net.kenstir.data.model.HoldType
 import net.kenstir.data.service.CircService
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.data.service.HoldUpdateOptions
@@ -44,9 +45,7 @@ import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
-import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.util.toApiDateTimeOrNull
-import java.util.Date
 
 object EvergreenCircService: CircService {
     private const val TAG = "CircService"
@@ -172,15 +171,15 @@ object EvergreenCircService: CircService {
         jobs.add(async {
             Log.d(TAG, "[holds] ${hold.holdType} hold id=${hold.id} target=$target")
             when (hold.holdType) {
-                Api.HoldType.TITLE ->
+                HoldType.TITLE ->
                     loadTitleHoldTargetDetails(account, hold, target)
-                Api.HoldType.METARECORD ->
+                HoldType.METARECORD ->
                     loadMetarecordHoldTargetDetails(account, hold, target)
-                Api.HoldType.PART ->
+                HoldType.PART ->
                     loadPartHoldTargetDetails(account, hold, target)
-                Api.HoldType.COPY, Api.HoldType.FORCE, Api.HoldType.RECALL ->
+                HoldType.COPY, HoldType.FORCE, HoldType.RECALL ->
                     loadCopyHoldTargetDetails(account, hold, target)
-                Api.HoldType.VOLUME ->
+                HoldType.VOLUME ->
                     loadVolumeHoldTargetDetails(account, hold, target)
                 else -> {
                     Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
@@ -302,7 +301,7 @@ object EvergreenCircService: CircService {
             val param = jsonMapOf(
                 "patronid" to userID,
                 "pickup_lib" to pickupLib,
-                "hold_type" to Api.HoldType.TITLE,
+                "hold_type" to HoldType.TITLE,
                 "titleid" to targetId
             )
             val params = paramListOf(authToken, param)

@@ -45,6 +45,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldPart
+import net.kenstir.data.model.HoldType
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -58,7 +59,6 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
-import org.evergreen_ils.Api
 import java.util.Calendar
 import java.util.Date
 
@@ -307,8 +307,8 @@ class PlaceHoldActivity : BaseActivity() {
             val holdType: String
             val itemId: Int
             when {
-                partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
-                else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
+                partRequired || getPartId() > 0 -> { holdType = HoldType.PART; itemId = getPartId() }
+                else -> { holdType = HoldType.TITLE; itemId = record.id }
             }
             Log.d(TAG, "[holds] placeHold: $holdType $itemId")
             showBusy(R.string.msg_placing_hold)

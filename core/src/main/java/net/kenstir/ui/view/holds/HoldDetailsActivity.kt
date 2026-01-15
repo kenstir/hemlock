@@ -49,7 +49,6 @@ import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.indexOfFirstOrZero
-import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
