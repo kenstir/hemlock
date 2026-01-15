@@ -20,7 +20,6 @@ package net.kenstir.data.service
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyLocationCounts
-import net.kenstir.data.model.Organization
 
 interface SearchService {
     /**
