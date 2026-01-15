@@ -9,6 +9,7 @@
 * Fixed bug where the app exited when pressing Back after starting from a notification
 
 ### Internal
+* internal: Fixed abstraction leaks of data layer into UI layer
 * internal: Upgrade to Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 1
 * internal: Migrate to ViewPager2 to mitigate TransactionTooLargeException
 * internal: Limit search to 100 results to mitigate TransactionTooLargeException
