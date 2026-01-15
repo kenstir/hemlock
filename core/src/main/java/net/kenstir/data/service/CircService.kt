@@ -23,6 +23,7 @@ import net.kenstir.data.model.CircRecord
 import net.kenstir.data.model.HistoryRecord
 import net.kenstir.data.model.HoldPart
 import net.kenstir.data.model.HoldRecord
+import java.util.Date
 
 interface CircService {
     /**
@@ -98,7 +99,7 @@ interface CircService {
 }
 
 /**
- * Options for placing or updating a hold.  Properties marked as `var` can be modified for [CircService.updateHold].
+ * Options for placing a hold via [CircService.placeHold].
  *
  * @property holdType The type of hold.
  * @property emailNotify Whether to notify by email.
@@ -107,9 +108,9 @@ interface CircService {
  * @property smsCarrierId Carrier ID for SMS notification.
  * @property useOverride Whether to use the .override option when placing a hold.
  * @property pickupLib Library ID for pickup location.
- * @property expireTime Expiration time for the hold (ISO 8601 format).
+ * @property expireTime Expiration time for the hold.
  * @property suspendHold Whether to suspend the hold.
- * @property thawDate Date to thaw the hold (ISO 8601 format).
+ * @property thawDate Date to thaw the hold.
  */
 data class HoldOptions(
     val holdType: String,
@@ -119,14 +120,17 @@ data class HoldOptions(
     val smsCarrierId: Int? = null,
     val useOverride: Boolean = false,
     var pickupLib: Int,
-    var expireTime: String? = null,
+    var expireTime: Date? = null,
     var suspendHold: Boolean = false,
-    var thawDate: String? = null,
+    var thawDate: Date? = null,
 )
 
+/**
+ * Options for placing a hold via [CircService.updateHold].
+ */
 data class HoldUpdateOptions(
     val pickupLib: Int,
-    val expireTime: String? = null,
+    val expireTime: Date? = null,
     val suspendHold: Boolean,
-    val thawDate: String? = null,
+    val thawDate: Date? = null,
 )

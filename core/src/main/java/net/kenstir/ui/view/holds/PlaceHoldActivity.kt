@@ -59,7 +59,6 @@ import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
 import org.evergreen_ils.Api
-import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -269,14 +268,6 @@ class PlaceHoldActivity : BaseActivity() {
         return if (notifyBySMS?.isChecked == true) id else null
     }
 
-    private fun getExpireDate(): String? {
-        return expireDate?.let { OSRFUtils.formatDate(it) }
-    }
-
-    private fun getThawDate(): String? {
-        return thawDate?.let { OSRFUtils.formatDate(it) }
-    }
-
     private fun placeHoldPreFlightCheck(): Boolean {
         val selectedOrg = visibleOrgs[selectedOrgPos]
         if (!selectedOrg.isPickupLocation) {
@@ -329,9 +320,9 @@ class PlaceHoldActivity : BaseActivity() {
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
                 useOverride = resources.getBoolean(R.bool.ou_enable_hold_use_override),
                 pickupLib = selectedOrgID,
-                expireTime = getExpireDate(),
+                expireTime = expireDate,
                 suspendHold = suspendHold?.isChecked == true,
-                thawDate = getThawDate()
+                thawDate = thawDate
             )
             val result = App.svc.circService.placeHold(
                 App.account, itemId, options)

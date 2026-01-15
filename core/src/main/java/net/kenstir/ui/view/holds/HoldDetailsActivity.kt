@@ -179,16 +179,14 @@ class HoldDetailsActivity : BaseActivity() {
     private fun updateHold(record: HoldRecord) {
         scope.async {
             showBusy(R.string.msg_updating_hold)
-            val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
-            val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
             val holdId = record.id
             val orgId = App.svc.consortiumService.visibleOrgs[selectedOrgPos].id
             val holdOptions = HoldUpdateOptions(
                 pickupLib = orgId,
                 suspendHold = suspendHold!!.isChecked,
-                expireTime = expireDateApi,
-                thawDate = thawDateApi,
+                expireTime = expireDate,
+                thawDate = thawDate,
             )
             val result = App.svc.circService.updateHold(
                 App.account, holdId, holdOptions)

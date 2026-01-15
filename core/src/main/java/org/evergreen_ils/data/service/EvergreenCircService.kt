@@ -44,6 +44,9 @@ import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.util.OSRFUtils
+import org.evergreen_ils.util.toApiDateTimeOrNull
+import java.util.Date
 
 object EvergreenCircService: CircService {
     private const val TAG = "CircService"
@@ -328,8 +331,9 @@ object EvergreenCircService: CircService {
             "pickup_lib" to options.pickupLib,
             "hold_type" to options.holdType,
             "email_notify" to options.emailNotify,
-            "expire_time" to options.expireTime,
-            "frozen" to options.suspendHold
+            "expire_time" to options.expireTime.toApiDateTimeOrNull(),
+            "frozen" to options.suspendHold,
+            "thaw_date" to options.thawDate.toApiDateTimeOrNull(),
         )
         if (!options.phoneNotify.isNullOrEmpty()) {
             param["phone_notify"] = options.phoneNotify
@@ -338,14 +342,12 @@ object EvergreenCircService: CircService {
             param["sms_carrier"] = options.smsCarrierId
             param["sms_notify"] = options.smsNotify
         }
-        if (!options.thawDate.isNullOrEmpty()) {
-            param["thaw_date"] = options.thawDate
-        }
 
         val params = paramListOf(authToken, param, arrayListOf(targetId))
         val method = if (options.useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
         val response = GatewayClient.fetch(Api.CIRC, method, params, false)
         val obj = response.payloadFirstAsObject()
+        Log.d(TAG, "[holds] hold create returned $obj")
         return true
     }
 
@@ -356,14 +358,15 @@ object EvergreenCircService: CircService {
                 "id" to holdId,
                 "pickup_lib" to options.pickupLib,
                 "frozen" to options.suspendHold,
-                "expire_time" to options.expireTime,
-                "thaw_date" to options.thawDate,
+                "expire_time" to options.expireTime.toApiDateTimeOrNull(),
+                "thaw_date" to options.thawDate.toApiDateTimeOrNull(),
             )
 
             val params = paramListOf(authToken, null, param)
             val response = GatewayClient.fetch(Api.CIRC, Api.HOLD_UPDATE, params, false)
             // HOLD_UPDATE returns holdId as string on success
             val str = response.payloadFirstAsString()
+            Log.d(TAG, "[holds] hold update returned $str")
             Result.Success(true)
         } catch (e: Exception) {
             Result.Error(e)
@@ -378,6 +381,7 @@ object EvergreenCircService: CircService {
             val response = GatewayClient.fetch(Api.CIRC, Api.HOLD_CANCEL, params, false)
             // HOLD_CANCEL returns "1" on success, and an error event if it fails.
             val str = response.payloadFirstAsString()
+            Log.d(TAG, "[holds] hold cancel returned $str")
             Result.Success(true)
         } catch (e: Exception) {
             Result.Error(e)
