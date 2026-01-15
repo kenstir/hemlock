@@ -52,7 +52,8 @@ class KtorClientTest {
             GatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
             GatewayClient.cacheDirectory.deleteRecursively()
 
-            client = GatewayClient.makeHttpClient()
+            GatewayClient.initHttpClient()
+            client = GatewayClient.client
         }
 
         fun getRequiredProperty(name: String): String {

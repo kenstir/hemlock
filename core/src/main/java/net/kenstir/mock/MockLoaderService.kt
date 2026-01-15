@@ -35,16 +35,14 @@ object MockLoaderService : LoaderService {
     override val httpClient: HttpClient
         get() = TODO("Not yet implemented")
 
-    override val okHttpClient: OkHttpClient
-        get() = TODO("Not yet implemented")
+    override lateinit var okHttpClient: OkHttpClient
 
     override fun initHttpClient(cacheDir: File): OkHttpClient {
-        TODO("Not yet implemented")
-//        okHttpClient = OkHttpClient.Builder()
-//            .callTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-//            .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-//            .build()
-//        return okHttpClient
+        okHttpClient = OkHttpClient.Builder()
+            .callTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .build()
+        return okHttpClient
     }
 
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {

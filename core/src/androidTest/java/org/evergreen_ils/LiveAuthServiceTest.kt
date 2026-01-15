@@ -55,6 +55,7 @@ class LiveAuthServiceTest {
             GatewayClient.clientCacheKey = "42"
             GatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
             GatewayClient.cacheDirectory.deleteRecursively()
+            GatewayClient.initHttpClient()
         }
 
         @JvmStatic
