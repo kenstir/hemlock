@@ -24,7 +24,7 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import okhttp3.OkHttpClient
 
 object CoilImageLoader {
-    fun setImageLoader(context: Context, okHttpClient: OkHttpClient) {
+    fun initImageLoader(context: Context, okHttpClient: OkHttpClient) {
         val imageLoader = ImageLoader.Builder(context)
             .components {
                 add(OkHttpNetworkFetcherFactory(

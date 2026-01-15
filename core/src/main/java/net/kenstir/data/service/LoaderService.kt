@@ -18,6 +18,7 @@
 package net.kenstir.data.service
 
 import android.content.res.Resources
+import io.ktor.client.HttpClient
 import net.kenstir.data.Result
 import okhttp3.OkHttpClient
 import java.io.File
@@ -36,10 +37,17 @@ interface LoaderService {
      */
     var serviceUrl: String
 
+    /** the ktor Http client, available after [initHttpClient] */
+    val httpClient: HttpClient
+
+    /** the OkHttp client supporting [httpClient], available after [initHttpClient] */
+    val okHttpClient: OkHttpClient
+
     /**
-     * Configures the HTTP client
+     * Configures the HTTP clients and returns the underlying OkHttpClient instance
+     * so it can be shared by the image loader.
      */
-    fun makeOkHttpClient(cacheDir: File): OkHttpClient
+    fun initHttpClient(cacheDir: File): OkHttpClient
 
     /**
      * Load any and all prerequisite data required for the client to function.

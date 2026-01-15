@@ -38,9 +38,9 @@ import kotlinx.serialization.json.Json
 import net.kenstir.data.model.Library
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.util.Analytics
 import net.kenstir.ui.util.showAlert
-import org.evergreen_ils.gateway.GatewayClient
 
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 @Serializable
@@ -96,7 +96,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val start = System.currentTimeMillis()
 
                 val url = directoryUrl ?: return@async
-                val client = GatewayClient.client
+                val client = App.svc.loaderService.httpClient
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
 

@@ -18,6 +18,7 @@
 package org.evergreen_ils.data.service
 
 import android.content.res.Resources
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -48,7 +49,13 @@ object EvergreenLoaderService: LoaderService {
             GatewayClient.baseUrl = value
         }
 
-    override fun makeOkHttpClient(cacheDir: File): OkHttpClient {
+    override val httpClient: HttpClient
+        get() = GatewayClient.client
+
+    override val okHttpClient: OkHttpClient
+        get() = GatewayClient.okHttpClient
+
+    override fun initHttpClient(cacheDir: File): OkHttpClient {
         GatewayClient.cacheDirectory = cacheDir
         GatewayClient.initHttpClient()
         return GatewayClient.okHttpClient

@@ -24,7 +24,7 @@ import net.kenstir.data.model.Library
 import net.kenstir.data.service.ServiceConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.util.CoilImageLoader.setImageLoader
+import net.kenstir.ui.util.CoilImageLoader.initImageLoader
 import net.kenstir.util.Analytics.logException
 import java.io.File
 
@@ -44,7 +44,7 @@ object App {
     var library = Library("", "")
         set(value) {
             field = value
-            svc.loaderService.setServiceUrl(value.url)
+            svc.loaderService.serviceUrl = value.url
         }
 
     fun init(context: Context) {
@@ -54,14 +54,11 @@ object App {
         factory = makeFactory(context.resources)
         behavior = factory.makeBehavior()
         svc = factory.makeServiceConfig(isAndroidTest)
-        configureServiceHttpClient(context)
-    }
 
-    private fun configureServiceHttpClient(context: Context) {
-        val client = svc.loaderService.makeOkHttpClient(
+        val okHttpClient = svc.loaderService.initHttpClient(
             File(context.cacheDir, "okhttp")
         )
-        setImageLoader(context, client)
+        initImageLoader(context, okHttpClient)
     }
 
     fun makeFactory(resources: Resources): AppFactory {

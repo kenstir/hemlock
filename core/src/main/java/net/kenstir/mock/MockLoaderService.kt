@@ -18,6 +18,7 @@
 package net.kenstir.mock
 
 import android.content.res.Resources
+import io.ktor.client.HttpClient
 import net.kenstir.data.Result
 import net.kenstir.data.service.LoadStartupOptions
 import net.kenstir.data.service.LoaderService
@@ -27,18 +28,23 @@ import java.io.File
 object MockLoaderService : LoaderService {
     const val DEFAULT_TIMEOUT_MS = 2_000
 
-    lateinit var okHttpClient: OkHttpClient
+    override var serviceUrl: String
+        get() = TODO("Not yet implemented")
+        set(value) {}
 
-    override fun makeOkHttpClient(cacheDir: File): OkHttpClient {
-        okHttpClient = OkHttpClient.Builder()
-            .callTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-            .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-            .build()
-        return okHttpClient
-    }
+    override val httpClient: HttpClient
+        get() = TODO("Not yet implemented")
 
-    override fun setServiceUrl(url: String) {
+    override val okHttpClient: OkHttpClient
+        get() = TODO("Not yet implemented")
+
+    override fun initHttpClient(cacheDir: File): OkHttpClient {
         TODO("Not yet implemented")
+//        okHttpClient = OkHttpClient.Builder()
+//            .callTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+//            .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+//            .build()
+//        return okHttpClient
     }
 
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {
