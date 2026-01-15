@@ -181,8 +181,6 @@ class OSRFCoderTest {
         val decodedPayload = OSRFCoder.decodePayload(response.payload)
         println("Decoded:      $decodedPayload")
 
-
-//        val obj = decodedPayload[0] as? XOSRFObject
         val obj = GatewayResult.create(json).payloadFirstAsObject()
         assertNotNull(obj)
         assertEquals("CONS", obj?.getString("shortname"))
@@ -222,13 +220,13 @@ class OSRFCoderTest {
         ))
         println("Original:     $obj")
 
-        //val json = Json.encodeToString(XOSRFObject.serializer(), obj)
+        //val json = Json.encodeToString(OSRFObject.serializer(), obj)
         val json = Json.encodeToString(obj)
         println("Serialized:   $json")
 
-        // If this check proves fragile, we can either change XOSRFObjectSerializer to add the keys
+        // If this check proves fragile, we can either change OSRFObjectSerializer to add the keys
         // in field order, or we can just assert some substrings.  I don't think
-        // XOSRFObjectSerializer.serialize() is used enough to worry about its performance.
+        // OSRFObjectSerializer.serialize() is used enough to worry about its performance.
         assertEquals(
             """{"id":42,"home_ou":69,"day_phone":"508-555-1212","real_null":null}""",
             json

@@ -94,7 +94,7 @@ class OSRFCoder(val netClass: String, val fields: List<String>) {
                 // wire protocol object
                 decodeObjectFromWireProtocol(element)
             } else {
-                // regular object, return XOSRFObject for compatibility with old code
+                // regular object, return OSRFObject for compatibility with old code
                 OSRFObject(element.mapValues { decodeElement(it.value) })
             }
         }

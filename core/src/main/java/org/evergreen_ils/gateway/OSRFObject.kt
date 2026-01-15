@@ -27,7 +27,7 @@ data class OSRFObject(
     val netClass: String? = null): java.io.Serializable
 {
     override fun toString(): String {
-        return "XOSRFObject(netClass=$netClass, map${map.toString()})"
+        return "OSRFObject(netClass=$netClass, map${map.toString()})"
     }
 
     operator fun get(key: String): Any? {

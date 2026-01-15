@@ -41,9 +41,9 @@ import kotlinx.serialization.json.jsonObject
  * This class is useful for encoding gateway parameters, but it alone is not
  * sufficiently flexible for decoding gateway payloads.  That is because
  * Json.decodeFromString<OSRFObject>() requires that you know you want
- * an XOSRFObject.  When decoding a gateway payload, all you know is that
+ * an OSRFObject.  When decoding a gateway payload, all you know is that
  * payload is an array.  Thus we ended up with GatewayResponseContent
- * and the deserialization happening in XOSRFCoder.
+ * and the deserialization happening in OSRFCoder.
  */
 object OSRFObjectSerializer : KSerializer<OSRFObject> {
     override val descriptor: SerialDescriptor =
@@ -56,9 +56,9 @@ object OSRFObjectSerializer : KSerializer<OSRFObject> {
     }
 
     private fun toJsonObject(value: OSRFObject): JsonObject {
-        value.netClass?.let {
-            return serializeAsWireProtocol(value, it)
-        } ?: run {
+        if (value.netClass != null) {
+            return serializeAsWireProtocol(value, value.netClass)
+        } else {
             // If netClass is not present, serialize as a map
             return buildJsonObject {
                 for ((key, v) in value.map) {
