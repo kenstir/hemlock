@@ -22,7 +22,7 @@ import org.evergreen_ils.gateway.GatewayEventException
 
 data class AccountCredentials(val authToken: String, val id: Int)
 
-/** return (authToken, userID) or throw GatewayEventError */
+/** return (authToken, userID) or throw GatewayEventException */
 fun Account.getCredentialsOrThrow(): AccountCredentials {
     val authToken = this.authToken
     val id = this.id
