@@ -49,7 +49,6 @@ import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.indexOfFirstOrZero
-import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -138,11 +137,11 @@ class HoldDetailsActivity : BaseActivity() {
             thawDatePicker?.show()
         }
 
-        val orgs = App.svc.orgService.getVisibleOrgs()
-        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        val orgs = App.svc.consortiumService.visibleOrgs
+        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
         selectedOrgPos = orgs.indexOfFirstOrZero { it.id == record.pickupLib }
 
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, true)
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, true)
         orgSelector.adapter = adapter
         orgSelector.setSelection(selectedOrgPos)
         orgSelector.onItemSelectedListener = object : OnItemSelectedListener {
@@ -179,16 +178,14 @@ class HoldDetailsActivity : BaseActivity() {
     private fun updateHold(record: HoldRecord) {
         scope.async {
             showBusy(R.string.msg_updating_hold)
-            val expireDateApi: String? = expireDate?.let { OSRFUtils.formatDate(it) }
-            val thawDateApi: String? = thawDate?.let { OSRFUtils.formatDate(it) }
 
             val holdId = record.id
-            val orgId = App.svc.orgService.getVisibleOrgs()[selectedOrgPos].id
+            val orgId = App.svc.consortiumService.visibleOrgs[selectedOrgPos].id
             val holdOptions = HoldUpdateOptions(
                 pickupLib = orgId,
                 suspendHold = suspendHold!!.isChecked,
-                expireTime = expireDateApi,
-                thawDate = thawDateApi,
+                expireTime = expireDate,
+                thawDate = thawDate,
             )
             val result = App.svc.circService.updateHold(
                 App.account, holdId, holdOptions)

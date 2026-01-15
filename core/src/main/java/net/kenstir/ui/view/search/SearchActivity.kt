@@ -70,8 +70,6 @@ import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.Analytics
 import net.kenstir.util.Analytics.orgDimensionKey
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgSearch
 
 const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
@@ -188,6 +186,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchOptions() {
+        val consortiumService = App.svc.consortiumService
         searchClassOption = SpinnerStringOption(
             key = AppState.SEARCH_CLASS,
             defaultValue = SearchClass.KEYWORD,
@@ -197,15 +196,14 @@ class SearchActivity : BaseActivity() {
         searchFormatOption = SpinnerStringOption(
             key = AppState.SEARCH_FORMAT,
             defaultValue = "",
-            optionLabels = EgCodedValueMap.searchFormatSpinnerLabels,
-            optionValues = EgCodedValueMap.searchFormatSpinnerValues
+            optionLabels = consortiumService.searchFormatSpinnerLabels,
+            optionValues = consortiumService.searchFormatSpinnerValues
         )
-        val orgService = App.svc.orgService
         searchOrgOption = SpinnerStringOption(
             key = AppState.SEARCH_ORG_SHORT_NAME,
-            defaultValue = orgService.findOrg(App.account.searchOrg)?.shortname ?: orgService.getVisibleOrgs()[0].shortname,
-            optionLabels = orgService.getOrgSpinnerLabels(),
-            optionValues = orgService.getOrgSpinnerShortNames()
+            defaultValue = consortiumService.findOrg(App.account.searchOrg)?.shortname ?: consortiumService.visibleOrgs[0].shortname,
+            optionLabels = consortiumService.orgSpinnerLabels,
+            optionValues = consortiumService.orgSpinnerShortNames
         )
     }
 
@@ -298,12 +296,12 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun logSearchEvent(result: Result<SearchResults>) {
-        val orgService = App.svc.orgService
+        val orgService = App.svc.consortiumService
         val b = bundleOf(
             Analytics.Param.SEARCH_CLASS to searchClass,
             Analytics.Param.SEARCH_FORMAT to searchFormatCode,
             Analytics.Param.SEARCH_ORG_KEY to
-                    orgDimensionKey(EgSearch.selectedOrganization,
+                    orgDimensionKey(orgService.selectedOrganization,
                         orgService.findOrg(App.account.searchOrg),
                         orgService.findOrg(App.account.homeOrg)),
         )
@@ -336,19 +334,20 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
+        val consortiumService = App.svc.consortiumService
+        val visibleOrgs = consortiumService.visibleOrgs
+
         // connect spinner to option and set adapter
         val option = searchOrgOption
         option.spinner = orgSpinner
-        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, false)
-
-        val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, option.optionLabels, visibleOrgs, false)
 
         // restore last selected value and monitor changes
         option.load()
-        EgSearch.selectedOrganization = visibleOrgs[option.selectedIndex]
+        consortiumService.selectedOrganization = visibleOrgs[option.selectedIndex]
         option.addSelectionListener { index, value ->
             Log.d(TAG, "[prefs] ${option.key} changed: $index $value")
-            EgSearch.selectedOrganization = visibleOrgs[index]
+            consortiumService.selectedOrganization = visibleOrgs[index]
         }
     }
 
@@ -382,7 +381,7 @@ class SearchActivity : BaseActivity() {
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { _, position ->
             val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-            intent.putExtra(Key.ORG_ID, EgSearch.selectedOrganization?.id)
+            intent.putExtra(Key.ORG_ID, App.svc.consortiumService.selectedOrganization?.id)
             intent.putExtra(Key.RECORD_POSITION, position)
             intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
             startActivityForResult(intent, 10)
@@ -408,7 +407,7 @@ class SearchActivity : BaseActivity() {
         when (item.itemId) {
             ITEM_SHOW_DETAILS -> {
                 val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-                intent.putExtra(Key.ORG_ID, EgSearch.selectedOrganization?.id)
+                intent.putExtra(Key.ORG_ID, App.svc.consortiumService.selectedOrganization?.id)
                 intent.putExtra(Key.RECORD_POSITION, info.position)
                 intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
                 startActivity(intent)

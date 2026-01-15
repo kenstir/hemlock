@@ -97,10 +97,10 @@ class FinesActivity : BaseActivity() {
                 Log.d(TAG, "[fetch] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
-                val homeOrg = App.svc.orgService.findOrg(App.account.homeOrg)
+                val homeOrg = App.svc.consortiumService.findOrg(App.account.homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
-                        val result = App.svc.orgService.loadOrgSettings(homeOrg.id)
+                        val result = App.svc.consortiumService.loadOrgSettings(homeOrg.id)
                         if (result is Result.Error) {
                             throw result.exception
                         }

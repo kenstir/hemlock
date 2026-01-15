@@ -30,6 +30,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import net.kenstir.data.model.BibRecord
+import net.kenstir.data.service.ServiceException
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
@@ -38,7 +39,6 @@ import net.kenstir.ui.Lifecycle
 import net.kenstir.ui.view.search.RecordDetailsActivity
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.gateway.GatewayError
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
@@ -53,7 +53,7 @@ fun Activity.showAlert(message: String, title: String? = "Error") {
 
 fun Activity.showAlert(ex: Exception) {
     Log.d(TAG_EXTENSIONS, "showAlert: ${ex.javaClass.simpleName}: ${ex.getCustomMessage()}", ex)
-    if (ex is GatewayError && ex.isSessionExpired()) {
+    if (ex is ServiceException && ex.isSessionExpired()) {
         showSessionExpiredAlert(ex)
     } else {
         showAlert(ex.getCustomMessage())

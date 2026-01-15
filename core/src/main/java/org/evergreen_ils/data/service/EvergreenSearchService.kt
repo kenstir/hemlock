@@ -24,11 +24,11 @@ import net.kenstir.data.service.SearchResults
 import net.kenstir.data.service.SearchService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.EvergreenCopyLocationCounts
-import org.evergreen_ils.system.EgSearch
-import org.evergreen_ils.system.EgSearch.selectedOrganization
+import org.evergreen_ils.data.service.EvergreenConsortiumService.selectedOrganization
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgSearch
 
 object EvergreenSearchService: SearchService {
 

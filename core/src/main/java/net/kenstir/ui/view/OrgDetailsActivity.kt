@@ -87,7 +87,7 @@ class OrgDetailsActivity : BaseActivity() {
         } else {
             App.account.homeOrg
         }
-        org = App.svc.orgService.findOrg(orgID)
+        org = App.svc.consortiumService.findOrg(orgID)
 
         orgSpinner = findViewById(R.id.org_details_spinner)
         day0Hours = findViewById(R.id.org_details_day0hours)
@@ -128,11 +128,11 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val orgs = App.svc.orgService.getVisibleOrgs()
-        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
+        val orgs = App.svc.consortiumService.visibleOrgs
+        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
         val selectedOrgPos = orgs.indexOfFirstOrZero { it.id == orgID }
 
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, false)
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(selectedOrgPos)
         Log.d(TAG, "[fetch] setSelection $selectedOrgPos")
@@ -276,13 +276,13 @@ class OrgDetailsActivity : BaseActivity() {
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
-                    val result = App.svc.orgService.loadOrgSettings(orgID)
+                    val result = App.svc.consortiumService.loadOrgSettings(orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
                 })
                 jobs.add(scope.async {
-                    val result = App.svc.orgService.loadOrgDetails(account, orgID)
+                    val result = App.svc.consortiumService.loadOrgDetails(account, orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }

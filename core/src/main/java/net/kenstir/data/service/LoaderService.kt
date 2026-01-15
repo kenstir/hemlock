@@ -17,6 +17,8 @@
 
 package net.kenstir.data.service
 
+import android.content.res.Resources
+import io.ktor.client.HttpClient
 import net.kenstir.data.Result
 import okhttp3.OkHttpClient
 import java.io.File
@@ -31,14 +33,21 @@ data class LoadStartupOptions(
  */
 interface LoaderService {
     /**
-     * Configures the HTTP client
+     * the service URL
      */
-    fun makeOkHttpClient(cacheDir: File): OkHttpClient
+    var serviceUrl: String
+
+    /** the ktor Http client, available after [initHttpClient] */
+    val httpClient: HttpClient
+
+    /** the OkHttp client supporting [httpClient], available after [initHttpClient] */
+    val okHttpClient: OkHttpClient
 
     /**
-     * Sets the service URL
+     * Configures the HTTP clients and returns the underlying OkHttpClient instance
+     * so it can be shared by the image loader.
      */
-    fun setServiceUrl(url: String)
+    fun initHttpClient(cacheDir: File): OkHttpClient
 
     /**
      * Load any and all prerequisite data required for the client to function.
@@ -51,7 +60,7 @@ interface LoaderService {
      *
      * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
      */
-    suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit>
+    suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit>
 
     /**
      * Load any additional data that is required for the Place Hold activity.

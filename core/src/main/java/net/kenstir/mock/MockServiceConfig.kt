@@ -20,7 +20,7 @@ package net.kenstir.mock
 import net.kenstir.data.service.AuthService
 import net.kenstir.data.service.BiblioService
 import net.kenstir.data.service.CircService
-import net.kenstir.data.service.OrgService
+import net.kenstir.data.service.ConsortiumService
 import net.kenstir.data.service.SearchService
 import net.kenstir.data.service.ServiceConfig
 
@@ -32,7 +32,7 @@ class MockServiceConfig : ServiceConfig {
         get() = TODO("Not yet implemented")
     override val circService: CircService
         get() = TODO("Not yet implemented")
-    override val orgService: OrgService
+    override val consortiumService: ConsortiumService
         get() = TODO("Not yet implemented")
     override val searchService: SearchService
         get() = TODO("Not yet implemented")

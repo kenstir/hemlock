@@ -20,43 +20,55 @@ package net.kenstir.data.service
 import net.kenstir.data.Result
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.Organization
+import net.kenstir.data.model.SMSCarrier
 
 /**
- * Service for loading organization (library) settings and details.
+ * Service for loading and finding information about the consortium or library system:
+ * organizations (libraries) and their settings and details.
  */
-interface OrgService {
+interface ConsortiumService {
 
-    /**
-     * An ID to use for the consortium as a whole, when needed.
-     */
+    /** An ID to use for the consortium as a whole, when needed. */
     val consortiumID: Int
 
     /** Is SMS notifications enabled for all orgs? */
     val isSmsEnabled: Boolean
 
-    /**
-     * Find an org by its orgId.
-     */
+    /** last searched organization */
+    var selectedOrganization: Organization?
+
+    /** search format labels for use in a Spinner */
+    val searchFormatSpinnerLabels: List<String>
+
+    /** search format codes for use as Spinner values */
+    val searchFormatSpinnerValues: List<String>
+
+    /** SMS carriers */
+    val smsCarriers: List<SMSCarrier>
+
+    /** SMS carrier spinner labels */
+    val smsCarrierSpinnerLabels: List<String>
+
+    /** SMS carrier spinner values */
+    val smsCarrierSpinnerValues: List<String>
+
+    /** Finds an org by its orgId. */
     fun findOrg(orgID: Int?): Organization?
 
-    /**
-     * Find an org and return its shortName, returning a safe default if not found.
-     */
-    fun getOrgShortNameSafe(orgID: Int?): String
+    /** Finds an org and return its shortname, returning a safe default if not found. */
+    fun findOrgShortNameSafe(orgID: Int?): String
 
-    /**
-     * Find an org and return its name, returning a safe default if not found.
-     */
-    fun getOrgNameSafe(orgID: Int?): String
+    /** Finds an org and return its name, returning a safe default if not found. */
+    fun findOrgNameSafe(orgID: Int?): String
 
-    /** Returns a list of all visible orgs */
-    fun getVisibleOrgs(): List<Organization>
+    /** all visible orgs */
+    val visibleOrgs: List<Organization>
 
-    /** Returns a list of the labels of all visible orgs for use in a Spinner */
-    fun getOrgSpinnerLabels(): List<String>
+    /** all visible org labels for use in a Spinner */
+    val orgSpinnerLabels: List<String>
 
-    /** Returns a list of the shortnames of all visible orgs */
-    fun getOrgSpinnerShortNames(): List<String>
+    /** all visible org shortnames for use in Spinner values */
+    val orgSpinnerShortNames: List<String>
 
     /** Logs details about all loaded orgs for debugging */
     fun dumpOrgStats()

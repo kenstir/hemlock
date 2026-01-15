@@ -15,16 +15,11 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data.service
+package net.kenstir.data.service
 
-import net.kenstir.data.service.ServiceConfig
+open class ServiceException(message: String?): Exception(message) {
 
-class EvergreenServiceConfig : ServiceConfig {
-    override val loaderService = EvergreenLoaderService
-    override val authService = EvergreenAuthService
-    override val biblioService = EvergreenBiblioService
-    override val circService = EvergreenCircService
-    override val consortiumService = EvergreenConsortiumService
-    override val searchService = EvergreenSearchService
-    override val userService = EvergreenUserService
+    open fun isSessionExpired(): Boolean {
+        return false
+    }
 }

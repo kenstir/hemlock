@@ -54,11 +54,13 @@ object GatewayClient {
     const val DEFAULT_TIMEOUT_MS = 30_000
     private const val CACHE_SIZE = 10 * 1024 * 1024 // 10 MiB
 
-    @JvmStatic
     lateinit var cacheDirectory: File
-    val client: HttpClient by lazy { makeHttpClient() }
+    lateinit var client: HttpClient
     lateinit var okHttpClient: OkHttpClient
-    fun makeHttpClient(): HttpClient {
+
+    /** Initializes [okHttpClient] and [client] */
+    @JvmStatic
+    fun initHttpClient() {
         val okHttpCache = Cache(cacheDirectory, CACHE_SIZE.toLong())
         okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
@@ -66,7 +68,7 @@ object GatewayClient {
             .readTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
             .addInterceptor(HemlockOkHttpInterceptor())
             .build()
-        return HttpClient(OkHttp) {
+        client = HttpClient(OkHttp) {
             engine {
                 preconfigured = okHttpClient
             }
@@ -78,12 +80,6 @@ object GatewayClient {
                 )
             }
         }
-    }
-
-    /** Initializes the HttpClient by the lazy initializer */
-    @JvmStatic
-    fun initHttpClient() {
-        client.pluginOrNull(HemlockPlugin)
     }
 
     /**

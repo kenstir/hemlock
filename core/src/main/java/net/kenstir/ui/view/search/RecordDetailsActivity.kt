@@ -61,7 +61,7 @@ class RecordDetailsActivity : BaseActivity() {
         records.addAll(recordList)
 
         // Calculate numResults after records are loaded
-        orgID = intent.getIntExtra(Key.ORG_ID, App.svc.orgService.consortiumID)
+        orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortiumService.consortiumID)
         val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
         numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
         mPager = findViewById(R.id.main_content_view)

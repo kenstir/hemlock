@@ -27,11 +27,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.coroutines.runBlocking
 import net.kenstir.hemlock.R
-import net.kenstir.util.Analytics.log
-import net.kenstir.util.Analytics.redactedString
 import net.kenstir.ui.App
 import net.kenstir.util.Analytics
-import org.evergreen_ils.gateway.GatewayClient
+import net.kenstir.util.Analytics.log
+import net.kenstir.util.Analytics.redactedString
 
 class AccountAuthenticator(private val context: Context): AbstractAccountAuthenticator(context) {
     private var authenticatorActivity: Class<*>? = null
@@ -103,7 +102,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             if (password != null) {
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
-                    if (libraryUrl != GatewayClient.baseUrl) {
+                    if (libraryUrl != App.svc.loaderService.serviceUrl) {
                         // The app changed the server URL; don't send the old password to the new server.
                         // This path clears the password and prompts the user to sign in again.
                         throw AuthenticationException("Server URL changed, please sign in again")

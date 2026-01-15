@@ -143,3 +143,6 @@ object OSRFUtils {
         return ret
     }
 }
+
+/** Formats an API date-time string, or null if the Date? is null */
+fun Date?.toApiDateTimeOrNull(): String? = this?.let { OSRFUtils.formatDate(it) }

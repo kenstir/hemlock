@@ -235,19 +235,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return App.svc.orgService.findOrg(App.account.homeOrg)?.eresourcesUrl
+        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return App.svc.orgService.findOrg(App.account.homeOrg)?.eventsURL
+        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return App.svc.orgService.findOrg(App.account.homeOrg)?.meetingRoomsUrl
+        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return App.svc.orgService.findOrg(App.account.homeOrg)?.museumPassesUrl
+        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

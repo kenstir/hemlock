@@ -22,7 +22,7 @@ interface ServiceConfig {
     val authService: AuthService
     val biblioService: BiblioService
     val circService: CircService
-    val orgService: OrgService
+    val consortiumService: ConsortiumService
     val searchService: SearchService
     val userService: UserService
 }

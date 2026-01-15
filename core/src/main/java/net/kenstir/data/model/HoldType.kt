@@ -15,16 +15,15 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data.service
+package net.kenstir.data.model
 
-import net.kenstir.data.service.ServiceConfig
-
-class EvergreenServiceConfig : ServiceConfig {
-    override val loaderService = EvergreenLoaderService
-    override val authService = EvergreenAuthService
-    override val biblioService = EvergreenBiblioService
-    override val circService = EvergreenCircService
-    override val consortiumService = EvergreenConsortiumService
-    override val searchService = EvergreenSearchService
-    override val userService = EvergreenUserService
+object HoldType {
+    const val COPY = "C"
+    const val FORCE = "F"
+    const val RECALL = "R"
+    const val ISSUANCE = "I"
+    const val VOLUME = "V"
+    const val TITLE = "T"
+    const val METARECORD = "M"
+    const val PART = "P"
 }

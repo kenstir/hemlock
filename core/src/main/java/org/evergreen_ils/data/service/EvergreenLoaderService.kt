@@ -17,6 +17,8 @@
 
 package org.evergreen_ils.data.service
 
+import android.content.res.Resources
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -34,31 +36,40 @@ import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.idl.IDLParser
+import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.system.EgSms
 import java.io.File
 
 object EvergreenLoaderService: LoaderService {
     const val TAG = "LoaderService"
 
-    override fun makeOkHttpClient(cacheDir: File): OkHttpClient {
+    override var serviceUrl: String
+        get() = GatewayClient.baseUrl
+        set(value) {
+            GatewayClient.baseUrl = value
+        }
+
+    override val httpClient: HttpClient
+        get() = GatewayClient.client
+
+    override val okHttpClient: OkHttpClient
+        get() = GatewayClient.okHttpClient
+
+    override fun initHttpClient(cacheDir: File): OkHttpClient {
         GatewayClient.cacheDirectory = cacheDir
         GatewayClient.initHttpClient()
         return GatewayClient.okHttpClient
     }
 
-    override fun setServiceUrl(url: String) {
-        GatewayClient.baseUrl = url
-    }
-
-    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
+    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {
         return try {
-            return Result.Success(loadStartupDataImpl(serviceOptions))
+            return Result.Success(loadStartupDataImpl(serviceOptions, resources))
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions): Unit = coroutineScope {
+    private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions, resources: Resources): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         GatewayClient.clientCacheKey = serviceOptions.clientCacheKey
         GatewayClient.serverCacheKey = fetchServerCacheKey()
@@ -68,9 +79,9 @@ object EvergreenLoaderService: LoaderService {
         val url = GatewayClient.getIDLUrl()
         val xml = GatewayClient.get(url).bodyAsText()
         val parser = IDLParser(xml.byteInputStream())
-        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL fetched")
+        now = Log.logElapsedTime(TAG, now, "[init] loadStartupData IDL fetched")
         parser.parse()
-        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL parsed")
+        now = Log.logElapsedTime(TAG, now, "[init] loadStartupData IDL parsed")
 
         // async: Load the rest of the data in parallel
         val jobs = mutableListOf<Deferred<Any>>()
@@ -78,10 +89,11 @@ object EvergreenLoaderService: LoaderService {
         jobs.add(async { loadOrgTree(serviceOptions.useHierarchicalOrgTree) })
         jobs.add(async { loadCopyStatuses() })
         jobs.add(async { loadCodedValueMaps() })
+        jobs.add(async { EgMessageMap.init(resources) })
 
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
-        Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+        Log.logElapsedTime(TAG, now, "[init] loadStartupData ${jobs.size} deferreds completed")
     }
 
     override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {
@@ -99,7 +111,7 @@ object EvergreenLoaderService: LoaderService {
         val jobs = mutableListOf<Deferred<Any>>()
         for (org in EgOrg.visibleOrgs) {
             jobs.add(async {
-                EvergreenOrgService.loadOrgSettings(org.id)
+                EvergreenConsortiumService.loadOrgSettings(org.id)
             })
         }
         jobs.add(async { loadSmsCarriers() })

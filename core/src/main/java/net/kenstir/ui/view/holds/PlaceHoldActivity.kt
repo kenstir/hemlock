@@ -45,6 +45,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldPart
+import net.kenstir.data.model.HoldType
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
@@ -58,9 +59,6 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
-import org.evergreen_ils.Api
-import org.evergreen_ils.system.EgSms
-import org.evergreen_ils.util.OSRFUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -96,7 +94,8 @@ class PlaceHoldActivity : BaseActivity() {
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
-    private val visibleOrgs = App.svc.orgService.getVisibleOrgs()
+    private val visibleOrgs = App.svc.consortiumService.visibleOrgs
+    private val smsCarriers = App.svc.consortiumService.smsCarriers
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -208,7 +207,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logOrgStats() {
         if (Analytics.isDebuggable(this)) {
-            App.svc.orgService.dumpOrgStats()
+            App.svc.consortiumService.dumpOrgStats()
         }
     }
 
@@ -245,8 +244,8 @@ class PlaceHoldActivity : BaseActivity() {
                 Analytics.Param.HOLD_NOTIFY to notifyTypes,
                 Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
                 Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(visibleOrgs[selectedOrgPos],
-                    App.svc.orgService.findOrg(App.account.pickupOrg),
-                    App.svc.orgService.findOrg(App.account.homeOrg)),
+                    App.svc.consortiumService.findOrg(App.account.pickupOrg),
+                    App.svc.consortiumService.findOrg(App.account.homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -267,14 +266,6 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun getSMSNotifyCarrier(id: Int): Int? {
         return if (notifyBySMS?.isChecked == true) id else null
-    }
-
-    private fun getExpireDate(): String? {
-        return expireDate?.let { OSRFUtils.formatDate(it) }
-    }
-
-    private fun getThawDate(): String? {
-        return thawDate?.let { OSRFUtils.formatDate(it) }
     }
 
     private fun placeHoldPreFlightCheck(): Boolean {
@@ -312,12 +303,12 @@ class PlaceHoldActivity : BaseActivity() {
 
         scope.async {
             val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
-            val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
+            val selectedSMSCarrierID = if (smsCarriers.size > selectedSMSPos) smsCarriers[selectedSMSPos].id else -1
             val holdType: String
             val itemId: Int
             when {
-                partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
-                else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
+                partRequired || getPartId() > 0 -> { holdType = HoldType.PART; itemId = getPartId() }
+                else -> { holdType = HoldType.TITLE; itemId = record.id }
             }
             Log.d(TAG, "[holds] placeHold: $holdType $itemId")
             showBusy(R.string.msg_placing_hold)
@@ -329,9 +320,9 @@ class PlaceHoldActivity : BaseActivity() {
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
                 useOverride = resources.getBoolean(R.bool.ou_enable_hold_use_override),
                 pickupLib = selectedOrgID,
-                expireTime = getExpireDate(),
+                expireTime = expireDate,
                 suspendHold = suspendHold?.isChecked == true,
-                thawDate = getThawDate()
+                thawDate = thawDate
             )
             val result = App.svc.circService.placeHold(
                 App.account, itemId, options)
@@ -399,7 +390,7 @@ class PlaceHoldActivity : BaseActivity() {
         val notify = AppState.getBoolean(AppState.HOLD_NOTIFY_BY_SMS, account?.notifyBySMS ?: false)
         notifyBySMS?.isChecked = notify && !notifyNumber.isNullOrEmpty()
 
-        val enabled = App.svc.orgService.isSmsEnabled
+        val enabled = App.svc.consortiumService.isSmsEnabled
         if (enabled) {
             notifyBySMS?.setOnCheckedChangeListener { _, isChecked ->
                 smsSpinner?.isEnabled = isChecked
@@ -427,11 +418,12 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSSpinner() {
-        smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, EgSms.spinnerLabels)
+        val spinnerLabels = App.svc.consortiumService.smsCarrierSpinnerLabels
+        smsSpinner?.adapter = ArrayAdapter(this, R.layout.org_item_layout, spinnerLabels)
 
         val savedId = AppState.getInt(AppState.HOLD_SMS_CARRIER_ID, -1)
         val defaultId = if (savedId != -1) savedId else account?.smsCarrier
-        selectedSMSPos = EgSms.carriers.indexOfFirstOrZero { it.id == defaultId }
+        selectedSMSPos = smsCarriers.indexOfFirstOrZero { it.id == defaultId }
         smsSpinner?.setSelection(selectedSMSPos)
         ignoreNextSMSSelection = true
         smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
@@ -442,7 +434,7 @@ class PlaceHoldActivity : BaseActivity() {
                 }
                 if (position == selectedSMSPos) return
                 selectedSMSPos = position
-                AppState.setInt(AppState.HOLD_SMS_CARRIER_ID, EgSms.carriers[position].id)
+                AppState.setInt(AppState.HOLD_SMS_CARRIER_ID, smsCarriers[position].id)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -500,8 +492,8 @@ class PlaceHoldActivity : BaseActivity() {
     // * changing it results in an JUST ONCE / ALWAYS alert
     // * ALWAYS saves it back to the account
     private fun initOrgSpinner() {
-        val spinnerLabels = App.svc.orgService.getOrgSpinnerLabels()
-        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, true)
+        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
+        orgSpinner?.adapter = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, visibleOrgs, true)
 
         val defaultId = account?.pickupOrg
         selectedOrgPos = visibleOrgs.indexOfFirstOrZero { it.id == defaultId }

@@ -284,7 +284,7 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
-        val error = res.exceptionOrNull() as? GatewayEventError
+        val error = res.exceptionOrNull() as? GatewayEventException
         assertEquals(error?.ev?.textCode, "NO_SESSION")
         assertEquals(error?.ev?.failPart, null)
         assertTrue(error?.isSessionExpired() ?: false)
@@ -303,7 +303,7 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
-        val error = res.exceptionOrNull() as? GatewayEventError
+        val error = res.exceptionOrNull() as? GatewayEventException
         assertEquals("PATRON_EXCEEDS_FINES", error?.ev?.textCode)
         assertEquals(customMessage, error?.ev?.message)
         assertFalse(error?.isSessionExpired() ?: false)
@@ -334,7 +334,7 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
-        val error = res.exceptionOrNull() as? GatewayEventError
+        val error = res.exceptionOrNull() as? GatewayEventException
         assertEquals("ITEM_NOT_HOLDABLE", error?.ev?.textCode)
         assertEquals(customMessage, error?.ev?.message)
         assertEquals("config.hold_matrix_test.holdable", error?.ev?.failPart)

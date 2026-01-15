@@ -55,6 +55,7 @@ class LiveAuthServiceTest {
             GatewayClient.clientCacheKey = "42"
             GatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
             GatewayClient.cacheDirectory.deleteRecursively()
+            GatewayClient.initHttpClient()
         }
 
         @JvmStatic
@@ -91,7 +92,8 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = serviceConfig.loaderService.loadStartupPrerequisites(LoadStartupOptions("42", true))
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val result = serviceConfig.loaderService.loadStartupPrerequisites(LoadStartupOptions("42", true), ctx.resources)
         isServiceDataLoaded = true
         return result
     }

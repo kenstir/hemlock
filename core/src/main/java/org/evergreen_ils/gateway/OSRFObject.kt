@@ -65,6 +65,10 @@ data class OSRFObject(
         }
     }
 
+    fun getDate(key: String): Date? {
+        return OSRFUtils.parseDate(getString(key))
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun getObject(key: String): OSRFObject? {
         return when (val value = map[key]) {
@@ -72,10 +76,6 @@ data class OSRFObject(
             is Map<*, *> -> OSRFObject(value as Map<String, Any?>)
             else -> null
         }
-    }
-
-    fun getDate(key: String): Date? {
-        return OSRFUtils.parseDate(getString(key))
     }
 
     /** Returns a list of OSRFObject associated with [key].

@@ -15,16 +15,19 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data.service
+package org.evergreen_ils.util
 
-import net.kenstir.data.service.ServiceConfig
+import net.kenstir.data.model.Account
+import org.evergreen_ils.gateway.GatewayEventException
 
-class EvergreenServiceConfig : ServiceConfig {
-    override val loaderService = EvergreenLoaderService
-    override val authService = EvergreenAuthService
-    override val biblioService = EvergreenBiblioService
-    override val circService = EvergreenCircService
-    override val consortiumService = EvergreenConsortiumService
-    override val searchService = EvergreenSearchService
-    override val userService = EvergreenUserService
+data class AccountCredentials(val authToken: String, val id: Int)
+
+/** return (authToken, userID) or throw GatewayEventException */
+fun Account.getCredentialsOrThrow(): AccountCredentials {
+    val authToken = this.authToken
+    val id = this.id
+    if (authToken == null || id == null) {
+        throw GatewayEventException.makeNoSessionError()
+    }
+    return AccountCredentials(authToken, id)
 }

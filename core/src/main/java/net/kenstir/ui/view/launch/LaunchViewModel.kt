@@ -31,7 +31,6 @@ import net.kenstir.ui.App
 import net.kenstir.ui.util.appVersionCode
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.system.EgMessageMap
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "LaunchViewModel"
@@ -78,14 +77,10 @@ class LaunchViewModel : ViewModel() {
 
                 // load the IDL etc.
                 val options = LoadStartupOptions(context.appVersionCode, context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
-                when (val result = App.svc.loaderService.loadStartupPrerequisites(options)) {
+                when (val result = App.svc.loaderService.loadStartupPrerequisites(options, context.resources)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception, "loadServiceData") ; return@async }
                 }
-
-                // load custom messages from resources
-                // TODO: move Evergreen-specific init to some evergreen-specific package
-                EgMessageMap.init(context.resources)
 
                 _status.value = "Connected"
                 _serviceDataReady.value = true

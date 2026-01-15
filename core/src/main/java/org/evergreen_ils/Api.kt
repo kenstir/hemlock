@@ -135,17 +135,4 @@ object Api {
     /// misc
 
     const val ILS_VERSION = "opensrf.open-ils.system.ils_version"
-
-    /// hold types
-
-    object HoldType {
-        const val COPY = "C"
-        const val FORCE = "F"
-        const val RECALL = "R"
-        const val ISSUANCE = "I"
-        const val VOLUME = "V"
-        const val TITLE = "T"
-        const val METARECORD = "M"
-        const val PART = "P"
-    }
 }
