@@ -39,50 +39,50 @@ class GatewayResult {
     val shouldCache: Boolean
         get() = (!failed && type != ResultType.EMPTY)
 
-    private var error: GatewayError? = null
+    private var error: GatewayException? = null
     private var type: ResultType = ResultType.UNKNOWN
 
     private constructor()
-    private constructor(error: GatewayError) {
+    private constructor(error: GatewayException) {
         this.error = error
         failed = true
         errorMessage = error.message
         type = ResultType.ERROR
     }
-    private constructor(ex: Exception): this(GatewayError(ex))
+    private constructor(ex: Exception): this(GatewayException(ex))
 
     /** given `"payload":["string"]` return `"string"` */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadFirstAsString(): String {
         error?.let { throw it }
         return try {
             payload.first() as String
         } catch (_: Exception) {
-            throw GatewayError("Internal Server Error: expected string, got $type")
+            throw GatewayException("Internal Server Error: expected string, got $type")
         }
     }
 
     /** given `"payload":[obj]` return `obj` */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadFirstAsObject(): OSRFObject {
         error?.let { throw it }
         try {
             (payload.firstOrNull() as? OSRFObject)?.let { return it }
             (payload.firstOrNull() as? JSONDictionary)?.let { return OSRFObject(it) } // NOT HIT
-            throw GatewayError("Unexpected type")
+            throw GatewayException("Unexpected type")
         } catch (_: Exception) {
-            throw GatewayError("Internal Server Error: expected object, got $type")
+            throw GatewayException("Internal Server Error: expected object, got $type")
         }
     }
 
     /** given `"payload":[obj]` return `obj` or null if payload empty */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadFirstAsOptionalObject(): OSRFObject? {
         return payloadAsObjectList().firstOrNull()
     }
 
     /** given `"payload":[obj,obj]` return `[obj,obj]` */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadAsObjectList(): List<OSRFObject> {
         error?.let { throw it }
         return try {
@@ -92,31 +92,31 @@ class GatewayResult {
 
             }
         } catch (_: Exception) {
-            throw GatewayError("Internal Server Error: expected array, got $type")
+            throw GatewayException("Internal Server Error: expected array, got $type")
         }
     }
 
     /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadFirstAsObjectList(): List<OSRFObject> {
         error?.let { throw it }
         return try {
             val first = payload.firstOrNull() as List<Any>
             first as List<OSRFObject>
         } catch (_: Exception) {
-            throw GatewayError("Internal Server Error: expected array, got $type")
+            throw GatewayException("Internal Server Error: expected array, got $type")
         }
     }
 
     /** given `"payload":[[any]]` return `[any]` */
-    @Throws(GatewayError::class)
+    @Throws(GatewayException::class)
     fun payloadFirstAsList(): List<Any> {
         error?.let { throw it }
         return try {
             val inner = payload as List<Any>
             inner.first() as List<Any>
         } catch (_: Exception) {
-            throw GatewayError("Internal Server Error: expected array, got $type")
+            throw GatewayException("Internal Server Error: expected array, got $type")
         }
     }
 
@@ -128,11 +128,11 @@ class GatewayResult {
                 val response = Json.decodeFromString<XGatewayResponseContent>(json)
                 if (response.status != 200) {
                     val detail = if (response.debug.isNullOrEmpty()) "" else ": ${response.debug}"
-                    throw GatewayError("Request failed with status ${response.status}${detail}")
+                    throw GatewayException("Request failed with status ${response.status}${detail}")
                 }
                 createFromPayload(response.payload)
             } catch (_: SerializationException) {
-                GatewayResult(GatewayError("Internal Server Error: response is not JSON"))
+                GatewayResult(GatewayException("Internal Server Error: response is not JSON"))
             } catch (ex: Exception) {
                 GatewayResult(ex)
             }
@@ -154,7 +154,7 @@ class GatewayResult {
                         if (event != null) {
                             resp.failed = true
                             resp.errorMessage = event.message
-                            resp.error = GatewayEventError(event)
+                            resp.error = GatewayEventException(event)
                             resp.type = ResultType.EVENT
                         } else {
                             resp.type = ResultType.OBJECT
@@ -167,7 +167,7 @@ class GatewayResult {
                         if (event != null) {
                             resp.failed = true
                             resp.errorMessage = event.message
-                            resp.error = GatewayEventError(event)
+                            resp.error = GatewayEventException(event)
                             resp.type = ResultType.EVENT
                         } else {
                             resp.type = ResultType.ARRAY

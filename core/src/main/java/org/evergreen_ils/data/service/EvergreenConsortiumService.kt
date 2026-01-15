@@ -35,6 +35,7 @@ import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.system.EgSms
+import org.evergreen_ils.util.getCredentialsOrThrow
 
 object EvergreenConsortiumService: ConsortiumService {
     const val TAG = "ConsortService"

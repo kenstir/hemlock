@@ -18,25 +18,26 @@
 package org.evergreen_ils.data.service
 
 import net.kenstir.data.JSONDictionary
-import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
 import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.Account
 import net.kenstir.data.model.PatronCharges
 import net.kenstir.data.model.PatronList
-import net.kenstir.logging.Log
+import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.service.UserService
+import net.kenstir.logging.Log
 import net.kenstir.util.requireType
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.BookBag
+import org.evergreen_ils.data.model.EvergreenAccount
 import org.evergreen_ils.data.model.EvergreenPatronMessage
 import org.evergreen_ils.data.model.FineRecord
-import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.data.model.EvergreenAccount
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
 import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.util.OSRFUtils
+import org.evergreen_ils.util.getCredentialsOrThrow
 import java.util.Date
 
 object EvergreenUserService: UserService {

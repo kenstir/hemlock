@@ -37,7 +37,7 @@ import net.kenstir.data.service.HoldUpdateOptions
 import net.kenstir.logging.Log
 import net.kenstir.util.requireType
 import org.evergreen_ils.Api
-import org.evergreen_ils.gateway.GatewayError
+import org.evergreen_ils.gateway.GatewayException
 import org.evergreen_ils.data.model.EvergreenCircRecord
 import org.evergreen_ils.data.model.EvergreenHistoryRecord
 import org.evergreen_ils.data.model.EvergreenHoldRecord
@@ -45,6 +45,7 @@ import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.util.getCredentialsOrThrow
 import org.evergreen_ils.util.toApiDateTimeOrNull
 
 object EvergreenCircService: CircService {
@@ -68,7 +69,7 @@ object EvergreenCircService: CircService {
             val circObj = fetchCircRecord(account,  circRecord.circId)
             circRecord.circ = circObj
 
-            val targetCopy = circObj.getInt("target_copy") ?: throw GatewayError("circ item has no target_copy")
+            val targetCopy = circObj.getInt("target_copy") ?: throw GatewayException("circ item has no target_copy")
             val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
             val record = MBRecord(modsObj)
             circRecord.record = record
@@ -131,7 +132,7 @@ object EvergreenCircService: CircService {
                 return Result.Success(Unit)
             }
 
-            val targetCopy = recordImpl.targetCopy ?: throw GatewayError("circ item has no target_copy")
+            val targetCopy = recordImpl.targetCopy ?: throw GatewayException("circ item has no target_copy")
             val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
             val record = MBRecord(modsObj)
             recordImpl.record = record
@@ -166,7 +167,7 @@ object EvergreenCircService: CircService {
     }
 
     private suspend fun loadHoldDetailsImpl(account: Account, hold: EvergreenHoldRecord): Unit = coroutineScope {
-        val target = hold.target ?: throw GatewayError("null hold target")
+        val target = hold.target ?: throw GatewayException("null hold target")
         val jobs = mutableListOf<Deferred<Any>>()
         jobs.add(async {
             Log.d(TAG, "[holds] ${hold.holdType} hold id=${hold.id} target=$target")
@@ -183,7 +184,7 @@ object EvergreenCircService: CircService {
                     loadVolumeHoldTargetDetails(account, hold, target)
                 else -> {
                     Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
-                    Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
+                    Result.Error(GatewayException("unexpected hold type: ${hold.holdType}"))
                 }
             }
         })
@@ -219,7 +220,7 @@ object EvergreenCircService: CircService {
 
     private suspend fun loadPartHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
         val bmpObj = fetchBMP(target)
-        val id = bmpObj.getInt("record") ?: throw GatewayError("missing record number in part hold bre")
+        val id = bmpObj.getInt("record") ?: throw GatewayException("missing record number in part hold bre")
         hold.partLabel = bmpObj.getString("label")
 
         val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
@@ -245,10 +246,10 @@ object EvergreenCircService: CircService {
         // steps: hold target -> asset copy -> asset.call_number -> mods
 
         val acpObj = fetchAssetCopy(target)
-        val callNumber = acpObj.getInt("call_number") ?: throw GatewayError("missing call_number in copy hold")
+        val callNumber = acpObj.getInt("call_number") ?: throw GatewayException("missing call_number in copy hold")
 
         val acnObj = fetchAssetCallNumber(callNumber)
-        val id = acnObj.getInt("record") ?: throw GatewayError("missing record number in asset call number")
+        val id = acnObj.getInt("record") ?: throw GatewayException("missing record number in asset call number")
 
         val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
         val bibRecord = MBRecord(modsObj)
@@ -272,7 +273,7 @@ object EvergreenCircService: CircService {
         // steps: hold target -> asset call number -> mods
 
         val acnObj = fetchAssetCallNumber(target)
-        val id = acnObj.getInt("record") ?: throw GatewayError("missing record number in asset call number")
+        val id = acnObj.getInt("record") ?: throw GatewayException("missing record number in asset call number")
 
         val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
         val bibRecord = MBRecord(modsObj)

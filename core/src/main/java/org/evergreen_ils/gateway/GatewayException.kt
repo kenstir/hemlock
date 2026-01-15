@@ -17,22 +17,24 @@
 
 package org.evergreen_ils.gateway
 
-open class GatewayError(message: String?): Exception(message) {
+import net.kenstir.data.service.ServiceException
+
+open class GatewayException(message: String?): ServiceException(message) {
     constructor(ex: Exception): this(ex.message)
 
-    fun isSessionExpired(): Boolean {
-        (this as? GatewayEventError)?.let {
+    override fun isSessionExpired(): Boolean {
+        (this as? GatewayEventException)?.let {
             return it.ev.textCode == "NO_SESSION"
         }
         return false
     }
 }
 
-class GatewayEventError constructor(var ev: Event): GatewayError(ev.message) {
+class GatewayEventException(var ev: Event): GatewayException(ev.message) {
     companion object {
         // for use when we have null/empty creds and we want to treat it like isSessionExpired()
-        fun makeNoSessionError(): GatewayEventError {
-            return GatewayEventError(Event(mapOf("desc" to "No session", "textcode" to "NO_SESSION")))
+        fun makeNoSessionError(): GatewayEventException {
+            return GatewayEventException(Event(mapOf("desc" to "No session", "textcode" to "NO_SESSION")))
         }
     }
 }

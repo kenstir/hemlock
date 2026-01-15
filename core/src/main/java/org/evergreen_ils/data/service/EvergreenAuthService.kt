@@ -23,7 +23,7 @@ import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
 import net.kenstir.data.jsonMapOf
 import org.evergreen_ils.Api
-import org.evergreen_ils.gateway.GatewayError
+import org.evergreen_ils.gateway.GatewayException
 import java.security.MessageDigest
 
 object EvergreenAuthService: AuthService {
@@ -45,8 +45,8 @@ object EvergreenAuthService: AuthService {
 
             // step 3: get authtoken from response
             // {"payload":[{"payload":{"authtoken":"***","authtime":1209600},"ilsevent":0,"textcode":"SUCCESS","desc":"Success"}],"status":200}
-            val payload = obj.getObject("payload") ?: throw GatewayError("Missing payload in login response")
-            val authToken = payload.getString("authtoken") ?: throw GatewayError("Missing authtoken in login response")
+            val payload = obj.getObject("payload") ?: throw GatewayException("Missing payload in login response")
+            val authToken = payload.getString("authtoken") ?: throw GatewayException("Missing authtoken in login response")
             //val authTime = payload.getInt("authtime") ?: throw GatewayError("Missing authtime in login  response")
             Result.Success(authToken)
         } catch (e: Exception) {

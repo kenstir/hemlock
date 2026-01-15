@@ -19,11 +19,8 @@ package net.kenstir.data.model
 
 import androidx.core.os.bundleOf
 import net.kenstir.util.Analytics
-import org.evergreen_ils.gateway.GatewayEventError
 import java.text.DateFormat
 import java.util.Date
-
-data class AccountCredentials(val authToken: String, val id: Int)
 
 open class Account(val username: String, var authToken: String?) {
     constructor(username: String) : this(username, null)
@@ -71,16 +68,6 @@ open class Account(val username: String, var authToken: String?) {
         get() = _searchOrg ?: homeOrg
     val expireDateString: String?
         get() = expireDate?.let { DateFormat.getDateInstance().format(it) }
-
-    /** return (authToken, userID) or throw GatewayEventError */
-    fun getCredentialsOrThrow(): AccountCredentials {
-        val authToken = this.authToken
-        val id = this.id
-        if (authToken == null || id == null) {
-            throw GatewayEventError.makeNoSessionError()
-        }
-        return AccountCredentials(authToken, id)
-    }
 
     fun clearAuthToken() {
         authToken = null
