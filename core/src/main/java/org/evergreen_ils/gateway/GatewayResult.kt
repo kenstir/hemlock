@@ -127,7 +127,7 @@ class GatewayResult {
             return try {
                 val response = Json.decodeFromString<XGatewayResponseContent>(json)
                 if (response.status != 200) {
-                    val detail = if (response.debug.isNullOrEmpty()) "" else ": ${response.debug}"
+                    val detail = if (response.debug.isEmpty()) "" else ": ${response.debug}"
                     throw GatewayException("Request failed with status ${response.status}${detail}")
                 }
                 createFromPayload(response.payload)

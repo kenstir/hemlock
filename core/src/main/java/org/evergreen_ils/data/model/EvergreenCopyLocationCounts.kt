@@ -54,7 +54,7 @@ class EvergreenCopyLocationCounts(
         fun makeArray(payload: List<Any>): List<CopyLocationCounts> {
             val ret = mutableListOf<CopyLocationCounts>()
             for (elem in payload) {
-                val a = elem as? List<Any> ?: continue
+                val a = elem as? List<*> ?: continue
                 if (a.size < 6) continue
                 val orgId = (a[0] as? String)?.toIntOrNull() ?: continue
                 val callNumberPrefix = a[1] as? String ?: continue

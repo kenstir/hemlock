@@ -34,6 +34,7 @@ import net.kenstir.util.JsonUtils
 import org.evergreen_ils.gateway.OSRFObject
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.ceil
 
 class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
     override val id: Int
@@ -69,6 +70,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
         //  7 for 'suspended'
         //  8 for 'captured, on wrong hold shelf'
         val status = status
+        val estimatedWaitInSeconds = estimatedWaitInSeconds ?: 0
         return if (status == null) {
             res.getString(R.string.hold_status_unavailable)
         } else if (status == 4) {
@@ -81,8 +83,8 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
             s
         } else if (status == 7) {
             res.getString(R.string.hold_status_suspended)
-        } else if (estimatedWaitInSeconds!! > 0) {
-            val days = Math.ceil(estimatedWaitInSeconds!!.toDouble() / 86400.0).toInt()
+        } else if (estimatedWaitInSeconds > 0) {
+            val days = ceil(estimatedWaitInSeconds.toDouble() / 86400.0).toInt()
             res.getString(R.string.hold_status_estimated_wait,
                 res.getQuantityString(R.plurals.number_of_days, days, days))
         } else if (status == 3 || status == 8) {
@@ -179,9 +181,9 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
                 val l = v as? ArrayList<*>
                 if (l != null) {
                     for (elem in l) {
-                        val e = elem as? Map<String, String>
-                        val attr = e?.get("_attr")
-                        val value = e?.get("_val")
+                        val e = elem as? Map<*, *>
+                        val attr = e?.get("_attr") as? String
+                        val value = e?.get("_val") as? String
                         if (attr == "mr_hold_format" && value != null) {
                             formats.add(value)
                         }
