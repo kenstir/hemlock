@@ -17,32 +17,41 @@
 
 package org.evergreen_ils.data.model
 
+import net.kenstir.data.model.OrgClosure
+import net.kenstir.data.model.OrgHours
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.data.model.Organization
 import org.evergreen_ils.Api
 
 class EvergreenOrganization(
-    id: Int,
-    level: Int,
-    name: String,
-    shortname: String,
-    opacVisible: Boolean,
-    parent: Int?,
+    override val id: Int,
+    override val level: Int,
+    override val name: String,
+    override val shortname: String,
+    override val opacVisible: Boolean,
+    override val parent: Int?,
     val obj: OSRFObject,
-): Organization(id, level, name, shortname, opacVisible, parent) {
+): Organization {
+    var settingsLoaded: Boolean = false
     private val orgType: OrgType? = EgOrg.findOrgType(obj.getInt("ou_type") ?: -1)
+    private var addressObj: OSRFObject? = null
     val addressID: Int? = obj.getInt("mailing_address")
 
-    init {
-        email = obj.getString("email")
-        phone = obj.getString("phone")
-    }
+    override var hours: OrgHours? = null
+    override var closures: List<OrgClosure> = emptyList()
 
-    private var addressObj: OSRFObject? = null
+    override var email: String? = obj.getString("email")
+    override var phone: String? = obj.getString("phone")
+    override var eresourcesUrl: String? = null
+    override var eventsURL: String? = null
+    override var infoURL: String? = null
+    override var meetingRoomsUrl: String? = null
+    override var museumPassesUrl: String? = null
 
     override val isConsortium: Boolean
         get() = id == CONSORTIUM_ID
+    override var isPaymentAllowed: Boolean = false
 
     private var isNotPickupLocationSetting: Boolean? = null
     override val isPickupLocation: Boolean
@@ -51,17 +60,18 @@ class EvergreenOrganization(
             orgType?.canHaveVols?.let { return it }
             return true // should not happen
         }
-
     override val canHaveUsers: Boolean
         get() = orgType?.canHaveUsers ?: true
-
     override val canHaveVols: Boolean
         get() = orgType?.canHaveVols ?: true
+
+    override var indentedDisplayPrefix = ""
 
     override val navigationAddress: String?
         get() = getAddress(" ")
     override val displayAddress: String?
         get() = getAddress("\n")
+
     private fun getAddress(separator: String): String {
         if (addressObj == null) return ""
         return buildString {
@@ -104,5 +114,4 @@ class EvergreenOrganization(
     companion object {
         const val CONSORTIUM_ID = 1 // // as defaulted in Open-ILS code
     }
-
 }
