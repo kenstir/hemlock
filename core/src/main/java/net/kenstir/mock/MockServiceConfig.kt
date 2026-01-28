@@ -25,16 +25,16 @@ import net.kenstir.data.service.SearchService
 import net.kenstir.data.service.ServiceConfig
 
 class MockServiceConfig : ServiceConfig {
-    override val loaderService = MockLoaderService
-    override val authService: AuthService
+    override val loader = MockLoaderService
+    override val auth: AuthService
         get() = TODO("Not yet implemented")
-    override val biblioService: BiblioService
+    override val biblio: BiblioService
         get() = TODO("Not yet implemented")
-    override val circService: CircService
+    override val circ: CircService
         get() = TODO("Not yet implemented")
-    override val consortiumService: ConsortiumService
+    override val consortium: ConsortiumService
         get() = TODO("Not yet implemented")
-    override val searchService: SearchService
+    override val search: SearchService
         get() = TODO("Not yet implemented")
-    override val userService = MockUserService
+    override val user = MockUserService
 }

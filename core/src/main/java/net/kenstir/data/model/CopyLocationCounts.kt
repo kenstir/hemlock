@@ -24,6 +24,7 @@ interface CopyLocationCounts {
     val orgId: Int
     /** shelving location */
     val copyLocation: String
+    /** call number including prefix and suffix */
     val callNumber: String
     /** newline-separated list of "count status" labels, e.g. "1 Available\n1 Checked out" */
     val countsByStatusLabel: String

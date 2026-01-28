@@ -113,7 +113,7 @@ class CheckoutsActivity : BaseActivity() {
     private fun enableCheckoutHistory() {
         scope.async {
             try {
-                val result = App.svc.userService.enableCheckoutHistory(
+                val result = App.svc.user.enableCheckoutHistory(
                     App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
@@ -131,7 +131,7 @@ class CheckoutsActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 showBusy(R.string.msg_retrieving_data)
                 val account = App.account
-                val circService = App.svc.circService
+                val circService = App.svc.circ
 
                 // fetch checkouts
                 val result = circService.fetchCheckouts(account)
@@ -203,7 +203,7 @@ class CheckoutsActivity : BaseActivity() {
         scope.async {
             record.targetCopy?.let {
                 showBusy(R.string.msg_renewing_item)
-                val result = App.svc.circService.renewCheckout(
+                val result = App.svc.circ.renewCheckout(
                     App.account, it)
                 hideBusy()
                 when (result) {

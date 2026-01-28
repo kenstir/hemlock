@@ -80,7 +80,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 
         private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
             val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
-            return App.svc.circService.loadHistoryDetails(historyRecord)
+            return App.svc.circ.loadHistoryDetails(historyRecord)
         }
 
         private fun loadMetadata(context: Context, historyRecord: HistoryRecord) {
@@ -89,7 +89,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             author.text = historyRecord.author
 
             historyRecord.record?.let {
-                val url = App.svc.biblioService.imageUrl(it, ImageSize.SMALL)
+                val url = App.svc.biblio.imageUrl(it, ImageSize.SMALL)
                 recordImage.load(url)
             }
         }

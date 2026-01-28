@@ -51,19 +51,19 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
 
-            val url = App.svc.biblioService.imageUrl(record, ImageSize.SMALL)
+            val url = App.svc.biblio.imageUrl(record, ImageSize.SMALL)
             recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return
             scope.async {
                 try {
                     scope.async {
-                        App.svc.biblioService.loadRecordDetails(record, true)
+                        App.svc.biblio.loadRecordDetails(record, true)
                         loadMetadata(record)
                     }
 
                     scope.async {
-                        App.svc.biblioService.loadRecordAttributes(record)
+                        App.svc.biblio.loadRecordAttributes(record)
                         loadFormat(record)
                     }
 

@@ -102,13 +102,13 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             if (password != null) {
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
-                    if (libraryUrl != App.svc.loaderService.serviceUrl) {
+                    if (libraryUrl != App.svc.loader.serviceUrl) {
                         // The app changed the server URL; don't send the old password to the new server.
                         // This path clears the password and prompts the user to sign in again.
                         throw AuthenticationException("Server URL changed, please sign in again")
                     }
                     authToken = runBlocking {
-                        App.svc.authService.getAuthToken(account.name, password).get()
+                        App.svc.auth.getAuthToken(account.name, password).get()
                     }
                 } catch (e: AuthenticationException) {
                     Analytics.logExceptionToBuffer(e);

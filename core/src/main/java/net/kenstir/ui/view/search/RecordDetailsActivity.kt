@@ -56,12 +56,12 @@ class RecordDetailsActivity : BaseActivity() {
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         var recordList = intent.getSerializableExtra(Key.RECORD_LIST) as? List<BibRecord>
         if (recordList == null)
-            recordList = App.svc.searchService.getLastSearchResults().records
+            recordList = App.svc.search.getLastSearchResults().records
         records.clear()
         records.addAll(recordList)
 
         // Calculate numResults after records are loaded
-        orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortiumService.consortiumID)
+        orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortium.consortiumID)
         val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
         numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
         mPager = findViewById(R.id.main_content_view)

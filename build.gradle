@@ -47,9 +47,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-task printProps {
-    doLast {
-        println fabricFubar
-    }
-}

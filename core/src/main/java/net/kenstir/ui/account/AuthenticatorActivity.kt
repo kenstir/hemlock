@@ -170,7 +170,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 var authtoken: String? = null
                 var errorMessage = "Login failed"
 
-                val result = App.svc.authService.getAuthToken(username, password)
+                val result = App.svc.auth.getAuthToken(username, password)
                 when (result) {
                     is Result.Success -> authtoken = result.get()
                     is Result.Error -> {

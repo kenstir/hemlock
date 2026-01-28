@@ -220,7 +220,7 @@ open class MainBaseActivity : BaseActivity() {
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.svc.userService.updatePushNotificationToken(
+                val updateResult = App.svc.user.updatePushNotificationToken(
                     App.account, currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)

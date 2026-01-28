@@ -95,7 +95,7 @@ class HoldsActivity : BaseActivity() {
                 val account = App.account
 
                 // fetchHolds
-                val result = App.svc.circService.fetchHolds(account)
+                val result = App.svc.circ.fetchHolds(account)
                 if (result is Result.Error) {
                     showAlert(result.exception)
                     return@async
@@ -107,7 +107,7 @@ class HoldsActivity : BaseActivity() {
                 val jobs = mutableListOf<Deferred<Any>>()
                 for (hold in holds) {
                     jobs.add(scope.async {
-                        App.svc.circService.loadHoldDetails(account, hold)
+                        App.svc.circ.loadHoldDetails(account, hold)
                     })
                 }
 

@@ -190,7 +190,7 @@ class LaunchActivity : AppCompatActivity() {
         lifecycleScope.async {
             try {
                 // ignore failure getting the IP address
-                val result = App.svc.loaderService.fetchPublicIpAddress()
+                val result = App.svc.loader.fetchPublicIpAddress()
                 val ip = when (result) {
                     is Result.Success -> result.get()
                     is Result.Error -> "unknown"
@@ -251,7 +251,7 @@ class LaunchActivity : AppCompatActivity() {
         val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         App.library = library
-        val account = App.svc.userService.makeAccount(result.accountName, result.authToken)
+        val account = App.svc.user.makeAccount(result.accountName, result.authToken)
         App.account = account
     }
 
@@ -284,9 +284,9 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // load the home org settings, used to control visibility of Events and other buttons
-        val orgService = App.svc.consortiumService
+        val orgService = App.svc.consortium
         orgService.findOrg(App.account.homeOrg)?.let { org ->
-            val result = App.svc.consortiumService.loadOrgSettings(org.id)
+            val result = App.svc.consortium.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
@@ -306,7 +306,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private suspend fun fetchSession(account: Account): Result<Unit> {
-        return App.svc.userService.loadUserSession(account)
+        return App.svc.user.loadUserSession(account)
     }
 
     @Deprecated("Deprecated in Java")

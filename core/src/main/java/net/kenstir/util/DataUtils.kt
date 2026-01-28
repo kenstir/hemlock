@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Kenneth H. Cox
+ * Copyright (c) 2026 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,14 +15,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.data.service
+package net.kenstir.util
 
-interface ServiceConfig {
-    val loader: LoaderService
-    val auth: AuthService
-    val biblio: BiblioService
-    val circ: CircService
-    val consortium: ConsortiumService
-    val search: SearchService
-    val user: UserService
+import net.kenstir.data.model.CopyLocationCounts
+import net.kenstir.data.service.ConsortiumService
+
+/**
+ * filter copy location counts to only those at orgs that are opacVisible
+ */
+fun visibleCopyLocationCounts(copyLocationCounts: List<CopyLocationCounts>, consortium: ConsortiumService): List<CopyLocationCounts> {
+    return copyLocationCounts.filter { clc ->
+        val org = consortium.findOrg(clc.orgId)
+        // if a branch is not opac_visible, its copies should not be visible
+        org != null && org.opacVisible
+    }
 }

@@ -45,7 +45,7 @@ class SearchResultsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDataset = App.svc.searchService.getLastSearchResults().records
+        mDataset = App.svc.search.getLastSearchResults().records
         mAdapter = RecordViewAdapter(mDataset)
     }
 

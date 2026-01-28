@@ -38,7 +38,7 @@ fun Exception.getCustomMessage(): String {
     return "Cancelled"
 }
 
-/** returns index of item in array that matches string, or 0 if not found
+/** returns index of item in array that matches [element], or 0 if not found
  *
  * like indexOf but with a safe default
  */

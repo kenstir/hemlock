@@ -17,28 +17,23 @@
 
 package org.evergreen_ils.data.model
 
-import net.kenstir.data.jsonMapOf
-import org.evergreen_ils.system.EgCopyStatus
+import net.kenstir.util.visibleCopyLocationCounts
+import org.evergreen_ils.data.service.EvergreenConsortiumService
 import org.evergreen_ils.gateway.GatewayResult
-import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 class CopyLocationCountsTest {
 
-    fun make_ccs(id: Int, name: String, opac_visible: String): OSRFObject {
-        return OSRFObject(jsonMapOf("id" to id, "name" to name, "opac_visible" to opac_visible))
-    }
-
-    @Before
-    fun setUp() {
-        val ccsList = listOf(
-            make_ccs(1, "Checked out", "t"),
-            make_ccs(0, "Available", "t"),
-            make_ccs(7, "Reshelving", "t")
-        )
-        EgCopyStatus.loadCopyStatuses(ccsList)
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUpClass() {
+            SampleData.loadOrgTypes()
+            SampleData.loadOrgs()
+            SampleData.loadCopyStatuses()
+        }
     }
 
     @Test
@@ -74,5 +69,26 @@ class CopyLocationCountsTest {
         assertEquals(listOf(Pair(1, 2), Pair(7,1)), clc1.countsByStatus)
         assertEquals("2 Checked out\n1 Reshelving", clc1.countsByStatusLabel)
         assertEquals("3 Available\n1 Checked out", clc2.countsByStatusLabel)
+    }
+
+    @Test
+    fun test_ignoreCopyFromNonVisibleOrg() {
+        // orgID 7 is not visible
+        val jsonPayload = """
+            [[["4","","YA B JOHNSON","","NONFIC",{"0":1}],
+              ["5","","YA B JOHNSON","","NONFIC",{"1":1}],
+              ["7","","YA B JOHNSON","","NONFIC",{"0":1}]]]
+            """
+        val cscJson = """
+            {"payload":$jsonPayload,"status":200}
+            """.trimIndent()
+        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
+        val clcList = EvergreenCopyLocationCounts.makeArray(payloadList)
+        assertEquals(3, clcList.size)
+
+        val consortiumService = EvergreenConsortiumService
+        val visible = visibleCopyLocationCounts(clcList, consortiumService)
+        assertEquals(2, visible.size)
+        assertEquals(null, visible.find { it.orgId == 7 } )
     }
 }

@@ -57,6 +57,7 @@ import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.ui.util.ProgressDialogFragment
 import net.kenstir.ui.util.ThemeManager
+import net.kenstir.ui.util.appVersionCode
 import net.kenstir.ui.util.launchURL
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.BarcodeActivity
@@ -88,7 +89,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         @SuppressLint("StringFormatInvalid")
         get() {
             val urlFormat = getString(R.string.ou_feedback_url)
-            return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, getAppVersionCode(this))
+            return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, appVersionCode)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -235,19 +236,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eresourcesUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eventsURL
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.meetingRoomsUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.museumPassesUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -367,7 +368,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     suspend fun logout() {
         Log.d(TAG, "[auth] logout")
         val account = App.account
-        App.svc.userService.deleteSession(account)
+        App.svc.user.deleteSession(account)
         AccountUtils.invalidateAuthToken(this, account.authToken)
         AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()
@@ -462,18 +463,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     companion object {
         private const val TAG = "BaseActivity"
         private const val PROGRESS_TAG = "progress"
-
-        fun getAppVersionCode(context: Context): String {
-            var version = ""
-            try {
-                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                version = String.format("%d", pInfo.versionCode)
-            } catch (e: PackageManager.NameNotFoundException) {
-                Log.d("Log", "caught", e)
-            }
-
-            return version
-        }
 
         fun activityForNotificationType(notification: PushNotification): Class<out BaseActivity> {
             return when (notification.type) {

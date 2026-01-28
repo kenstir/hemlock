@@ -137,8 +137,8 @@ class HoldDetailsActivity : BaseActivity() {
             thawDatePicker?.show()
         }
 
-        val orgs = App.svc.consortiumService.visibleOrgs
-        val spinnerLabels = App.svc.consortiumService.orgSpinnerLabels
+        val orgs = App.svc.consortium.visibleOrgs
+        val spinnerLabels = App.svc.consortium.orgSpinnerLabels
         selectedOrgPos = orgs.indexOfFirstOrZero { it.id == record.pickupLib }
 
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, orgs, true)
@@ -158,7 +158,7 @@ class HoldDetailsActivity : BaseActivity() {
             showBusy(R.string.msg_canceling_hold)
 
             val holdId = record.id
-            val result = App.svc.circService.cancelHold(App.account, holdId)
+            val result = App.svc.circ.cancelHold(App.account, holdId)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -180,14 +180,14 @@ class HoldDetailsActivity : BaseActivity() {
             showBusy(R.string.msg_updating_hold)
 
             val holdId = record.id
-            val orgId = App.svc.consortiumService.visibleOrgs[selectedOrgPos].id
+            val orgId = App.svc.consortium.visibleOrgs[selectedOrgPos].id
             val holdOptions = HoldUpdateOptions(
                 pickupLib = orgId,
                 suspendHold = suspendHold!!.isChecked,
                 expireTime = expireDate,
                 thawDate = thawDate,
             )
-            val result = App.svc.circService.updateHold(
+            val result = App.svc.circ.updateHold(
                 App.account, holdId, holdOptions)
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
