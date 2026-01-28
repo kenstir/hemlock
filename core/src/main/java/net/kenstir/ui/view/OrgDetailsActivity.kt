@@ -166,7 +166,7 @@ class OrgDetailsActivity : BaseActivity() {
             dialPhone(org?.phone)
         }
         map?.setOnClickListener {
-            launchMap(org?.getAddress(" "))
+            launchMap(org?.navigationAddress)
         }
         enableButtonsWhenReady()
     }
@@ -175,7 +175,7 @@ class OrgDetailsActivity : BaseActivity() {
         webSite?.isEnabled = !(org?.infoURL.isNullOrEmpty())
         email?.isEnabled = !(org?.email.isNullOrEmpty())
         phone?.isEnabled = !(org?.phone.isNullOrEmpty())
-        map?.isEnabled = org?.hasAddress ?: false
+        map?.isEnabled = !(org?.navigationAddress.isNullOrEmpty())
     }
 
     private fun testNote(note: String?): String? {
@@ -248,7 +248,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun onOrgLoaded() {
         email?.text = org?.email
         phone?.text = org?.phone
-        address?.text = org?.getAddress("\n")
+        address?.text = org?.displayAddress
         org?.hours?.let { loadHours(it) }
         loadClosures(org?.closures ?: emptyList())
         enableButtonsWhenReady()

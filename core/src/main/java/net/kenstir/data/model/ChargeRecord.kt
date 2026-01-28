@@ -25,7 +25,7 @@ interface ChargeRecord {
     var record: BibRecord?
 }
 
-class PatronCharges(
+data class PatronCharges(
     val totalCharges: Double,
     val totalPaid: Double,
     val balanceOwed: Double,

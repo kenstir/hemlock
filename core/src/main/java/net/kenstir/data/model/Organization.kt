@@ -16,40 +16,34 @@
  */
 package net.kenstir.data.model
 
-open class Organization(
-    @JvmField val id: Int,
-    @JvmField val level: Int,
-    @JvmField val name: String,
-    @JvmField val shortname: String,
-    @JvmField val opacVisible: Boolean,
-    @JvmField var parent: Int?
-) {
-    var email: String? = null
-    var phone: String? = null
-    protected var address: String? = null // use getAddress()
-    var eresourcesUrl: String? = null
-    var eventsURL: String? = null
-    var infoURL: String? = null
-    var meetingRoomsUrl: String? = null
-    var museumPassesUrl: String? = null
-    open val isConsortium: Boolean = false
-    open var isPaymentAllowed: Boolean = false
-    open val isPickupLocation: Boolean = true
-    open val canHaveUsers: Boolean = true
-    open val canHaveVols: Boolean = true
-    open val hasAddress: Boolean = !address.isNullOrEmpty()
+interface Organization {
+    val id: Int
+    val level: Int
+    val name: String
+    val shortname: String
+    val opacVisible: Boolean
+    val parent: Int?
 
-    var settingsLoaded = false
+    var hours: OrgHours?
+    var closures: List<OrgClosure>
 
-    open var hours: OrgHours? = null
-    open var closures: List<OrgClosure> = emptyList()
+    var email: String?
+    var phone: String?
+    val navigationAddress: String?
+    val displayAddress: String?
+    var eresourcesUrl: String?
+    var eventsURL: String?
+    var infoURL: String?
+    var meetingRoomsUrl: String?
+    var museumPassesUrl: String?
 
-    // display fields
-    var indentedDisplayPrefix = ""
+    val isConsortium: Boolean
+    var isPaymentAllowed: Boolean
+    val isPickupLocation: Boolean
+    val canHaveUsers: Boolean
+    val canHaveVols: Boolean
+
+    var indentedDisplayPrefix: String
     val spinnerLabel: String
         get() = indentedDisplayPrefix + name
-
-    open fun getAddress(separator: String = " "): String {
-        return address ?: ""
-    }
 }
