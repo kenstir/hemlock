@@ -68,7 +68,7 @@ class EvergreenOrganization(
     override var indentedDisplayPrefix = ""
 
     override val navigationAddress: String?
-        get() = getAddress(" ")
+        get() = getAddress(", ")
     override val displayAddress: String?
         get() = getAddress("\n")
 
@@ -76,10 +76,8 @@ class EvergreenOrganization(
         if (addressObj == null) return ""
         return buildString {
             append(addressObj?.getString("street1"))
-            addressObj?.getString("street2")?.let { append(" ").append(it) }
-            if (isNotEmpty()) {
-                append(separator)
-            }
+            addressObj?.getString("street2")?.takeIf { it.isNotEmpty() }?.let { append(" ").append(it) }
+            if (isNotEmpty()) { append(separator) }
             append(addressObj?.getString("city"))
             append(", ").append(addressObj?.getString("state"))
             append(" ").append(addressObj?.getString("post_code"))
