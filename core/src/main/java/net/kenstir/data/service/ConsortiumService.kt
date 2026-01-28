@@ -52,15 +52,6 @@ interface ConsortiumService {
     /** SMS carrier spinner values */
     val smsCarrierSpinnerValues: List<String>
 
-    /** Finds an org by its orgId. */
-    fun findOrg(orgID: Int?): Organization?
-
-    /** Finds an org and return its shortname, returning a safe default if not found. */
-    fun findOrgShortNameSafe(orgID: Int?): String
-
-    /** Finds an org and return its name, returning a safe default if not found. */
-    fun findOrgNameSafe(orgID: Int?): String
-
     /** all visible orgs */
     val visibleOrgs: List<Organization>
 
@@ -69,6 +60,15 @@ interface ConsortiumService {
 
     /** all visible org shortnames for use in Spinner values */
     val orgSpinnerShortNames: List<String>
+
+    /** Finds an org by its orgId. */
+    fun findOrg(orgID: Int?): Organization?
+
+    /** Finds an org and return its shortname, returning a safe default if not found. */
+    fun findOrgShortNameSafe(orgID: Int?): String
+
+    /** Finds an org and return its name, returning a safe default if not found. */
+    fun findOrgNameSafe(orgID: Int?): String
 
     /** Logs details about all loaded orgs for debugging */
     fun dumpOrgStats()
