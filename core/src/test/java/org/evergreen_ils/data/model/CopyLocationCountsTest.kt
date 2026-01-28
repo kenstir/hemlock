@@ -17,15 +17,10 @@
 
 package org.evergreen_ils.data.model
 
-import net.kenstir.data.jsonMapOf
-import net.kenstir.util.JsonUtils
 import net.kenstir.util.visibleCopyLocationCounts
 import org.evergreen_ils.data.service.EvergreenConsortiumService
-import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.gateway.GatewayResult
-import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
