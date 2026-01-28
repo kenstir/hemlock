@@ -46,6 +46,7 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.getCopySummary
+import net.kenstir.util.visibleCopyLocationCounts
 
 class CopyInformationActivity : BaseActivity() {
 
@@ -142,28 +143,24 @@ class CopyInformationActivity : BaseActivity() {
     }
 
     private fun updateCopyInfo(copyLocationCountsList: List<CopyLocationCounts>) {
+        val consortium = App.svc.consortiumService
+
         copyInfoRecords.clear()
-        val orgService = App.svc.consortiumService
-        for (clc in copyLocationCountsList) {
-            val org = orgService.findOrg(clc.orgId)
-            // if a branch is not opac_visible, its copies should not be visible
-            if (org != null && org.opacVisible) {
-                copyInfoRecords.add(clc)
-            }
-        }
+        copyInfoRecords.addAll(visibleCopyLocationCounts(copyLocationCountsList, consortium))
+
         if (groupCopiesBySystem) {
             // sort by system, then by branch, like http://gapines.org/eg/opac/record/5700567?locg=1
             copyInfoRecords.sortWith(Comparator { a, b ->
-                val aOrg = orgService.findOrg(a.orgId)
-                val bOrg = orgService.findOrg(b.orgId)
-                val aSystemName = orgService.findOrgNameSafe(aOrg?.parent)
-                val bSystemName = orgService.findOrgNameSafe(bOrg?.parent)
+                val aOrg = consortium.findOrg(a.orgId)
+                val bOrg = consortium.findOrg(b.orgId)
+                val aSystemName = consortium.findOrgNameSafe(aOrg?.parent)
+                val bSystemName = consortium.findOrgNameSafe(bOrg?.parent)
                 val compareBySystem = compareValues(aSystemName, bSystemName)
                 if (compareBySystem != 0) compareBySystem else compareValues(aOrg?.name, bOrg?.name)
             })
         } else {
             copyInfoRecords.sortWith(Comparator { a, b ->
-                compareValues(orgService.findOrgNameSafe(a.orgId), orgService.findOrgNameSafe(b.orgId))
+                compareValues(consortium.findOrgNameSafe(a.orgId), consortium.findOrgNameSafe(b.orgId))
             })
         }
         adapter?.notifyDataSetChanged()

@@ -19,6 +19,8 @@ package org.evergreen_ils.data.model
 
 import net.kenstir.data.jsonMapOf
 import net.kenstir.util.JsonUtils
+import net.kenstir.util.visibleCopyLocationCounts
+import org.evergreen_ils.data.service.EvergreenConsortiumService
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.gateway.GatewayResult
 import org.evergreen_ils.gateway.OSRFObject
@@ -87,6 +89,11 @@ class CopyLocationCountsTest {
             """.trimIndent()
         val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
         val clcList = EvergreenCopyLocationCounts.makeArray(payloadList)
-        assertEquals(2, clcList.size)
+        assertEquals(3, clcList.size)
+
+        val consortiumService = EvergreenConsortiumService
+        val visible = visibleCopyLocationCounts(clcList, consortiumService)
+        assertEquals(2, visible.size)
+        assertEquals(null, visible.find { it.orgId == 7 } )
     }
 }

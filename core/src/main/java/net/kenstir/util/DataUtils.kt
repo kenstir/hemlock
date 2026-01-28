@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Kenneth H. Cox
+ * Copyright (c) 2026 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,17 +15,19 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.data.model
+package net.kenstir.util
+
+import net.kenstir.data.model.CopyLocationCounts
+import net.kenstir.data.service.ConsortiumService
+import net.kenstir.ui.App
 
 /**
- * summary of copies at a specific shelving location at a specific org, by status
+ * filter copy location counts to only those at orgs that are opacVisible
  */
-interface CopyLocationCounts {
-    val orgId: Int
-    /** shelving location */
-    val copyLocation: String
-    /** call number including prefix and suffix */
-    val callNumber: String
-    /** newline-separated list of "count status" labels, e.g. "1 Available\n1 Checked out" */
-    val countsByStatusLabel: String
+fun visibleCopyLocationCounts(copyLocationCounts: List<CopyLocationCounts>, consortiumService: ConsortiumService): List<CopyLocationCounts> {
+    return copyLocationCounts.filter { clc ->
+        val org = consortiumService.findOrg(clc.orgId)
+        // if a branch is not opac_visible, its copies should not be visible
+        org != null && org.opacVisible
+    }
 }
