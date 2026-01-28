@@ -7,6 +7,7 @@
 * Fixed ANR (App Not Responding) errors by moving account operations off main thread
 * Fixed "Add account" to automatically choose the new account when restarting
 * Fixed bug where the app exited when pressing Back after starting from a notification
+* Fixed bug where address in Library Info could be double-spaced
 
 ### Internal
 * internal: Fixed abstraction leaks of data layer into UI layer
