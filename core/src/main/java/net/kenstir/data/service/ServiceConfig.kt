@@ -18,11 +18,11 @@
 package net.kenstir.data.service
 
 interface ServiceConfig {
-    val loaderService: LoaderService
-    val authService: AuthService
-    val biblioService: BiblioService
-    val circService: CircService
-    val consortiumService: ConsortiumService
-    val searchService: SearchService
-    val userService: UserService
+    val loader: LoaderService
+    val auth: AuthService
+    val biblio: BiblioService
+    val circ: CircService
+    val consortium: ConsortiumService
+    val search: SearchService
+    val user: UserService
 }

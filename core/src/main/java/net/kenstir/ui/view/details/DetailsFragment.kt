@@ -57,7 +57,7 @@ import net.kenstir.util.getCopySummary
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
-    private var orgID: Int = App.svc.consortiumService.consortiumID
+    private var orgID: Int = App.svc.consortium.consortiumID
     private var position: Int = 0
     private var total: Int = 0
 
@@ -132,7 +132,7 @@ class DetailsFragment : Fragment() {
 
         // Start async load
         record?.let {
-            val url = App.svc.biblioService.imageUrl(it, ImageSize.MEDIUM)
+            val url = App.svc.biblio.imageUrl(it, ImageSize.MEDIUM)
             //Log.d(TAG, "${it.id}: load $url")
             recordImage?.load(url)
             fetchData(it)
@@ -196,7 +196,7 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val record = this.record ?: return
-        val org = App.svc.consortiumService.findOrg(orgID) ?: return
+        val org = App.svc.consortium.findOrg(orgID) ?: return
 
         val links = App.behavior.getOnlineLocations(record, org.shortname)
         if (links.isEmpty()) return // TODO: alert
@@ -229,7 +229,7 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        val org = App.svc.consortiumService.findOrg(orgID)
+        val org = App.svc.consortium.findOrg(orgID)
         val links = if (org != null) App.behavior.getOnlineLocations(record, org.shortname) else emptyList()
         val numCopies = record.totalCopies(orgID)
         placeHoldButton?.isEnabled = (numCopies > 0)
@@ -308,7 +308,7 @@ class DetailsFragment : Fragment() {
                 Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Any>>()
-                val biblioService = App.svc.biblioService
+                val biblioService = App.svc.biblio
 
                 jobs.add(scope.async {
                     biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))

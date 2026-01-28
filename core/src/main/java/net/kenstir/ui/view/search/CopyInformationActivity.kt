@@ -51,7 +51,7 @@ import net.kenstir.util.visibleCopyLocationCounts
 class CopyInformationActivity : BaseActivity() {
 
     private lateinit var record: BibRecord
-    private var orgID: Int = App.svc.consortiumService.consortiumID
+    private var orgID: Int = App.svc.consortium.consortiumID
     private var placeHoldButton: Button? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
     private var rv: RecyclerView? = null
@@ -84,7 +84,7 @@ class CopyInformationActivity : BaseActivity() {
             orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
             record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
-            orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortiumService.consortiumID)
+            orgID = intent.getIntExtra(Key.ORG_ID, App.svc.consortium.consortiumID)
         }
 
         rv = findViewById(R.id.recycler_view)
@@ -143,7 +143,7 @@ class CopyInformationActivity : BaseActivity() {
     }
 
     private fun updateCopyInfo(copyLocationCountsList: List<CopyLocationCounts>) {
-        val consortium = App.svc.consortiumService
+        val consortium = App.svc.consortium
 
         copyInfoRecords.clear()
         copyInfoRecords.addAll(visibleCopyLocationCounts(copyLocationCountsList, consortium))
@@ -169,8 +169,8 @@ class CopyInformationActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                val org = App.svc.consortiumService.findOrg(orgID) ?: return@async
-                val result = App.svc.searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
+                val org = App.svc.consortium.findOrg(orgID) ?: return@async
+                val result = App.svc.search.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(result.get())
             } catch (ex: Exception) {

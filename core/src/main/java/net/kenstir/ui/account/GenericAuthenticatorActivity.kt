@@ -96,7 +96,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val start = System.currentTimeMillis()
 
                 val url = directoryUrl ?: return@async
-                val client = App.svc.loaderService.httpClient
+                val client = App.svc.loader.httpClient
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
 

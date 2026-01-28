@@ -65,7 +65,7 @@ class LiveAuthServiceTest {
             if (!isSessionLoaded) return
             runBlocking {
                 launch(Dispatchers.Main) {
-                    val result = serviceConfig.userService.deleteSession(account)
+                    val result = serviceConfig.user.deleteSession(account)
                     when (result) {
                         is Result.Error -> Log.d("LiveAuthServiceTest", "Error deleting session", result.exception)
                         is Result.Success -> Log.d("LiveAuthServiceTest", "Session deleted successfully")
@@ -81,7 +81,7 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestAuthToken(): Result<Unit> {
         if (account.authToken != null) return Result.Success(Unit)
-        val result = serviceConfig.authService.getAuthToken(testUsername, testPassword)
+        val result = serviceConfig.auth.getAuthToken(testUsername, testPassword)
         when (result) {
             is Result.Error -> return result
             is Result.Success -> {}
@@ -93,7 +93,7 @@ class LiveAuthServiceTest {
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val result = serviceConfig.loaderService.loadStartupPrerequisites(LoadStartupOptions("42", true), ctx.resources)
+        val result = serviceConfig.loader.loadStartupPrerequisites(LoadStartupOptions("42", true), ctx.resources)
         isServiceDataLoaded = true
         return result
     }
@@ -102,7 +102,7 @@ class LiveAuthServiceTest {
         if (isSessionLoaded) return Result.Success(Unit)
         val authResult = loadTestAuthToken()
         if (!authResult.succeeded) return authResult
-        val result = serviceConfig.userService.loadUserSession(account)
+        val result = serviceConfig.user.loadUserSession(account)
         isSessionLoaded = true
         return result
     }

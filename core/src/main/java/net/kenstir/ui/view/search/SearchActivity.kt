@@ -178,7 +178,7 @@ class SearchActivity : BaseActivity() {
 
     private fun restoreResults() {
         haveSearched = true
-        searchResults = App.svc.searchService.getLastSearchResults()
+        searchResults = App.svc.search.getLastSearchResults()
     }
 
     private fun initSearchButton() {
@@ -186,7 +186,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchOptions() {
-        val consortiumService = App.svc.consortiumService
+        val consortiumService = App.svc.consortium
         searchClassOption = SpinnerStringOption(
             key = AppState.SEARCH_CLASS,
             defaultValue = SearchClass.KEYWORD,
@@ -236,7 +236,7 @@ class SearchActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = App.svc.userService.loadPatronLists(App.account)
+                val result = App.svc.user.loadPatronLists(App.account)
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -267,9 +267,9 @@ class SearchActivity : BaseActivity() {
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
-                val queryString = App.svc.searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val queryString = App.svc.search.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
                 Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
-                val result = App.svc.searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
+                val result = App.svc.search.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true
@@ -296,7 +296,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun logSearchEvent(result: Result<SearchResults>) {
-        val orgService = App.svc.consortiumService
+        val orgService = App.svc.consortium
         val b = bundleOf(
             Analytics.Param.SEARCH_CLASS to searchClass,
             Analytics.Param.SEARCH_FORMAT to searchFormatCode,
@@ -334,7 +334,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val consortiumService = App.svc.consortiumService
+        val consortiumService = App.svc.consortium
         val visibleOrgs = consortiumService.visibleOrgs
 
         // connect spinner to option and set adapter
@@ -381,7 +381,7 @@ class SearchActivity : BaseActivity() {
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { _, position ->
             val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-            intent.putExtra(Key.ORG_ID, App.svc.consortiumService.selectedOrganization?.id)
+            intent.putExtra(Key.ORG_ID, App.svc.consortium.selectedOrganization?.id)
             intent.putExtra(Key.RECORD_POSITION, position)
             intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
             startActivityForResult(intent, 10)
@@ -407,7 +407,7 @@ class SearchActivity : BaseActivity() {
         when (item.itemId) {
             ITEM_SHOW_DETAILS -> {
                 val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-                intent.putExtra(Key.ORG_ID, App.svc.consortiumService.selectedOrganization?.id)
+                intent.putExtra(Key.ORG_ID, App.svc.consortium.selectedOrganization?.id)
                 intent.putExtra(Key.RECORD_POSITION, info.position)
                 intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
                 startActivity(intent)

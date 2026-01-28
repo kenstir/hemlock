@@ -162,7 +162,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_list_contents)
 
                 // load bookBag contents
-                val result = App.svc.userService.loadPatronListItems(App.account, patronList)
+                val result = App.svc.user.loadPatronListItems(App.account, patronList)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
@@ -185,7 +185,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     suspend fun fetchTargetDetails(item: ListItem): Result<Unit> {
         val record = item.record ?: return Result.Error(Exception("No record found for item ${item.id}"))
-        return App.svc.biblioService.loadRecordDetails(record,
+        return App.svc.biblio.loadRecordDetails(record,
             resources.getBoolean(R.bool.ou_need_marc_record))
     }
 
@@ -225,7 +225,7 @@ class BookBagDetailsActivity : BaseActivity() {
         scope.async {
             showBusy(R.string.msg_deleting_list)
             val id = patronList.id
-            val result = App.svc.userService.deletePatronList(
+            val result = App.svc.user.deletePatronList(
                 App.account, id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
@@ -306,7 +306,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun removeItemFromList(item: ListItem) {
         scope.async {
             showBusy(R.string.msg_removing_list_item)
-            val result = App.svc.userService.removeItemFromPatronList(
+            val result = App.svc.user.removeItemFromPatronList(
                 App.account, patronList.id, item.id)
             hideBusy()
             Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(

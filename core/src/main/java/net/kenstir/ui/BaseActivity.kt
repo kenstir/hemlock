@@ -235,19 +235,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eresourcesUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.eventsURL
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.meetingRoomsUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return App.svc.consortiumService.findOrg(App.account.homeOrg)?.museumPassesUrl
+        return App.svc.consortium.findOrg(App.account.homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -367,7 +367,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     suspend fun logout() {
         Log.d(TAG, "[auth] logout")
         val account = App.account
-        App.svc.userService.deleteSession(account)
+        App.svc.user.deleteSession(account)
         AccountUtils.invalidateAuthToken(this, account.authToken)
         AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()

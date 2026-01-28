@@ -111,7 +111,7 @@ open class MainActivity : MainBaseActivity() {
         scope.async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
-                val result = App.svc.userService.fetchPatronMessages(
+                val result = App.svc.user.fetchPatronMessages(
                     App.account)
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {

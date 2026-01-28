@@ -44,7 +44,7 @@ object App {
     var library = Library("", "")
         set(value) {
             field = value
-            svc.loaderService.serviceUrl = value.url
+            svc.loader.serviceUrl = value.url
         }
 
     fun init(context: Context) {
@@ -55,7 +55,7 @@ object App {
         behavior = factory.makeBehavior()
         svc = factory.makeServiceConfig(isAndroidTest)
 
-        val okHttpClient = svc.loaderService.initHttpClient(
+        val okHttpClient = svc.loader.initHttpClient(
             File(context.cacheDir, "okhttp")
         )
         initImageLoader(context, okHttpClient)

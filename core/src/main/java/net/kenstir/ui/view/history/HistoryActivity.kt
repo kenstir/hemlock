@@ -105,12 +105,12 @@ class HistoryActivity : BaseActivity() {
         scope.async {
             try {
                 // first disable the patron setting
-                val result = App.svc.userService.disableCheckoutHistory(
+                val result = App.svc.user.disableCheckoutHistory(
                     App.account)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // then clear history
-                val clearResult = App.svc.userService.clearCheckoutHistory(
+                val clearResult = App.svc.user.clearCheckoutHistory(
                     App.account)
                 if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
 
@@ -129,7 +129,7 @@ class HistoryActivity : BaseActivity() {
                 showBusy(R.string.msg_retrieving_data)
 
                 // fetch history
-                val result = App.svc.circService.fetchCheckoutHistory(
+                val result = App.svc.circ.fetchCheckoutHistory(
                     App.account)
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async

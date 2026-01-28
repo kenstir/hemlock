@@ -20,11 +20,11 @@ package org.evergreen_ils.data.service
 import net.kenstir.data.service.ServiceConfig
 
 class EvergreenServiceConfig : ServiceConfig {
-    override val loaderService = EvergreenLoaderService
-    override val authService = EvergreenAuthService
-    override val biblioService = EvergreenBiblioService
-    override val circService = EvergreenCircService
-    override val consortiumService = EvergreenConsortiumService
-    override val searchService = EvergreenSearchService
-    override val userService = EvergreenUserService
+    override val loader = EvergreenLoaderService
+    override val auth = EvergreenAuthService
+    override val biblio = EvergreenBiblioService
+    override val circ = EvergreenCircService
+    override val consortium = EvergreenConsortiumService
+    override val search = EvergreenSearchService
+    override val user = EvergreenUserService
 }

@@ -19,14 +19,13 @@ package net.kenstir.util
 
 import net.kenstir.data.model.CopyLocationCounts
 import net.kenstir.data.service.ConsortiumService
-import net.kenstir.ui.App
 
 /**
  * filter copy location counts to only those at orgs that are opacVisible
  */
-fun visibleCopyLocationCounts(copyLocationCounts: List<CopyLocationCounts>, consortiumService: ConsortiumService): List<CopyLocationCounts> {
+fun visibleCopyLocationCounts(copyLocationCounts: List<CopyLocationCounts>, consortium: ConsortiumService): List<CopyLocationCounts> {
     return copyLocationCounts.filter { clc ->
-        val org = consortiumService.findOrg(clc.orgId)
+        val org = consortium.findOrg(clc.orgId)
         // if a branch is not opac_visible, its copies should not be visible
         org != null && org.opacVisible
     }
