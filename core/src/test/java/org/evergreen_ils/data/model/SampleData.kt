@@ -132,15 +132,15 @@ object SampleData {
         EgOrg.loadOrgs(cons, true)
     }
 
-    fun make_ccs(id: Int, name: String, opac_visible: String): OSRFObject {
+    fun makeCopyStatus(id: Int, name: String, opac_visible: String): OSRFObject {
         return OSRFObject(jsonMapOf("id" to id, "name" to name, "opac_visible" to opac_visible))
     }
 
     fun loadCopyStatuses() {
         val ccsList = listOf(
-            make_ccs(0, "Available", "t"),
-            make_ccs(1, "Checked out", "t"),
-            make_ccs(7, "Reshelving", "t"),
+            makeCopyStatus(0, "Available", "t"),
+            makeCopyStatus(1, "Checked out", "t"),
+            makeCopyStatus(7, "Reshelving", "t"),
         )
         EgCopyStatus.loadCopyStatuses(ccsList)
     }
