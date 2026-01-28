@@ -26,7 +26,6 @@ open class Organization(
 ) {
     var email: String? = null
     var phone: String? = null
-    protected var address: String? = null // use getAddress()
     var eresourcesUrl: String? = null
     var eventsURL: String? = null
     var infoURL: String? = null
@@ -37,7 +36,6 @@ open class Organization(
     open val isPickupLocation: Boolean = true
     open val canHaveUsers: Boolean = true
     open val canHaveVols: Boolean = true
-    open val hasAddress: Boolean = !address.isNullOrEmpty()
 
     var settingsLoaded = false
 
@@ -49,7 +47,6 @@ open class Organization(
     val spinnerLabel: String
         get() = indentedDisplayPrefix + name
 
-    open fun getAddress(separator: String = " "): String {
-        return address ?: ""
-    }
+    open val navigationAddress: String? = null
+    open val displayAddress: String? = null
 }

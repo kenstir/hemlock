@@ -58,19 +58,22 @@ class EvergreenOrganization(
     override val canHaveVols: Boolean
         get() = orgType?.canHaveVols ?: true
 
-    override val hasAddress: Boolean
-        get() = addressObj != null
-
-    override fun getAddress(separator: String): String {
+    override val navigationAddress: String?
+        get() = getAddress(" ")
+    override val displayAddress: String?
+        get() = getAddress("\n")
+    private fun getAddress(separator: String): String {
         if (addressObj == null) return ""
-        val sb = StringBuilder()
-        sb.append(addressObj?.getString("street1"))
-        addressObj?.getString("street2")?.let { sb.append(separator).append(it) }
-        sb.append(separator).append(addressObj?.getString("city"))
-        sb.append(", ").append(addressObj?.getString("state"))
-        //sb.append(separator).append(addressObj?.getString("country"))
-        sb.append(" ").append(addressObj?.getString("post_code"))
-        return sb.toString()
+        return buildString {
+            append(addressObj?.getString("street1"))
+            addressObj?.getString("street2")?.let { append(" ").append(it) }
+            if (isNotEmpty()) {
+                append(separator)
+            }
+            append(addressObj?.getString("city"))
+            append(", ").append(addressObj?.getString("state"))
+            append(" ").append(addressObj?.getString("post_code"))
+        }
     }
 
     fun loadSettings(obj: OSRFObject) {
