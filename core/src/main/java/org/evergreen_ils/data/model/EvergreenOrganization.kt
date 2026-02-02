@@ -92,8 +92,6 @@ class EvergreenOrganization(
         infoURL = obj.getStringValueFromOrgSetting(Api.SETTING_INFO_URL)
         isNotPickupLocationSetting = obj.getBooleanValueFromOrgSetting(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
         isPaymentAllowed = obj.getBooleanValueFromOrgSetting(Api.SETTING_CREDIT_PAYMENTS_ALLOW) ?: false
-        val smsEnable = obj.getBooleanValueFromOrgSetting(Api.SETTING_SMS_ENABLE)
-        smsEnable?.let { EgOrg.smsEnabled = smsEnable }
         settingsLoaded = true
     }
 
