@@ -119,7 +119,6 @@ object AppState {
         }
     }
 
-    @JvmStatic
     fun setInt(key: String, value: Int) {
         Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
@@ -134,7 +133,6 @@ object AppState {
         }
     }
 
-    @JvmStatic
     fun incrementLaunchCount() {
         val count = getInt(LAUNCH_COUNT, 0)
         setInt(LAUNCH_COUNT, count + 1)
