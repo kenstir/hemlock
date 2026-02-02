@@ -34,6 +34,9 @@ interface ConsortiumService {
     /** Is SMS notifications enabled for all orgs? */
     val isSmsEnabled: Boolean
 
+    /** system alert banner */
+    val alertBanner: String?
+
     /** last searched organization */
     var selectedOrganization: Organization?
 

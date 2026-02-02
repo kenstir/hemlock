@@ -18,6 +18,7 @@
 
 package net.kenstir.util
 
+import java.security.MessageDigest
 import kotlin.random.Random
 
 /** custom message for particular exceptional conditions
@@ -61,4 +62,25 @@ fun injectRandomFailure(where: String, percentChance: Int) {
     if (random < percentChance) {
         throw Exception("Random failure in $where")
     }
+}
+
+/** returns the MD5 hash of the string
+ */
+fun String.md5(): String {
+
+    val digest = MessageDigest.getInstance("MD5")
+    digest.update(this.toByteArray())
+    val messageDigest = digest.digest()
+
+    // Create Hex String
+    val hexString = StringBuilder()
+    for (i in messageDigest.indices) {
+        val hex = Integer.toHexString(0xFF and messageDigest[i].toInt())
+        if (hex.length == 1) {
+            // could use a for loop, but we're only dealing with a single byte
+            hexString.append('0')
+        }
+        hexString.append(hex)
+    }
+    return hexString.toString()
 }

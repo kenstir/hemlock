@@ -45,6 +45,9 @@ object EvergreenConsortiumService: ConsortiumService {
     override val isSmsEnabled: Boolean
         get() = EgOrg.smsEnabled
 
+    override val alertBanner: String?
+        get() = if (EgOrg.alertBannerEnabled) EgOrg.alertBannerText else null
+
     override var selectedOrganization: Organization?
         get() = EgSearch.selectedOrganization
         set(value) {
