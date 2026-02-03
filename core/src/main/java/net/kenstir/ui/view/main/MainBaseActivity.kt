@@ -255,18 +255,21 @@ open class MainBaseActivity : BaseActivity() {
     }
 
     fun maybeShowSystemAlert() {
-        // only show the alert the first time the main activity is attached
+        // do this only the first time the main activity is attached
         if (++attachCount != 1) return
-
         Log.d(TAG, "[alert] attachCount=${attachCount}")
-        val alertBanner = App.svc.consortium.alertBanner ?: return
 
+        // do nothing if there's no alert banner, or if the user squelched it by
+        // tapping "don't show again" on this exact message (as determined by MD5())
+        val alertBanner = App.svc.consortium.alertBanner ?: return
         val squelchedMD5 = AppState.getString(AppState.ALERT_BANNER_SQUELCHED_MD5)
         val alertBannerMD5 = alertBanner.md5()
         if (squelchedMD5 == alertBannerMD5) {
             Log.d(TAG, "[alert] already squelched")
             return
         }
+
+        // show the alert dialog with simple HTML rendering of the message
         val spannedMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Html.fromHtml(alertBanner, Html.FROM_HTML_MODE_COMPACT)
         } else {
@@ -285,7 +288,7 @@ open class MainBaseActivity : BaseActivity() {
         val dialog = builder.create()
         dialog.show()
 
-        // Get the message TextView and set the movement method
+        // set the movementMethod on the TextView to make any links clickable
         val messageView: TextView? = dialog.findViewById(android.R.id.message)
         messageView?.movementMethod = LinkMovementMethod.getInstance()
     }
