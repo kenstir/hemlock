@@ -25,7 +25,6 @@ import net.kenstir.data.jsonMapOf
 import net.kenstir.util.md5
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.GatewayException
-import java.security.MessageDigest
 
 object EvergreenAuthService: AuthService {
 
