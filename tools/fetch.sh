@@ -49,6 +49,9 @@ test -n "$url" || {
 # construct url
 url="${url}/osrf-gateway-v1"
 case "$what" in
+alert*)
+    url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22opac.alert_banner_text%22%5D&param=%22ANONYMOUS%22"
+    ;;
 idl)
     exec "$topdir/tools/fetch_idl.sh" "$url"
     ;;
