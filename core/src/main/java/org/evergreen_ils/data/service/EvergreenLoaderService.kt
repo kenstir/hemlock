@@ -133,7 +133,6 @@ object EvergreenLoaderService: LoaderService {
             Api.SETTING_HEMLOCK_CACHE_KEY,
             Api.SETTING_OPAC_ALERT_BANNER_SHOW,
             Api.SETTING_OPAC_ALERT_BANNER_TEXT,
-            Api.SETTING_OPAC_ALERT_BANNER_TYPE,
             Api.SETTING_SMS_ENABLE,
         )
         val params = paramListOf(EgOrg.CONSORTIUM_ID, settings, Api.ANONYMOUS)
@@ -143,7 +142,6 @@ object EvergreenLoaderService: LoaderService {
         // load global settings
         EgOrg.alertBannerEnabled = obj.getBooleanValueFromOrgSetting(Api.SETTING_OPAC_ALERT_BANNER_SHOW) ?: false
         EgOrg.alertBannerText = obj.getStringValueFromOrgSetting(Api.SETTING_OPAC_ALERT_BANNER_TEXT)
-        EgOrg.alertBannerType = obj.getStringValueFromOrgSetting(Api.SETTING_OPAC_ALERT_BANNER_TYPE)
         EgOrg.smsEnabled = obj.getBooleanValueFromOrgSetting(Api.SETTING_SMS_ENABLE) ?: false
 
         // derive and return serverCacheKey

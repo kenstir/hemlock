@@ -35,7 +35,6 @@ object EgOrg {
     var smsEnabled = false
     var alertBannerEnabled = false
     var alertBannerText: String? = null
-    var alertBannerType: String? = null
 
     val allOrgs: List<Organization>
         get() = orgs
