@@ -72,7 +72,8 @@ object EvergreenLoaderService: LoaderService {
     private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions, resources: Resources): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         GatewayClient.clientCacheKey = serviceOptions.clientCacheKey
-        GatewayClient.serverCacheKey = fetchServerCacheKey()
+        val serverCacheKey = loadGlobalOrgSettings()
+        GatewayClient.serverCacheKey = serverCacheKey
 
         // sync: Load the IDL next, because everything else depends on it
         var now = System.currentTimeMillis()
@@ -105,7 +106,7 @@ object EvergreenLoaderService: LoaderService {
     }
 
     private suspend fun loadPlaceHoldDataImpl(): Unit = coroutineScope {
-        var now = System.currentTimeMillis()
+        val now = System.currentTimeMillis()
 
         // async: Load all org settings and SMS carriers in parallel
         val jobs = mutableListOf<Deferred<Any>>()
@@ -121,19 +122,32 @@ object EvergreenLoaderService: LoaderService {
         Log.logElapsedTime(TAG, now, "loadPlaceHoldData ${jobs.size} deferreds completed")
     }
 
-    private suspend fun fetchServerCacheKey(): String {
+    // Load global org settings from consortium org and return serverCacheKey
+    private suspend fun loadGlobalOrgSettings(): String {
         // fetch the server version
         val response = GatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
         val serverVersion = response.payloadFirstAsString()
 
-        // fetch the cache key org setting
-        val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
+        // fetch the global org settings
+        val settings = listOf(
+            Api.SETTING_HEMLOCK_CACHE_KEY,
+            Api.SETTING_OPAC_ALERT_BANNER_SHOW,
+            Api.SETTING_OPAC_ALERT_BANNER_TEXT,
+            Api.SETTING_SMS_ENABLE,
+        )
         val params = paramListOf(EgOrg.CONSORTIUM_ID, settings, Api.ANONYMOUS)
         val obj = GatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
             .payloadFirstAsObject()
-        val hemlockCacheKey = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_CACHE_KEY)
 
-        return if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
+        // load global settings
+        EgOrg.alertBannerEnabled = obj.getBooleanValueFromOrgSetting(Api.SETTING_OPAC_ALERT_BANNER_SHOW) ?: false
+        EgOrg.alertBannerText = obj.getStringValueFromOrgSetting(Api.SETTING_OPAC_ALERT_BANNER_TEXT)
+        EgOrg.smsEnabled = obj.getBooleanValueFromOrgSetting(Api.SETTING_SMS_ENABLE) ?: false
+
+        // derive and return serverCacheKey
+        val hemlockCacheKey = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_CACHE_KEY)
+        val serverCacheKey = if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
+        return serverCacheKey
     }
 
     private suspend fun loadOrgTypes() {

@@ -68,6 +68,9 @@ object Api {
     const val SETTING_UI_REQUIRE_MONOGRAPHIC_PART = "circ.holds.ui_require_monographic_part_when_present"
     const val SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow"
     const val SETTING_INFO_URL = "lib.info_url"
+    const val SETTING_OPAC_ALERT_BANNER_SHOW = "opac.alert_banner_show" // bool
+    const val SETTING_OPAC_ALERT_BANNER_TEXT = "opac.alert_banner_text"
+    const val SETTING_OPAC_ALERT_BANNER_TYPE = "opac.alert_banner_type" // success|info|warning|danger - unused
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"
     const val SETTING_SMS_ENABLE = "sms.enable"
     const val USER_SETTING_CIRC_HISTORY_START = "history.circ.retention_start"

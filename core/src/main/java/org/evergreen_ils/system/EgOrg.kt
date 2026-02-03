@@ -27,11 +27,14 @@ import java.util.*
 import kotlin.Comparator
 
 object EgOrg {
+    private const val TAG = "EgOrg"
+    const val CONSORTIUM_ID = 1
+
     var orgTypes = mutableListOf<OrgType>()
     private var orgs = mutableListOf<Organization>()
     var smsEnabled = false
-    const val CONSORTIUM_ID = 1
-    private const val TAG = "EgOrg"
+    var alertBannerEnabled = false
+    var alertBannerText: String? = null
 
     val allOrgs: List<Organization>
         get() = orgs
@@ -56,7 +59,6 @@ object EgOrg {
         Log.d(TAG, "[orgs] ${objArray.size} org types")
     }
 
-    @JvmStatic
     fun findOrgType(id: Int): OrgType? {
         return orgTypes.firstOrNull { it.id == id }
     }

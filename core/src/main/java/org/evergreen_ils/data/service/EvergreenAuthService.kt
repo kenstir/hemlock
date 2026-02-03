@@ -22,9 +22,9 @@ import net.kenstir.data.Result
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
 import net.kenstir.data.jsonMapOf
+import net.kenstir.util.md5
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.GatewayException
-import java.security.MessageDigest
 
 object EvergreenAuthService: AuthService {
 
@@ -54,21 +54,7 @@ object EvergreenAuthService: AuthService {
         }
     }
 
-    private fun md5(s: String): String {
-        val digest = MessageDigest.getInstance("MD5")
-        digest.update(s.toByteArray())
-        val messageDigest = digest.digest()
-
-        // Create Hex String
-        val hexString = StringBuilder()
-        for (i in messageDigest.indices) {
-            val hex = Integer.toHexString(0xFF and messageDigest[i].toInt())
-            if (hex.length == 1) {
-                // could use a for loop, but we're only dealing with a single byte
-                hexString.append('0')
-            }
-            hexString.append(hex)
-        }
-        return hexString.toString()
+    private fun md5(input: String): String {
+        return input.md5()
     }
 }

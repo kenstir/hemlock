@@ -1,6 +1,7 @@
 ## 4.6.0 - or maybe 5.0.0 - UNRELEASED
 
 ### New
+* If the public catalog has an alert banner showing, display the same message in a dialog on app startup
 
 ### Fixed
 * Fixed accessibility issues where author and copy info text links were too small

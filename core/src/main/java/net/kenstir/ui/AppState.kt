@@ -28,22 +28,23 @@ object AppState {
     private const val TAG = "AppState"
 
     // keys for prefs
-    const val LIST_SORT_BY = "sort_by"
-    const val LIST_SORT_DESC = "sort_desc"
-    const val HOLD_NOTIFY_BY_EMAIL = "notify_by_email"
-    const val HOLD_NOTIFY_BY_PHONE = "notify_by_phone"
-    const val HOLD_NOTIFY_BY_SMS = "notify_by_sms"
+    const val ALERT_BANNER_SQUELCHED_MD5 = "alert_squelched" // String; md5 of last squelched alert banner
+    const val HOLD_NOTIFY_BY_EMAIL = "notify_by_email" // Bool
+    const val HOLD_NOTIFY_BY_PHONE = "notify_by_phone" // Bool
+    const val HOLD_NOTIFY_BY_SMS = "notify_by_sms" // Bool
     const val HOLD_PHONE_NUMBER = "phone_number"
-    const val HOLD_SMS_CARRIER_ID = "sms_carrier_id"
+    const val HOLD_SMS_CARRIER_ID = "sms_carrier_id" // Int
     const val HOLD_SMS_NUMBER = "sms_number"
-    const val LAUNCH_COUNT = "launch_count"
+    const val LAUNCH_COUNT = "launch_count" // Int
     const val LIBRARY_URL_OBSOLETE = "library_url" // no longer used
     const val LIBRARY_NAME = "library_name"
-    const val NIGHT_MODE = "night_mode"
-    const val NOTIFICATIONS_DENY_COUNT = "notifications_deny_count"
+    const val LIST_SORT_BY = "sort_by"
+    const val LIST_SORT_DESC = "sort_desc" // Bool
+    const val NIGHT_MODE = "night_mode" // Int
+    const val NOTIFICATIONS_DENY_COUNT = "notifications_deny_count" // Int
     const val SEARCH_CLASS = "search_class"
     const val SEARCH_FORMAT = "search_format"
-    const val SEARCH_OPTIONS_ARE_VISIBLE = "search_options_visible"
+    const val SEARCH_OPTIONS_ARE_VISIBLE = "search_options_visible" // Bool
     const val SEARCH_ORG_SHORT_NAME = "search_org"
 
     // increment PREFS_SCHEMA_VERSION every time you make a breaking change to the persistent pref storage
@@ -118,7 +119,6 @@ object AppState {
         }
     }
 
-    @JvmStatic
     fun setInt(key: String, value: Int) {
         Log.d(TAG, "[prefs] Set $key = $value")
         prefs.edit {
@@ -133,7 +133,6 @@ object AppState {
         }
     }
 
-    @JvmStatic
     fun incrementLaunchCount() {
         val count = getInt(LAUNCH_COUNT, 0)
         setInt(LAUNCH_COUNT, count + 1)

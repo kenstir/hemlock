@@ -45,6 +45,9 @@ object EvergreenConsortiumService: ConsortiumService {
     override val isSmsEnabled: Boolean
         get() = EgOrg.smsEnabled
 
+    override val alertBanner: String?
+        get() = if (EgOrg.alertBannerEnabled) EgOrg.alertBannerText else null
+
     override var selectedOrganization: Organization?
         get() = EgSearch.selectedOrganization
         set(value) {
@@ -106,11 +109,6 @@ object EvergreenConsortiumService: ConsortiumService {
             Api.SETTING_HEMLOCK_MEETING_ROOMS_URL,
             Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL,
         )
-        if (orgID == EgOrg.CONSORTIUM_ID) {
-            settings.add(Api.SETTING_SMS_ENABLE)
-//            settings.add(Api.SETTING_REQUIRE_MONOGRAPHIC_PART)
-//            settings.add(Api.SETTING_UI_REQUIRE_MONOGRAPHIC_PART)
-        }
         val response = GatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, paramListOf(orgID, settings, Api.ANONYMOUS), true)
         val obj = response.payloadFirstAsObject()
         org.loadSettings(obj)

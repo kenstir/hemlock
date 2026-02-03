@@ -22,8 +22,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -43,6 +46,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
+import net.kenstir.util.md5
 
 /**
  * Behavior common to MainActivity and MainGridActivity.
@@ -202,8 +206,6 @@ open class MainBaseActivity : BaseActivity() {
 
     fun updateStoredNotificationToken() {
         scope.async {
-            val start = System.currentTimeMillis()
-
             // get the fcmToken
             val result = fetchFcmNotificationToken()
             if (result is Result.Error) {
@@ -244,5 +246,56 @@ open class MainBaseActivity : BaseActivity() {
         if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
             return true
         return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
+        maybeShowSystemAlert()
+    }
+
+    fun maybeShowSystemAlert() {
+        // do this only the first time the main activity is attached
+        if (++attachCount != 1) return
+        Log.d(TAG, "[alert] attachCount=${attachCount}")
+
+        // do nothing if there's no alert banner, or if the user squelched it by
+        // tapping "don't show again" on this exact message (as determined by MD5())
+        val alertBanner = App.svc.consortium.alertBanner ?: return
+        val squelchedMD5 = AppState.getString(AppState.ALERT_BANNER_SQUELCHED_MD5)
+        val alertBannerMD5 = alertBanner.md5()
+        if (squelchedMD5 == alertBannerMD5) {
+            Log.d(TAG, "[alert] already squelched")
+            return
+        }
+
+        // show the alert dialog with simple HTML rendering of the message
+        val spannedMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(alertBanner, Html.FROM_HTML_MODE_COMPACT)
+        } else {
+            Html.fromHtml(alertBanner)
+        }
+        val builder = AlertDialog.Builder(this)
+            .setTitle(resources.getString(R.string.system_alert_title))
+            .setMessage(spannedMessage)
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNegativeButton(resources.getString(R.string.system_alert_dont_show_again)) { dialog, _ ->
+                AppState.setString(AppState.ALERT_BANNER_SQUELCHED_MD5, alertBannerMD5)
+                dialog.dismiss()
+            }
+        val dialog = builder.create()
+        dialog.show()
+
+        // set the movementMethod on the TextView to make any links clickable
+        val messageView: TextView? = dialog.findViewById(android.R.id.message)
+        messageView?.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    companion object {
+        const val TAG = "MainBase"
+
+        var attachCount = 0
     }
 }
