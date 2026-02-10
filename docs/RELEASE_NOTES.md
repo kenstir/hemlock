@@ -1,4 +1,4 @@
-## 4.6.0 - or maybe 5.0.0 - UNRELEASED
+## 4.6.0
 
 ### New
 * If the public catalog has an alert banner showing, display the same message in a dialog on app startup
