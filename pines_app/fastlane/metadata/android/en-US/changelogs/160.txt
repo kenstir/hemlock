@@ -1,0 +1,6 @@
+* New: Show public catalog alert banner as a dialog in the app
+* Fixed accessibility issues where author and copy info text links were too small
+* Fixed ANR (App Not Responding) errors by moving operations off main thread
+* Fixed "Add account" to restart with the new account
+* Fixed bug where the app exited when pressing Back after a notification
+* Fixed bug where Library Info address was double-spaced
