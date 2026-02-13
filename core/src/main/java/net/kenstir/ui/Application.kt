@@ -25,7 +25,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.util.ThemeManager
 import java.io.File
 
-class Application : androidx.multidex.MultiDexApplication() {
+class Application : android.app.Application() {
 
     // Define a scope that lives as long as the application
     // Use SupervisorJob so if one child coroutine fails, others aren't cancelled

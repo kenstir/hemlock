@@ -26,7 +26,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 35
-        multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         versionName rootProject.ext.globalVersionName
@@ -74,7 +73,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
-    implementation 'androidx.multidex:multidex:2.0.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     testImplementation 'junit:junit:4.13.2'
 
