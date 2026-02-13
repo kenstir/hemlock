@@ -1,3 +1,8 @@
+## unreleased
+
+### Internal
+* internal: Change analytics param multiple_accounts to be a string user property, and change all other bool values to strings
+
 ## 4.6.0
 
 ### New

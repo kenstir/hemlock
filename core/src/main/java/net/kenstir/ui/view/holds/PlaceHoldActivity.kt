@@ -242,7 +242,7 @@ class PlaceHoldActivity : BaseActivity() {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
                 Analytics.Param.RESULT to result,
                 Analytics.Param.HOLD_NOTIFY to notifyTypes,
-                Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
+                Analytics.Param.HOLD_EXPIRES_KEY to Analytics.boolValue(expireDate != null),
                 Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(visibleOrgs[selectedOrgPos],
                     App.svc.consortium.findOrg(App.account.pickupOrg),
                     App.svc.consortium.findOrg(App.account.homeOrg)),

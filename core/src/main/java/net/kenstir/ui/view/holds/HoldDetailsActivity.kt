@@ -192,8 +192,8 @@ class HoldDetailsActivity : BaseActivity() {
             hideBusy()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),
-                Analytics.Param.HOLD_SUSPEND_KEY to suspendHold!!.isChecked,
-                Analytics.Param.HOLD_REACTIVATE_KEY to (thawDate != null),
+                Analytics.Param.HOLD_SUSPEND_KEY to Analytics.boolValue(suspendHold!!.isChecked),
+                Analytics.Param.HOLD_REACTIVATE_KEY to Analytics.boolValue(thawDate != null),
             ))
             when (result) {
                 is Result.Success -> {

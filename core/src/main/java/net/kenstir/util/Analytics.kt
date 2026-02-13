@@ -81,15 +81,13 @@ object Analytics {
         const val NUM_RESULTS = "num_results"
         const val SEARCH_TERM_UNIQ_WORDS = "search_term_uniq_words"
         const val SEARCH_TERM_AVG_WORD_LEN_X10 = "search_term_avg_word_len_x10"
-
-        // boolean params do not need to be registered
-        const val MULTIPLE_ACCOUNTS = "multiple_accounts"
     }
 
     object UserProperty {
         // these need to be registered in FA as Custom Dimensions w/ scope=User
         const val HOME_ORG = "user_home_org"
         const val PARENT_ORG = "user_parent_org"
+        const val MULTIPLE_ACCOUNTS = "user_multiple_accounts" // bool
     }
 
     object Value {
@@ -119,9 +117,10 @@ object Analytics {
         runningInTestLab = (setting == "true")
 
         if (wantAnalytics(context)) {
+            Log.d(TAG, "[analytics] Enabled")
             analytics = true
         } else {
-            Log.d(TAG, "Disabling Crashlytics")
+            Log.d(TAG, "[analytics] Disabling Crashlytics")
             FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
             analytics = false
         }
@@ -139,7 +138,7 @@ object Analytics {
         //   adb shell setprop log.tag.FA SILENT
         // See also: https://firebase.google.com/docs/analytics/debugview#android
 
-        // Usually I do not want to include events while I am running in the debugger
+        // Set to true to include events while debugging, e.g. for DebugView
         val includeEventsForDebugBuilds = false
         return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeEventsForDebugBuilds)
     }
@@ -289,6 +288,15 @@ object Analytics {
         }
     }
 
+    /** Returns "true" or "false" to use as a value in a [logEvent] bundle.
+     *
+     * This is necessary because FA does not have real booleans, reports them as 0/1, and omits 0 values,
+     * resulting in missing dimension panels in the FA Events UI.
+     */
+    fun boolValue(value: Boolean): String {
+        return if (value) "true" else "false"
+    }
+
     fun searchTextStats(searchText: String): Bundle {
         // Count unique words in searchText
         val words = searchText.lowercase().split("\\s+".toRegex()).toTypedArray()
@@ -315,14 +323,14 @@ object Analytics {
     fun logSuccessfulLaunch(username: String, barcode: String?, homeOrg: String?, parentOrg: String, numAccounts: Int) {
         setUserProperties(bundleOf(
             UserProperty.HOME_ORG to homeOrg,
-            UserProperty.PARENT_ORG to parentOrg
+            UserProperty.PARENT_ORG to parentOrg,
+            UserProperty.MULTIPLE_ACCOUNTS to boolValue(numAccounts > 1),
         ))
         logEvent(
             Event.LOGIN, bundleOf(
             Param.RESULT to Value.OK,
             Param.LOGIN_TYPE to loginTypeKey(username, barcode),
             Param.NUM_ACCOUNTS to numAccounts,
-            Param.MULTIPLE_ACCOUNTS to (numAccounts > 1)
         ))
     }
 
