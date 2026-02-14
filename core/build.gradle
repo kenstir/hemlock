@@ -7,8 +7,8 @@ plugins {
 android {
     compileSdk 35
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 35
+        minSdk 21
+        targetSdk 35
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments = [server: testServer, username: testUsername, password: testPassword, httpbinServer: testHttpbinServer]
     }
