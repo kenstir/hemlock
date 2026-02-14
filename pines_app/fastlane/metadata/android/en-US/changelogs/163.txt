@@ -1,0 +1,3 @@
+* internal: Convert to version catalog and centralize plugin versions
+* internal: Remove unnecessary multidex library
+* internal: Change analytics param multiple_accounts to be a string user property, and change all other bool values to strings
