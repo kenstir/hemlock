@@ -204,10 +204,7 @@ object Analytics {
 
     @JvmStatic
     fun logEvent(event: String, b: Bundle?) {
-        if (event.length > 40) {
-            if (BuildConfig.DEBUG) throw AssertionError("Event name is too long")
-            return
-        }
+        assert(event.length <= 40) { "Event name is too long: $event" }
         if (analytics) mAnalytics?.logEvent(event, b)
     }
 
