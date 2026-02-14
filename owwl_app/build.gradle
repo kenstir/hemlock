@@ -72,6 +72,4 @@ dependencies {
     implementation project(':core')
     androidTestImplementation libs.espressoCore
     testImplementation libs.junit
-
-    implementation project(path: ':assets:opensource')
 }
