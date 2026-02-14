@@ -184,11 +184,10 @@ lane :make_release do
   end
 end
 
-desc "Upload release AAB to the beta channel (called from beta)"
-lane :upload_beta do
+def upload_track(track)
   upload_to_play_store(
     aab: find_aab(),
-    track: "beta",
+    track: track,
     release_status: "completed",
     skip_upload_metadata: true,
     skip_upload_changelogs: false,
@@ -197,9 +196,9 @@ lane :upload_beta do
   )
 end
 
-desc "Make release AAB + upload to the beta channel"
-lane :beta do
-  #ensure_git_status_clean
+desc "Make release AAB + upload to the internal channel"
+lane :internal do
+  ensure_git_status_clean
   tag, msg = get_tag_info()
   if git_tag_exists(tag: tag, remote: true)
     UI.user_error!("tag already exists: #{tag}")
@@ -209,7 +208,29 @@ lane :beta do
 
   make_release
 
-  upload_beta
+  upload_track("internal")
+
+  add_git_tag(
+    tag: tag,
+    message: msg,
+    grouping: nil
+  )
+  push_git_tags(tag: tag)
+end
+
+desc "Make release AAB + upload to the beta channel"
+lane :beta do
+  ensure_git_status_clean
+  tag, msg = get_tag_info()
+  if git_tag_exists(tag: tag, remote: true)
+    UI.user_error!("tag already exists: #{tag}")
+  end
+  UI.message("tag: #{tag}")
+  UI.message("msg: #{msg}")
+
+  make_release
+
+  upload_track("beta")
 
   add_git_tag(
     tag: tag,

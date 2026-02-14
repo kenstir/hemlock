@@ -1,6 +1,7 @@
 ## TENTATIVE UNRELEASED 4.7.0
 
 ### Internal
+* internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
 
 ## 4.6.1
