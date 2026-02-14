@@ -72,10 +72,4 @@ dependencies {
     implementation project(':core')
     androidTestImplementation libs.espressoCore
     testImplementation libs.junit
-
-    // include pro assets if directory exists
-    def dir = new File('assets/pro')
-    if (dir.exists()) {
-        implementation project(path: ':assets:pro')
-    }
 }
