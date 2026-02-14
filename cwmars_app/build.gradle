@@ -6,10 +6,10 @@ buildscript {
 }
 
 plugins {
-    id 'com.android.application'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.kotlinAndroid)
 }
 
 // load signing keys from a secret file
@@ -70,8 +70,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation libs.espressoCore
+    testImplementation libs.junit
 
     // include pro assets if directory exists
     def dir = new File('assets/pro')

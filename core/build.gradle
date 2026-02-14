@@ -1,7 +1,7 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.plugin.serialization'
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -51,38 +51,38 @@ dependencies {
 
     // Import the BoM for the Firebase platform
     // https://firebase.google.com/docs/android/learn-more#bom
-    implementation platform('com.google.firebase:firebase-bom:33.5.1')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-messaging'
+    implementation platform(libs.firebaseBom)
+    implementation libs.firebaseAnalytics
+    implementation libs.firebaseCrashlytics
+    implementation libs.firebaseMessaging
 
     // kotlinx.serialization + ktor
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1'
-    implementation 'io.ktor:ktor-client-okhttp:3.1.3'
-    implementation 'io.ktor:ktor-client-content-negotiation:3.1.3'
-    implementation 'io.ktor:ktor-client-core:3.1.3'
-    implementation 'io.ktor:ktor-client-logging:3.1.3'
-    implementation 'io.ktor:ktor-serialization-kotlinx-json:3.1.3'
+    implementation libs.kotlinxSerializationJson
+    implementation libs.ktorClientOkhttp
+    implementation libs.ktorClientContentNegotiation
+    implementation libs.ktorClientCore
+    implementation libs.ktorClientLogging
+    implementation libs.ktorSerializationKotlinxJson
     //implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    implementation 'io.coil-kt.coil3:coil:3.0.4'
-    implementation 'io.coil-kt.coil3:coil-network-okhttp:3.0.4'
+    implementation libs.coil
+    implementation libs.coilNetworkOkhttp
 
-    api 'com.google.zxing:core:3.5.3'
-    api 'com.google.android.material:material:1.12.0'
-    api 'androidx.appcompat:appcompat:1.7.1'
-    api 'androidx.recyclerview:recyclerview:1.4.0'
-    api 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.6'
-    implementation 'com.google.android.gms:play-services-code-scanner:16.1.0'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
+    api libs.zxing
+    api libs.material
+    api libs.appcompat
+    api libs.recyclerView
+    api libs.constraintLayout
+    implementation libs.coreKtx
+    implementation libs.coroutinesCore
+    implementation libs.coroutinesAndroid
+    implementation libs.lifecycleViewmodelKtx
+    implementation libs.lifecycleRuntimeKtx
+    implementation libs.playServicesCodeScanner
+    androidTestImplementation libs.androidxTestRunner
+    androidTestImplementation libs.androidxTestExtJunit
+    testImplementation libs.junit
+    testImplementation libs.kotlinxCoroutinesTest
+    androidTestImplementation libs.kotlinxCoroutinesTest
 
     // useful for debugging TransactionTooLargeException
     //implementation 'com.gu.android:toolargetool:0.3.0'

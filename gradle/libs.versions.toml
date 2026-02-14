@@ -1,0 +1,56 @@
+[versions]
+appcompat = "1.7.1"
+material = "1.12.0"
+constraintLayout = "2.2.1"
+coreKtx = "1.13.1"
+recyclerView = "1.4.0"
+junit = "4.13.2"
+coroutines = "1.8.1"
+kotlinxSerialization = "1.8.1"
+ktor = "3.1.3"
+coil = "3.0.4"
+firebaseBom = "33.5.1"
+playServicesCodeScanner = "16.1.0"
+androidxTestRunner = "1.6.2"
+androidxTestExtJunit = "1.2.1"
+espresso = "3.6.1"
+lifecycle = "2.8.6"
+zxing = "3.5.3"
+
+[libraries]
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
+coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+recyclerView = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerView" }
+junit = { module = "junit:junit", version.ref = "junit" }
+coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktorClientLogging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coilNetworkOkhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
+firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebaseMessaging = { module = "com.google.firebase:firebase-messaging" }
+playServicesCodeScanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
+androidxTestRunner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidxTestExtJunit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExtJunit" }
+kotlinxCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
+lifecycleViewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version = "8.13.2" }
+androidLibrary = { id = "com.android.library", version = "8.13.2" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version = "2.1.21" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "2.1.21" }
+googleServices = { id = "com.google.gms.google-services", version = "4.3.15" }
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "2.9.5" }
