@@ -23,7 +23,6 @@ import android.provider.Settings
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import net.kenstir.hemlock.BuildConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.data.model.Organization
