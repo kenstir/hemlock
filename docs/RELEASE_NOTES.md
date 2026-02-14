@@ -1,6 +1,10 @@
 ## TENTATIVE UNRELEASED 4.7.0
 
+### New
+* Updated minimum Android version to 6.0 (API 23)
+
 ### Internal
+* internal: Upgrade firebase, zxing dependencies
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
 
