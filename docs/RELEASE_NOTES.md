@@ -1,10 +1,10 @@
 ## TENTATIVE UNRELEASED 4.7.0
 
 ### New
-* Updated minimum Android version to 6.0 (API 23)
+* Update minimum Android version to 6.0 (API 23)
 
 ### Internal
-* internal: Upgrade firebase, zxing dependencies
+* internal: Upgrade dependencies
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
 
@@ -17,7 +17,7 @@
 ## 4.6.0
 
 ### New
-* If the public catalog has an alert banner showing, display the same message in a dialog on app startup
+* If the public catalog has an active alert banner, display it in a dialog on app startup
 
 ### Fixed
 * Fixed accessibility issues where author and copy info text links were too small
