@@ -28,7 +28,8 @@ fm_IDL.*
 .DS_Store
 /build
 /*/build
-/*/release
+/*_app/release
+/*_app/debug
 /captures
 google-services.json
 

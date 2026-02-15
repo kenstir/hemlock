@@ -94,7 +94,6 @@ object AppState {
         return value
     }
 
-    @JvmStatic
     fun getInt(key: String): Int {
         return getInt(key, 0)
     }
