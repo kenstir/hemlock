@@ -19,15 +19,15 @@
 package org.evergreen_ils.util
 
 fun Any.fromApiToIntOrNull(): Int? {
-    when (this) {
+    return when (this) {
         is Int -> {
-            return this
+            this
         }
         is String -> {
-            return this.toIntOrNull()
+            this.toIntOrNull()
         }
         else -> {
-            return null
+            null
         }
     }
 }
