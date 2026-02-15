@@ -15,7 +15,7 @@
 # https://stackoverflow.com/questions/51860843/how-to-turn-off-only-the-obfuscation-in-android-r8
 #-dontshrink
 -dontobfuscate
--dontoptimize
+#-dontoptimize
 
 # suppress warning
 -dontwarn kotlin.jvm.internal.SourceDebugExtension
