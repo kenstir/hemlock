@@ -1,0 +1,2 @@
+* Updated minimum Android version to 6.0 (API 23)
+* internal: Upgrade dependencies

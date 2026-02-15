@@ -23,7 +23,6 @@ import android.provider.Settings
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import net.kenstir.hemlock.BuildConfig
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.data.model.Organization
@@ -204,10 +203,7 @@ object Analytics {
 
     @JvmStatic
     fun logEvent(event: String, b: Bundle?) {
-        if (event.length > 40) {
-            if (BuildConfig.DEBUG) throw AssertionError("Event name is too long")
-            return
-        }
+        assert(event.length <= 40) { "Event name is too long: $event" }
         if (analytics) mAnalytics?.logEvent(event, b)
     }
 
