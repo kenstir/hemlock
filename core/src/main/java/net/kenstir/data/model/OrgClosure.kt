@@ -31,6 +31,6 @@ open class OrgClosure(
     val reason: String,
 ) {
     open fun toInfo(): OrgClosureInfo {
-        return OrgClosureInfo("", reason ?: "", false)
+        return OrgClosureInfo("", reason, false)
     }
 }
