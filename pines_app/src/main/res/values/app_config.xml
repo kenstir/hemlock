@@ -10,7 +10,6 @@
 <!--    <string name="app_account_type">net.kenstir.apps.pines.test</string>-->
 <!--    <string name="app_label">PINES TEST</string>-->
 
-    <string name="app_account_label">PINES</string>
     <string name="app_account_sign_in_message">Sign in to your PINES account</string>
     <string name="app_bar_library_name">PINES</string>
     <string name="app_bar_subtitle">%2$s</string>

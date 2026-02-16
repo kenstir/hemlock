@@ -11,7 +11,6 @@
 <!--    <string name="app_label">Acorn Catalog TEST</string>-->
     <string name="app_developer_email">acornapp@biblio.org</string>
 
-    <string name="app_account_label">Acorn Catalog</string>
     <string name="app_account_sign_in_message">Sign in to your Bibliomation account</string>
     <string name="app_bar_library_name">Bibliomation</string>
     <string name="app_bar_subtitle">%2$s</string>

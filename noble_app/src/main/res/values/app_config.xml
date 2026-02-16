@@ -3,7 +3,6 @@
     <string name="app_base_url">https://evergreen-ils.noblenet.org</string>
     <string name="app_account_type">net.kenstir.apps.noble</string>
 
-    <string name="app_account_label">NOBLE</string>
     <string name="app_account_sign_in_message">Sign in to your NOBLE account</string>
     <string name="app_label">NOBLE</string>
     <string name="app_bar_library_name">NOBLE</string>

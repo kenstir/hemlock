@@ -3,7 +3,6 @@
     <string name="app_base_url">https://missourievergreen.org</string>
     <string name="app_account_type">net.kenstir.apps.mo</string>
 
-    <string name="app_account_label">Missouri Evergreen</string>
     <string name="app_account_sign_in_message">Sign in to your Missouri Evergreen account</string>
     <string name="app_label">Missouri Evergreen</string>
     <string name="app_bar_library_name">Missouri Evergreen</string>

@@ -10,7 +10,7 @@
     <string name="app_label">Hemlock</string>
 
     <!-- the label shown in the android account manager -->
-    <string name="app_account_label">Hemlock</string>
+    <string name="app_account_label">@string/app_label</string>
     <!-- title shown on sign in activity -->
     <string name="app_account_sign_in_message" />
     <!-- label above choose library spinner (generic Hemlock app only) -->

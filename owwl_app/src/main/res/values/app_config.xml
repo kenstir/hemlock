@@ -3,7 +3,6 @@
     <string name="app_base_url">https://evergreen.owwl.org</string>
     <string name="app_account_type">net.kenstir.apps.owwl</string>
 
-    <string name="app_account_label">OWWL</string>
     <string name="app_account_sign_in_message">Sign in to your OWWL Library System account</string>
     <string name="app_label">OWWL</string>
     <string name="app_bar_library_name">OWWL</string>

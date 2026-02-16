@@ -3,7 +3,6 @@
     <string name="app_base_url">https://bark.cwmars.org</string>
     <string name="app_account_type">org.cwmars</string>
 
-    <string name="app_account_label">CW MARS</string>
     <string name="app_account_sign_in_message">Sign in to your CW MARS account</string>
     <string name="app_label">CW MARS</string>
     <string name="app_bar_library_name">CW MARS</string>

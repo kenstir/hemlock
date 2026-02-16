@@ -3,7 +3,6 @@
     <string name="app_base_url"></string>
     <string name="app_account_type">net.kenstir.apps.hemlock</string>
 
-    <string name="app_account_label">Hemlock</string>
     <string name="app_account_sign_in_message"></string>
     <string name="app_choose_library_label">Choose your library system:</string>
     <string name="app_label">Hemlock</string>

@@ -3,7 +3,6 @@
     <string name="app_base_url">https://catalog.sage.eou.edu</string>
     <string name="app_account_type">net.kenstir.apps.sagecat</string>
 
-    <string name="app_account_label">SageCat</string>
     <string name="app_account_sign_in_message">Sign in to your SageCat account</string>
     <string name="app_label">SageCat</string>
     <string name="app_bar_library_name">SageCat</string>
