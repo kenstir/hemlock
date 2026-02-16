@@ -13,6 +13,6 @@
     <bool name="app_enable_hierarchical_org_tree">false</bool>
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_analytics">true</bool>
-<!--    <bool name="ou_enable_messages">true</bool>-->
+<!--    <bool name="app_enable_patron_messages">true</bool>-->
     <bool name="app_is_generic_app">true</bool>
 </resources>
