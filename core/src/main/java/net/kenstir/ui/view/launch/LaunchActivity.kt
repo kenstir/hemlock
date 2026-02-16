@@ -294,7 +294,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // record analytics
         val numAccounts = AccountUtils.getAccountsByType(this).size
-        if (resources.getBoolean(R.bool.ou_is_generic_app)) {
+        if (resources.getBoolean(R.bool.app_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLaunch(account.username, account.barcode,
                 null, orgService.findOrgShortNameSafe(orgService.consortiumID), numAccounts)

@@ -18,7 +18,6 @@
 package net.kenstir.ui.view
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -149,7 +148,7 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initHoursViews(hoursHeader: View?, hoursTable: View?) {
-        if (!resources.getBoolean(R.bool.ou_enable_hours_of_operation)) {
+        if (!resources.getBoolean(R.bool.app_enable_hours_of_operation)) {
             hoursHeader?.visibility = View.GONE
             hoursTable?.visibility = View.GONE
         }
@@ -223,7 +222,7 @@ class OrgDetailsActivity : BaseActivity() {
         } else {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.VISIBLE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.GONE
-            addClosureRows(closures.take(resources.getInteger(R.integer.ou_upcoming_closures_limit)))
+            addClosureRows(closures.take(resources.getInteger(R.integer.app_upcoming_closures_limit)))
         }
     }
 

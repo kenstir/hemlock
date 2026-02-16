@@ -219,7 +219,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 }
             }
             navHeader?.setOnClickListener { v -> onNavigationAction(v.id) }
-            if (!resources.getBoolean(R.bool.ou_enable_events_button)) {
+            if (!resources.getBoolean(R.bool.app_enable_events_button)) {
                 navigationView.menu.removeItem(R.id.main_events_button)
             }
         }

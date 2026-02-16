@@ -187,7 +187,7 @@ class MainGridActivity : MainBaseActivity() {
             menu.removeItem(R.id.action_feedback)
 
         // set up the messages action view, it didn't work when set in xml
-        if (!resources.getBoolean(R.bool.ou_enable_messages)) {
+        if (!resources.getBoolean(R.bool.app_enable_patron_messages)) {
             menu.removeItem(R.id.action_messages)
         }
 

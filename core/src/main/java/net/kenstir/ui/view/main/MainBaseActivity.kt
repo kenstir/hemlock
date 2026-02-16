@@ -87,7 +87,7 @@ open class MainBaseActivity : BaseActivity() {
 //    }
 
     fun initializePushNotifications() {
-        if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
+        if (!resources.getBoolean(R.bool.app_enable_push_notifications)) return
 
         requestNotificationPermission()
         createNotificationChannels()

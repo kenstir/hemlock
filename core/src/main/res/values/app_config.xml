@@ -46,53 +46,53 @@
     <string name="app_pay_fines_url" />
 
     <!-- if true, organize library spinners hierarchically -->
-    <bool name="ou_hierarchical_org_tree">true</bool>
+    <bool name="app_enable_hierarchical_org_tree">true</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
-    <bool name="ou_group_copy_info_by_system">false</bool>
+    <bool name="app_group_copy_info_by_system">false</bool>
     <!-- if true, display "expires DATE" on Show Card screen -->
-    <bool name="ou_enable_barcode_expiration">true</bool>
+    <bool name="app_enable_card_expiration_date">true</bool>
     <!-- if true, copy information links to the library info page -->
-    <bool name="ou_enable_copy_info_web_links">true</bool>
+    <bool name="app_enable_copy_info_web_links">true</bool>
     <!-- if true, enable phone notification controls on Place Hold screen -->
-    <bool name="ou_enable_phone_notification">false</bool>
+    <bool name="app_enable_phone_notification">false</bool>
     <!-- if true, use .override api method to place holds -->
-    <bool name="ou_enable_hold_use_override">false</bool>
+    <bool name="app_enable_hold_use_override">false</bool>
     <!-- if true, show pickup location when hold becomes available -->
-    <bool name="ou_enable_hold_pickup_location">false</bool>
+    <bool name="app_enable_hold_pickup_location">false</bool>
     <!-- if true, allow patron to see their position in hold queue -->
-    <bool name="ou_enable_hold_queue_position">true</bool>
+    <bool name="app_enable_hold_queue_position">true</bool>
     <!-- if true, show "expires DATE" for holds that are Available -->
-    <bool name="ou_enable_hold_shelf_expiration">true</bool>
+    <bool name="app_enable_hold_shelf_expiration">true</bool>
     <!-- if true, we query an item for parts to allow a part hold -->
-    <bool name="ou_enable_part_holds">false</bool>
+    <bool name="app_enable_part_holds">false</bool>
     <!-- if true, and the item has parts, try title_hold.is_possible and if so, allow title hold.
          if false, require a part hold for an item with parts. -->
-    <bool name="ou_enable_title_hold_on_item_with_parts">false</bool>
+    <bool name="app_enable_title_hold_on_item_with_parts">false</bool>
     <!-- if true, enable messages link in app bar -->
-    <bool name="ou_enable_messages">false</bool>
-    <!-- if true, enable Pay Fines button based on settings -->
-    <bool name="ou_enable_pay_fines">true</bool>
+    <bool name="app_enable_patron_messages">false</bool>
+    <!-- if true, enable Pay Fines button, if home org also has it enabled -->
+    <bool name="app_enable_pay_fines">true</bool>
     <!-- [fcm] if true, initialize Firebase Cloud Messaging and send token to EG -->
-    <bool name="ou_enable_push_notifications">false</bool>
+    <bool name="app_enable_push_notifications">false</bool>
     <!-- if true, display label host name in Item Details view for online items -->
-    <bool name="ou_show_online_access_hostname">true</bool>
+    <bool name="app_show_online_access_hostname">true</bool>
     <!-- if true, clicking Online Access always shows a popup, even if there is only 1 link -->
-    <bool name="ou_always_popup_online_links">false</bool>
+    <bool name="app_always_popup_online_links">false</bool>
     <!-- if true, we must load MARCXML records to load online locations -->
-    <bool name="ou_need_marc_record">false</bool>
+    <bool name="app_need_marc_record">false</bool>
     <!-- if true, display the hours of operation on the Library Info screen -->
-    <bool name="ou_enable_hours_of_operation">true</bool>
+    <bool name="app_enable_hours_of_operation">true</bool>
     <!-- if true, Firebase Analytics is initialized -->
-    <bool name="ou_enable_analytics">false</bool>
+    <bool name="app_enable_analytics">false</bool>
     <!-- if true, add Events button, link to home org setting hemlock.events_calendar_url -->
-    <bool name="ou_enable_events_button">false</bool>
-    <!-- true only for the Hemlock generic app; used for analytics -->
-    <bool name="ou_is_generic_app">false</bool>
+    <bool name="app_enable_events_button">false</bool>
+    <!-- true only for the generic Hemlock app; used for analytics -->
+    <bool name="app_is_generic_app">false</bool>
 
     <!-- max number of search results to display -->
-    <integer name="ou_search_limit">100</integer>
+    <integer name="app_search_limit">100</integer>
     <!-- max number of upcoming closures to display -->
-    <integer name="ou_upcoming_closures_limit">5</integer>
+    <integer name="app_upcoming_closures_limit">5</integer>
 
     <!-- [fcm] -->
     <bool name="notification_channel_register_checkouts_channel">true</bool>

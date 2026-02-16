@@ -139,7 +139,7 @@ object Analytics {
 
         // Set to true to include events while debugging, e.g. for DebugView
         val includeEventsForDebugBuilds = false
-        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeEventsForDebugBuilds)
+        return context.resources.getBoolean(R.bool.app_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeEventsForDebugBuilds)
     }
 
     fun isDebuggable(context: Context): Boolean {

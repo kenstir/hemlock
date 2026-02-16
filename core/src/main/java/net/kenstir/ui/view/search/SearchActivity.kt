@@ -269,7 +269,7 @@ class SearchActivity : BaseActivity() {
                 // submit the query
                 val queryString = App.svc.search.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.app_sort_by))
                 Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
-                val result = App.svc.search.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
+                val result = App.svc.search.searchCatalog(queryString, resources.getInteger(R.integer.app_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true
