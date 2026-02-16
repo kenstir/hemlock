@@ -11,7 +11,10 @@
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
 
-## 4.7.0 - only released to cwmars beta - became 5.0.0
+## 4.7.0 - only released to cwmars beta
+
+### Internal
+* internal: Remove unnecessary multidex library
 
 ## 4.6.1
 
