@@ -24,26 +24,26 @@
     <!-- URL of feedback form -->
     <string name="app_feedback_url" />
     <!-- name of class overriding main activity -->
-    <string name="ou_main_activity" />
+    <string name="app_main_activity" />
     <!-- name of class that supplies menu handler for main menu extensions -->
-    <string name="ou_menu_provider" />
+    <string name="app_menu_provider" />
     <!-- name of class that implements AppFactory -->
     <string name="app_factory_provider" />
     <!-- email address to which debug logs may be sent -->
-    <string name="ou_developer_email">kenstir.apps@gmail.com</string>
+    <string name="app_developer_email">kenstir.apps@gmail.com</string>
     <!-- sort keyword to use in the open-ils.search.biblio.multiclass.query request, e.g. poprel
          if empty the sort() clause is omitted -->
-    <string name="ou_sort_by" />
+    <string name="app_sort_by" />
     <!-- if non-empty, the Barcode format to display for Show Card -->
-    <string name="ou_barcode_format" />
+    <string name="app_barcode_format" />
     <!-- if non-empty, the text of link to add to Item Details, e.g. "Recommended Reads" -->
-    <string name="ou_details_link_text" />
+    <string name="app_details_link_text" />
     <!-- if non-empty, the URL query to add to Item Details -->
-    <string name="ou_details_link_query" />
+    <string name="app_details_link_query" />
     <!-- if non-empty, the URL fragment to add to Item Details /eg/opac/record/6276882#awards -->
-    <string name="ou_details_link_fragment" />
+    <string name="app_details_link_fragment" />
     <!-- Custom URL for Pay Fines, leave empty for Evergreen default -->
-    <string name="ou_pay_fines_url" />
+    <string name="app_pay_fines_url" />
 
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">true</bool>

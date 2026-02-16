@@ -226,7 +226,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun initMenuProvider() {
-        menuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider))
+        menuItemHandler = MenuProvider.create(getString(R.string.app_menu_provider))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -15,10 +15,10 @@
     <string name="app_bar_library_name">PINES</string>
     <string name="app_bar_subtitle">%2$s</string>
     <string name="app_factory_provider">net.kenstir.apps.pines.PinesAppFactory</string>
-    <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
-    <string name="ou_barcode_format">Codabar</string>
-    <string name="ou_details_link_text">More Information</string>
-    <string name="ou_details_link_fragment">awards</string>
+    <string name="app_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
+    <string name="app_barcode_format">Codabar</string>
+    <string name="app_details_link_text">More Information</string>
+    <string name="app_details_link_fragment">awards</string>
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_enable_barcode_expiration">true</bool>
     <bool name="ou_group_copy_info_by_system">true</bool>

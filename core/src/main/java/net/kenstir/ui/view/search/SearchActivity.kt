@@ -267,7 +267,7 @@ class SearchActivity : BaseActivity() {
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
-                val queryString = App.svc.search.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val queryString = App.svc.search.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.app_sort_by))
                 Log.d(TAG, "[fetch] fetchSearchResults ... \"$queryString\"")
                 val result = App.svc.search.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {

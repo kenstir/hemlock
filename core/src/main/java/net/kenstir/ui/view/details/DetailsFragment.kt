@@ -169,7 +169,7 @@ class DetailsFragment : Fragment() {
                 }
             }
         }
-        val extrasLinkText = resources.getString(R.string.ou_details_link_text)
+        val extrasLinkText = resources.getString(R.string.app_details_link_text)
         if (extrasLinkText.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
@@ -177,11 +177,11 @@ class DetailsFragment : Fragment() {
             extrasButton?.setOnClickListener {
                 val url = StringBuilder(resources.getString(R.string.app_base_url))
                 url.append("/eg/opac/record/").append(record?.id)
-                val q = resources.getString(R.string.ou_details_link_query)
+                val q = resources.getString(R.string.app_details_link_query)
                 if (q.isNotEmpty()) {
                     url.append("?").append(q)
                 }
-                val frag = resources.getString(R.string.ou_details_link_fragment)
+                val frag = resources.getString(R.string.app_details_link_fragment)
                 if (frag.isNotEmpty()) {
                     url.append("#").append(frag)
                 }

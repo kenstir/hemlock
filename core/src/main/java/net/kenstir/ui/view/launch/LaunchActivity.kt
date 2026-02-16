@@ -199,7 +199,7 @@ class LaunchActivity : AppCompatActivity() {
 
                 val i = Intent(Intent.ACTION_SENDTO)
                 i.data = Uri.parse("mailto:") // only email apps should handle this
-                i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
+                i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.app_developer_email)))
                 i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
                 //TODO: append as attachment
                 i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
