@@ -1,0 +1,4 @@
+* Updated minimum Android version to 6.0 (API 23)
+* Made app download smaller by enabling R8 full mode optimization
+* internal: Replace deprecated onBackPressed with dispatcher (#87)
+* internal: Upgrade dependencies

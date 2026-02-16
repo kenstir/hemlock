@@ -1,4 +1,4 @@
-## 5.0.0 - TENTATIVE - UNRELEASED
+## 5.0.0 - INTERNAL TESTING
 
 ### New
 * Update minimum Android version to 6.0 (API 23)
@@ -7,6 +7,7 @@
 * Made app download smaller by enabling R8 full mode optimization
 
 ### Internal
+* internal: Replace deprecated onBackPressed with dispatcher (#87)
 * internal: Upgrade dependencies
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
