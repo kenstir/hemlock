@@ -209,15 +209,6 @@ class HoldDetailsActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     companion object {
         const val RESULT_CODE_DELETE_HOLD = 5
         const val RESULT_CODE_UPDATE_HOLD = 6

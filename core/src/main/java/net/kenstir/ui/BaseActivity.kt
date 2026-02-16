@@ -20,15 +20,14 @@ package net.kenstir.ui
 import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -178,14 +177,36 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     /** Set up the navigation drawer, if present in this layout */
     open fun setupNavigationDrawer() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer != null) {
-            val toggle = ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-            drawer.addDrawerListener(toggle)
-            toggle.syncState()
-        }
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout) ?: return
 
+        // Set up the hamburger icon to open and close the drawer
+        val toggle = ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+
+        // Register an on-back-pressed callback to close the drawer if it's open
+        val onBackPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START)
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
+        // Listen for drawer changes to enable/disable the callback
+        drawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerOpened(drawerView: View) {
+                onBackPressedCallback.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                onBackPressedCallback.isEnabled = false
+            }
+        })
+
+        // Set up the navigation item selected listener and header click listener
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this)
@@ -204,16 +225,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
     fun initMenuProvider() {
         menuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider))
     }
@@ -221,7 +232,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 return true
             }
             R.id.action_feedback -> {
