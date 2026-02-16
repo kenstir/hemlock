@@ -254,15 +254,6 @@ class OrgDetailsActivity : BaseActivity() {
         enableButtonsWhenReady()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun fetchData() {
         scope.async {
             try {

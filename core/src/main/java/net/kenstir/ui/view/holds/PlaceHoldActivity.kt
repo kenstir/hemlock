@@ -559,15 +559,6 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     companion object {
         private const val TAG = "PlaceHoldActivity"
     }

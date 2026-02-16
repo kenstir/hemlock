@@ -127,15 +127,6 @@ class CopyInformationActivity : BaseActivity() {
         logBundleSize(outState)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     fun launchOrgDetails(orgID: Int?) {
         val intent = Intent(this, OrgDetailsActivity::class.java)
         intent.putExtra(Key.ORG_ID, orgID)
