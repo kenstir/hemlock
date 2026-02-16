@@ -2,7 +2,7 @@
 # 1. Protect generic signatures for Ktor and Serialization
 -keepattributes Signature, *Annotation*, InnerClasses
 # 2. Protect kotlinx.serialization metadata
--keepclassmembers class * { *** Companion; }
+-keepclassmembers @kotlinx.serialization.Serializable class * { *** Companion; }
 -keepnames class kotlinx.serialization.internal.GeneratedSerializer { *; }
 # 3. Ktor Client - prevent stripping of the CIO/OkHttp engines
 -keep class io.ktor.client.engine.** { *; }
