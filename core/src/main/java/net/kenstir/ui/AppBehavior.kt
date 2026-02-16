@@ -22,7 +22,8 @@ import net.kenstir.data.model.Link
 /** AppBehavior - customizable app behaviors
  *
  * to override, create a subclass of AppBehavior in the xxx_app module,
- * and specify the name of that class in R.string.ou_behavior_provider.
+ * create an AppFactory that returns an instance of that subclass in makeBehavior(),
+ * and specify the name of the factory class in R.string.app_factory_provider.
  */
 open class AppBehavior {
     open fun isOnlineResource(record: BibRecord?): Boolean? {
