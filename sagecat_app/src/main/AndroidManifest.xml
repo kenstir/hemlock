@@ -20,7 +20,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/launcher_icon"
-        android:label="@string/ou_app_label"
+        android:label="@string/app_label"
         android:theme="@style/SageDarkNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 

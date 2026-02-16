@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- NOTA BENE: change these together: ou_library_url, ou_account_type, ou_app_label -->
+    <!-- NOTA BENE: change these together: app_base_url, app_account_type, app_label -->
     <!-- OPAC URL -->
-    <string name="ou_library_url">https://demo.evergreencatalog.com</string>
+    <string name="app_base_url">https://demo.evergreencatalog.com</string>
     <!-- Android AccountManager internal type.
-         Each evergreen-derived app must have its own unique ou_account_type. -->
-    <string name="ou_account_type">org.evergreen_ils.example</string>
+         Each evergreen-derived app must have its own unique app_account_type. -->
+    <string name="app_account_type">org.evergreen_ils.example</string>
     <!-- app name used to launch app -->
-    <string name="ou_app_label">Hemlock</string>
+    <string name="app_label">Hemlock</string>
 
     <!-- the label shown in the android account manager -->
-    <string name="ou_account_label">Example Library</string>
+    <string name="ou_account_label">Hemlock</string>
     <!-- title shown on sign in activity -->
     <string name="ou_account_sign_in_message" />
     <!-- label above choose library spinner, leave empty for library-specific app -->

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- NOTA BENE: change these together: ou_library_url, ou_account_type, ou_app_label -->
+    <!-- NOTA BENE: change these together: app_base_url, app_account_type, app_label -->
     <!-- production server -->
-    <string name="ou_library_url">https://gapines.org</string>
-    <string name="ou_account_type">net.kenstir.apps.pines</string>
-    <string name="ou_app_label">PINES</string>
+    <string name="app_base_url">https://gapines.org</string>
+    <string name="app_account_type">net.kenstir.apps.pines</string>
+    <string name="app_label">PINES</string>
     <!-- PINES test server -->
-<!--    <string name="ou_library_url">https://test.gapines.org</string>-->
-<!--    <string name="ou_account_type">net.kenstir.apps.pines.test</string>-->
-<!--    <string name="ou_app_label">PINES TEST</string>-->
+<!--    <string name="app_base_url">https://test.gapines.org</string>-->
+<!--    <string name="app_account_type">net.kenstir.apps.pines.test</string>-->
+<!--    <string name="app_label">PINES TEST</string>-->
 
     <string name="ou_account_label">PINES</string>
     <string name="ou_account_sign_in_message">Sign in to your PINES account</string>

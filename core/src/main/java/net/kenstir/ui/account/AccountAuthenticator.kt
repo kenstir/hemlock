@@ -37,7 +37,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
 
     init {
         // Choose the right AuthenticatorActivity.  A custom app does not require the library spinner.
-        val libraryUrl = context.getString(R.string.ou_library_url)
+        val libraryUrl = context.getString(R.string.app_base_url)
         if (TextUtils.isEmpty(libraryUrl)) {
             this.authenticatorActivity = GenericAuthenticatorActivity::class.java
         } else {
@@ -92,7 +92,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
         }
         if (libraryUrl == null) {
             // workaround issue #24 - not sure how it happened
-            libraryUrl = context.getString(R.string.ou_library_url)
+            libraryUrl = context.getString(R.string.app_base_url)
         }
 
         var authToken = am.peekAuthToken(account, authTokenType)

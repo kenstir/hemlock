@@ -247,7 +247,7 @@ class LaunchActivity : AppCompatActivity() {
             throw Exception(result.failureMessage)
 
         // turn that into a Library and Account
-        val accountType: String = applicationContext.getString(R.string.ou_account_type)
+        val accountType: String = applicationContext.getString(R.string.app_account_type)
         val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         App.library = library

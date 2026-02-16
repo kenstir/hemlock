@@ -175,7 +175,7 @@ class DetailsFragment : Fragment() {
         } else {
             extrasButton?.text = extrasLinkText
             extrasButton?.setOnClickListener {
-                val url = StringBuilder(resources.getString(R.string.ou_library_url))
+                val url = StringBuilder(resources.getString(R.string.app_base_url))
                 url.append("/eg/opac/record/").append(record?.id)
                 val q = resources.getString(R.string.ou_details_link_query)
                 if (q.isNotEmpty()) {

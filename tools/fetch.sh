@@ -37,7 +37,7 @@ if [ ! -f "$settings" ]; then
 fi
 
 # scrape library_url from settings xml
-url=$(fgrep -m1 '"ou_library_url"' $settings)
+url=$(fgrep -m1 '"app_base_url"' $settings)
 url=${url%<*}
 url=${url#*>}
 test -n "$url" || {
