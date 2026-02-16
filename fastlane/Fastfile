@@ -110,11 +110,14 @@ def increment_version_string(part = :patch, path = "../version.gradle")
       major += 1
       minor = 0
       patch = 0
+      build = 1
     when :minor
       minor += 1
       patch = 0
+      build = 1
     when :patch
       patch += 1
+      build = 1
     when :build
       build += 1
     else
