@@ -87,7 +87,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected val feedbackUrl: String
         @SuppressLint("StringFormatInvalid")
         get() {
-            val urlFormat = getString(R.string.ou_feedback_url)
+            val urlFormat = getString(R.string.app_feedback_url)
             return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, appVersionCode)
         }
 
@@ -164,7 +164,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (actionBar == null) return
         val username =
             if (getResources().getBoolean(R.bool.admin_screenshot_mode)) "janejetson" else App.account.displayName
-        actionBar.subtitle = String.format(getString(R.string.ou_activity_subtitle),
+        actionBar.subtitle = String.format(getString(R.string.app_bar_subtitle),
             AppState.getString(AppState.LIBRARY_NAME), username)
         titleOverride?.let { actionBar.title = it }
         if (true || !isMainActivity) {

@@ -23,14 +23,14 @@
         android:id="@+id/account_sign_in_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ou_account_sign_in_message" />
+        android:text="@string/app_account_sign_in_message" />
 
     <TextView
         android:id="@+id/choose_library_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/ou_choose_library_label"
+        android:text="@string/app_choose_library_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Spinner
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/ou_sign_in_label"
+        android:text="@string/app_sign_in_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.textfield.TextInputLayout

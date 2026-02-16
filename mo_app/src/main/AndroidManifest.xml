@@ -41,7 +41,7 @@
         </activity>
         <activity
             android:name="net.kenstir.ui.view.main.MainActivity"
-            android:label="@string/ou_library_name"
+            android:label="@string/app_bar_library_name"
             android:launchMode="singleTask">
         </activity>
 
@@ -128,7 +128,7 @@
 
         <activity
             android:name="net.kenstir.ui.account.AuthenticatorActivity"
-            android:label="@string/ou_account_label">
+            android:label="@string/app_account_label">
         </activity>
         <service
             android:name="net.kenstir.ui.account.AuthenticatorService"

@@ -88,7 +88,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
         log(TAG, "getAuthToken> library_name=$libraryName library_url=$libraryUrl")
         if (libraryName == null) {
             // workaround issue #24 - not sure how it happened
-            libraryName = context.getString(R.string.ou_library_name)
+            libraryName = context.getString(R.string.app_bar_library_name)
         }
         if (libraryUrl == null) {
             // workaround issue #24 - not sure how it happened

@@ -183,7 +183,7 @@ object AccountUtils {
             libraryUrl = am.getUserData(account, Const.KEY_LIBRARY_URL)
             Log.d(Const.AUTH_TAG, "[auth]    libraryUrl from user data: $libraryUrl")
         }
-        var libraryName = context.getString(R.string.ou_library_name)
+        var libraryName = context.getString(R.string.app_bar_library_name)
         if (libraryName.isEmpty()) {
             libraryName = am.getUserData(account, Const.KEY_LIBRARY_NAME)
             Log.d(Const.AUTH_TAG, "[auth]    libraryName from user data: $libraryName")

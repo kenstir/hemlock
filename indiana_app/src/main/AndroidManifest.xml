@@ -123,7 +123,7 @@
 
         <activity
             android:name="net.kenstir.ui.account.AuthenticatorActivity"
-            android:label="@string/ou_account_label">
+            android:label="@string/app_account_label">
         </activity>
         <service
             android:name="net.kenstir.ui.account.AuthenticatorService"

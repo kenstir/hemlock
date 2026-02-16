@@ -10,19 +10,19 @@
     <string name="app_label">Hemlock</string>
 
     <!-- the label shown in the android account manager -->
-    <string name="ou_account_label">Hemlock</string>
+    <string name="app_account_label">Hemlock</string>
     <!-- title shown on sign in activity -->
-    <string name="ou_account_sign_in_message" />
-    <!-- label above choose library spinner, leave empty for library-specific app -->
-    <string name="ou_choose_library_label">Choose your library system:</string>
-    <!-- label above sign_in field on generic Hemlock app -->
-    <string name="ou_sign_in_label">Login to your account:</string>
+    <string name="app_account_sign_in_message" />
+    <!-- label above choose library spinner (generic Hemlock app only) -->
+    <string name="app_choose_library_label">Choose your library system:</string>
+    <!-- label above sign_in field (generic Hemlock app only) -->
+    <string name="app_sign_in_label">Login to your account:</string>
     <!-- library name displayed in the app bar -->
-    <string name="ou_library_name"></string>
+    <string name="app_bar_library_name"></string>
     <!-- subtitle displayed in the app bar -->
-    <string name="ou_activity_subtitle">%1$s - %2$s</string>
+    <string name="app_bar_subtitle">%1$s - %2$s</string>
     <!-- URL of feedback form -->
-    <string name="ou_feedback_url" />
+    <string name="app_feedback_url" />
     <!-- name of class overriding main activity -->
     <string name="ou_main_activity" />
     <!-- name of class that supplies menu handler for main menu extensions -->
