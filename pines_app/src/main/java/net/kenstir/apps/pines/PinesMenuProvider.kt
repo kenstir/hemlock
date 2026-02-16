@@ -40,7 +40,7 @@ class PinesMenuProvider : MenuProvider() {
                 Analytics.logEvent(Analytics.Event.OTHER_ACTION, bundleOf(
                     Analytics.Param.ACTION_NAME to "full_catalog",
                 ))
-                val url = activity.getString(R.string.ou_library_url)
+                val url = activity.getString(R.string.app_base_url)
                 activity.launchURL(url)
             }
             R.id.library_locator_button -> {

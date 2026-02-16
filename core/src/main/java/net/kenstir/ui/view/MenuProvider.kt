@@ -19,9 +19,10 @@ package net.kenstir.ui.view
 import android.app.Activity
 import net.kenstir.util.Analytics
 
-/** Interface to get extra buttons provided by the main main of a custom app.
+/** Interface to get extra buttons provided by the main activity of a custom app
+ *
  * Concrete implementation is provided by the app
- * and the name of that class is specified in R.string.ou_main_menu_provider .
+ * and the name of that class is specified in R.string.app_menu_provider .
  */
 abstract class MenuProvider {
     abstract fun onCreate(activity: Activity)

@@ -106,7 +106,7 @@ class BarcodeActivity : BaseActivity() {
             imageView?.setImageResource(R.drawable.invalid_barcode)
         }
 
-        if (resources.getBoolean(R.bool.ou_enable_barcode_expiration)) {
+        if (resources.getBoolean(R.bool.app_enable_card_expiration_date)) {
             val date = App.account.expireDateString
             barcodeWarning?.text = resources.getString(R.string.barcode_expires_msg, date)
         } else {

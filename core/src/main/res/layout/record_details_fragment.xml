@@ -163,7 +163,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/target_min_height"
-                    android:text="@string/ou_details_link_text"
+                    android:text="@string/app_details_link_text"
                     tools:text="More Information"/>
             </LinearLayout>
 

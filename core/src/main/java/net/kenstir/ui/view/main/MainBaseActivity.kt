@@ -62,7 +62,7 @@ open class MainBaseActivity : BaseActivity() {
 //        } else {
 //            //TODO: change to an alert
 //            //TODO: change title to "Notice" and add text on how to update it later
-//            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label))
+//            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.app_label))
 //            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         }
     }
@@ -87,7 +87,7 @@ open class MainBaseActivity : BaseActivity() {
 //    }
 
     fun initializePushNotifications() {
-        if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
+        if (!resources.getBoolean(R.bool.app_enable_push_notifications)) return
 
         requestNotificationPermission()
         createNotificationChannels()
@@ -119,7 +119,7 @@ open class MainBaseActivity : BaseActivity() {
                 return
             }
             AlertDialog.Builder(this)
-                .setTitle(getString(R.string.notification_permission_rationale_title, getString(R.string.ou_app_label)))
+                .setTitle(getString(R.string.notification_permission_rationale_title, getString(R.string.app_label)))
                 .setMessage(getString(R.string.notification_permission_rationale_msg))
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     Log.d(TAG_PERM, "Launching request for permission (2)")

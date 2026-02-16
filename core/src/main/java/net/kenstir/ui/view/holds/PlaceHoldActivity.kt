@@ -24,7 +24,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.format.DateFormat
-import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -140,7 +139,7 @@ class PlaceHoldActivity : BaseActivity() {
         format?.text = record.iconFormatLabel
 
         initEmailNotification()
-        initPhoneControls(resources.getBoolean(R.bool.ou_enable_phone_notification))
+        initPhoneControls(resources.getBoolean(R.bool.app_enable_phone_notification))
         initPlaceHoldButton()
         initSuspendHoldButton()
         initDatePickers()
@@ -175,12 +174,12 @@ class PlaceHoldActivity : BaseActivity() {
                     App.svc.loader.loadPlaceHoldPrerequisites()
                 })
 
-                if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
+                if (resources.getBoolean(R.bool.app_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
                         val result = App.svc.circ.fetchHoldParts(record.id)
                         onPartsResult(result)
-                        if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
+                        if (hasParts && resources.getBoolean(R.bool.app_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
                             val isPossibleResult = App.svc.circ.fetchTitleHoldIsPossible(App.account, record.id, App.account.pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
@@ -318,7 +317,7 @@ class PlaceHoldActivity : BaseActivity() {
                 phoneNotify = getPhoneNotify(),
                 smsNotify = getSMSNotify(),
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
-                useOverride = resources.getBoolean(R.bool.ou_enable_hold_use_override),
+                useOverride = resources.getBoolean(R.bool.app_enable_hold_use_override),
                 pickupLib = selectedOrgID,
                 expireTime = expireDate,
                 suspendHold = suspendHold?.isChecked == true,

@@ -30,14 +30,14 @@ case "$app" in
 *)     app_dir="${app}_app";;
 esac
 
-settings="${topdir}/${app_dir}/src/main/res/values/ou.xml"
+settings="${topdir}/${app_dir}/src/main/res/values/app_config.xml"
 if [ ! -f "$settings" ]; then
     echo "No such file: $settings"
     exit 1
 fi
 
-# scrape library_url from settings xml
-url=$(fgrep -m1 '"ou_library_url"' $settings)
+# scrape url from $settings xml
+url=$(fgrep -m1 '"app_base_url"' $settings)
 url=${url%<*}
 url=${url#*>}
 test -n "$url" || {

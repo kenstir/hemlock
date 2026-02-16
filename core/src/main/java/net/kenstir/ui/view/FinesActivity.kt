@@ -126,11 +126,11 @@ class FinesActivity : BaseActivity() {
 
     private fun updatePayFinesButtonVisibility() {
         val account = App.account
-        if (resources.getBoolean(R.bool.ou_enable_pay_fines)
+        if (resources.getBoolean(R.bool.app_enable_pay_fines)
             && App.svc.user.isPayFinesEnabled(account))
         {
             payFinesButton?.visibility = View.VISIBLE
-            val url = resources.getString(R.string.ou_pay_fines_url).ifEmpty {
+            val url = resources.getString(R.string.app_pay_fines_url).ifEmpty {
                 App.svc.user.payFinesUrl(account)
             }
             payFinesButton?.setOnClickListener { launchURL(url) }

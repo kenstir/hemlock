@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_base_url">https://missourievergreen.org</string>
+    <string name="app_account_type">net.kenstir.apps.mo</string>
+
+    <string name="app_account_label">Missouri Evergreen</string>
+    <string name="app_account_sign_in_message">Sign in to your Missouri Evergreen account</string>
+    <string name="app_label">Missouri Evergreen</string>
+    <string name="app_bar_library_name">Missouri Evergreen</string>
+    <string name="app_bar_subtitle">%2$s</string>
+    <string name="app_factory_provider">net.kenstir.apps.mo.MoAppFactory</string>
+    <string name="app_menu_provider"></string>
+    <string name="app_barcode_format">Codabar</string>
+    <bool name="app_enable_hierarchical_org_tree">true</bool>
+    <bool name="app_group_copy_info_by_system">false</bool>
+    <bool name="app_enable_phone_notification">true</bool>
+    <bool name="app_enable_hold_queue_position">true</bool>
+    <bool name="app_enable_hold_shelf_expiration">true</bool>
+    <bool name="app_enable_patron_messages">true</bool>
+    <bool name="app_enable_part_holds">true</bool>
+    <bool name="app_enable_title_hold_on_item_with_parts">false</bool>
+    <bool name="app_enable_pay_fines">true</bool>
+    <bool name="app_need_marc_record">true</bool>
+    <bool name="app_show_online_access_hostname">false</bool>
+    <bool name="app_always_popup_online_links">true</bool>
+    <bool name="app_enable_analytics">true</bool>
+    <bool name="app_enable_events_button">true</bool>
+</resources>

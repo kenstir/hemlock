@@ -76,7 +76,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
         } else if (status == 4) {
             var s = res.getString(R.string.hold_status_available, pickupOrgName)
             shelfExpireTime?.let {
-                if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration)) {
+                if (res.getBoolean(R.bool.app_enable_hold_shelf_expiration)) {
                     s = s + "\n" + res.getString(R.string.hold_status_expires, DateFormat.getDateInstance().format(it))
                 }
             }
@@ -93,7 +93,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
             var s = res.getString(R.string.hold_status_waiting_for_copy,
                 res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds),
                 res.getQuantityString(R.plurals.number_of_copies, potentialCopies!!, potentialCopies))
-            if (res.getBoolean(R.bool.ou_enable_hold_queue_position))
+            if (res.getBoolean(R.bool.app_enable_hold_queue_position))
                 s = s + "\n" + res.getString(R.string.hold_status_queue_position, queuePosition)
             s
         } else {

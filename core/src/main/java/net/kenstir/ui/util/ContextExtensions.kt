@@ -42,7 +42,7 @@ val Context.appInfo: String
         } catch (e: PackageManager.NameNotFoundException) {
             logException(e)
         }
-        val appName: String = getString(R.string.ou_app_label)
+        val appName: String = getString(R.string.app_label)
         val versionName = pInfo?.versionName ?: "1.0.0.1"
         val verCode = pInfo?.versionCode ?: 0
         val version = "$appName $verCode ($versionName)"

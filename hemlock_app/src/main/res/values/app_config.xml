@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_base_url"></string>
+    <string name="app_account_type">net.kenstir.apps.hemlock</string>
+
+    <string name="app_account_label">Hemlock</string>
+    <string name="app_account_sign_in_message"></string>
+    <string name="app_choose_library_label">Choose your library system:</string>
+    <string name="app_label">Hemlock</string>
+    <string name="app_bar_library_name"></string>
+    <string name="app_factory_provider">net.kenstir.apps.hemlock.HemlockAppFactory</string>
+    <string name="app_feedback_url">https://docs.google.com/forms/d/e/1FAIpQLSdJ667-fEC14SN8LYBA-BxFDYErCC_jRpj3oqz-SjseH8JAKQ/viewform?entry.1598427127=%1$s</string>
+    <bool name="app_enable_hierarchical_org_tree">false</bool>
+    <bool name="app_enable_part_holds">true</bool>
+    <bool name="app_enable_analytics">true</bool>
+<!--    <bool name="app_enable_patron_messages">true</bool>-->
+    <bool name="app_is_generic_app">true</bool>
+</resources>

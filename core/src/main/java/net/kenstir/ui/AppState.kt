@@ -67,7 +67,7 @@ object AppState {
                 version = PREFS_SCHEMA_VERSION
                 putInt(VERSION, PREFS_SCHEMA_VERSION)
                 remove(LIBRARY_URL_OBSOLETE)
-                putString(LIBRARY_NAME, context.getString(R.string.ou_library_name))
+                putString(LIBRARY_NAME, context.getString(R.string.app_bar_library_name))
             }
         }
         Log.d(TAG, "version=$version")

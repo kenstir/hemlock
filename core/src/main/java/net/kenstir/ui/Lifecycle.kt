@@ -110,7 +110,7 @@ object Lifecycle {
      * Gets an intent to start the main activity, which may be MainList or MainGrid
      */
     fun getMainActivityIntent(activity: Activity): Intent {
-        val clazzName: String = activity.getString(R.string.ou_main_activity)
+        val clazzName: String = activity.getString(R.string.app_main_activity)
         if (clazzName.isNotEmpty()) {
             try {
                 val clazz = Class.forName(clazzName)

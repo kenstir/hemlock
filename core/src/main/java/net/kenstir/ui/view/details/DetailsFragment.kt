@@ -169,19 +169,19 @@ class DetailsFragment : Fragment() {
                 }
             }
         }
-        val extrasLinkText = resources.getString(R.string.ou_details_link_text)
+        val extrasLinkText = resources.getString(R.string.app_details_link_text)
         if (extrasLinkText.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
             extrasButton?.text = extrasLinkText
             extrasButton?.setOnClickListener {
-                val url = StringBuilder(resources.getString(R.string.ou_library_url))
+                val url = StringBuilder(resources.getString(R.string.app_base_url))
                 url.append("/eg/opac/record/").append(record?.id)
-                val q = resources.getString(R.string.ou_details_link_query)
+                val q = resources.getString(R.string.app_details_link_query)
                 if (q.isNotEmpty()) {
                     url.append("?").append(q)
                 }
-                val frag = resources.getString(R.string.ou_details_link_fragment)
+                val frag = resources.getString(R.string.app_details_link_fragment)
                 if (frag.isNotEmpty()) {
                     url.append("#").append(frag)
                 }
@@ -202,7 +202,7 @@ class DetailsFragment : Fragment() {
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
-        if (links.size == 1 && !resources.getBoolean(R.bool.ou_always_popup_online_links)) {
+        if (links.size == 1 && !resources.getBoolean(R.bool.app_always_popup_online_links)) {
             launchURL(links[0].href)
             return
         }
@@ -242,7 +242,7 @@ class DetailsFragment : Fragment() {
             onlineAccessButton?.isEnabled = true
             onlineAccessButton?.visibility = View.VISIBLE
 
-            if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
+            if (resources.getBoolean(R.bool.app_show_online_access_hostname)) {
                 val uri = links[0].href.toUri()
                 copySummaryTextView?.text = uri.host
             }
@@ -290,7 +290,7 @@ class DetailsFragment : Fragment() {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
             App.behavior.isOnlineResource(record) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
-                if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
+                if (resources.getBoolean(R.bool.app_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = onlineLocation.toUri()
                     uri.host
                 } else {
@@ -311,7 +311,7 @@ class DetailsFragment : Fragment() {
                 val biblioService = App.svc.biblio
 
                 jobs.add(scope.async {
-                    biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))
+                    biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.app_need_marc_record))
                     loadMetadata()
                     Log.d(TAG, "${record.id}: loadRecordMetadataAsync done")
                 })

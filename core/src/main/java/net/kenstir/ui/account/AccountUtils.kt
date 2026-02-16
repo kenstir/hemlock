@@ -24,7 +24,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -62,7 +61,7 @@ object AccountUtils {
     ): Bundle = suspendCancellableCoroutine { cont ->
         Log.d(Const.AUTH_TAG, "[auth] addAccount")
         val am = AccountManager.get(activity)
-        val accountType = activity.getString(R.string.ou_account_type)
+        val accountType = activity.getString(R.string.app_account_type)
         val callback = AccountManagerCallback<Bundle> { future ->
             try {
                 val result = future.result
@@ -92,7 +91,7 @@ object AccountUtils {
     ): Bundle = suspendCancellableCoroutine { cont ->
         Log.d(Const.AUTH_TAG, "[auth] getAuthTokenByFeatures")
         val am = AccountManager.get(activity)
-        val accountType = activity.getString(R.string.ou_account_type)
+        val accountType = activity.getString(R.string.app_account_type)
         val callback = AccountManagerCallback<Bundle> { future ->
             try {
                 val result = future.result
@@ -123,7 +122,7 @@ object AccountUtils {
     ): Bundle = suspendCancellableCoroutine { cont ->
         Log.d(Const.AUTH_TAG, "[auth] getAuthTokenForAccountFuture $accountName")
         val am = AccountManager.get(activity)
-        val accountType = activity.getString(R.string.ou_account_type)
+        val accountType = activity.getString(R.string.app_account_type)
         val account = Account(accountName, accountType)
         val callback = AccountManagerCallback<Bundle> { future ->
             try {
@@ -149,7 +148,7 @@ object AccountUtils {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     suspend fun removeAllAccounts(context: Context) = withContext(Dispatchers.IO) {
         val am = AccountManager.get(context)
-        val accountType = context.getString(R.string.ou_account_type)
+        val accountType = context.getString(R.string.app_account_type)
         val accounts = am.getAccountsByType(accountType)
         for (account in accounts) {
             Log.d(Const.AUTH_TAG, "[auth] removing account ${account.name}")
@@ -179,12 +178,12 @@ object AccountUtils {
 
         // For custom apps, libraryUrl and libraryName come from the resources.
         // For the generic Hemlock app, they are stored as user data in the AccountManager.
-        var libraryUrl = context.getString(R.string.ou_library_url)
+        var libraryUrl = context.getString(R.string.app_base_url)
         if (libraryUrl.isEmpty()) {
             libraryUrl = am.getUserData(account, Const.KEY_LIBRARY_URL)
             Log.d(Const.AUTH_TAG, "[auth]    libraryUrl from user data: $libraryUrl")
         }
-        var libraryName = context.getString(R.string.ou_library_name)
+        var libraryName = context.getString(R.string.app_bar_library_name)
         if (libraryName.isEmpty()) {
             libraryName = am.getUserData(account, Const.KEY_LIBRARY_NAME)
             Log.d(Const.AUTH_TAG, "[auth]    libraryName from user data: $libraryName")
@@ -215,7 +214,7 @@ object AccountUtils {
      */
     fun getAccountsByType(context: Context): List<Account> {
         val am = AccountManager.get(context)
-        val accountType: String? = context.getString(R.string.ou_account_type)
+        val accountType: String? = context.getString(R.string.app_account_type)
         val availableAccounts = am.getAccountsByType(accountType)
         Log.d(Const.AUTH_TAG, "[auth] getAccountsByType found ${availableAccounts.size} accounts")
         return availableAccounts.toList()
@@ -229,7 +228,7 @@ object AccountUtils {
         Log.d(Const.AUTH_TAG, "[auth] invalidateAuthToken $authToken")
         if (authToken.isNullOrEmpty()) return
         val am = AccountManager.get(context)
-        val accountType: String? = context.getString(R.string.ou_account_type)
+        val accountType: String? = context.getString(R.string.app_account_type)
         am.invalidateAuthToken(accountType, authToken)
     }
 
@@ -239,7 +238,7 @@ object AccountUtils {
      */
     fun clearPassword(context: Context, accountName: String) {
         val am = AccountManager.get(context)
-        val accountType = context.getString(R.string.ou_account_type)
+        val accountType = context.getString(R.string.app_account_type)
         val account = Account(accountName, accountType)
         am.clearPassword(account)
     }

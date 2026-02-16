@@ -21,7 +21,6 @@ package net.kenstir.ui.view.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -58,7 +57,7 @@ class CopyInformationActivity : BaseActivity() {
     private var adapter: CopyInformationViewAdapter? = null
 
     private val groupCopiesBySystem: Boolean
-        get() = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
+        get() = resources.getBoolean(R.bool.app_group_copy_info_by_system)
 
     override fun adjustPaddingForEdgeToEdge() {
         super.adjustPaddingForEdgeToEdge()
@@ -105,7 +104,7 @@ class CopyInformationActivity : BaseActivity() {
     }
 
     private fun initClickListener() {
-        if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {
+        if (resources.getBoolean(R.bool.app_enable_copy_info_web_links)) {
             ItemClickSupport.addTo(rv ?: return).setOnItemClickListener { _, position, _ ->
                 val clc = copyInfoRecords[position]
                 launchOrgDetails(clc.orgId)

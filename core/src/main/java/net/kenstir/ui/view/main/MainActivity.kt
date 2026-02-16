@@ -103,13 +103,13 @@ open class MainActivity : MainBaseActivity() {
 
     private fun homeOrgHasEvents(): Boolean {
         val url = getEventsUrl()
-        return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
+        return resources.getBoolean(R.bool.app_enable_events_button) && !url.isNullOrEmpty()
     }
 
     private fun loadUnreadMessageCount() {
         Log.d(TAG, "[async] loadUnreadMessageCount ...")
         scope.async {
-            if (resources.getBoolean(R.bool.ou_enable_messages)) {
+            if (resources.getBoolean(R.bool.app_enable_patron_messages)) {
                 val start = System.currentTimeMillis()
                 val result = App.svc.user.fetchPatronMessages(
                     App.account)
@@ -146,7 +146,7 @@ open class MainActivity : MainBaseActivity() {
             menu.removeItem(R.id.action_feedback)
 
         // set up the messages action view, it didn't work when set in xml
-        if (resources.getBoolean(R.bool.ou_enable_messages)) {
+        if (resources.getBoolean(R.bool.app_enable_patron_messages)) {
             createMessagesActionView(menu)
         } else {
             menu.removeItem(R.id.action_messages)

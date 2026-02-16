@@ -186,7 +186,7 @@ class BookBagDetailsActivity : BaseActivity() {
     suspend fun fetchTargetDetails(item: ListItem): Result<Unit> {
         val record = item.record ?: return Result.Error(Exception("No record found for item ${item.id}"))
         return App.svc.biblio.loadRecordDetails(record,
-            resources.getBoolean(R.bool.ou_need_marc_record))
+            resources.getBoolean(R.bool.app_need_marc_record))
     }
 
     private fun updateItemsList() {

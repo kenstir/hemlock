@@ -91,7 +91,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         Analytics.log(TAG, "authTokenType=$authTokenType")
 
         val signInText = findViewById<TextView>(R.id.account_sign_in_text)
-        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), AppState.getString(
+        signInText.text = String.format(getString(R.string.app_account_sign_in_message), AppState.getString(
             AppState.LIBRARY_NAME))
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
@@ -110,7 +110,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         } catch (_: NoSuchFieldError) {
         }
         forgotPasswordButton?.setOnClickListener {
-            val url = getString(R.string.ou_library_url) + "/eg/opac/password_reset"
+            val url = getString(R.string.app_base_url) + "/eg/opac/password_reset"
             launchURL(url)
         }
 
@@ -121,7 +121,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     protected open fun initSelectedLibrary() {
-        setLibrary(Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name)))
+        setLibrary(Library(getString(R.string.app_base_url), getString(R.string.app_bar_library_name)))
     }
 
     protected open fun setLibrary(library: Library?) {
@@ -180,7 +180,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                     }
                 }
 
-                val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
+                val accountType = this@AuthenticatorActivity.getString(R.string.app_account_type)
                 val data = Bundle()
                 data.putString(AccountManager.KEY_ACCOUNT_NAME, username)
                 data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)

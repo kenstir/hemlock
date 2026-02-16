@@ -76,7 +76,7 @@ class LaunchViewModel : ViewModel() {
                 //injectRandomFailure("loadServiceData", 25)
 
                 // load the IDL etc.
-                val options = LoadStartupOptions(context.appVersionCode, context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                val options = LoadStartupOptions(context.appVersionCode, context.resources.getBoolean(R.bool.app_enable_hierarchical_org_tree))
                 when (val result = App.svc.loader.loadStartupPrerequisites(options, context.resources)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception, "loadServiceData") ; return@async }
