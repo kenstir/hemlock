@@ -1,0 +1,3 @@
+* Updated minimum Android version to 6.0 (API 23)
+* Made app download smaller by enabling R8 full mode optimization
+* internal: Upgrade dependencies

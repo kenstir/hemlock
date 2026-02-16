@@ -1,12 +1,17 @@
-## TENTATIVE UNRELEASED 4.7.0
+## 5.0.0 - TENTATIVE - UNRELEASED
 
 ### New
 * Update minimum Android version to 6.0 (API 23)
+
+### Fixed
+* Made app download smaller by enabling R8 full mode optimization
 
 ### Internal
 * internal: Upgrade dependencies
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
+
+## 4.7.0 - only released to cwmars beta - became 5.0.0
 
 ## 4.6.1
 
