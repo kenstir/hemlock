@@ -3,9 +3,6 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
 
-    // Kotlin plugin for Android
-    alias(libs.plugins.kotlinAndroid) apply false
-
     // Kotlin serialization plugin
     alias(libs.plugins.kotlinSerialization) apply false
 
