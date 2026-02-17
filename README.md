@@ -21,7 +21,7 @@ Quick start for developers
 1. Get the correct version of [Android Studio](https://developer.android.com/studio/index.html). 
    This branch is built using
    ```
-   Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 1
+   Android Studio Otter 3 Feature Drop | 2025.2.3
    ```
 2. Module `core` contains shared code and resources, and there is one module per target app,
    e.g. `cwmars_app`.
