@@ -10,7 +10,6 @@
 # https://developer.android.com/studio/build/shrink-code
 # https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports?platform=android
 -keepattributes SourceFile,LineNumberTable
--keep public class * extends java.lang.Exception
 
 # suppress warning
 -dontwarn kotlin.jvm.internal.SourceDebugExtension
