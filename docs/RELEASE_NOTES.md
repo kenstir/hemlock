@@ -2,6 +2,7 @@
 
 ### Internal
 * internal: Change analytics param multiple_accounts to be a string user property, and change all other bool values to strings
+* internal: Add analytics notification_token_update event
 
 ## 4.6.0
 
