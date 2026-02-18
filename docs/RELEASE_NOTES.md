@@ -53,11 +53,10 @@
 
 ### Fixed
 * Fixed ANR (App Not Responding) error when adding account
-* internal: Add fallback drawable/splash_title.png to try to fix Resources$NotFoundException
+* internal: Add fallback drawable/splash_title.png to try to fix Resources$NotFoundException (hemlock, indiana, mo, noble, sagecat)
 * internal: Remove unused library_url from SharedPrefs
 * internal: Fastlane improvements
 * internal: Upgrade to fastlane 2.230.0
-* internal: Add fallback splash_title.png to hemlock, indiana, mo, noble, sagecat
 
 ## 4.4.1
 
