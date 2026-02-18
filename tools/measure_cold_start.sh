@@ -36,7 +36,6 @@ for i in $(seq $ITER); do
     sleep 0.5
     out=$(adb shell am start -W -S -n $PKG/$ACT)
     echo "$out" > start.$PKG.$i.log
-    # extract ThisTime (ms)
     t=$(echo "$out" | grep TotalTime | awk -F': ' '{print $2}')
     echo "run $i: ${t}ms"
     results+=($t)
