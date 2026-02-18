@@ -55,6 +55,7 @@ object Analytics {
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
         const val SEARCH_ADV_SEARCH = "search_advanced_search"
         const val SEARCH_ADV_CANCEL = "search_advanced_cancel"
+        const val TOKEN_UPDATE = "notification_token_update" // starts with "notification" to group it with related events in FA
         const val VIEW_ITEM_DETAILS = FirebaseAnalytics.Event.VIEW_ITEM
     }
 
