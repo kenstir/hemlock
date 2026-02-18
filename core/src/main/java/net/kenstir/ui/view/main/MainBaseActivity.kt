@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -46,6 +47,7 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
+import net.kenstir.util.Analytics
 import net.kenstir.util.md5
 
 /**
@@ -224,6 +226,9 @@ open class MainBaseActivity : BaseActivity() {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
                 val updateResult = App.svc.user.updatePushNotificationToken(
                     App.account, currentToken)
+                Analytics.logEvent(Analytics.Event.TOKEN_UPDATE, bundleOf(
+                    Analytics.Param.RESULT to Analytics.resultValue(updateResult)
+                ))
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)
                     return@async
