@@ -216,6 +216,7 @@ lane :beta do
     message: msg,
     grouping: nil
   )
+  push_to_git_remote(tags: false)
   push_git_tags(tag: tag)
 end
 
@@ -234,6 +235,7 @@ lane :tag_release do
     message: msg,
     grouping: nil
   )
+  push_to_git_remote(tags: false)
   push_git_tags(tag: tag)
 end
 
