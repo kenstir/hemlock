@@ -58,35 +58,13 @@ import net.kenstir.util.md5
 open class MainBaseActivity : BaseActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        Log.d(TAG_PERM, "[perm] result isGranted=$isGranted")
+        logNotificationRequestResult(isGranted)
+        setUserPropertyNotificationPermitted(isGranted)
         if (isGranted) {
-            Log.d(TAG_PERM, "Permission granted (1)")
             resetDenyCount()
-//        } else {
-//            //TODO: change to an alert
-//            //TODO: change title to "Notice" and add text on how to update it later
-//            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.app_label))
-//            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         }
     }
-
-    /// FCM: handle background push notification
-    // NB: this doesn't happen here, it happens in LaunchActivity.onLaunchSuccess
-//    fun onCreateHandleLaunchIntent(): Boolean {
-//        Log.d(TAG_FCM, "************************************** MainActivity intent: $intent")
-//        intent.extras?.let {
-//            val notification = PushNotification(it)
-//            Log.d(TAG_FCM, "======================================================================================== background notification: $notification")
-//            showAlert("background notification in MainBaseActivity: $notification")
-//            if (notification.isNotGeneral()) {
-//                val targetActivityClass = activityForNotificationType(notification)
-//                val intent = Intent(applicationContext, targetActivityClass)
-//                startActivity(intent)
-//                finish()
-//                return true
-//            }
-//        }
-//        return false
-//    }
 
     fun initializePushNotifications() {
         if (!resources.getBoolean(R.bool.app_enable_push_notifications)) return
@@ -101,35 +79,40 @@ open class MainBaseActivity : BaseActivity() {
     // because ActivityCompat.shouldShowRequestPermissionRationale() kept returning true even after
     // the user said "no thanks".  We avoid that case by keeping a deny counter.
     fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            Log.d(TAG_PERM, "API Version < 33 did not have a permission dialog")
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG_PERM, "[perm] already granted")
+            setUserPropertyNotificationPermitted(true)
+            resetDenyCount()
             return
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG_PERM, "Permission granted (2)")
-            resetDenyCount()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Log.d(TAG_PERM, "[perm] API < 33 does not have a permission dialog")
+            setUserPropertyNotificationPermitted(false)
             return
         }
 
         // See if the system thinks we should show the rationale dialog but show it only once.
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
             val denyCount = getDenyCount()
-            Log.d(TAG_PERM, "shouldShowRequestPermissionRationale true, denyCount = $denyCount")
+            Log.d(TAG_PERM, "[perm] shouldShow=true denyCount=$denyCount")
             if (denyCount > 0) {
+                setUserPropertyNotificationPermitted(false)
                 return
             }
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.notification_permission_rationale_title, getString(R.string.app_label)))
                 .setMessage(getString(R.string.notification_permission_rationale_msg))
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                    Log.d(TAG_PERM, "Launching request for permission (2)")
+                    Log.d(TAG_PERM, "[perm] launching request from rationale dialog")
                     resetDenyCount()
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
                 .setNegativeButton(getString(R.string.no_thanks)) { _, _ ->
-                    Log.d(TAG_PERM, "Permission denied")
+                    Log.d(TAG_PERM, "[perm] no thanks")
+                    logNotificationRequestResult(false)
+                    setUserPropertyNotificationPermitted(false)
                     incrementDenyCount()
                 }
                 .show()
@@ -137,18 +120,30 @@ open class MainBaseActivity : BaseActivity() {
         }
 
         // Directly ask for the permission
-        Log.d(TAG_PERM, "Launching request for permission (1)")
+        Log.d(TAG_PERM, "[perm] launching request directly")
         requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
+    private fun setUserPropertyNotificationPermitted(isGranted: Boolean) {
+        Analytics.setUserProperties(bundleOf(
+            Analytics.UserProperty.NOTIFICATION_PERMITTED to if (isGranted) Analytics.Value.GRANTED else Analytics.Value.DENIED
+        ))
+    }
+
+    private fun logNotificationRequestResult(isGranted: Boolean) {
+        Analytics.logEvent(Analytics.Event.NOTIFICATION_PERMISSION_REQUEST, bundleOf(
+            Analytics.Param.RESULT to if (isGranted) Analytics.Value.GRANTED else Analytics.Value.DENIED
+        ))
+    }
+
     private fun resetDenyCount() {
-        Log.d(TAG_PERM, "Resetting deny count")
+        Log.d(TAG_PERM, "[perm] resetting denyCount")
         AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, 0)
     }
 
     private fun incrementDenyCount() {
         val count = AppState.getInt(AppState.NOTIFICATIONS_DENY_COUNT) + 1
-        Log.d(TAG_PERM, "Incrementing deny count to $count")
+        Log.d(TAG_PERM, "[perm] incrementing denyCount to $count")
         AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, count)
     }
 
@@ -226,7 +221,7 @@ open class MainBaseActivity : BaseActivity() {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
                 val updateResult = App.svc.user.updatePushNotificationToken(
                     App.account, currentToken)
-                Analytics.logEvent(Analytics.Event.TOKEN_UPDATE, bundleOf(
+                Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
                 ))
                 if (updateResult is Result.Error) {

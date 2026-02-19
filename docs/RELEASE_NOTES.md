@@ -22,7 +22,7 @@
 
 ### Internal
 * internal: Change analytics param multiple_accounts to be a string user property, and change all other bool values to strings
-* internal: Add analytics notification_token_update event
+* internal: Add analytics events notification_token_update, notification_permission_request, and user property user_notification_permitted
 * internal: Upgrade fastlane to 2.232.1
 
 ## 4.6.0
