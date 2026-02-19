@@ -51,12 +51,13 @@ object Analytics {
         //const val LOGIN = FirebaseAnalytics.Event.LOGIN // avoid builtin name so my custom dimension works
         const val LOGIN = "login_v2"
         const val MESSAGES_OPEN = "messages_open"
+        const val NOTIFICATION_PERMISSION_REQUEST = "notification_permission_request"
+        const val NOTIFICATION_TOKEN_UPDATE = "notification_token_update"
         const val OTHER_ACTION = "other_action"
         const val SCAN = "barcode_scan"
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
         const val SEARCH_ADV_SEARCH = "search_advanced_search"
         const val SEARCH_ADV_CANCEL = "search_advanced_cancel"
-        const val TOKEN_UPDATE = "notification_token_update" // starts with "notification" to group it with related events in FA
         const val VIEW_ITEM_DETAILS = FirebaseAnalytics.Event.VIEW_ITEM
     }
 
@@ -89,10 +90,13 @@ object Analytics {
         const val HOME_ORG = "user_home_org"
         const val PARENT_ORG = "user_parent_org"
         const val MULTIPLE_ACCOUNTS = "user_multiple_accounts" // bool
+        const val NOTIFICATION_PERMITTED = "user_notification_permitted" // { granted | denied | grandfathered }
     }
 
     object Value {
         const val OK = "ok"
+        const val GRANTED = "granted"
+        const val DENIED = "denied"
     }
 
     private const val TAG = "Analytics"
@@ -193,7 +197,7 @@ object Analytics {
         logException(TAG, e)
     }
 
-    private fun setUserProperties(b: Bundle?) {
+    fun setUserProperties(b: Bundle?) {
         if (b == null) return
         if (analytics) {
             for (name in b.keySet()) {
