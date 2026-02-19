@@ -89,7 +89,7 @@ object Analytics {
         const val HOME_ORG = "user_home_org"
         const val PARENT_ORG = "user_parent_org"
         const val MULTIPLE_ACCOUNTS = "user_multiple_accounts" // bool
-        const val NOTIFICATION_PERMITTED = "user_notification_permitted" // { granted | denied | grandfathered }
+        const val NOTIFICATION_PERMITTED = "user_notification_perm" // { granted | denied }
     }
 
     object Value {
