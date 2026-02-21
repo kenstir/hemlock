@@ -107,7 +107,7 @@ class BarcodeActivity : BaseActivity() {
         }
 
         if (resources.getBoolean(R.bool.app_enable_card_expiration_date)) {
-            val date = App.account.expireDateString
+            val date = App.account.expireDateLabel
             barcodeWarning?.text = resources.getString(R.string.barcode_expires_msg, date)
         } else {
             barcodeWarning?.visibility = View.GONE

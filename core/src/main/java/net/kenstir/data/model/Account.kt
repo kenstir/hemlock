@@ -66,7 +66,7 @@ open class Account(val username: String, var authToken: String?) {
         }
     val searchOrg: Int?
         get() = _searchOrg ?: homeOrg
-    val expireDateString: String?
+    val expireDateLabel: String?
         get() = expireDate?.let { DateFormat.getDateInstance().format(it) }
 
     fun clearAuthToken() {
