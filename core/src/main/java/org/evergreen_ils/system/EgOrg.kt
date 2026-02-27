@@ -135,13 +135,25 @@ object EgOrg {
 
     @SuppressLint("DefaultLocale")
     fun dumpOrgStats() {
-        Log.d(TAG, String.format("[orgs] %3d visible orgs", visibleOrgs.size))
-        val numPickupLocations = visibleOrgs.count { it.isPickupLocation }
-        val numWithEvents = visibleOrgs.count { !it.eventsURL.isNullOrEmpty() }
-        val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
-        val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
-        val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        val numWithPaymentAllowed = visibleOrgs.count { it.isPaymentAllowed }
+        val now = System.currentTimeMillis()
+        var numVisibleOrgs = 0
+        var numPickupLocations = 0
+        var numWithEvents = 0
+        var numWithEresources = 0
+        var numWithMeetingRooms = 0
+        var numWithMuseumPasses = 0
+        var numWithPaymentAllowed = 0
+        for (org in allOrgs) {
+            if (org.opacVisible) numVisibleOrgs++ else continue
+            if (org.isPickupLocation) numPickupLocations++
+            if (!org.eventsURL.isNullOrEmpty()) numWithEvents++
+            if (!org.eresourcesUrl.isNullOrEmpty()) numWithEresources++
+            if (!org.meetingRoomsUrl.isNullOrEmpty()) numWithMeetingRooms++
+            if (!org.museumPassesUrl.isNullOrEmpty()) numWithMuseumPasses++
+            if (org.isPaymentAllowed) numWithPaymentAllowed++
+        }
+        Log.logElapsedTime(TAG, now, "[orgs] dumpOrgStats")
+        Log.d(TAG, String.format("[orgs] %3d visible orgs", numVisibleOrgs))
         Log.d(TAG, String.format("[orgs] %3d are pickup locations", numPickupLocations))
         Log.d(TAG, String.format("[orgs] %3d have events URLs", numWithEvents))
         Log.d(TAG, String.format("[orgs] %3d have eresources URLs", numWithEresources))
