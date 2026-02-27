@@ -135,17 +135,19 @@ object EgOrg {
 
     @SuppressLint("DefaultLocale")
     fun dumpOrgStats() {
+        Log.d(TAG, String.format("[orgs] %3d visible orgs", visibleOrgs.size))
         val numPickupLocations = visibleOrgs.count { it.isPickupLocation }
         val numWithEvents = visibleOrgs.count { !it.eventsURL.isNullOrEmpty() }
         val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
         val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
         val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        Log.d(TAG, String.format("[orgs] %3d visible orgs", visibleOrgs.size))
+        val numWithPaymentAllowed = visibleOrgs.count { it.isPaymentAllowed }
         Log.d(TAG, String.format("[orgs] %3d are pickup locations", numPickupLocations))
         Log.d(TAG, String.format("[orgs] %3d have events URLs", numWithEvents))
         Log.d(TAG, String.format("[orgs] %3d have eresources URLs", numWithEresources))
         Log.d(TAG, String.format("[orgs] %3d have meeting rooms URLs", numWithMeetingRooms))
         Log.d(TAG, String.format("[orgs] %3d have museum passes URLs", numWithMuseumPasses))
+        Log.d(TAG, String.format("[orgs] %3d allow payment", numWithPaymentAllowed))
 
 //        print("")
 //        for (org in allOrgs) {
