@@ -172,12 +172,12 @@ class DetailsFragment : Fragment() {
         }
         val extrasLinkText = resources.getString(R.string.app_details_link_text)
         val extrasLinkUrlFormat = resources.getString(R.string.app_details_link_url_template)
-        if (extrasLinkText.isEmpty() || extrasLinkUrlFormat.isEmpty()) {
+        val recordId = record?.id?.toString() ?: ""
+        if (extrasLinkText.isEmpty() || extrasLinkUrlFormat.isEmpty() || recordId.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
             extrasButton?.text = extrasLinkText
             extrasButton?.setOnClickListener {
-                val recordId = record?.id?.toString() ?: ""
                 val values = mapOf(
                     "baseUrl" to resources.getString(R.string.app_base_url),
                     "recordId" to recordId,
@@ -341,7 +341,7 @@ class DetailsFragment : Fragment() {
     companion object {
         private const val TAG = "Details"
 
-        fun create(record: BibRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
+        fun create(record: BibRecord, orgID: Int, position: Int, total: Int): DetailsFragment {
             Log.d(TAG, "${record?.id}: create DetailsFragment")
             val fragment = DetailsFragment()
             fragment.record = record
