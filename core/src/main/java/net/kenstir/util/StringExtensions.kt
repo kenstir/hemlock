@@ -17,7 +17,6 @@
 
 package net.kenstir.util
 
-import android.net.Uri
 import java.security.MessageDigest
 import java.util.regex.Matcher.quoteReplacement
 import java.util.regex.Pattern
