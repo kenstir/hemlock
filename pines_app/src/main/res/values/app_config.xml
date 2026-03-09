@@ -17,7 +17,7 @@
     <string name="app_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <string name="app_barcode_format">Codabar</string>
     <string name="app_details_link_text">More Information</string>
-    <string name="app_details_link_fragment">awards</string>
+    <string name="app_details_link_url_template">{baseUrl}/eg/opac/record/{recordId}#awards</string>
     <bool name="app_enable_hierarchical_org_tree">true</bool>
     <bool name="app_enable_card_expiration_date">true</bool>
     <bool name="app_group_copy_info_by_system">true</bool>

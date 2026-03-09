@@ -53,6 +53,7 @@ import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.ui.view.search.CopyInformationActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
+import net.kenstir.util.expandTemplate
 import net.kenstir.util.getCopySummary
 
 class DetailsFragment : Fragment() {
@@ -170,21 +171,18 @@ class DetailsFragment : Fragment() {
             }
         }
         val extrasLinkText = resources.getString(R.string.app_details_link_text)
-        if (extrasLinkText.isEmpty()) {
+        val extrasLinkUrlFormat = resources.getString(R.string.app_details_link_url_template)
+        if (extrasLinkText.isEmpty() || extrasLinkUrlFormat.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
             extrasButton?.text = extrasLinkText
             extrasButton?.setOnClickListener {
-                val url = StringBuilder(resources.getString(R.string.app_base_url))
-                url.append("/eg/opac/record/").append(record?.id)
-                val q = resources.getString(R.string.app_details_link_query)
-                if (q.isNotEmpty()) {
-                    url.append("?").append(q)
-                }
-                val frag = resources.getString(R.string.app_details_link_fragment)
-                if (frag.isNotEmpty()) {
-                    url.append("#").append(frag)
-                }
+                val recordId = record?.id?.toString() ?: ""
+                val values = mapOf(
+                    "baseUrl" to resources.getString(R.string.app_base_url),
+                    "recordId" to recordId,
+                )
+                val url = extrasLinkUrlFormat.expandTemplate(values)
                 launchURL(url.toString())
             }
         }
