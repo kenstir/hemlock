@@ -19,6 +19,7 @@ package net.kenstir.util
 
 import android.net.Uri
 import java.security.MessageDigest
+import java.util.regex.Matcher.quoteReplacement
 import java.util.regex.Pattern
 
 /** returns the MD5 hash of the string
@@ -56,28 +57,10 @@ fun String.expandTemplate(values: Map<String, String>): String {
     while (mr.find()) {
         val key = mr.group(1)
         val replacement = values[key] ?: throw IllegalArgumentException("No value for key '$key'")
-        mr.appendReplacement(sbr, matcherQuote(replacement))
+        mr.appendReplacement(sbr, quoteReplacement(replacement))
     }
     mr.appendTail(sbr)
     result = sbr.toString()
 
-//    // encoded tokens {%name} -> Uri.encode(value)
-//    val normal = Pattern.compile("\\{%([a-zA-Z0-9_]+)\\}")
-//    val mn = normal.matcher(result)
-//    val sbn = StringBuffer()
-//    while (mn.find()) {
-//        val key = mn.group(1)
-//        val replacement = values[key] ?: throw IllegalArgumentException("No value for key '$key'")
-//        val replacement = Uri.encode(replacement)
-//        mn.appendReplacement(sbn, matcherQuote(replacement))
-//    }
-//    mn.appendTail(sbn)
-//    result = sbn.toString()
-
     return result
 }
-
-private fun String?.orEmpty(): String = this ?: ""
-
-// Helper to properly escape replacement literals for regex replacement
-private fun matcherQuote(replacement: String): String = java.util.regex.Matcher.quoteReplacement(replacement)

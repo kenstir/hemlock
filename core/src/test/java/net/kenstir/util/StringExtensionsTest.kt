@@ -38,6 +38,7 @@ class StringExtensionsTest {
                 mapOf("baseUrl" to "https://example.com", "recordId" to "1"),
                 "https://example.com/eg/opac/record/1#awards"),
             Case("{id}?{id}#{id}", mapOf("id" to "1"), "1?1#1"),
+            Case("beginning_{s}_end", mapOf("s" to "middle"), "beginning_middle_end"),
             Case("No tokens here", mapOf("id" to "1"), "No tokens here"),
         )
 
