@@ -1,6 +1,8 @@
 ## 5.0.0 - INTERNAL TESTING
 
 ### New
+* cwmars: Add "More information" button to Item Details screen, which links to an expanded
+  description with series details and read-alike recommendations
 * Update minimum Android version to 6.0 (API 23)
 
 ### Fixed

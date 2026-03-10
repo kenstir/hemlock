@@ -53,6 +53,7 @@ import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.ui.view.search.CopyInformationActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
+import net.kenstir.util.expandTemplate
 import net.kenstir.util.getCopySummary
 
 class DetailsFragment : Fragment() {
@@ -169,23 +170,28 @@ class DetailsFragment : Fragment() {
                 }
             }
         }
+        initExtrasButton()
+    }
+
+    private fun initExtrasButton() {
         val extrasLinkText = resources.getString(R.string.app_details_link_text)
-        if (extrasLinkText.isEmpty()) {
+        val extrasLinkUrlFormat = resources.getString(R.string.app_details_link_url_template)
+        val recordId = record?.id?.toString() ?: ""
+        if (extrasLinkText.isEmpty() || extrasLinkUrlFormat.isEmpty() || recordId.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
+            // expand template early so that a configuration error can be caught before clicking the button
             extrasButton?.text = extrasLinkText
-            extrasButton?.setOnClickListener {
-                val url = StringBuilder(resources.getString(R.string.app_base_url))
-                url.append("/eg/opac/record/").append(record?.id)
-                val q = resources.getString(R.string.app_details_link_query)
-                if (q.isNotEmpty()) {
-                    url.append("?").append(q)
-                }
-                val frag = resources.getString(R.string.app_details_link_fragment)
-                if (frag.isNotEmpty()) {
-                    url.append("#").append(frag)
-                }
-                launchURL(url.toString())
+            val values = mapOf(
+                "baseUrl" to resources.getString(R.string.app_base_url),
+                "recordId" to recordId,
+            )
+            try {
+                val url = extrasLinkUrlFormat.expandTemplate(values)
+                extrasButton?.setOnClickListener { launchURL(url) }
+            } catch (ex: Exception) {
+                activity?.showAlert(ex)
+                extrasButton?.visibility = View.GONE
             }
         }
     }
@@ -343,8 +349,8 @@ class DetailsFragment : Fragment() {
     companion object {
         private const val TAG = "Details"
 
-        fun create(record: BibRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
-            Log.d(TAG, "${record?.id}: create DetailsFragment")
+        fun create(record: BibRecord, orgID: Int, position: Int, total: Int): DetailsFragment {
+            Log.d(TAG, "${record.id}: create DetailsFragment")
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID
