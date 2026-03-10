@@ -182,8 +182,12 @@ class DetailsFragment : Fragment() {
                     "baseUrl" to resources.getString(R.string.app_base_url),
                     "recordId" to recordId,
                 )
-                val url = extrasLinkUrlFormat.expandTemplate(values)
-                launchURL(url.toString())
+                try {
+                    val url = extrasLinkUrlFormat.expandTemplate(values)
+                    launchURL(url)
+                } catch (ex: Exception) {
+                    activity?.showAlert(ex)
+                }
             }
         }
     }
@@ -342,7 +346,7 @@ class DetailsFragment : Fragment() {
         private const val TAG = "Details"
 
         fun create(record: BibRecord, orgID: Int, position: Int, total: Int): DetailsFragment {
-            Log.d(TAG, "${record?.id}: create DetailsFragment")
+            Log.d(TAG, "${record.id}: create DetailsFragment")
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID

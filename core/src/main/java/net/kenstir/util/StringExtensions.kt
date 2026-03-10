@@ -55,7 +55,7 @@ fun String.expandTemplate(values: Map<String, String>): String {
     val sbr = StringBuffer()
     while (mr.find()) {
         val key = mr.group(1)
-        val replacement = values[key] ?: throw IllegalArgumentException("No value for key '$key'")
+        val replacement = values[key] ?: throw IllegalArgumentException("Missing value for key \"$key\" in template \"$this\"")
         mr.appendReplacement(sbr, quoteReplacement(replacement))
     }
     mr.appendTail(sbr)
