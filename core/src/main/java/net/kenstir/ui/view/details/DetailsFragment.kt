@@ -170,24 +170,28 @@ class DetailsFragment : Fragment() {
                 }
             }
         }
+        initExtrasButton()
+    }
+
+    private fun initExtrasButton() {
         val extrasLinkText = resources.getString(R.string.app_details_link_text)
         val extrasLinkUrlFormat = resources.getString(R.string.app_details_link_url_template)
         val recordId = record?.id?.toString() ?: ""
         if (extrasLinkText.isEmpty() || extrasLinkUrlFormat.isEmpty() || recordId.isEmpty()) {
             extrasButton?.visibility = View.GONE
         } else {
+            // expand template early so that a configuration error can be caught before clicking the button
             extrasButton?.text = extrasLinkText
-            extrasButton?.setOnClickListener {
-                val values = mapOf(
-                    "baseUrl" to resources.getString(R.string.app_base_url),
-                    "recordId" to recordId,
-                )
-                try {
-                    val url = extrasLinkUrlFormat.expandTemplate(values)
-                    launchURL(url)
-                } catch (ex: Exception) {
-                    activity?.showAlert(ex)
-                }
+            val values = mapOf(
+                "baseUrl" to resources.getString(R.string.app_base_url),
+                "recordId" to recordId,
+            )
+            try {
+                val url = extrasLinkUrlFormat.expandTemplate(values)
+                extrasButton?.setOnClickListener { launchURL(url) }
+            } catch (ex: Exception) {
+                activity?.showAlert(ex)
+                extrasButton?.visibility = View.GONE
             }
         }
     }
