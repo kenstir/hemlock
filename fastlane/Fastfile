@@ -55,8 +55,8 @@ def get_tag_info
   UI.message("version_code: #{version_code}")
   UI.message("version_name: #{version_name}")
 
-  tag = "#{app}_v#{version_code}"
-  msg = "#{tag} (#{version_name})"
+  tag = "#{app}_v#{version_name}"
+  msg = "#{version_name}"
 
   return tag, msg
 end
@@ -304,48 +304,46 @@ lane :promote_beta do
   )
 end
 
-desc "Query Play Store for live version codes"
-lane :query_version_codes do
-  app = get_project().delete_suffix("_app")
-  local_version, beta_versions, prod_versions = get_version_codes()
+desc "Show version names for all apps"
+lane :query_all_version_names do
+  root = get_repo_root()
+  csv_file = "#{root}/build/app_versions.csv"
 
-  UI.message("app:           #{app}")
-  UI.message("local_version: #{local_version}")
-  UI.message("beta_versions: #{beta_versions}")
-  UI.message("prod_versions: #{prod_versions}")
-  pp Actions.lane_context
-end
+  File.open(csv_file, 'w') do |file|
+    file.puts('app_name,local_version,beta_version,prod_version')
 
-desc "Show version codes for all apps"
-lane :query_all_version_codes do
-  get_all_apps().each do |app|
-    root = get_repo_root()
-    info_file = "#{root}/secret/#{app}-info.json"
-    key_file = "#{root}/secret/#{app}-fastlane.json"
+    get_all_apps().each do |app|
+      info_file = "#{root}/secret/#{app}-info.json"
+      key_file = "#{root}/secret/#{app}-fastlane.json"
 
-    info = read_json_file(info_file)
-    package_name = info.key?('package_name') ? info['package_name'] : "net.kenstir.apps.#{app}"
+      info = read_json_file(info_file)
+      package_name = info.key?('package_name') ? info['package_name'] : "net.kenstir.apps.#{app}"
 
-    local_version, _ = get_version_info("../version.gradle")
+      _, local_version = get_version_info("../version.gradle")
 
-    # NB: If we omit package_name and json_key, the Supply client is
-    # reused, returning info for the wrong project and exhausing the
-    # project's request quota.
-    beta_versions = google_play_track_version_codes(
-      track: "beta",
-      package_name: package_name,
-      json_key: key_file
-    )
-    prod_versions = google_play_track_version_codes(
-      track: "production",
-      package_name: package_name,
-      json_key: key_file
-    )
+      # NB: If we omit package_name and json_key, the Supply client is
+      # reused, returning info for the wrong project and exhausing the
+      # project's request quota.
+      beta_versions = google_play_track_release_names(
+        track: "beta",
+        package_name: package_name,
+        json_key: key_file
+      )
+      prod_versions = google_play_track_release_names(
+        track: "production",
+        package_name: package_name,
+        json_key: key_file
+      )
 
-    msg("app:           #{app}")
-    msg("local_version: #{local_version}")
-    msg("beta_versions: #{beta_versions}")
-    msg("prod_versions: #{prod_versions}")
+      msg("app:           #{app}")
+      msg("local_version: #{local_version}")
+      msg("beta_versions: #{beta_versions.join(' ')}")
+      msg("prod_versions: #{prod_versions.join(' ')}")
+
+      file.puts("#{app},#{local_version},#{beta_versions.join(' ')},#{prod_versions.join(' ')}")
+    end
+
+    msg("wrote: #{csv_file}")
   end
 end
 
