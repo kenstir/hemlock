@@ -72,7 +72,9 @@ android {
 
 dependencies {
     implementation project(':core')
-    implementation project(':assets:pro')
+    if (findProject(':assets:pro') != null) {
+        implementation project(':assets:pro')
+    }
     androidTestImplementation libs.espressoCore
     testImplementation libs.junit
 }
