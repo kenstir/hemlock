@@ -9,7 +9,8 @@
 * Made app download smaller by enabling R8 full mode optimization
 
 ### Internal
-* internal: Upgrade to Android Studio Otter 3 Feature Drop and AGP 9.0.1
+* internal: Upgrade to Android Studio Panda 2 and AGP 9.0.1
+* internal: Upgrade fastlane to 2.232.2
 * internal: Replace deprecated onBackPressed with dispatcher (#87)
 * internal: Upgrade dependencies
 * internal: Convert to version catalog and centralize plugin versions

@@ -49,8 +49,6 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     // Import the BoM for the Firebase platform
     // https://firebase.google.com/docs/android/learn-more#bom
     implementation platform(libs.firebaseBom)

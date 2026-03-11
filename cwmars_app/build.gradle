@@ -71,14 +71,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
+    if (findProject(':assets:pro') != null) {
+        implementation project(':assets:pro')
+    }
     androidTestImplementation libs.espressoCore
     testImplementation libs.junit
-
-    // include pro assets if directory exists
-    def dir = new File('assets/pro')
-    if (dir.exists()) {
-        implementation project(path: ':assets:pro')
-    }
 }

@@ -71,10 +71,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
+    implementation project(':assets:opensource')
     androidTestImplementation libs.espressoCore
     testImplementation libs.junit
-
-    implementation project(path: ':assets:opensource')
 }

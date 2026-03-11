@@ -16,9 +16,9 @@ include ':owwl_app'
 include ':pines_app'
 include ':sagecat_app'
 
-// include pro assets if directory exists
-def dir = new File('assets/pro')
-if (dir.exists()) {
+// include assets/pro module if it is checked out
+def proAssetsFile = file('assets/pro/build.gradle')
+if (proAssetsFile.exists()) {
     include ':assets:pro'
 }
 include ':assets:opensource'
