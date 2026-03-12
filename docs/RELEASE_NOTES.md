@@ -1,4 +1,4 @@
-## 5.0.0 - INTERNAL TESTING
+## 5.0.0
 
 ### New
 * cwmars: Add "More information" button to Item Details screen, which links to an expanded
@@ -16,7 +16,7 @@
 * internal: Convert to version catalog and centralize plugin versions
 * internal: Remove unnecessary multidex library
 
-## 4.7.0 - only released to cwmars beta
+## 4.7.0
 
 ### Internal
 * internal: Remove unnecessary multidex library
