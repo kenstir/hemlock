@@ -5,7 +5,13 @@
 
 ### fix PATH
 
-PATH=$PATH:"/c/Program Files/Android/Android Studio/jbr/bin"
+case "$OSTYPE" in
+darwin*)
+    export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home";;
+*)
+    export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr";;
+esac
+PATH="$JAVA_HOME/bin:$PATH"
 
 ### run whatever it is
 
