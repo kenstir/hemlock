@@ -183,8 +183,8 @@ class DetailsFragment : Fragment() {
             // expand template early so that a configuration error can be caught before clicking the button
             extrasButton?.text = extrasLinkText
             val values = mapOf(
-                "baseUrl" to resources.getString(R.string.app_base_url),
-                "recordId" to recordId,
+                "base_url" to resources.getString(R.string.app_base_url),
+                "record_id" to recordId,
             )
             try {
                 val url = extrasLinkUrlFormat.expandTemplate(values)

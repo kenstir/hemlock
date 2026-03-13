@@ -11,7 +11,7 @@
     <string name="app_factory_provider">org.cwmars.CwmarsAppFactory</string>
     <string name="app_barcode_format">Codabar</string>
     <string name="app_details_link_text">More Information</string>
-    <string name="app_details_link_url_template">https://catalog.cwmars.org/Record/{recordId}#novelistPanelBody</string>
+    <string name="app_details_link_url_template">https://catalog.cwmars.org/Record/{record_id}#novelistPanelBody</string>
     <bool name="app_enable_hierarchical_org_tree">false</bool>
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_title_hold_on_item_with_parts">true</bool>
