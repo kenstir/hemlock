@@ -6,6 +6,7 @@
 * Update minimum Android version to 6.0 (API 23)
 
 ### Fixed
+* Fixed bug where copy summary for holdable items with electronic resources would display a hostname instead of the number of available copies
 * Made app download smaller by enabling R8 full mode optimization
 
 ### Internal
