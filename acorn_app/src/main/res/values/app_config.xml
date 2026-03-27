@@ -28,6 +28,7 @@
     <bool name="app_need_marc_record">true</bool>
     <bool name="app_enable_analytics">true</bool>
     <bool name="app_enable_events_button">true</bool>
+    <bool name="app_always_popup_online_links">true</bool>
     <integer name="app_search_limit">100</integer>
 
     <!-- [fcm] -->
