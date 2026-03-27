@@ -1,0 +1,8 @@
+* If the public catalog has an alert banner, show it in the app
+* Remember search options, hold options, and list sort options across app launches
+* Improve accessibility throughout the app
+* Add physical description to Item Details
+* Add Hours of Operation notes to Library Info
+* Fixed ANR (App Not Responding) errors
+* Made app download smaller
+* Update minimum Android version to 6.0
