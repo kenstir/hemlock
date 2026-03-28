@@ -50,9 +50,11 @@ class AcornAppBehavior : EvergreenAppBehavior() {
     }
 
     override fun trimLinkTitle(s: String): String {
-        val s1 = s.replace("Click here to (download|access)\\.?".toRegex(), "")
+        return s.replace("Click here to (download|access)\\.?".toRegex(), "")
+            .replace("click here".toRegex(), "")
+            .removePrefix("To see ")
             .trim()
-        return s1.trimEnd('.').trim()
+            .trimEnd('.', ',', ' ')
     }
 
     override fun isVisibleToOrg(df: MARCDatafield, orgShortName: String): Boolean {

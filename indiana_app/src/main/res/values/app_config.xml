@@ -10,6 +10,8 @@
     <string name="app_factory_provider">net.kenstir.apps.indiana.IndianaAppFactory</string>
     <string name="app_menu_provider"></string>
     <string name="app_barcode_format">Codabar</string>
+    <string name="app_details_link_text">More Information</string>
+    <string name="app_details_link_url_template">{base_url}/eg/opac/record/{record_id}#rdetail_extras_div</string>
     <bool name="app_enable_hierarchical_org_tree">true</bool>
     <bool name="app_group_copy_info_by_system">false</bool>
     <bool name="app_enable_phone_notification">true</bool>

@@ -8,7 +8,7 @@ GEM
     artifactory (3.0.17)
     atomos (0.1.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1225.0)
+    aws-partitions (1.1226.0)
     aws-sdk-core (3.243.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -124,6 +124,7 @@ GEM
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
+    fiddle (1.1.8)
     gapic-common (0.23.0)
       faraday (>= 1.9, < 3.a)
       faraday-retry (>= 1.0, < 3.a)
@@ -264,6 +265,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane
+  fiddle
   google-analytics-data-v1beta
 
 CHECKSUMS
@@ -273,7 +275,7 @@ CHECKSUMS
   artifactory (3.0.17) sha256=3023d5c964c31674090d655a516f38ca75665c15084140c08b7f2841131af263
   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1225.0) sha256=eb348951c2e5e375897843afc0ecff16830d346d53149441d9677508195172b2
+  aws-partitions (1.1226.0) sha256=66fde74a9b53de8df53d511fdf2d898cb647d804ba1db34a6fe9b256fed449a8
   aws-sdk-core (3.243.0) sha256=a014eef785124b71d28325783fa422a1512f8421ec9b6e3931c8b0ca3fbb0f1c
   aws-sdk-kms (1.122.0) sha256=47ce3f51b26bd7d76f1270cfdfca17b40073ecd3219c8c9400788712abfb4eb8
   aws-sdk-s3 (1.216.0) sha256=a3bf6191e6f7a3dfb04b7cc73409f059394be559e4aff92d2a764341e4d90af4
@@ -309,6 +311,7 @@ CHECKSUMS
   fastimage (2.4.1) sha256=c64bebd46b6fd8943ab70c1e6e85ff728f970f2e48f92ecd249b6bc3a540ad20
   fastlane (2.232.2) sha256=978689f60f0fc3d54699de86ef12be4eda9f5b52217c1798965257c390d2b112
   fastlane-sirp (1.0.0) sha256=66478f25bcd039ec02ccf65625373fca29646fa73d655eb533c915f106c5e641
+  fiddle (1.1.8) sha256=7fa8ee3627271497f3add5503acdbc3f40b32f610fc1cf49634f083ef3f32eee
   gapic-common (0.23.0) sha256=331f483bc6ff9768808058562f765fa57d1d90c678af41a4225309936083ab44
   gh_inspector (1.1.3) sha256=04cca7171b87164e053aa43147971d3b7f500fcb58177698886b48a9fc4a1939
   google-analytics-data-v1beta (0.14.0) sha256=06e3a3fe5a919bb81df16b07bec2b47748fa6890dbbfead5a2a4149927a35ce0

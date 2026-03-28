@@ -17,6 +17,8 @@
     <string name="app_factory_provider">net.kenstir.apps.acorn.AcornAppFactory</string>
     <string name="app_main_activity">net.kenstir.ui.view.main.MainGridActivity</string>
     <string name="app_barcode_format">Codabar</string>
+    <string name="app_details_link_text">More Information</string>
+    <string name="app_details_link_url_template">{base_url}/eg/opac/record/{record_id}#syndetics_unbound</string>
     <bool name="app_enable_hierarchical_org_tree">true</bool>
     <bool name="app_enable_card_expiration_date">true</bool>
     <bool name="app_enable_phone_notification">true</bool>
@@ -26,6 +28,7 @@
     <bool name="app_need_marc_record">true</bool>
     <bool name="app_enable_analytics">true</bool>
     <bool name="app_enable_events_button">true</bool>
+    <bool name="app_always_popup_online_links">true</bool>
     <integer name="app_search_limit">100</integer>
 
     <!-- [fcm] -->

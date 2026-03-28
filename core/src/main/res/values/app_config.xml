@@ -38,7 +38,7 @@
     <string name="app_barcode_format" />
     <!-- if non-empty, the text of link to add to Item Details, e.g. "Recommended Reads" -->
     <string name="app_details_link_text" />
-    <!-- if non-empty, URL template of link from Item Details, e.g. "{baseUrl}/eg/opac/record/{recordId}#awards" -->
+    <!-- if non-empty, URL template of link from Item Details, e.g. "{base_url}/eg/opac/record/{record_id}#awards" -->
     <string name="app_details_link_url_template" />
     <!-- Custom URL for Pay Fines, leave empty for Evergreen default -->
     <string name="app_pay_fines_url" />

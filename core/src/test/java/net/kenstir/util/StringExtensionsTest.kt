@@ -34,8 +34,8 @@ class StringExtensionsTest {
         data class Case(val template: String, val values: Map<String, String>, val expected: String)
 
         val cases = listOf(
-            Case("{baseUrl}/eg/opac/record/{recordId}#awards",
-                mapOf("baseUrl" to "https://example.com", "recordId" to "1"),
+            Case("{base_url}/eg/opac/record/{record_id}#awards",
+                mapOf("base_url" to "https://example.com", "record_id" to "1"),
                 "https://example.com/eg/opac/record/1#awards"),
             Case("{id}?{id}#{id}", mapOf("id" to "1"), "1?1#1"),
             Case("beginning_{s}_end", mapOf("s" to "middle"), "beginning_middle_end"),

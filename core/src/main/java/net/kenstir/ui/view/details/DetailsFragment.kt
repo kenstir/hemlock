@@ -183,8 +183,8 @@ class DetailsFragment : Fragment() {
             // expand template early so that a configuration error can be caught before clicking the button
             extrasButton?.text = extrasLinkText
             val values = mapOf(
-                "baseUrl" to resources.getString(R.string.app_base_url),
-                "recordId" to recordId,
+                "base_url" to resources.getString(R.string.app_base_url),
+                "record_id" to recordId,
             )
             try {
                 val url = extrasLinkUrlFormat.expandTemplate(values)
@@ -247,11 +247,6 @@ class DetailsFragment : Fragment() {
         } else {
             onlineAccessButton?.isEnabled = true
             onlineAccessButton?.visibility = View.VISIBLE
-
-            if (resources.getBoolean(R.bool.app_show_online_access_hostname)) {
-                val uri = links[0].href.toUri()
-                copySummaryTextView?.text = uri.host
-            }
         }
     }
 
@@ -292,19 +287,22 @@ class DetailsFragment : Fragment() {
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
-        copySummaryTextView?.text = when {
-            record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            App.behavior.isOnlineResource(record) ?: false -> {
+        val str = when {
+            record.isDeleted ->
+                getString(R.string.item_marked_deleted_msg)
+            App.behavior.isOnlineResource(record) == true -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.app_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = onlineLocation.toUri()
-                    uri.host
+                    uri.host ?: ""
                 } else {
                     ""
                 }
             }
-            else -> record.getCopySummary(resources, orgID)
+            else ->
+                record.getCopySummary(resources, orgID)
         }
+        copySummaryTextView?.text = str
     }
 
     private fun fetchData(record: BibRecord) {

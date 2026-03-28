@@ -9,6 +9,8 @@
     <string name="app_bar_subtitle">%2$s</string>
     <string name="app_factory_provider">net.kenstir.apps.owwl.OwwlAppFactory</string>
     <string name="app_barcode_format">Codabar</string>
+    <string name="app_details_link_text">More Information</string>
+    <string name="app_details_link_url_template">https://search.owwl.org/Record/{record_id}#more-details-accordion</string>
     <bool name="app_enable_phone_notification">true</bool>
     <bool name="app_enable_hold_use_override">true</bool>
     <bool name="app_enable_part_holds">true</bool>
