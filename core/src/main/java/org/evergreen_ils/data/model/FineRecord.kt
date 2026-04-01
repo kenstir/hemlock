@@ -65,10 +65,6 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, val mbtsObj: OSRFOb
         balanceOwed = mbtsObj.getDouble("balance_owed")
         maxFine = circ?.getDouble("max_fine")
         stopFinesReason = circ?.getString("stop_fines")
-        Log.d(TAG, "[FineRecord] $title, $subtitle")
-        Log.d(TAG, "[FineRecord]     type:$xactType bal:$balanceOwed max:$maxFine")
-        Log.d(TAG, "[FineRecord]     checkin:    $checkinTime")
-        Log.d(TAG, "[FineRecord]     stop_fines: $stopFinesReason")
     }
 
     companion object {
