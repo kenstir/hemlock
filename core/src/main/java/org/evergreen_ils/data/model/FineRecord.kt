@@ -27,27 +27,34 @@ import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.gateway.OSRFObject
 import java.util.*
 
-class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject): ChargeRecord {
+class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, val mbtsObj: OSRFObject): ChargeRecord {
     override var title: String? = null
     override var subtitle: String? = null
-    override var balanceOwed: Double? = null
-    var maxFine: Double? = null
-    private var checkinTime: Date? = null
+    override var balanceOwed: Double?
     override var record: BibRecord? = null
+
+    var maxFine: Double?
+    private var checkinTime: Date? = null
+    private var xactType: String? = mbtsObj.getString("xact_type")
+    private var stopFinesReason: String? = null
 
     override val status: String
         get() {
-            if (mvrObj == null) return ""
-            if (checkinTime != null) return "returned"
-            if (balanceOwed != null && maxFine != null && balanceOwed!! >= maxFine!!) return "maximum fine"
-            return "fines accruing"
+            if (xactType != "circulation") return ""
+            return when (stopFinesReason) {
+                "MAXFINES" -> "maximum fine"
+                "CHECKIN" -> "returned"
+                "RENEW" -> "renewed"
+                null -> "fines accruing"
+                else -> ""
+            }
         }
 
     init {
         if (mvrObj != null) {
             record = MBRecord(mvrObj)
         }
-        if (mbtsObj["xact_type"].toString() == "circulation") {
+        if (mbtsObj.getString("xact_type") == "circulation") {
             title = mvrObj?.getString("title")
             subtitle = mvrObj?.getString("author")
             checkinTime = OSRFUtils.parseDate(circ?.getString("checkin_time"))
@@ -55,16 +62,13 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject
             title = mbtsObj.getString("last_billing_type")
             subtitle = mbtsObj.getString("last_billing_note")
         }
-        try {
-            balanceOwed = mbtsObj.getString("balance_owed")?.toDouble()
-        } catch (e: NumberFormatException) {
-            Log.d(TAG, "error converting double", e)
-        }
-        try {
-            maxFine = circ?.getString("max_fine")?.toDouble()
-        } catch (e: NumberFormatException) {
-            Log.d(TAG, "error converting double", e)
-        }
+        balanceOwed = mbtsObj.getDouble("balance_owed")
+        maxFine = circ?.getDouble("max_fine")
+        stopFinesReason = circ?.getString("stop_fines")
+        Log.d(TAG, "[FineRecord] $title, $subtitle")
+        Log.d(TAG, "[FineRecord]     type:$xactType bal:$balanceOwed max:$maxFine")
+        Log.d(TAG, "[FineRecord]     checkin:    $checkinTime")
+        Log.d(TAG, "[FineRecord]     stop_fines: $stopFinesReason")
     }
 
     companion object {

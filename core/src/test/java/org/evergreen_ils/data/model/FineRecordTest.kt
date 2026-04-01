@@ -19,6 +19,7 @@ package org.evergreen_ils.data.model
 
 import org.evergreen_ils.gateway.GatewayResult
 import org.evergreen_ils.gateway.OSRFCoder
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
@@ -89,6 +90,21 @@ class FineRecordTest {
         assertEquals(2.0, fine.balanceOwed)
         assertEquals(null, (fine as FineRecord).maxFine)
         assertEquals("", fine.status)
+    }
+
+    @Test
+    fun test_statusCircFineMax() {
+        val mbtsObj = OSRFObject(mapOf(
+            "xact_type" to "circulation",
+            "balance_owed" to 1.0,
+        ))
+        val circObj = OSRFObject(mapOf(
+            "max_fine" to 1.0,
+            "stop_fines" to "MAXFINES",
+            "checkin_time" to null,
+        ))
+        val fine = FineRecord(circObj, null, mbtsObj)
+        assertEquals("maximum fine", fine.status)
     }
 
     /* TODO: waiting to hear from Amy whether this logic is correct
