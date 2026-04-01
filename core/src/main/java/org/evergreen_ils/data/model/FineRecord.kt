@@ -54,11 +54,11 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, val mbtsObj: OSRFOb
         if (mvrObj != null) {
             record = MBRecord(mvrObj)
         }
-        if (mbtsObj.getString("xact_type") == "circulation") {
+        if (xactType == "circulation") {
             title = mvrObj?.getString("title")
             subtitle = mvrObj?.getString("author")
             checkinTime = OSRFUtils.parseDate(circ?.getString("checkin_time"))
-        } else { // xact_type = "grocery"
+        } else { // "grocery"
             title = mbtsObj.getString("last_billing_type")
             subtitle = mbtsObj.getString("last_billing_note")
         }
