@@ -47,7 +47,7 @@ object OSRFUtils {
     /** parse ISO date+time string returned from API methods  */
     fun parseDate(dateString: String?): Date? {
         //Log.d("Utils", "[dbg] parseDate: dateString=$dateString")
-        if (dateString == null || dateString.isEmpty()) return null
+        if (dateString.isNullOrEmpty()) return null
 
         @SuppressLint("SimpleDateFormat") val df = SimpleDateFormat(API_DATE_PATTERN)
 
