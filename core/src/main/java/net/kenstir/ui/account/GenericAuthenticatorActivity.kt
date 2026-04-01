@@ -211,7 +211,8 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
         libraries.clear()
 
         if (Analytics.isDebuggable(this)) {
-            libraries.add(Library("http://192.168.1.8", "debug catalog", "00debug catalog", null))
+            libraries.add(Library("http://192.168.1.8", "lan catalog", "00 lan catalog", null))
+            libraries.add(Library("http://100.94.1.30", "tailnet catalog", "00 tailnet catalog", null))
         }
 
         val entries = Json.decodeFromString<List<DirectoryEntry>>(json)
