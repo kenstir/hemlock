@@ -229,7 +229,7 @@ class FinesActivity : BaseActivity() {
             fineTitle?.text = record?.title
             fineAuthor?.text = record?.subtitle
             fineBalanceOwed?.text = decimalFormatter!!.format(record?.balanceOwed)
-            fineStatus?.text = record?.status
+            fineStatus?.text = if (resources.getBoolean(R.bool.app_enable_fine_status)) record?.status else ""
 
             return row
         }

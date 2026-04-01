@@ -1,3 +1,10 @@
+## 5.0.1
+
+### Fixed
+
+* Fix wrong label "returned" on fine for renewed item
+* pines: Do not show any labels on fines
+
 ## 5.0.0
 
 ### New

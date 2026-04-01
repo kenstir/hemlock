@@ -70,6 +70,8 @@
     <bool name="app_enable_patron_messages">false</bool>
     <!-- if true, enable Pay Fines button, if home org also has it enabled -->
     <bool name="app_enable_pay_fines">true</bool>
+    <!-- if true, show status label on Fines screen, e.g. "maximum fine" -->
+    <bool name="app_enable_fine_status">true</bool>
     <!-- [fcm] if true, initialize Firebase Cloud Messaging and send token to EG -->
     <bool name="app_enable_push_notifications">false</bool>
     <!-- if true, display label host name in Item Details view for online items -->

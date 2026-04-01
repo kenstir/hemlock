@@ -29,6 +29,7 @@
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_title_hold_on_item_with_parts">false</bool>
     <bool name="app_enable_pay_fines">true</bool>
+    <bool name="app_enable_fine_status">false</bool>
     <bool name="app_show_online_access_hostname">false</bool>
     <bool name="app_need_marc_record">true</bool>
     <bool name="app_always_popup_online_links">true</bool>

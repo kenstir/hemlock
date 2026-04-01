@@ -19,6 +19,7 @@ package org.evergreen_ils.data.model
 
 import org.evergreen_ils.gateway.GatewayResult
 import org.evergreen_ils.gateway.OSRFCoder
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
@@ -89,6 +90,59 @@ class FineRecordTest {
         assertEquals(2.0, fine.balanceOwed)
         assertEquals(null, (fine as FineRecord).maxFine)
         assertEquals("", fine.status)
+    }
+
+    @Test
+    fun test_status() {
+        val mbtsObj = OSRFObject(mapOf(
+            "xact_type" to "circulation",
+            "balance_owed" to "1.00",
+        ))
+        val circObjMaxFines = OSRFObject(mapOf(
+            "max_fine" to "10.00",
+            "stop_fines" to "MAXFINES",
+            "checkin_time" to null,
+        ))
+        val circObjReturned = OSRFObject(mapOf(
+            "max_fine" to "10.00",
+            "stop_fines" to "CHECKIN",
+            "checkin_time" to "2026-04-01T12:00:00-0400",
+        ))
+        val circObjRenewed = OSRFObject(mapOf(
+            "max_fine" to "10.00",
+            "stop_fines" to "RENEW",
+            "checkin_time" to "2026-04-01T12:00:00-0400",
+        ))
+        val circObjAccruing = OSRFObject(mapOf(
+            "max_fine" to "10.00",
+            "stop_fines" to null,
+            "checkin_time" to null,
+        ))
+        val mvrObj = OSRFObject(mapOf(
+            "title" to "The testaments",
+            "author" to "Atwood, Margaret",
+        ))
+
+        val fine1 = FineRecord(circObjMaxFines, mvrObj, mbtsObj)
+        assertEquals("maximum fine", fine1.status)
+
+        val fine2 = FineRecord(circObjReturned, mvrObj, mbtsObj)
+        assertEquals("returned", fine2.status)
+
+        val fine3 = FineRecord(circObjRenewed, mvrObj, mbtsObj)
+        assertEquals("renewed", fine3.status)
+
+        val fine4 = FineRecord(circObjAccruing, mvrObj, mbtsObj)
+        assertEquals("fines accruing", fine4.status)
+
+        val groceryMbtsObj = OSRFObject(mapOf(
+            "xact_type" to "grocery",
+            "balance_owed" to "1.00",
+            "last_billing_type" to "Photocopies",
+            "last_billing_note" to "Miscellaneous",
+        ))
+        val fine5 = FineRecord(null, null, groceryMbtsObj)
+        assertEquals("", fine5.status)
     }
 
     /* TODO: waiting to hear from Amy whether this logic is correct
