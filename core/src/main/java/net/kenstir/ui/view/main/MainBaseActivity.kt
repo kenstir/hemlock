@@ -152,7 +152,7 @@ open class MainBaseActivity : BaseActivity() {
         return count
     }
 
-    suspend fun fetchFcmNotificationToken(): Result<Unit> {
+    suspend fun fetchFcmNotificationToken(): Result<String> {
         val task = FirebaseMessaging.getInstance().token
         task.await()
         if (!task.isSuccessful) {
@@ -160,8 +160,7 @@ open class MainBaseActivity : BaseActivity() {
         }
         val token = task.result
         Log.d(TAG_FCM, "[fcm] fetched token=$token")
-        App.fcmNotificationToken = token
-        return Result.Success(Unit)
+        return Result.Success(token)
     }
 
     /** Create channels to show notifications.
@@ -209,18 +208,20 @@ open class MainBaseActivity : BaseActivity() {
                 showAlert(result.exception)
                 return@async
             }
+            val currentToken = result.get()
 
-            // If the current FCM token is different from the one we got from the user settings,
-            // we need to update the user setting in Evergreen
-            val storedToken = App.account.savedPushNotificationData
+            // add it to the token store
+            App.tokenStore.addCurrentToken(currentToken)
+
+            // determine if we need to update the stored user settings
+            val storedData = App.account.savedPushNotificationData
             val storedEnabledFlag = App.account.savedPushNotificationEnabled
-            val currentToken = App.fcmNotificationToken
-            Log.d(TAG_FCM, "[fcm] stored token was: $storedToken")
-            if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
+            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedData:$storedData")
+            if (App.tokenStore.isModified || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.svc.user.updatePushNotificationToken(
-                    App.account, currentToken)
+                val updateResult = App.svc.user.updatePushNotificationData(
+                    App.account, App.tokenStore.encodeToString())
                 Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
                 ))
