@@ -200,13 +200,13 @@ object EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun updatePushNotificationData(account: Account, token: String?): Result<Unit> {
+    override suspend fun updatePushNotificationData(account: Account, pushNotificationData: String?): Result<Unit> {
         return try {
             updatePatronSettings(account, jsonMapOf(
-                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to pushNotificationData,
                 Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
             ))
-            account.savedPushNotificationData = token
+            account.savedPushNotificationData = pushNotificationData
             account.savedPushNotificationEnabled = true
             Result.Success(Unit)
         } catch (e: Exception) {

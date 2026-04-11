@@ -42,6 +42,44 @@ class TokenStore {
     var isModified = false
 
     /**
+     * Initializes the TokenStore from a string, either plain (v1) PN token or a JSON TS object (v2)
+     */
+    fun initFromString(storedData: String?) {
+        entries.clear()
+        isModified = false
+
+        if (storedData.isNullOrBlank()) {
+            return
+        }
+
+        // if it looks like a JSON object, try to decode it
+        val trimmed = storedData.trim()
+        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+            try {
+                decodeFromJSON(trimmed)
+                return
+            } catch (_: Exception) {
+                // if it fails to decode, fall back to treating it as a plain token string
+            }
+        }
+
+        addCurrentToken(storedData)
+    }
+
+    /**
+     * Loads the TokenStore entries from a JSON string, removing any expired entries.
+     */
+    private fun decodeFromJSON(json: String) {
+        val decoded = Json.decodeFromString<TokenStore>(json)
+
+        entries.addAll(decoded.entries)
+
+        // filter out expired entries
+        val now = System.currentTimeMillis() / 1000
+        isModified = entries.removeAll { now - it.addedAt >= TOKEN_EXPIRATION_SECONDS }
+    }
+
+    /**
      * Adds [token] to the store, unless it's already present.
      *
      * If [token] is present, but was added more than [TOKEN_REFRESH_INTERVAL_SECONDS] ago,
@@ -50,12 +88,6 @@ class TokenStore {
     fun addCurrentToken(token: String) {
         currentToken = token
         val now = System.currentTimeMillis() / 1000
-
-        // first remove any expired entries
-        val changed = entries.removeAll { now - it.addedAt > TOKEN_EXPIRATION_SECONDS }
-        if (changed) {
-            isModified = true
-        }
 
         // check if token exists and if it needs to be refreshed
         val currentEntry = entries.find { it.token == token }
@@ -92,21 +124,5 @@ class TokenStore {
         const val MAX_TOKEN_ENTRIES = 4
         const val TOKEN_EXPIRATION_SECONDS = 86400 * 365 // 1 year
         const val TOKEN_REFRESH_INTERVAL_SECONDS = TOKEN_EXPIRATION_SECONDS / 2
-
-        fun makeFromString(storedData: String): TokenStore {
-            // if it looks like a JSON object, try to decode it
-            val trimmed = storedData.trim()
-            if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-                try {
-                    return Json.decodeFromString<TokenStore>(trimmed)
-                } catch (_: Exception) {
-                    // if it fails to decode, fall back to treating it as a plain token string
-                }
-            }
-
-            val ts = TokenStore()
-            ts.addCurrentToken(storedData)
-            return ts
-        }
     }
 }

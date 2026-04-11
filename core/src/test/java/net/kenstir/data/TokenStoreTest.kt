@@ -47,7 +47,42 @@ class TokenStoreTest {
     }
 
     @Test
-    fun test_makeFromStringV2() {
+    fun test_initFromString_v1() {
+        val pushNotificationData = "old-v1-token"
+
+        val ts = TokenStore()
+        ts.initFromString(pushNotificationData)
+        assertTrue(ts.isModified)
+        assertEquals(1, ts.entries.size)
+        assertEquals("old-v1-token", ts.currentToken)
+        assertTrue(abs(ts.entries[0].addedAt) - now < 10)
+    }
+
+    @Test
+    fun test_initFromString_v1LooksLikeJSON() {
+        val pushNotificationData = "{old-v1-token}"
+
+        val ts = TokenStore()
+        ts.initFromString(pushNotificationData)
+        assertTrue(ts.isModified)
+        assertEquals(1, ts.entries.size)
+        assertEquals("{old-v1-token}", ts.currentToken)
+        assertTrue(abs(ts.entries[0].addedAt) - now < 10)
+    }
+
+    @Test
+    fun test_initFromString_empty() {
+        val testData = listOf(null, "")
+        for (pushNotificationData in testData) {
+            val ts = TokenStore()
+            ts.initFromString(pushNotificationData)
+            assertFalse(ts.isModified)
+            assertTrue(ts.entries.isEmpty())
+        }
+    }
+
+    @Test
+    fun test_initFromString_v2() {
         val json = """
             {
                 "entries": [
@@ -57,7 +92,8 @@ class TokenStoreTest {
             }
         """.replace("\\s".toRegex(), "")
 
-        val ts = TokenStore.makeFromString(json)
+        val ts = TokenStore()
+        ts.initFromString(json)
         assertFalse(ts.isModified)
         assertEquals(2, ts.entries.size)
         assertEquals("token-1", ts.entries[0].token)
@@ -68,35 +104,50 @@ class TokenStoreTest {
     }
 
     @Test
-    fun test_makeFromStringV1() {
-        val pushNotificationData = "old-v1-token"
+    fun test_initFromString_removesExpiredToken() {
+        val json = """
+            {
+                "entries": [
+                    {"token": "token-1", "added_at": ${expiredTime}},
+                    {"token": "token-2", "added_at": ${now}}
+                ]
+            }
+        """.replace("\\s".toRegex(), "")
 
-        val ts = TokenStore.makeFromString(pushNotificationData)
+        val ts = TokenStore()
+        ts.initFromString(json)
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
-        assertEquals("old-v1-token", ts.currentToken)
-        assertTrue(abs(ts.entries[0].addedAt) - now < 10)
+        assertEquals("token-2", ts.entries[0].token)
     }
 
     @Test
-    fun test_addCurrentToken() {
+    fun test_addCurrentToken_overflow() {
         val ts = TokenStore()
         ts.entries.addAll(listOf(entry1, entry2, entry3, entry4))
         assertFalse(ts.isModified)
 
-        // addTokenAsCurrent with a new token pushes out the oldest token
+        // adding a new token exceeds the max size, removing the oldest token
         ts.addCurrentToken("new-token-5")
         assertTrue(ts.isModified)
         assertEquals(TokenStore.MAX_TOKEN_ENTRIES, ts.entries.size)
         val entry = ts.entries.last()
         assertEquals("new-token-5", entry.token)
         assertEquals("new-token-5", ts.currentToken)
+    }
 
-        // addCurrentToken with an existing token within the refresh interval
-        // leaves it in place and does not update timestamp
+    @Test
+    fun test_addCurrentToken_noRefresh() {
+        val ts = TokenStore()
+        ts.entries.addAll(listOf(entry1, entry2, entry3, entry4))
+        assertFalse(ts.isModified)
+
+        // adding an existing token within the refresh interval
+        // leaves it in place and does not update its timestamp
         val indexBefore = ts.entries.indexOfFirst { it.token == entry3.token }
         assertNotEquals(-1, indexBefore)
         ts.addCurrentToken("test-token-3")
+        assertFalse(ts.isModified)
         val indexAfter = ts.entries.indexOfFirst { it.token == entry3.token }
         assertEquals(indexBefore, indexAfter)
         assertEquals(TokenStore.MAX_TOKEN_ENTRIES, ts.entries.size)
@@ -104,22 +155,18 @@ class TokenStoreTest {
     }
 
     @Test
-    fun test_addCurrent_Token_withRefresh() {
+    fun test_addCurrentToken_withRefresh() {
         val ts = TokenStore()
         ts.entries.add(TokenEntry("token-1", needsRefreshTime))
         ts.entries.add(TokenEntry("token-2", now - 60))
         assertFalse(ts.isModified)
 
-        // addCurrentToken with a fresh token leaves the TS unmodified
-        ts.addCurrentToken("token-2")
-        assertFalse(ts.isModified)
-        assertEquals(2, ts.entries.size)
-        assertEquals("token-2", ts.entries[1].token)
-
-        // addCurrentToken with a token needing refresh moves it to the end with a new timestamp
+        // adding a token needing refresh moves it to the end with a new timestamp
         ts.addCurrentToken("token-1")
         assertTrue(ts.isModified)
         assertEquals(2, ts.entries.size)
-        assertEquals("token-1", ts.entries[1].token)
+        val indexAfter = ts.entries.indexOfFirst { it.token == "token-1" }
+        assertEquals(1, indexAfter)
+        assertTrue(ts.entries[indexAfter].addedAt > needsRefreshTime)
     }
 }

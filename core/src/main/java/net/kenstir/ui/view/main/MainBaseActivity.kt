@@ -210,13 +210,13 @@ open class MainBaseActivity : BaseActivity() {
             }
             val currentToken = result.get()
 
-            // add it to the token store
+            // init the token store from the stored data and add the current token
+            App.tokenStore.initFromString(App.account.savedPushNotificationData)
             App.tokenStore.addCurrentToken(currentToken)
 
-            // determine if we need to update the stored user settings
-            val storedData = App.account.savedPushNotificationData
+            // update the stored user settings if needed
             val storedEnabledFlag = App.account.savedPushNotificationEnabled
-            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedData:$storedData")
+            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedData:${App.account.savedPushNotificationData}")
             if (App.tokenStore.isModified || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
