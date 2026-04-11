@@ -42,7 +42,6 @@ import net.kenstir.ui.App
 import net.kenstir.util.Analytics
 import net.kenstir.ui.util.showAlert
 
-@OptIn(kotlinx.serialization.InternalSerializationApi::class)
 @Serializable
 data class DirectoryEntry(
     @SerialName("short_name") val shortName: String,
