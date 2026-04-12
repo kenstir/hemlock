@@ -21,6 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
+import kotlin.io.encoding.Base64
 
 @Serializable
 data class TokenEntry(
@@ -42,7 +43,7 @@ class TokenStore {
     var isModified = false
 
     /**
-     * Initializes the TokenStore from a string, either plain (v1) PN token or a JSON TS object (v2)
+     * Initializes the TokenStore from a string, either a plain PN token (v1) or a base64url-encoded JSON TS object (v2)
      */
     fun initFromString(storedData: String?) {
         entries.clear()
@@ -52,11 +53,10 @@ class TokenStore {
             return
         }
 
-        // if it looks like a JSON object, try to decode it
-        val trimmed = storedData.trim()
-        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+        // if it looks like a v2 encoded object, try to decode it
+        if (storedData.startsWith(V2_ENCODED_TOKEN_PREFIX)) {
             try {
-                decodeFromJSON(trimmed)
+                decodeFromV2(storedData)
                 return
             } catch (_: Exception) {
                 // if it fails to decode, fall back to treating it as a plain token string
@@ -67,12 +67,13 @@ class TokenStore {
     }
 
     /**
-     * Loads the TokenStore entries from a JSON string, removing any expired entries.
+     * Loads the TokenStore entries from a base64url-encoded JSON string, removing any expired entries.
      */
-    private fun decodeFromJSON(json: String) {
-        val decoded = Json.decodeFromString<TokenStore>(json)
+    private fun decodeFromV2(storedData: String) {
+        val json = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(storedData))
+        val decodedTokenStore = Json.decodeFromString<TokenStore>(json)
 
-        entries.addAll(decoded.entries)
+        entries.addAll(decodedTokenStore.entries)
 
         // filter out expired entries
         val now = System.currentTimeMillis() / 1000
@@ -117,12 +118,18 @@ class TokenStore {
     }
 
     fun encodeToString(): String {
-        return Json.encodeToString(this)
+        val json = Json.encodeToString(this)
+        val encoded = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
+            .encode(json.encodeToByteArray())
+        return encoded
     }
 
     companion object {
         const val MAX_TOKEN_ENTRIES = 4
         const val TOKEN_EXPIRATION_SECONDS = 86400 * 365 // 1 year
         const val TOKEN_REFRESH_INTERVAL_SECONDS = TOKEN_EXPIRATION_SECONDS / 2
+
+        /** prefix for all v2 encoded tokens, which is base64url-encoded string '{"entries":[' */
+        const val V2_ENCODED_TOKEN_PREFIX = "eyJlbnRyaWVzIjpb"
     }
 }

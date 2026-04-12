@@ -17,11 +17,14 @@
 
 package net.kenstir.data
 
+import net.kenstir.util.encodeToBase64URL
+import net.kenstir.util.trimmingAllWhitespace
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.io.encoding.Base64
 import kotlin.math.abs
 
 class TokenStoreTest {
@@ -90,17 +93,18 @@ class TokenStoreTest {
                     {"token": "token-2", "added_at": 1775060410}
                 ]
             }
-        """.replace("\\s".toRegex(), "")
+        """.trimmingAllWhitespace()
+        val encoded = json.encodeToBase64URL()
 
         val ts = TokenStore()
-        ts.initFromString(json)
+        ts.initFromString(encoded)
         assertFalse(ts.isModified)
         assertEquals(2, ts.entries.size)
         assertEquals("token-1", ts.entries[0].token)
         assertEquals(1775060400, ts.entries[0].addedAt)
 
         val str = ts.encodeToString()
-        assertEquals(json, str)
+        assertEquals(encoded, str)
     }
 
     @Test
@@ -112,10 +116,11 @@ class TokenStoreTest {
                     {"token": "token-2", "added_at": ${now}}
                 ]
             }
-        """.replace("\\s".toRegex(), "")
+        """.trimmingAllWhitespace()
+        val encoded = json.encodeToBase64URL()
 
         val ts = TokenStore()
-        ts.initFromString(json)
+        ts.initFromString(encoded)
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
         assertEquals("token-2", ts.entries[0].token)

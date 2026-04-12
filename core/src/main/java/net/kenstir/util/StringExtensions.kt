@@ -20,6 +20,7 @@ package net.kenstir.util
 import java.security.MessageDigest
 import java.util.regex.Matcher.quoteReplacement
 import java.util.regex.Pattern
+import kotlin.io.encoding.Base64
 
 /** returns the MD5 hash of the string
  */
@@ -39,6 +40,27 @@ fun String.md5(): String {
         hexString.append(hex)
     }
     return hexString.toString()
+}
+
+/**
+ * Returns the base64url encoding
+ */
+fun String.encodeToBase64URL(): String {
+    return Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(this.encodeToByteArray())
+}
+
+/**
+ * Decodes the base64url-encoded string
+ */
+fun String.decodeFromBase64URL(): String {
+    return String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(this))
+}
+
+/**
+ * Trims all whitespace from a string
+ */
+fun String.trimmingAllWhitespace(): String {
+    return this.replace("\\s".toRegex(), "")
 }
 
 /**
