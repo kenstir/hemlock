@@ -49,7 +49,6 @@ import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.md5
-import kotlin.io.encoding.Base64
 
 /**
  * Behavior common to MainActivity and MainGridActivity.
@@ -215,6 +214,7 @@ open class MainBaseActivity : BaseActivity() {
             App.tokenStore.initFromString(App.account.savedPushNotificationData)
             App.tokenStore.addCurrentToken(currentToken)
             Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens, modified:${App.tokenStore.isModified}")
+            App.tokenStore.dumpEntries()
 
             // update the stored user settings if needed
             if (App.tokenStore.isModified || !App.account.savedPushNotificationEnabled)

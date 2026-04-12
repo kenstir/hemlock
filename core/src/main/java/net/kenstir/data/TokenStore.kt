@@ -21,6 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
+import net.kenstir.logging.Log
 import kotlin.io.encoding.Base64
 
 @Serializable
@@ -124,7 +125,15 @@ class TokenStore {
         return encoded
     }
 
+    fun dumpEntries() {
+        //Log.d(TAG, "[fcm] ${entries.size} tokens isModified:$isModified")
+        for (entry in entries) {
+            Log.d(TAG, "[fcm]   added_at:${entry.addedAt} token:${entry.token}")
+        }
+    }
+
     companion object {
+        private const val TAG = "TokenStore"
         const val MAX_TOKEN_ENTRIES = 4
         const val TOKEN_EXPIRATION_SECONDS = 86400 * 365 // 1 year
         const val TOKEN_REFRESH_INTERVAL_SECONDS = TOKEN_EXPIRATION_SECONDS / 2
