@@ -18,30 +18,26 @@
 package net.kenstir.data
 
 import net.kenstir.util.encodeToBase64URL
-import net.kenstir.util.trimmingAllWhitespace
+import net.kenstir.util.trimAllWhitespace
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.io.encoding.Base64
 import kotlin.math.abs
 
 class TokenStoreTest {
-    val entry0: TokenEntry
+    val now = System.currentTimeMillis() / 1000
+    val expiredTime = now - TokenStore.TOKEN_EXPIRATION_SECONDS - 60
+    val needsRefreshTime = now - TokenStore.TOKEN_REFRESH_INTERVAL_SECONDS - 60
+
     val entry1: TokenEntry
     val entry2: TokenEntry
     val entry3: TokenEntry
     val entry4: TokenEntry
     val entry5: TokenEntry
 
-    val now = System.currentTimeMillis() / 1000
-    val expiredTime = now - TokenStore.TOKEN_EXPIRATION_SECONDS - 60
-    val needsRefreshTime = now - TokenStore.TOKEN_REFRESH_INTERVAL_SECONDS - 60
-
     init {
-        // entry0 is expired, the others are current
-        entry0 = TokenEntry("test-token-0", expiredTime)
         entry1 = TokenEntry("test-token-1", now - 86400 * 10)
         entry2 = TokenEntry("test-token-2", now - 86400 * 5)
         entry3 = TokenEntry("test-token-3", now - 86400 * 2)
@@ -58,19 +54,19 @@ class TokenStoreTest {
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
         assertEquals("old-v1-token", ts.currentToken)
-        assertTrue(abs(ts.entries[0].addedAt) - now < 10)
+        assertTrue(abs(ts.entries[0].addedAt - now) < 2)
     }
 
     @Test
-    fun test_initFromString_v1LooksLikeJSON() {
-        val pushNotificationData = "{old-v1-token}"
+    fun test_initFromString_v1LooksLikeV2() {
+        val pushNotificationData = TokenStore.V2_ENCODED_TOKEN_PREFIX + "old-v1-token"
 
         val ts = TokenStore()
         ts.initFromString(pushNotificationData)
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
-        assertEquals("{old-v1-token}", ts.currentToken)
-        assertTrue(abs(ts.entries[0].addedAt) - now < 10)
+        assertEquals(pushNotificationData, ts.currentToken)
+        assertTrue(abs(ts.entries[0].addedAt - now) < 2)
     }
 
     @Test
@@ -93,7 +89,7 @@ class TokenStoreTest {
                     {"token": "token-2", "added_at": 1775060410}
                 ]
             }
-        """.trimmingAllWhitespace()
+        """.trimAllWhitespace()
         val encoded = json.encodeToBase64URL()
 
         val ts = TokenStore()
@@ -116,7 +112,7 @@ class TokenStoreTest {
                     {"token": "token-2", "added_at": ${now}}
                 ]
             }
-        """.trimmingAllWhitespace()
+        """.trimAllWhitespace()
         val encoded = json.encodeToBase64URL()
 
         val ts = TokenStore()
