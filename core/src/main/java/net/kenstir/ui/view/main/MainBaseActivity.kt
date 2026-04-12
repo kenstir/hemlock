@@ -211,23 +211,17 @@ open class MainBaseActivity : BaseActivity() {
             val currentToken = result.get()
             Log.d(TAG_FCM, "[fcm] fetched token=$currentToken")
 
-            // init the token store from the stored base64url-encoded data and add the current token
-            val decodedData = App.account.savedPushNotificationData?.let {
-                String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(it))
-            }
-            App.tokenStore.initFromString(decodedData)
+            // init the token store from the saved data and add the current token
+            App.tokenStore.initFromString(App.account.savedPushNotificationData)
             App.tokenStore.addCurrentToken(currentToken)
-
+            Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens from data, modified:${App.tokenStore.isModified}")
 
             // update the stored user settings if needed
-            val storedEnabledFlag = App.account.savedPushNotificationEnabled
-            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedEnabledFlag:$storedEnabledFlag")
-            if (App.tokenStore.isModified || !storedEnabledFlag)
+            if (App.tokenStore.isModified || !App.account.savedPushNotificationEnabled)
             {
-                Log.d(TAG_FCM, "[fcm] updating stored token")
-                val encoded = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
-                    .encode(App.tokenStore.encodeToString().encodeToByteArray())
-                val updateResult = App.svc.user.updatePushNotificationData(App.account, encoded)
+                Log.d(TAG_FCM, "[fcm] updating stored data")
+                val data = App.tokenStore.encodeToString()
+                val updateResult = App.svc.user.updatePushNotificationData(App.account, data)
                 Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
                 ))
