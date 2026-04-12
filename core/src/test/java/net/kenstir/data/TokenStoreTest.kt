@@ -31,19 +31,10 @@ class TokenStoreTest {
     val expiredTime = now - TokenStore.TOKEN_EXPIRATION_SECONDS - 60
     val needsRefreshTime = now - TokenStore.TOKEN_REFRESH_INTERVAL_SECONDS - 60
 
-    val entry1: TokenEntry
-    val entry2: TokenEntry
-    val entry3: TokenEntry
-    val entry4: TokenEntry
-    val entry5: TokenEntry
-
-    init {
-        entry1 = TokenEntry("test-token-1", now - 86400 * 10)
-        entry2 = TokenEntry("test-token-2", now - 86400 * 5)
-        entry3 = TokenEntry("test-token-3", now - 86400 * 2)
-        entry4 = TokenEntry("test-token-4", now - 86400)
-        entry5 = TokenEntry("test-token-5", now)
-    }
+    val entry1 = TokenEntry("test-token-1", now - 86400 * 10)
+    val entry2 = TokenEntry("test-token-2", now - 86400 * 5)
+    val entry3 = TokenEntry("test-token-3", now - 86400 * 2)
+    val entry4 = TokenEntry("test-token-4", now - 86400)
 
     @Test
     fun test_initFromString_v1() {
