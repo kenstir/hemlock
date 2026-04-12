@@ -214,7 +214,7 @@ open class MainBaseActivity : BaseActivity() {
             // init the token store from the saved data and add the current token
             App.tokenStore.initFromString(App.account.savedPushNotificationData)
             App.tokenStore.addCurrentToken(currentToken)
-            Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens from data, modified:${App.tokenStore.isModified}")
+            Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens, modified:${App.tokenStore.isModified}")
 
             // update the stored user settings if needed
             if (App.tokenStore.isModified || !App.account.savedPushNotificationEnabled)
