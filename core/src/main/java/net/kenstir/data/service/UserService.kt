@@ -54,7 +54,7 @@ interface UserService {
     suspend fun addItemToPatronList(account: Account, listId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromPatronList(account: Account, listId: Int, itemId: Int): Result<Unit>
 
-    suspend fun updatePushNotificationData(account: Account, pushNotificationData: String?): Result<Unit>
+    suspend fun updatePushNotificationData(account: Account, pushNotificationData: String): Result<Unit>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>
     suspend fun disableCheckoutHistory(account: Account): Result<Unit>
     suspend fun clearCheckoutHistory(account: Account): Result<Unit>

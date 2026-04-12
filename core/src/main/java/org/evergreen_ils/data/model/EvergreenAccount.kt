@@ -20,7 +20,9 @@ package org.evergreen_ils.data.model
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.gateway.OSRFObject
 import net.kenstir.data.model.Account
+import net.kenstir.logging.Log
 import org.evergreen_ils.Api
+import kotlin.io.encoding.Base64
 
 class EvergreenAccount(username: String, authToken: String? = null): Account(username, authToken) {
 
@@ -42,9 +44,10 @@ class EvergreenAccount(username: String, authToken: String? = null): Account(use
         val map = mutableMapOf<String, String>()
         settings?.forEach {
             val name = it.getString("name")
-            val value = it.getString("value")?.removeStupidExtraQuotes()
+            val value = it.getString("value")
+            //Log.d(TAG, "[setting] $name: $value")
             if (name != null && value != null) {
-                map[name] = value
+                map[name] = removeExtraQuotesFromSettingValue(value)
             }
         }
         this._pickupOrg = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
@@ -58,10 +61,33 @@ class EvergreenAccount(username: String, authToken: String? = null): Account(use
         this.holdHistoryStart = map[Api.USER_SETTING_HOLD_HISTORY_START]
         this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
         this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
+        Log.d(TAG, "[fcm] savedPushNotificationData: ${savedPushNotificationData?.length} bytes")
+    }
+
+    // user setting values have quotes around them sometimes, e.g. the integer 1 here:
+    // {"__c":"aus","__p":[8,"opac.default_search_location",150,"\"1\""]}
+    fun removeExtraQuotesFromSettingValue(value: String): String {
+        return if (value.startsWith("\"") && value.endsWith("\"")) {
+            //Log.d(TAG, "[setting] value has extra quotes, removing")
+            value.removePrefix("\"").removeSuffix("\"")
+        } else {
+            value
+        }
+    }
+
+    fun parseHoldNotifyValue(value: String?) {
+        // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
+        this.notifyByEmail = value?.contains("email") ?: false
+        this.notifyByPhone = value?.contains("phone") ?: false
+        this.notifyBySMS = value?.contains("sms") ?: false
     }
 
     fun loadLists(bags: List<OSRFObject>) {
         patronLists = BookBag.makeArray(bags)
         onListsLoaded()
+    }
+
+    companion object {
+        private const val TAG = "Account"
     }
 }

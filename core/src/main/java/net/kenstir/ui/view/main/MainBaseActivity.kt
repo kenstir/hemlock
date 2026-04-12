@@ -49,6 +49,7 @@ import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.util.showAlert
 import net.kenstir.util.Analytics
 import net.kenstir.util.md5
+import kotlin.io.encoding.Base64
 
 /**
  * Behavior common to MainActivity and MainGridActivity.
@@ -159,7 +160,6 @@ open class MainBaseActivity : BaseActivity() {
             return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
         }
         val token = task.result
-        Log.d(TAG_FCM, "[fcm] fetched token=$token")
         return Result.Success(token)
     }
 
@@ -209,19 +209,25 @@ open class MainBaseActivity : BaseActivity() {
                 return@async
             }
             val currentToken = result.get()
+            Log.d(TAG_FCM, "[fcm] fetched token=$currentToken")
 
-            // init the token store from the stored data and add the current token
-            App.tokenStore.initFromString(App.account.savedPushNotificationData)
+            // init the token store from the stored base64url-encoded data and add the current token
+            val decodedData = App.account.savedPushNotificationData?.let {
+                String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(it))
+            }
+            App.tokenStore.initFromString(decodedData)
             App.tokenStore.addCurrentToken(currentToken)
+
 
             // update the stored user settings if needed
             val storedEnabledFlag = App.account.savedPushNotificationEnabled
-            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedData:${App.account.savedPushNotificationData}")
+            Log.d(TAG_FCM, "[fcm] modified:${App.tokenStore.isModified} storedEnabledFlag:$storedEnabledFlag")
             if (App.tokenStore.isModified || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.svc.user.updatePushNotificationData(
-                    App.account, App.tokenStore.encodeToString())
+                val encoded = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
+                    .encode(App.tokenStore.encodeToString().encodeToByteArray())
+                val updateResult = App.svc.user.updatePushNotificationData(App.account, encoded)
                 Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
                 ))

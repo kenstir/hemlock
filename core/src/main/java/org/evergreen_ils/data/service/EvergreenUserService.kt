@@ -200,7 +200,7 @@ object EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun updatePushNotificationData(account: Account, pushNotificationData: String?): Result<Unit> {
+    override suspend fun updatePushNotificationData(account: Account, pushNotificationData: String): Result<Unit> {
         return try {
             updatePatronSettings(account, jsonMapOf(
                 Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to pushNotificationData,

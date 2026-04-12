@@ -79,21 +79,6 @@ open class Account(val username: String, var authToken: String?) {
         ))
     }
 
-    fun parseHoldNotifyValue(value: String?) {
-        // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
-        this.notifyByEmail = value?.contains("email") ?: false
-        this.notifyByPhone = value?.contains("phone") ?: false
-        this.notifyBySMS = value?.contains("sms") ?: false
-    }
-
-    // Fix stupid setting strings that are returned with extra quotes
-    // e.g. "\"160\"" -> "160"
-    fun String.removeStupidExtraQuotes(): String? {
-        var s = this
-        if (s.startsWith("\"")) s = s.replace("\"", "")
-        return s
-    }
-
     // authTokenOrThrow fixes the problem where Kotlin warns if you try to pass a mutable property
     // to a function that takes a non-optional
     // "Smart cast to X is impossible, because Y is a mutable property that could have been changed by this time"
