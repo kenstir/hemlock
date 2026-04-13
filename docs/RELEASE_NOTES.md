@@ -1,8 +1,14 @@
+## UPCOMING
+
+### New
+
+* Allow patron to receive push notifications on multiple devices for the same account
+
 ## 5.0.1
 
 ### Fixed
 
-* Fix wrong label "returned" on fine for renewed item
+* Fixed wrong label "returned" on fine for renewed item
 * pines: Do not show any labels on fines
 
 ## 5.0.0
