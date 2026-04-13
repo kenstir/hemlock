@@ -17,6 +17,7 @@
 
 package net.kenstir.data
 
+import net.kenstir.util.decodeFromBase64URL
 import net.kenstir.util.encodeToBase64URL
 import net.kenstir.util.trimAllWhitespace
 import org.junit.Assert.assertEquals
@@ -69,6 +70,20 @@ class TokenStoreTest {
             assertFalse(ts.isModified)
             assertTrue(ts.entries.isEmpty())
         }
+    }
+
+    @Test
+    fun test_encodingIsCompatible() {
+        // Check that the implementation we are using is compatible with other implementations,
+        // that is, base64-url-encoding with no padding.
+        val json = """{"a":"??~"}"""
+        val want = "eyJhIjoiPz9-In0" // plain base64 would be "eyJhIjoiPz9+In0="
+
+        val encoded = json.encodeToBase64URL()
+        assertEquals(want, encoded)
+
+        val decoded = encoded.decodeFromBase64URL()
+        assertEquals(json, decoded)
     }
 
     @Test
