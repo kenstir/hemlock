@@ -37,6 +37,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import net.kenstir.data.Result
+import net.kenstir.data.TokenStore
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
@@ -211,16 +212,17 @@ open class MainBaseActivity : BaseActivity() {
             Log.d(TAG_FCM, "[fcm] fetched token=$fcmNotificationToken")
 
             // init the token store from the saved data and add the current token
-            App.tokenStore.initFromString(App.account.savedPushNotificationData)
-            App.tokenStore.addCurrentToken(fcmNotificationToken)
-            Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens, modified:${App.tokenStore.isModified}")
-            App.tokenStore.dumpEntries()
+            val tokenStore = TokenStore()
+            tokenStore.initFromString(App.account.savedPushNotificationData)
+            tokenStore.addCurrentToken(fcmNotificationToken)
+            Log.d(TAG_FCM, "[fcm] loaded ${tokenStore.entries.size} tokens, modified:${tokenStore.isModified}")
+            tokenStore.dumpEntries()
 
             // update the stored user settings if needed
-            if (App.tokenStore.isModified || !App.account.savedPushNotificationEnabled)
+            if (tokenStore.isModified || !App.account.savedPushNotificationEnabled)
             {
                 Log.d(TAG_FCM, "[fcm] updating stored data")
-                val data = App.tokenStore.encodeToString()
+                val data = tokenStore.encodeToString()
                 val updateResult = App.svc.user.updatePushNotificationData(App.account, data)
                 Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
