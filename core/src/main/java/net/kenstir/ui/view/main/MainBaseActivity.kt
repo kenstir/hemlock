@@ -207,12 +207,12 @@ open class MainBaseActivity : BaseActivity() {
                 showAlert(result.exception)
                 return@async
             }
-            val currentToken = result.get()
-            Log.d(TAG_FCM, "[fcm] fetched token=$currentToken")
+            val fcmNotificationToken = result.get()
+            Log.d(TAG_FCM, "[fcm] fetched token=$fcmNotificationToken")
 
             // init the token store from the saved data and add the current token
             App.tokenStore.initFromString(App.account.savedPushNotificationData)
-            App.tokenStore.addCurrentToken(currentToken)
+            App.tokenStore.addCurrentToken(fcmNotificationToken)
             Log.d(TAG_FCM, "[fcm] loaded ${App.tokenStore.entries.size} tokens, modified:${App.tokenStore.isModified}")
             App.tokenStore.dumpEntries()
 

@@ -34,9 +34,6 @@ class TokenStore {
     @Serializable
     val entries = ArrayList<TokenEntry>()
 
-    @Transient
-    var currentToken: String? = null
-
     /**
      * True if the store has changed in any way and should be saved to storage.
      */
@@ -88,7 +85,6 @@ class TokenStore {
      * it is moved to the end of the list with the current timestamp.
      */
     fun addCurrentToken(token: String) {
-        currentToken = token
         val now = System.currentTimeMillis() / 1000
 
         // check if token exists and if it needs to be refreshed

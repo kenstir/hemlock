@@ -45,7 +45,7 @@ class TokenStoreTest {
         ts.initFromString(pushNotificationData)
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
-        assertEquals("old-v1-token", ts.currentToken)
+        assertEquals("old-v1-token", ts.entries[0].token)
         assertTrue(abs(ts.entries[0].addedAt - now) < 2)
     }
 
@@ -57,7 +57,7 @@ class TokenStoreTest {
         ts.initFromString(pushNotificationData)
         assertTrue(ts.isModified)
         assertEquals(1, ts.entries.size)
-        assertEquals(pushNotificationData, ts.currentToken)
+        assertEquals(pushNotificationData, ts.entries[0].token)
         assertTrue(abs(ts.entries[0].addedAt - now) < 2)
     }
 
@@ -140,7 +140,6 @@ class TokenStoreTest {
         assertEquals(TokenStore.MAX_TOKEN_ENTRIES, ts.entries.size)
         val entry = ts.entries.last()
         assertEquals("new-token-5", entry.token)
-        assertEquals("new-token-5", ts.currentToken)
     }
 
     @Test
