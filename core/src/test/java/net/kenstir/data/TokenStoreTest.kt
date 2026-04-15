@@ -105,8 +105,34 @@ class TokenStoreTest {
         assertEquals("token-1", ts.entries[0].token)
         assertEquals(1775060400, ts.entries[0].addedAt)
 
+        // check that encoding the store produces the original string (ignoring whitespace)
+        // NB: kotlinx.serialization adds keys in the order they appear in the class
         val str = ts.encodeToString()
         assertEquals(encoded, str)
+    }
+
+    @Test
+    fun test_initFromString_forwardCompatible() {
+        // v2 format with possible future additions
+        // NB: "entries" appears first
+        val json = """
+            {
+                "entries": [
+                    {"token": "token-1", "added_at": 1775060400, "extra_field": "ignored"},
+                    {"token": "token-2", "added_at": 1775060410, "extra_field": "ignored"}
+                ],
+                "version": 3
+            }
+        """.trimAllWhitespace()
+        val encoded = json.encodeToBase64URL()
+
+        // check that we ignore unknown fields and parse the known ones correctly
+        val ts = TokenStore()
+        ts.initFromString(encoded)
+        assertFalse(ts.isModified)
+        assertEquals(2, ts.entries.size)
+        assertEquals("token-1", ts.entries[0].token)
+        assertEquals(1775060400, ts.entries[0].addedAt)
     }
 
     @Test
