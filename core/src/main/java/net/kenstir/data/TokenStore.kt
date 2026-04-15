@@ -69,8 +69,9 @@ class TokenStore {
      */
     private fun decodeFromV2(storedData: String) {
         val json = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(storedData))
-        val decodedTokenStore = Json.decodeFromString<TokenStore>(json)
+        //Log.d(TAG, "[fcm] ts=\"$storedData\"")
 
+        val decodedTokenStore = Json.decodeFromString<TokenStore>(json)
         entries.addAll(decodedTokenStore.entries)
 
         // filter out expired entries
