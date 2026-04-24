@@ -35,7 +35,6 @@ object App {
     const val REQUEST_MESSAGES: Int = 10002
 
     var account: Account = Account.noAccount
-    var fcmNotificationToken: String? = null
 
     lateinit var behavior: AppBehavior
     lateinit var factory: AppFactory

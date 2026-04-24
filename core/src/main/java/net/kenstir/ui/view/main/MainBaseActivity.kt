@@ -37,6 +37,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import net.kenstir.data.Result
+import net.kenstir.data.TokenStore
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
@@ -152,16 +153,14 @@ open class MainBaseActivity : BaseActivity() {
         return count
     }
 
-    suspend fun fetchFcmNotificationToken(): Result<Unit> {
+    suspend fun fetchFcmNotificationToken(): Result<String> {
         val task = FirebaseMessaging.getInstance().token
         task.await()
         if (!task.isSuccessful) {
             return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
         }
         val token = task.result
-        Log.d(TAG_FCM, "[fcm] fetched token=$token")
-        App.fcmNotificationToken = token
-        return Result.Success(Unit)
+        return Result.Success(token)
     }
 
     /** Create channels to show notifications.
@@ -209,18 +208,22 @@ open class MainBaseActivity : BaseActivity() {
                 showAlert(result.exception)
                 return@async
             }
+            val fcmNotificationToken = result.get()
+            Log.d(TAG_FCM, "[fcm] fetched token=$fcmNotificationToken")
 
-            // If the current FCM token is different from the one we got from the user settings,
-            // we need to update the user setting in Evergreen
-            val storedToken = App.account.savedPushNotificationData
-            val storedEnabledFlag = App.account.savedPushNotificationEnabled
-            val currentToken = App.fcmNotificationToken
-            Log.d(TAG_FCM, "[fcm] stored token was: $storedToken")
-            if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
+            // init the token store from the saved data and add the current token
+            val tokenStore = TokenStore()
+            tokenStore.initFromString(App.account.savedPushNotificationData)
+            tokenStore.addCurrentToken(fcmNotificationToken)
+            Log.d(TAG_FCM, "[fcm] loaded ${tokenStore.entries.size} tokens, modified:${tokenStore.isModified}")
+            tokenStore.dumpEntries()
+
+            // update the stored user settings if needed
+            if (tokenStore.isModified || !App.account.savedPushNotificationEnabled)
             {
-                Log.d(TAG_FCM, "[fcm] updating stored token")
-                val updateResult = App.svc.user.updatePushNotificationToken(
-                    App.account, currentToken)
+                Log.d(TAG_FCM, "[fcm] updating stored data")
+                val data = tokenStore.encodeToString()
+                val updateResult = App.svc.user.updatePushNotificationData(App.account, data)
                 Analytics.logEvent(Analytics.Event.NOTIFICATION_TOKEN_UPDATE, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(updateResult)
                 ))
