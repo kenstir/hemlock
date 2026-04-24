@@ -1,3 +1,8 @@
+## UPCOMING
+
+### Internal
+* internal: Upgrade fastlane to 2.233.0
+
 ## 5.0.1
 
 ### Fixed
