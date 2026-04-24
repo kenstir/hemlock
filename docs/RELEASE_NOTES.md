@@ -1,4 +1,4 @@
-## UPCOMING
+## 5.1.0
 
 ### New
 * Allow patron to receive push notifications on multiple devices for the same account

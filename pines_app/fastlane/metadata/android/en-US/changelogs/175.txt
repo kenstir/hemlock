@@ -1,0 +1,1 @@
+* Allow patron to receive push notifications on multiple devices for the same account
