@@ -1,8 +1,10 @@
 ## UPCOMING
 
 ### New
-
 * Allow patron to receive push notifications on multiple devices for the same account
+
+### Internal
+* internal: Upgrade fastlane to 2.233.0
 
 ## 5.0.1
 
