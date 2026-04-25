@@ -79,6 +79,12 @@ open class Account(val username: String, var authToken: String?) {
         ))
     }
 
+    fun onListItemsLoaded(patronList: PatronList) {
+        Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
+            Analytics.Param.NUM_ITEMS to patronList.items.size
+        ))
+    }
+
     // authTokenOrThrow fixes the problem where Kotlin warns if you try to pass a mutable property
     // to a function that takes a non-optional
     // "Smart cast to X is impossible, because Y is a mutable property that could have been changed by this time"

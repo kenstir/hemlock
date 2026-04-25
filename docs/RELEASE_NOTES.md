@@ -4,6 +4,7 @@
 * Allow patron to receive push notifications on multiple devices for the same account
 
 ### Internal
+* internal: Add missing reporting of bookbag_load event
 * internal: Upgrade fastlane to 2.233.0
 
 ## 5.0.1

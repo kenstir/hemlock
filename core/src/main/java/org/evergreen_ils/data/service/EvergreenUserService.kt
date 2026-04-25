@@ -122,6 +122,8 @@ object EvergreenUserService: UserService {
             val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, patronList.id)
             val response = GatewayClient.fetch(Api.ACTOR, Api.CONTAINER_FLESH, params, false)
             bookBag.fleshFromObject(response.payloadFirstAsObject())
+
+            account.onListItemsLoaded(patronList)
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
