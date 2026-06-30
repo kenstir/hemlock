@@ -43,7 +43,7 @@ GEM
     dotenv (2.8.1)
     emoji_regex (3.2.3)
     excon (0.112.0)
-    faraday (1.10.5)
+    faraday (1.10.6)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -175,6 +175,9 @@ GEM
     google-protobuf (4.34.1-x64-mingw-ucrt)
       bigdecimal
       rake (~> 13.3)
+    google-protobuf (4.34.1-x86_64-linux-gnu)
+      bigdecimal
+      rake (~> 13.3)
     googleapis-common-protos (1.9.0)
       google-protobuf (~> 4.26)
       googleapis-common-protos-types (~> 1.21)
@@ -193,6 +196,9 @@ GEM
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc (1.78.1-x64-mingw-ucrt)
+      google-protobuf (>= 3.25, < 5.0)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.78.1-x86_64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     highline (2.0.3)
@@ -263,6 +269,7 @@ GEM
 PLATFORMS
   arm64-darwin-24
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   fastlane
@@ -296,7 +303,7 @@ CHECKSUMS
   dotenv (2.8.1) sha256=c5944793349ae03c432e1780a2ca929d60b88c7d14d52d630db0508c3a8a17d8
   emoji_regex (3.2.3) sha256=ecd8be856b7691406c6bf3bb3a5e55d6ed683ffab98b4aa531bb90e1ddcc564b
   excon (0.112.0) sha256=daf9ac3a4c2fc9aa48383a33da77ecb44fa395111e973084d5c52f6f214ae0f0
-  faraday (1.10.5) sha256=b144f1d2b045652fa820b5f532723e1643cc28b93dae911d784e5c5f88e8f6ed
+  faraday (1.10.6) sha256=7ff4802a6b312876a2241b3e641ce0d5045e168dd871b422c35b505e5261ad4d
   faraday-cookie_jar (0.0.8) sha256=0140605823f8cc63c7028fccee486aaed8e54835c360cffc1f7c8c07c4299dbb
   faraday-em_http (1.0.0) sha256=7a3d4c7079789121054f57e08cd4ef7e40ad1549b63101f38c7093a9d6c59689
   faraday-em_synchrony (1.0.1) sha256=bf3ce45dcf543088d319ab051f80985ea6d294930635b7a0b966563179f81750
@@ -328,11 +335,13 @@ CHECKSUMS
   google-logging-utils (0.2.0) sha256=675462b4ea5affa825a3442694ca2d75d0069455a1d0956127207498fca3df7b
   google-protobuf (4.34.1-arm64-darwin) sha256=2745061f973119e6e7f3c81a0c77025d291a3caa6585a2cd24a25bbc7bedb267
   google-protobuf (4.34.1-x64-mingw-ucrt) sha256=8361420912aabb400a86b6e0a4baa99fa77b4b93d1fa0c5ddcd11c18969ba4d5
+  google-protobuf (4.34.1-x86_64-linux-gnu) sha256=87088c9fd8e47b5b40ca498fc1195add6149e941ff7e81c532a5b0b8876d4cc9
   googleapis-common-protos (1.9.0) sha256=207be372d8d25e3876e1e1155d057e14f3c92f8f5428772864a8ce04a0b756e4
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.16.2) sha256=15009502e2e38af71948cda918f230e27d327f6882a1e47967a5a4664930a638
   grpc (1.78.1-arm64-darwin) sha256=7378b58db8dc65b19dce8006a47c0da30f1faf5d07160d2e1816c31126d3a388
   grpc (1.78.1-x64-mingw-ucrt) sha256=9362924da9418c73ee37cc34eaa2a28f123c24b6b7ceb728a43408d27c589c71
+  grpc (1.78.1-x86_64-linux-gnu) sha256=c0715fe9bc80cf21fbaca2713abf8db6f628f6f31ec1d8762b667151e6ab0c9f
   highline (2.0.3) sha256=2ddd5c127d4692721486f91737307236fe005352d12a4202e26c48614f719479
   http-cookie (1.0.8) sha256=b14fe0445cf24bf9ae098633e9b8d42e4c07c3c1f700672b09fbfe32ffd41aa6
   httpclient (2.9.0) sha256=4b645958e494b2f86c2f8a2f304c959baa273a310e77a2931ddb986d83e498c8
