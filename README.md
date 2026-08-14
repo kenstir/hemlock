@@ -21,7 +21,7 @@ Quick start for developers
 1. Get the correct version of [Android Studio](https://developer.android.com/studio/index.html). 
    This branch is built using
    ```
-   Android Studio Quail 3 | 2026.1.3
+   Android Studio Quail 3 | 2026.1.3 Patch 1
    ```
 2. Module `core` contains shared code and resources, and there is one module per target app,
    e.g. `cwmars_app`.

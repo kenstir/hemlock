@@ -4,7 +4,7 @@
 * Target Android 16
 
 ### Internal
-* internal: Upgrade to Android Studio Quail 3 and AGP 9.3.1
+* internal: Upgrade to Android Studio Quail 3 Patch 1 and AGP 9.3.1
 * internal: Upgrade fastlane to 2.237.0
 
 ## 5.1.0
