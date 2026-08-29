@@ -73,6 +73,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var notifyBySMS: CheckBox? = null
     private var smsSpinner: Spinner? = null
     private var placeHold: Button? = null
+    private var advancedHold: Button? = null
     private var suspendHold: CheckBox? = null
     private var partRow: View? = null
     private var partSpinner: Spinner? = null
@@ -93,6 +94,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
+    private var isAdvancedHold = false
     private val visibleOrgs = App.svc.consortium.visibleOrgs
     private val smsCarriers = App.svc.consortium.smsCarriers
 
@@ -105,19 +107,22 @@ class PlaceHoldActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
+        isAdvancedHold = intent.getBooleanExtra(Key.IS_ADVANCED, false)
+
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_place_hold)
-        setupActionBar()
+        setupActionBar(if (isAdvancedHold) resources.getString(R.string.title_advanced_hold) else null)
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
 
-        record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         account = App.account
 
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
         format = findViewById(R.id.hold_format)
         placeHold = findViewById(R.id.place_hold)
+        advancedHold = findViewById(R.id.advanced_hold)
         expireDateText = findViewById(R.id.hold_expiration_date)
         notifyByEmail = findViewById(R.id.hold_enable_email_notification)
         phoneNotificationLabel = findViewById(R.id.hold_phone_notification_label)
@@ -140,7 +145,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         initEmailNotification()
         initPhoneControls(resources.getBoolean(R.bool.app_enable_phone_notification))
-        initPlaceHoldButton()
+        initButtonRow()
         initSuspendHoldButton()
         initDatePickers()
         initOrgSpinner()
@@ -251,8 +256,15 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun initPlaceHoldButton() {
+    private fun initButtonRow() {
         placeHold?.setOnClickListener { placeHold() }
+        advancedHold?.visibility = if (!isAdvancedHold && record.metarecordId != null) View.VISIBLE else View.GONE
+        advancedHold?.setOnClickListener {
+            val intent = Intent(this@PlaceHoldActivity, PlaceHoldActivity::class.java)
+            intent.putExtra(Key.RECORD_INFO, record)
+            intent.putExtra(Key.IS_ADVANCED, true)
+            startActivity(intent)
+        }
     }
 
     private fun getPhoneNotify(): String? {

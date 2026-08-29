@@ -23,7 +23,6 @@
     <string name="hold_place_title">Place Hold</string>
     <string name="hold_details_title">Hold Details</string>
     <string name="copy_information_title">Copy Information</string>
-    <string name="button_place_hold">Place hold</string>
     <string name="barcode_title">Show Card</string>
     <string name="barcode_description">Barcode</string>
     <string name="barcode_text_description">Barcode numbers</string>
@@ -134,6 +133,9 @@
     <string name="msg_change_pickup_location">Change pickup location to %1$s?</string>
     <string name="button_just_once">Just once</string>
     <string name="button_always">Always</string>
+    <string name="button_place_hold">Place hold</string>
+    <string name="button_advanced_hold">Advanced hold</string>
+    <string name="title_advanced_hold">Advanced Hold</string>
 
     <!-- Checkout items -->
     <string name="checked_out_items">%s checked out</string>

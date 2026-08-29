@@ -291,6 +291,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_place_hold" />
+
+            <Button
+                android:id="@+id/advanced_hold"
+                style="@style/ApplicationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_advanced_hold" />
         </LinearLayout>
 
     </LinearLayout>
