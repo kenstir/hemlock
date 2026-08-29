@@ -18,6 +18,7 @@
 package org.evergreen_ils.data.service
 
 import net.kenstir.data.Result
+import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.BiblioService
 import net.kenstir.data.service.ImageSize
@@ -101,7 +102,13 @@ object EvergreenBiblioService: BiblioService {
     }
 
     suspend fun fetchMARC(id: Int): OSRFObject {
-        val response = GatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_BRE, paramListOf(Api.ANONYMOUS, id), true)
+        val query = jsonMapOf(
+            "flesh_fields" to jsonMapOf(
+                "bre" to listOf("metarecord")
+            ),
+            "flesh" to 1
+        )
+        val response = GatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_BRE, paramListOf(Api.ANONYMOUS, id, query), true)
         return response.payloadFirstAsObject()
     }
 
