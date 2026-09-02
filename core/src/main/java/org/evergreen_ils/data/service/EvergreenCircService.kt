@@ -316,6 +316,28 @@ object EvergreenCircService: CircService {
         }
     }
 
+    override suspend fun fetchHoldableFormats(account: Account, targetId: Int, pickupLib: Int): Result<List<String>> {
+        return try {
+            val params = paramListOf(targetId, pickupLib)
+            val response = GatewayClient.fetch(Api.CIRC, Api.CIRC_METARECORD_HOLDS_FILTERS, params, false)
+            // Response is a JSON object with a metarecord object field.  The metarecord object has "langs" and "formats"
+            // fields which are arrays of ccvm objects.
+            val obj = response.payloadFirstAsObject()
+            Log.d(TAG, "[holds] holdableFormats=$obj")
+            val formats = arrayListOf<String>()
+            val metarecordObj = obj.getObject("metarecord") ?: throw GatewayException("missing metarecord in holdable formats response")
+            val formatsArray = metarecordObj.getObjectList("formats") ?: throw GatewayException("missing formats in holdable formats response")
+            for (formatObj in formatsArray) {
+                Log.d(TAG, "[holds]     formatObj=$formatObj")
+                val ccvmCode = formatObj.getString("code") ?: throw GatewayException("missing code in holdable format object")
+                formats.add(ccvmCode)
+            }
+            Result.Success(formats)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Boolean> {
         return try {
             Result.Success(placeHoldImpl(account, targetId, options))

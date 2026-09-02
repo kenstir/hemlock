@@ -101,6 +101,7 @@ object Api {
     const val HOLD_CANCEL = "open-ils.circ.hold.cancel"
     const val HOLD_TEST_AND_CREATE = "open-ils.circ.holds.test_and_create.batch"
     const val HOLD_TEST_AND_CREATE_OVERRIDE = "open-ils.circ.holds.test_and_create.batch.override"
+    const val CIRC_METARECORD_HOLDS_FILTERS = "open-ils.circ.mmr.holds.filters"
     const val TITLE_HOLD_IS_POSSIBLE = "open-ils.circ.title_hold.is_possible"
 
     /// fielder

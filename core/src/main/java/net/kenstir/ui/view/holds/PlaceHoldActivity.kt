@@ -179,6 +179,19 @@ class PlaceHoldActivity : BaseActivity() {
                     App.svc.loader.loadPlaceHoldPrerequisites()
                 })
 
+                val metarecordId = record.metarecordId
+                if (/*isAdvancedHold &&*/ resources.getBoolean(R.bool.app_enable_metarecord_holds) && metarecordId != null) {
+                    Log.d(TAG, "${record.title}: fetching metarecord hold formats")
+                    jobs.add(scope.async {
+                        val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
+                        val result = App.svc.circ.fetchHoldableFormats(App.account, metarecordId, selectedOrgID)
+                        if (result is Result.Error) {
+                            showAlert(result.exception)
+                        }
+                        Result.Success(Unit)
+                    })
+                }
+
                 if (resources.getBoolean(R.bool.app_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
@@ -258,7 +271,9 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initButtonRow() {
         placeHold?.setOnClickListener { placeHold() }
-        advancedHold?.visibility = if (!isAdvancedHold && record.metarecordId != null) View.VISIBLE else View.GONE
+        advancedHold?.visibility = if (!isAdvancedHold
+            && resources.getBoolean(R.bool.app_enable_metarecord_holds)
+            && record.metarecordId != null) View.VISIBLE else View.GONE
         advancedHold?.setOnClickListener {
             val intent = Intent(this@PlaceHoldActivity, PlaceHoldActivity::class.java)
             intent.putExtra(Key.RECORD_INFO, record)

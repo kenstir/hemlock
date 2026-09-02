@@ -81,6 +81,11 @@ interface CircService {
     suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<Boolean>
 
     /**
+     * Fetches a list of holdable formats for the given metarecord and pickup library.
+     */
+    suspend fun fetchHoldableFormats(account: Account, targetId: Int, pickupLib: Int): Result<List<String>>
+
+    /**
      * Places a hold on the specified target.
      *
      * @param targetId titleId for Title hold, partId for Part hold
