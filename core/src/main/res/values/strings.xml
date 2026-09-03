@@ -306,4 +306,5 @@
     <string name="system_alert_dont_show_again">Don\'t show again</string>
     <string name="advanced_hold_formats_title">Desired format(s)</string>
     <string name="msg_no_holdable_formats">No holdable formats found</string>
+    <string name="any_x_format_checkbox_label">Any %1$s</string>
 </resources>

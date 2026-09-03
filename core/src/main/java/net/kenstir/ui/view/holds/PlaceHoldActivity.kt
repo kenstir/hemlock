@@ -252,7 +252,7 @@ class PlaceHoldActivity : BaseActivity() {
         Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
-    private fun onHoldableFormatsResult(result: Result<List<String>?>) {
+    private fun onHoldableFormatsResult(result: Result<List<String>>) {
         if (result is Result.Error) {
             showAlert(result.exception)
             return
@@ -263,7 +263,7 @@ class PlaceHoldActivity : BaseActivity() {
             Log.d(TAG, "${record.title}: holdable format: $formatCode")
             val checkBox = CheckBox(this@PlaceHoldActivity).apply {
                 val formatLabel = App.svc.biblio.iconFormatLabel(formatCode)
-                text = "Any $formatLabel"
+                text = context.getString(R.string.any_x_format_checkbox_label, formatLabel)
                 isChecked = false
                 setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
