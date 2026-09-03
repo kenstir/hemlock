@@ -29,6 +29,7 @@ import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgCodedValueMap
 
 object EvergreenBiblioService: BiblioService {
 
@@ -38,6 +39,10 @@ object EvergreenBiblioService: BiblioService {
             ImageSize.MEDIUM -> GatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record.id)
             ImageSize.LARGE -> GatewayClient.getUrl("/opac/extras/ac/jacket/large/r/" + record.id)
         }
+    }
+
+    override fun iconFormatLabel(formatCode: String): String {
+        return EgCodedValueMap.getValueFromCode(EgCodedValueMap.ICON_FORMAT, formatCode) ?: formatCode
     }
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {

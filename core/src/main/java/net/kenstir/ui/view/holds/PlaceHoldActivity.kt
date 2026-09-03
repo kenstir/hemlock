@@ -262,7 +262,8 @@ class PlaceHoldActivity : BaseActivity() {
         holdableFormats?.forEach { formatCode ->
             Log.d(TAG, "${record.title}: holdable format: $formatCode")
             val checkBox = CheckBox(this@PlaceHoldActivity).apply {
-                text = formatCode
+                val formatLabel = App.svc.biblio.iconFormatLabel(formatCode)
+                text = "Any $formatLabel"
                 isChecked = false
                 setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
