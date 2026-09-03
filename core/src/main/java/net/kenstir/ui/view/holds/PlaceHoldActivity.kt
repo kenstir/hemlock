@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -87,6 +88,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var thawDate: Date? = null
     private var expireDateText: EditText? = null
     private var expireDate: Date? = null
+    private var advancedHoldOptionsLayout: LinearLayout? = null
     private var selectedOrgPos = 0
     private var ignoreNextOrgSelection = false // ignore initial onItemSelected callback
     private var selectedSMSPos = 0
@@ -95,6 +97,8 @@ class PlaceHoldActivity : BaseActivity() {
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
     private var isAdvancedHold = false
+    private var holdableFormats: ArrayList<String>? = null
+    private var selectedHoldFormats = mutableListOf<String>()
     private val visibleOrgs = App.svc.consortium.visibleOrgs
     private val smsCarriers = App.svc.consortium.smsCarriers
 
@@ -109,6 +113,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         isAdvancedHold = intent.getBooleanExtra(Key.IS_ADVANCED, false)
+        holdableFormats = intent.getStringArrayListExtra(Key.HOLDABLE_FORMATS)
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_place_hold)
@@ -138,6 +143,7 @@ class PlaceHoldActivity : BaseActivity() {
         partSpinner = findViewById(R.id.hold_part_spinner)
         orgSpinner = findViewById(R.id.hold_pickup_location)
         thawDateText = findViewById(R.id.hold_thaw_date)
+        advancedHoldOptionsLayout = findViewById(R.id.advanced_hold_options_layout)
 
         title?.text = record.title
         author?.text = record.author
@@ -180,14 +186,12 @@ class PlaceHoldActivity : BaseActivity() {
                 })
 
                 val metarecordId = record.metarecordId
-                if (/*isAdvancedHold &&*/ resources.getBoolean(R.bool.app_enable_metarecord_holds) && metarecordId != null) {
+                if (isAdvancedHold && metarecordId != null) {
                     Log.d(TAG, "${record.title}: fetching metarecord hold formats")
                     jobs.add(scope.async {
                         val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
                         val result = App.svc.circ.fetchHoldableFormats(App.account, metarecordId, selectedOrgID)
-                        if (result is Result.Error) {
-                            showAlert(result.exception)
-                        }
+                        onHoldableFormatsResult(result)
                         Result.Success(Unit)
                     })
                 }
@@ -248,6 +252,30 @@ class PlaceHoldActivity : BaseActivity() {
         Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
+    private fun onHoldableFormatsResult(result: Result<List<String>?>) {
+        if (result is Result.Error) {
+            showAlert(result.exception)
+            return
+        }
+        holdableFormats = ArrayList(result.get())
+        Log.d(TAG, "${record.title}: ${holdableFormats?.size} holdable formats found")
+        holdableFormats?.forEach { formatCode ->
+            Log.d(TAG, "${record.title}: holdable format: $formatCode")
+            val checkBox = CheckBox(this@PlaceHoldActivity).apply {
+                text = formatCode
+                isChecked = false
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        selectedHoldFormats.add(formatCode)
+                    } else {
+                        selectedHoldFormats.remove(formatCode)
+                    }
+                }
+            }
+            advancedHoldOptionsLayout?.addView(checkBox)
+        }
+    }
+
     private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
         if (notifyByEmail?.isChecked == true) notify.add("email")
@@ -278,8 +306,10 @@ class PlaceHoldActivity : BaseActivity() {
             val intent = Intent(this@PlaceHoldActivity, PlaceHoldActivity::class.java)
             intent.putExtra(Key.RECORD_INFO, record)
             intent.putExtra(Key.IS_ADVANCED, true)
+            intent.putStringArrayListExtra(Key.HOLDABLE_FORMATS, ArrayList(holdableFormats ?: emptyList()))
             startActivity(intent)
         }
+        advancedHoldOptionsLayout?.visibility = if (isAdvancedHold) View.VISIBLE else View.GONE
     }
 
     private fun getPhoneNotify(): String? {
@@ -334,6 +364,7 @@ class PlaceHoldActivity : BaseActivity() {
             val itemId: Int
             when {
                 partRequired || getPartId() > 0 -> { holdType = HoldType.PART; itemId = getPartId() }
+                isAdvancedHold -> { holdType = HoldType.METARECORD; itemId = record.metarecordId ?: -1 }
                 else -> { holdType = HoldType.TITLE; itemId = record.id }
             }
             Log.d(TAG, "[holds] placeHold: $holdType $itemId")
@@ -344,6 +375,7 @@ class PlaceHoldActivity : BaseActivity() {
                 phoneNotify = getPhoneNotify(),
                 smsNotify = getSMSNotify(),
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
+                metarecordHoldFormats = if (isAdvancedHold) selectedHoldFormats else null,
                 useOverride = resources.getBoolean(R.bool.app_enable_hold_use_override),
                 pickupLib = selectedOrgID,
                 expireTime = expireDate,

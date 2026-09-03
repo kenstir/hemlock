@@ -304,4 +304,6 @@
     <string name="android_too_old_message">Sorry, your Android is too old to support this function</string>
     <string name="system_alert_title">Alert</string>
     <string name="system_alert_dont_show_again">Don\'t show again</string>
+    <string name="advanced_hold_formats_title">Desired format(s)</string>
+    <string name="msg_no_holdable_formats">No holdable formats found</string>
 </resources>
