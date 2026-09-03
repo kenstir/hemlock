@@ -22,6 +22,7 @@ import net.kenstir.data.model.BibRecord
 
 interface BiblioService {
     fun imageUrl(record: BibRecord, size: ImageSize): String?
+    fun iconFormatLabel(formatCode: String): String
     suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit>
     suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit>
     suspend fun loadRecordCopyCounts(bibRecord: BibRecord, orgId: Int): Result<Unit>

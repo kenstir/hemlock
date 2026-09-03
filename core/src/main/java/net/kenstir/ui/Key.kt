@@ -24,6 +24,8 @@ package net.kenstir.ui
 object Key {
     const val ACCOUNT_ID = "accountId"
     const val HOLD_RECORD = "holdRecord"
+    const val HOLDABLE_FORMATS = "holdableFormats"
+    const val IS_ADVANCED = "isAdvanced"
     const val NUM_RESULTS = "numResults"
     const val ORG_ID = "orgID"
     const val PATRON_LIST = "patronList"

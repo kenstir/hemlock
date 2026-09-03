@@ -315,7 +315,8 @@ class DetailsFragment : Fragment() {
                 val biblioService = App.svc.biblio
 
                 jobs.add(scope.async {
-                    biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.app_need_marc_record))
+                    val needMARC = resources.getBoolean(R.bool.app_need_marc_record) || resources.getBoolean(R.bool.app_enable_metarecord_holds)
+                    biblioService.loadRecordDetails(record, needMARC)
                     loadMetadata()
                     Log.d(TAG, "${record.id}: loadRecordMetadataAsync done")
                 })

@@ -20,6 +20,9 @@ package org.evergreen_ils.data.service
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.json.Json
+import net.kenstir.data.JSONDictionary
+import net.kenstir.data.JSONDictionarySerializer
 import net.kenstir.util.Analytics
 import net.kenstir.data.MutableJSONDictionary
 import net.kenstir.data.Result
@@ -307,10 +310,32 @@ object EvergreenCircService: CircService {
             )
             val params = paramListOf(authToken, param)
             val response = GatewayClient.fetch(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, params, false)
-            // The response is a JSON object with details, e.g. "success":1.  But if a title hold is not posssible,
+            // The response is a JSON object with details, e.g. "success":1.  But if a title hold is not possible,
             // the response includes an event and an error is thrown while deserializing.
             response.payloadFirstAsObject()
             Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchHoldableFormats(account: Account, targetId: Int, pickupLib: Int): Result<List<String>> {
+        return try {
+            val params = paramListOf(targetId, pickupLib)
+            val response = GatewayClient.fetch(Api.CIRC, Api.CIRC_METARECORD_HOLDS_FILTERS, params, false)
+            // Response is a JSON object with a metarecord object field.  The metarecord object has "langs" and "formats"
+            // fields which are arrays of ccvm objects.
+            val obj = response.payloadFirstAsObject()
+            Log.d(TAG, "[holds] holdableFormats=$obj")
+            val formats = arrayListOf<String>()
+            val metarecordObj = obj.getObject("metarecord") ?: throw GatewayException("missing metarecord in holdable formats response")
+            val formatsArray = metarecordObj.getObjectList("formats") ?: throw GatewayException("missing formats in holdable formats response")
+            for (formatObj in formatsArray) {
+                Log.d(TAG, "[holds]     formatObj=$formatObj")
+                val ccvmCode = formatObj.getString("code") ?: throw GatewayException("missing code in holdable format object")
+                formats.add(ccvmCode)
+            }
+            Result.Success(formats)
         } catch (e: Exception) {
             Result.Error(e)
         }
@@ -342,6 +367,9 @@ object EvergreenCircService: CircService {
             param["sms_carrier"] = options.smsCarrierId
             param["sms_notify"] = options.smsNotify
         }
+        if (options.holdType == HoldType.METARECORD) {
+            param["holdable_formats_map"] = makeHoldableFormatsMap(targetId, options.metarecordHoldFormats ?: emptyList())
+        }
 
         val params = paramListOf(authToken, param, arrayListOf(targetId))
         val method = if (options.useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
@@ -349,6 +377,24 @@ object EvergreenCircService: CircService {
         val obj = response.payloadFirstAsObject()
         Log.d(TAG, "[holds] hold create returned $obj")
         return true
+    }
+
+    // Creates the `holdable_formats_map` for a metarecord hold, e.g.
+    // {"241": "{"0": [{"_attr":"mr_hold_format","_val":"book"},{"_attr":"mr_hold_format","_val":"lpbook"}],
+    //           "1": [{"_attr":"item_lang","_val":"eng"}]}"
+    // }
+    //
+    // NOTE: For some crazy reason Evergreen expects a Map<String, String>.  Not a Map, Not a String.
+    private fun makeHoldableFormatsMap(targetId: Int, formats: List<String>): JSONDictionary {
+        val formatsMap = jsonMapOf(
+            "0" to formats.map { jsonMapOf("_attr" to "mr_hold_format", "_val" to it) }
+            // TODO: "1" -> languages if needed
+        )
+        val formatMapString = Json.encodeToString(JSONDictionarySerializer, formatsMap)
+        val map = jsonMapOf(
+            targetId.toString() to formatMapString
+        )
+        return map
     }
 
     override suspend fun updateHold(account: Account, holdId: Int, options: HoldUpdateOptions): Result<Boolean> {
