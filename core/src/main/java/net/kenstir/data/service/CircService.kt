@@ -81,6 +81,11 @@ interface CircService {
     suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<Boolean>
 
     /**
+     * Fetches a list of holdable format codes for the given metarecord and pickup library.
+     */
+    suspend fun fetchHoldableFormats(account: Account, targetId: Int, pickupLib: Int): Result<List<String>>
+
+    /**
      * Places a hold on the specified target.
      *
      * @param targetId titleId for Title hold, partId for Part hold
@@ -106,6 +111,7 @@ interface CircService {
  * @property phoneNotify Phone number to notify.
  * @property smsNotify Phone number to notify by SMS.
  * @property smsCarrierId Carrier ID for SMS notification.
+ * @property metarecordHoldFormats List of hold format codes for metarecord holds (holdType "M").
  * @property useOverride Whether to use the .override option when placing a hold.
  * @property pickupLib Library ID for pickup location.
  * @property expireTime Expiration time for the hold.
@@ -118,6 +124,7 @@ data class HoldOptions(
     val phoneNotify: String? = null,
     val smsNotify: String? = null,
     val smsCarrierId: Int? = null,
+    val metarecordHoldFormats: List<String>? = null,
     val useOverride: Boolean = false,
     var pickupLib: Int,
     var expireTime: Date? = null,

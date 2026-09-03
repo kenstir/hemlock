@@ -18,6 +18,7 @@
 package org.evergreen_ils.data.service
 
 import net.kenstir.data.Result
+import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.BiblioService
 import net.kenstir.data.service.ImageSize
@@ -28,6 +29,7 @@ import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
+import org.evergreen_ils.system.EgCodedValueMap
 
 object EvergreenBiblioService: BiblioService {
 
@@ -37,6 +39,10 @@ object EvergreenBiblioService: BiblioService {
             ImageSize.MEDIUM -> GatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record.id)
             ImageSize.LARGE -> GatewayClient.getUrl("/opac/extras/ac/jacket/large/r/" + record.id)
         }
+    }
+
+    override fun iconFormatLabel(formatCode: String): String {
+        return EgCodedValueMap.getValueFromCode(EgCodedValueMap.ICON_FORMAT, formatCode) ?: formatCode
     }
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
@@ -101,7 +107,13 @@ object EvergreenBiblioService: BiblioService {
     }
 
     suspend fun fetchMARC(id: Int): OSRFObject {
-        val response = GatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_BRE, paramListOf(Api.ANONYMOUS, id), true)
+        val query = jsonMapOf(
+            "flesh_fields" to jsonMapOf(
+                "bre" to listOf("metarecord")
+            ),
+            "flesh" to 1
+        )
+        val response = GatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_BRE, paramListOf(Api.ANONYMOUS, id, query), true)
         return response.payloadFirstAsObject()
     }
 
