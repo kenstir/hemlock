@@ -1,6 +1,7 @@
 ## 5.2.0
 
 ### New
+* New feature: tap to zoom on item image in Details screen
 * Target Android 16
 
 ### Internal
