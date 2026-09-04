@@ -20,6 +20,7 @@
 package net.kenstir.ui.view.details
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
@@ -37,6 +38,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil3.load
+import coil3.request.crossfade
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.model.BibRecord
@@ -133,9 +135,7 @@ class DetailsFragment : Fragment() {
 
         // Start async load
         record?.let {
-            val url = App.svc.biblio.imageUrl(it, ImageSize.MEDIUM)
-            //Log.d(TAG, "${it.id}: load $url")
-            recordImage?.load(url)
+            initImage(it)
             fetchData(it)
         }
 
@@ -220,6 +220,37 @@ class DetailsFragment : Fragment() {
         builder.setTitle(R.string.record_online_access)
         builder.setItems(titles) { _, which -> launchURL(links[which].href) }
         builder.create().show()
+    }
+
+    private fun initImage(record: BibRecord) {
+        val url = App.svc.biblio.imageUrl(record, ImageSize.MEDIUM)
+        recordImage?.load(url)
+
+        recordImage?.setOnClickListener {
+            val url = App.svc.biblio.imageUrl(record, ImageSize.LARGE)
+            showFullScreenImage(url)
+        }
+    }
+
+    private fun showFullScreenImage(url: String?) {
+        val activity = activity ?: return
+
+        // Instantiate a dialog styled to run full-screen
+        val dialog = Dialog(activity, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_full_screen_image)
+
+        // Load the image
+        val recordImage = dialog.findViewById<ImageView>(R.id.record_image)
+        recordImage.load(url) {
+            crossfade(true)
+        }
+
+        // Tap to dismiss
+        recordImage.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun updateButtonViews() {

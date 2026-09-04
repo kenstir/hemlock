@@ -2,6 +2,7 @@
 
 ### New
 * New feature: Advanced Hold
+* New feature: Tap to zoom item image in Details screen
 * Target Android 16
 
 ### Internal
