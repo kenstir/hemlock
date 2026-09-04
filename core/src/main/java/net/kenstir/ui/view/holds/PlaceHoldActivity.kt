@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -39,6 +40,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import coil3.load
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
@@ -47,6 +49,7 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldPart
 import net.kenstir.data.model.HoldType
 import net.kenstir.data.service.HoldOptions
+import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
@@ -66,6 +69,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var title: TextView? = null
     private var author: TextView? = null
     private var format: TextView? = null
+    private var recordImage: ImageView? = null
     private var account: Account? = null
     private var smsNumberText: EditText? = null
     private var phoneNumberText: EditText? = null
@@ -126,6 +130,7 @@ class PlaceHoldActivity : BaseActivity() {
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
         format = findViewById(R.id.hold_format)
+        recordImage = findViewById(R.id.record_image)
         placeHold = findViewById(R.id.place_hold)
         advancedHold = findViewById(R.id.advanced_hold)
         expireDateText = findViewById(R.id.hold_expiration_date)
@@ -148,6 +153,12 @@ class PlaceHoldActivity : BaseActivity() {
         title?.text = record.title
         author?.text = record.author
         format?.text = record.iconFormatLabel
+
+        // Start async image load
+        record.let {
+            val url = App.svc.biblio.imageUrl(it, ImageSize.MEDIUM)
+            recordImage?.load(url)
+        }
 
         initEmailNotification()
         initPhoneControls(resources.getBoolean(R.bool.app_enable_phone_notification))

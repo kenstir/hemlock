@@ -14,27 +14,67 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/hold_title"
-            style="@style/HemlockText.PagePrimary"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            tools:text="Trashed : a graphic novel" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/hold_author"
-            style="@style/HemlockText.PageTertiary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Derf" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/hold_format"
-            style="@style/HemlockText.PageTertiary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Book" />
+                <TextView
+                    android:id="@+id/hold_title"
+                    style="@style/HemlockText.PagePrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Harry Potter and the Goblet of Fire" />
+
+                <TextView
+                    android:id="@+id/hold_author"
+                    style="@style/HemlockText.PageSecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/spannable_text_min_height"
+                    tools:text="Rowling, J. K." />
+
+                <TextView
+                    android:id="@+id/hold_format"
+                    style="@style/HemlockText.PageSecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    tools:text="Book" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/record_details_publisher"-->
+<!--                    style="@style/HemlockText.PageTertiary"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="3dp"-->
+<!--                    tools:text="c2000 Arthur A. Levine Books" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/record_details_physical_description"-->
+<!--                    style="@style/HemlockText.PageTertiary"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="3dp"-->
+<!--                    tools:text="352 p., [1] folded leaf of plates : ill. (some col.) ; 23 cm." />-->
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/record_image"
+                android:layout_width="140dp"
+                android:layout_height="180dp"
+                android:paddingLeft="8dp"
+                tools:src="@drawable/sample_jacket"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/hold_part_row"
