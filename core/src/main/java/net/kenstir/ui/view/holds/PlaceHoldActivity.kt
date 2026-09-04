@@ -288,19 +288,19 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun logPlaceHoldResult(result: String) {
-        val notify = ArrayList<String?>()
-        if (notifyByEmail?.isChecked == true) notify.add("email")
-        if (notifyByPhone?.isChecked == true) notify.add("phone")
-        if (notifyBySMS?.isChecked == true) notify.add("sms")
+    private fun logPlaceHoldResult(result: String, holdOptions: HoldOptions) {
 
-        val notifyTypes = TextUtils.join("|", notify)
         try {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
                 Analytics.Param.RESULT to result,
-                Analytics.Param.HOLD_NOTIFY to notifyTypes,
+                Analytics.Param.HOLD_NOTIFY to Analytics.notifyDimensionValue(
+                    holdOptions.emailNotify,
+                    !holdOptions.phoneNotify.isNullOrEmpty(),
+                    !holdOptions.smsNotify.isNullOrEmpty()),
                 Analytics.Param.HOLD_EXPIRES_KEY to Analytics.boolValue(expireDate != null),
-                Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(visibleOrgs[selectedOrgPos],
+                Analytics.Param.HOLD_TYPE_KEY to holdOptions.holdType,
+                Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionValue(
+                    visibleOrgs[selectedOrgPos],
                     App.svc.consortium.findOrg(App.account.pickupOrg),
                     App.svc.consortium.findOrg(App.account.homeOrg)),
             ))
@@ -400,13 +400,13 @@ class PlaceHoldActivity : BaseActivity() {
             hideBusy()
             when (result) {
                 is Result.Success -> {
-                    logPlaceHoldResult(Analytics.Value.OK)
+                    logPlaceHoldResult(Analytics.Value.OK, options)
                     Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed", Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
                     finish()
                 }
                 is Result.Error -> {
-                    logPlaceHoldResult(result.exception.getCustomMessage())
+                    logPlaceHoldResult(result.exception.getCustomMessage(), options)
                     showAlert(result.exception)
                 }
             }
