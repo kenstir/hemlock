@@ -174,7 +174,7 @@ object EvergreenLoaderService: LoaderService {
 
     private suspend fun loadCodedValueMaps() {
         Log.v(TAG, "loadCodedValueMaps ...")
-        val formats = listOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
+        val formats = listOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT, EgCodedValueMap.ITEM_LANG)
         val searchParams = jsonMapOf("ctype" to formats)
         val response = GatewayClient.fetch(Api.PCRUD, Api.SEARCH_CCVM, paramListOf(Api.ANONYMOUS, searchParams), true)
         EgCodedValueMap.loadCodedValueMaps(response.payloadFirstAsObjectList())

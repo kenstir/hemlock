@@ -134,8 +134,18 @@
     <string name="button_just_once">Just once</string>
     <string name="button_always">Always</string>
     <string name="button_place_hold">Place hold</string>
-    <string name="button_advanced_hold">Advanced hold</string>
-    <string name="title_advanced_hold">Advanced Hold</string>
+    <string name="advanced_hold_button">Advanced hold</string>
+    <string name="advanced_hold_title">Advanced Hold</string>
+    <string name="advanced_hold_formats_label">Desired formats</string>
+    <string name="advanced_hold_langs_label">Desired languages</string>
+    <string name="advanced_hold_msg">An Advanced Hold will be filled by the first available item in any of the Desired formats and languages; for example, either DVD or Blu-ray.</string>
+    <string name="no_holdable_formats_msg">No holdable formats found</string>
+    <string name="any_x_format_label">Any %1$s</string>
+    <string name="notification_options_label">Notification options</string>
+    <string name="no_format_selected_title">No format selected</string>
+    <string name="no_format_selected_msg">You must select at least one format before placing a hold on this item</string>
+    <string name="no_lang_selected_title">No language selected</string>
+    <string name="no_lang_selected_msg">You must select at least one language before placing a hold on this item</string>
 
     <!-- Checkout items -->
     <string name="checked_out_items">%s checked out</string>
@@ -304,8 +314,4 @@
     <string name="android_too_old_message">Sorry, your Android is too old to support this function</string>
     <string name="system_alert_title">Alert</string>
     <string name="system_alert_dont_show_again">Don\'t show again</string>
-    <string name="advanced_hold_formats_label">Desired formats</string>
-    <string name="msg_no_holdable_formats">No holdable formats found</string>
-    <string name="any_x_format_checkbox_label">Any %1$s</string>
-    <string name="notification_options_label">Notification options</string>
 </resources>

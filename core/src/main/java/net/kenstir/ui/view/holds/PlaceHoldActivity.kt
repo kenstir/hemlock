@@ -50,6 +50,7 @@ import net.kenstir.data.model.HoldPart
 import net.kenstir.data.model.HoldType
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.data.service.ImageSize
+import net.kenstir.data.service.MetarecordHoldOptions
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
@@ -64,6 +65,8 @@ import net.kenstir.util.getCustomMessage
 import net.kenstir.util.indexOfFirstOrZero
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+import java.util.MissingResourceException
 
 class PlaceHoldActivity : BaseActivity() {
     private var title: TextView? = null
@@ -92,7 +95,8 @@ class PlaceHoldActivity : BaseActivity() {
     private var thawDate: Date? = null
     private var expireDateText: EditText? = null
     private var expireDate: Date? = null
-    private var advancedHoldOptionsLayout: LinearLayout? = null
+    private var advancedHoldFormatsLayout: LinearLayout? = null
+    private var advancedHoldLangsLayout: LinearLayout? = null
     private var selectedOrgPos = 0
     private var ignoreNextOrgSelection = false // ignore initial onItemSelected callback
     private var selectedSMSPos = 0
@@ -101,8 +105,10 @@ class PlaceHoldActivity : BaseActivity() {
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: BibRecord
     private var isAdvancedHold = false
-    private var holdableFormats: ArrayList<String>? = null
+    private var holdableFormats: List<String>? = null
     private var selectedHoldFormats = mutableListOf<String>()
+    private var holdableLangs: List<String>? = null
+    private var selectedHoldLangs = mutableListOf<String>()
     private val visibleOrgs = App.svc.consortium.visibleOrgs
     private val smsCarriers = App.svc.consortium.smsCarriers
 
@@ -118,10 +124,11 @@ class PlaceHoldActivity : BaseActivity() {
         record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         isAdvancedHold = intent.getBooleanExtra(Key.IS_ADVANCED, false)
         holdableFormats = intent.getStringArrayListExtra(Key.HOLDABLE_FORMATS)
+        holdableLangs = intent.getStringArrayListExtra(Key.HOLDABLE_LANGS)
 
         compatEnableEdgeToEdge()
         setContentView(R.layout.activity_place_hold)
-        setupActionBar(if (isAdvancedHold) resources.getString(R.string.title_advanced_hold) else null)
+        setupActionBar(if (isAdvancedHold) resources.getString(R.string.advanced_hold_title) else null)
         adjustPaddingForEdgeToEdge()
         setupNavigationDrawer()
 
@@ -148,7 +155,8 @@ class PlaceHoldActivity : BaseActivity() {
         partSpinner = findViewById(R.id.hold_part_spinner)
         orgSpinner = findViewById(R.id.hold_pickup_location)
         thawDateText = findViewById(R.id.hold_thaw_date)
-        advancedHoldOptionsLayout = findViewById(R.id.advanced_hold_options_layout)
+        advancedHoldFormatsLayout = findViewById(R.id.advanced_hold_formats_layout)
+        advancedHoldLangsLayout = findViewById(R.id.advanced_hold_langs_layout)
 
         title?.text = record.title
         author?.text = record.author
@@ -162,7 +170,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         initEmailNotification()
         initPhoneControls(resources.getBoolean(R.bool.app_enable_phone_notification))
-        initButtonRow()
+        initAdvancedHoldViews()
         initSuspendHoldButton()
         initDatePickers()
         initOrgSpinner()
@@ -190,7 +198,6 @@ class PlaceHoldActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Result<Unit>>>()
                 showBusy(R.string.msg_loading_place_hold)
-                placeHold?.isEnabled = false
 
                 jobs.add(scope.async {
                     App.svc.loader.loadPlaceHoldPrerequisites()
@@ -201,8 +208,8 @@ class PlaceHoldActivity : BaseActivity() {
                     Log.d(TAG, "${record.title}: fetching metarecord hold formats")
                     jobs.add(scope.async {
                         val selectedOrgID = if (visibleOrgs.size > selectedOrgPos) visibleOrgs[selectedOrgPos].id else -1
-                        val result = App.svc.circ.fetchHoldableFormats(App.account, metarecordId, selectedOrgID)
-                        onHoldableFormatsResult(result)
+                        val result = App.svc.circ.fetchMetarecordHoldOptions(App.account, metarecordId, selectedOrgID)
+                        onMetarecordHoldOptionsResult(result)
                         Result.Success(Unit)
                     })
                 }
@@ -226,7 +233,7 @@ class PlaceHoldActivity : BaseActivity() {
                 logOrgStats()
                 initPartControls()
                 initSMSControls()
-                placeHold?.isEnabled = true
+                enableHoldButtons()
                 Log.logElapsedTime(TAG, start, "[async] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[async] fetchData ... caught", ex)
@@ -241,6 +248,14 @@ class PlaceHoldActivity : BaseActivity() {
         if (Analytics.isDebuggable(this)) {
             App.svc.consortium.dumpOrgStats()
         }
+    }
+
+    private fun enableHoldButtons() {
+        if (!isAdvancedHold && hasParts) {
+            advancedHold?.visibility = View.GONE
+        }
+        placeHold?.isEnabled = true
+        advancedHold?.isEnabled = true
     }
 
     private fun onPartsResult(result: Result<List<HoldPart>>) {
@@ -263,18 +278,20 @@ class PlaceHoldActivity : BaseActivity() {
         Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
-    private fun onHoldableFormatsResult(result: Result<List<String>>) {
+    private fun onMetarecordHoldOptionsResult(result: Result<MetarecordHoldOptions>) {
         if (result is Result.Error) {
             showAlert(result.exception)
             return
         }
-        holdableFormats = ArrayList(result.get())
+        val options = result.get()
+
+        holdableFormats = options.formatCodes
         Log.d(TAG, "${record.title}: ${holdableFormats?.size} holdable formats found")
         holdableFormats?.forEach { formatCode ->
             Log.d(TAG, "${record.title}: holdable format: $formatCode")
             val checkBox = CheckBox(this@PlaceHoldActivity).apply {
                 val formatLabel = App.svc.biblio.iconFormatLabel(formatCode)
-                text = context.getString(R.string.any_x_format_checkbox_label, formatLabel)
+                text = context.getString(R.string.any_x_format_label, formatLabel)
                 isChecked = false
                 setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
@@ -284,7 +301,38 @@ class PlaceHoldActivity : BaseActivity() {
                     }
                 }
             }
-            advancedHoldOptionsLayout?.addView(checkBox)
+            advancedHoldFormatsLayout?.addView(checkBox)
+        }
+
+        holdableLangs = options.languageCodes
+        val defaultLang = getDefaultLang()
+        Log.d(TAG, "${record.title}: ${holdableLangs?.size} holdable languages found, default=$defaultLang")
+        holdableLangs?.forEach { langCode ->
+            Log.d(TAG, "${record.title}: holdable language: $langCode")
+            val checkBox = CheckBox(this@PlaceHoldActivity).apply {
+                val langLabel = App.svc.biblio.languageLabel(langCode)
+                text = langLabel
+                isChecked = (langCode == defaultLang)
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        selectedHoldLangs.add(langCode)
+                    } else {
+                        selectedHoldLangs.remove(langCode)
+                    }
+                }
+            }
+            if (checkBox.isChecked) {
+                selectedHoldLangs.add(langCode)
+            }
+            advancedHoldLangsLayout?.addView(checkBox)
+        }
+    }
+
+    private fun getDefaultLang(): String? {
+        return try {
+            Locale.getDefault().isO3Language
+        } catch (_: MissingResourceException) {
+            null
         }
     }
 
@@ -309,8 +357,9 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun initButtonRow() {
+    private fun initAdvancedHoldViews() {
         placeHold?.setOnClickListener { placeHold() }
+        placeHold?.isEnabled = false
         advancedHold?.visibility = if (!isAdvancedHold
             && resources.getBoolean(R.bool.app_enable_metarecord_holds)
             && record.metarecordId != null) View.VISIBLE else View.GONE
@@ -318,10 +367,14 @@ class PlaceHoldActivity : BaseActivity() {
             val intent = Intent(this@PlaceHoldActivity, PlaceHoldActivity::class.java)
             intent.putExtra(Key.RECORD_INFO, record)
             intent.putExtra(Key.IS_ADVANCED, true)
+            // HOLDABLE_FORMATS and HOLDABLE_LANGS will be used only if we fetch in Place Hold, and if we want to
+            // hide the Advanced Hold button in the case of only one format.
             intent.putStringArrayListExtra(Key.HOLDABLE_FORMATS, ArrayList(holdableFormats ?: emptyList()))
+            intent.putStringArrayListExtra(Key.HOLDABLE_LANGS, ArrayList(holdableLangs ?: emptyList()))
             startActivity(intent)
         }
-        advancedHoldOptionsLayout?.visibility = if (isAdvancedHold) View.VISIBLE else View.GONE
+        advancedHoldFormatsLayout?.visibility = if (isAdvancedHold) View.VISIBLE else View.GONE
+        advancedHoldLangsLayout?.visibility = if (isAdvancedHold) View.VISIBLE else View.GONE
     }
 
     private fun getPhoneNotify(): String? {
@@ -354,6 +407,23 @@ class PlaceHoldActivity : BaseActivity() {
             builder.create().show()
             return false
         }
+        if (isAdvancedHold && holdableFormats.orEmpty().size > 1 && selectedHoldFormats.isEmpty()) {
+            val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+            builder.setTitle(getString(R.string.no_format_selected_title))
+                    .setMessage(getString(R.string.no_format_selected_msg))
+                    .setPositiveButton(android.R.string.ok, null)
+            builder.create().show()
+            return false
+        }
+        if (isAdvancedHold && holdableLangs.orEmpty().size > 1 && selectedHoldLangs.isEmpty()) {
+            val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+            builder.setTitle(getString(R.string.no_lang_selected_title))
+                    .setMessage(getString(R.string.no_lang_selected_msg))
+                    .setPositiveButton(android.R.string.ok, null)
+            builder.create().show()
+            return false
+        }
+
         if (notifyByPhone?.isChecked == true && notifyByPhone?.isVisible == true && TextUtils.isEmpty(phoneNumberText?.text.toString())) {
             phoneNumberText?.error = getString(R.string.error_phone_notify_empty)
             return false
@@ -387,7 +457,7 @@ class PlaceHoldActivity : BaseActivity() {
                 phoneNotify = getPhoneNotify(),
                 smsNotify = getSMSNotify(),
                 smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
-                metarecordHoldFormats = if (isAdvancedHold) selectedHoldFormats else null,
+                metarecordHoldOptions = if (isAdvancedHold) MetarecordHoldOptions(selectedHoldFormats, selectedHoldLangs) else null,
                 useOverride = resources.getBoolean(R.bool.app_enable_hold_use_override),
                 pickupLib = selectedOrgID,
                 expireTime = expireDate,

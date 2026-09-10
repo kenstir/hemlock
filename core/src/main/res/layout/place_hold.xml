@@ -308,7 +308,7 @@
         </TableLayout>
 
         <LinearLayout
-            android:id="@+id/advanced_hold_options_layout"
+            android:id="@+id/advanced_hold_formats_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -320,7 +320,21 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="4dp"
                 android:text="@string/advanced_hold_formats_label" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/advanced_hold_langs_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/HemlockText.PageSecondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:text="@string/advanced_hold_langs_label" />
         </LinearLayout>
 
         <LinearLayout
@@ -344,7 +358,7 @@
                 style="@style/ApplicationButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_advanced_hold" />
+                android:text="@string/advanced_hold_button" />
         </LinearLayout>
 
     </LinearLayout>

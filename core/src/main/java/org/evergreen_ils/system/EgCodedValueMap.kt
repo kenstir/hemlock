@@ -27,12 +27,14 @@ object EgCodedValueMap {
     const val TAG = "CodedValueMap"
     const val SEARCH_FORMAT = "search_format"
     const val ICON_FORMAT = "icon_format"
+    const val ITEM_LANG = "item_lang"
     const val ALL_SEARCH_FORMATS = "All Formats"
 
     internal data class CodedValue(val code: String, val value: String, val opacVisible: Boolean)
 
     private var searchFormats = ArrayList<CodedValue>()
     private var iconFormats = ArrayList<CodedValue>()
+    private var itemLanguages = ArrayList<CodedValue>()
 
     @JvmStatic
     fun loadCodedValueMaps(objects: List<OSRFObject>) {
@@ -46,10 +48,10 @@ object EgCodedValueMap {
             val value = obj.getString("value") ?: ""
             val cv = CodedValue(code, if (search_label.isNotBlank()) search_label else value, opac_visible)
             Log.v(TAG, "ccvm ctype:" + ctype + " code:" + code + " label:" + cv.value)
-            if (ctype == SEARCH_FORMAT) {
-                searchFormats.add(cv)
-            } else if (ctype == ICON_FORMAT) {
-                iconFormats.add(cv)
+            when (ctype) {
+                SEARCH_FORMAT -> searchFormats.add(cv)
+                ICON_FORMAT -> iconFormats.add(cv)
+                ITEM_LANG -> itemLanguages.add(cv)
             }
         }
     }
@@ -58,6 +60,7 @@ object EgCodedValueMap {
         val codedValues: ArrayList<CodedValue> = when (ctype) {
             SEARCH_FORMAT -> searchFormats
             ICON_FORMAT -> iconFormats
+            ITEM_LANG -> itemLanguages
             else -> return null
         }
         val cv = codedValues.firstOrNull { code == it.code }
@@ -71,6 +74,7 @@ object EgCodedValueMap {
         val codedValues: ArrayList<CodedValue> = when (ctype) {
             SEARCH_FORMAT -> searchFormats
             ICON_FORMAT -> iconFormats
+            ITEM_LANG -> itemLanguages
             else -> return null
         }
         val cv = codedValues.firstOrNull { value == it.value }
@@ -79,17 +83,18 @@ object EgCodedValueMap {
         return cv?.code
     }
 
-    @JvmStatic
     fun iconFormatLabel(code: String?): String? {
         return getValueFromCode(ICON_FORMAT, code)
     }
 
-    @JvmStatic
+    fun languageLabel(code: String?): String? {
+        return getValueFromCode(ITEM_LANG, code)
+    }
+
     fun searchFormatLabel(code: String): String? {
         return getValueFromCode(SEARCH_FORMAT, code)
     }
 
-    @JvmStatic
     fun searchFormatCode(label: String?): String? {
         return if (label.isNullOrBlank() || label == ALL_SEARCH_FORMATS) "" else getCodeFromValue(SEARCH_FORMAT, label)
     }
