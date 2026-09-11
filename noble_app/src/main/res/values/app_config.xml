@@ -15,6 +15,8 @@
 
     <bool name="app_enable_hierarchical_org_tree">true</bool>
     <bool name="app_enable_copy_info_web_links">false</bool>
+    <bool name="app_enable_hold_use_override">true</bool>
+    <bool name="app_enable_metarecord_holds">true</bool>
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_title_hold_on_item_with_parts">true</bool>
     <bool name="app_enable_pay_fines">true</bool>
