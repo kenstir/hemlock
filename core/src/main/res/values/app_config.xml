@@ -81,7 +81,7 @@
     <!-- if true, clicking Online Access always shows a popup, even if there is only 1 link -->
     <bool name="app_always_popup_online_links">false</bool>
     <!-- if true, we must load MARCXML records to load online locations -->
-    <bool name="app_need_marc_record">false</bool>
+    <bool name="app_need_marc_record">true</bool>
     <!-- if true, display the hours of operation on the Library Info screen -->
     <bool name="app_enable_hours_of_operation">true</bool>
     <!-- if true, Firebase Analytics is initialized -->
