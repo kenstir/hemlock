@@ -62,7 +62,7 @@
     <!-- if true, show "expires DATE" for holds that are Available -->
     <bool name="app_enable_hold_shelf_expiration">true</bool>
     <!-- if true, show "Advanced Hold" button on Place Hold screen for items with metarecords -->
-    <bool name="app_enable_metarecord_holds">false</bool>
+    <bool name="app_enable_metarecord_holds">true</bool>
     <!-- if true, we query an item for parts to allow a part hold -->
     <bool name="app_enable_part_holds">false</bool>
     <!-- if true, and the item has parts, try title_hold.is_possible and if so, allow title hold.
