@@ -109,6 +109,25 @@ class GatewayResultTest {
     }
 
     @Test
+    fun test_payloadAsObjectList_oneObj() {
+        // e.g. open-ils.actor.history.circ
+        val json = """
+            {"payload":[
+            {"__c":"test1","__p":[9297488,"s1"]}
+            ],"status":200}
+        """.trimIndent()
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val arr = result.payloadAsObjectList()
+        assertEquals(1, arr.size)
+
+        val obj = arr.first()
+        assertEquals(9297488, obj.getInt("id"))
+        assertEquals("s1", obj.getString("name"))
+    }
+
+    @Test
     fun test_payloadAsObjectList_empty() {
         // e.g. open-ils.actor.history.circ
         val json = """
