@@ -360,6 +360,7 @@ class PlaceHoldActivity : BaseActivity() {
     private fun initAdvancedHoldViews() {
         placeHold?.setOnClickListener { placeHold() }
         placeHold?.isEnabled = false
+        advancedHold?.isEnabled = false
         advancedHold?.visibility = if (!isAdvancedHold
             && resources.getBoolean(R.bool.app_enable_metarecord_holds)
             && record.metarecordId != null) View.VISIBLE else View.GONE
