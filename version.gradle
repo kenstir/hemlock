@@ -1,7 +1,7 @@
 // format: Major.Minor.Patch.Build where Build starts with 1
-ext.globalVersionName = "5.2.0.4"
+ext.globalVersionName = "5.2.0.5"
 
-ext.globalVersionCode = 181
+ext.globalVersionCode = 182
 
 // idea: replace with automatic code based on date.
 // Downside: harder to manage release note files in fastlane.
