@@ -30,6 +30,7 @@ GEM
     base64 (0.3.0)
     benchmark (0.5.0)
     bigdecimal (4.1.2)
+    cgi (0.5.2)
     claide (1.1.0)
     colored (1.2)
     colored2 (3.1.2)
@@ -61,7 +62,7 @@ GEM
     faraday-retry (2.4.0)
       faraday (~> 2.0)
     fastimage (2.4.1)
-    fastlane (2.238.0)
+    fastlane (2.240.1)
       CFPropertyList (>= 2.3, < 5.0.0)
       abbrev (~> 0.1)
       addressable (>= 2.9.0, < 3.0.0)
@@ -71,6 +72,7 @@ GEM
       base64 (~> 0.2)
       benchmark (>= 0.1.0)
       bundler (>= 2.4.0, < 5.0.0)
+      cgi (~> 0.4)
       colored (~> 1.2)
       commander (~> 4.6)
       csv (~> 3.3)
@@ -85,12 +87,11 @@ GEM
       fastimage (>= 2.1.0, < 3.0.0)
       fastlane-sirp (>= 1.1.0)
       gh_inspector (>= 1.1.2, < 2.0.0)
-      google-apis-androidpublisher_v3 (~> 0.3)
+      google-apis-androidpublisher_v3 (~> 0.99)
       google-apis-playcustomapp_v1 (~> 0.1)
-      google-cloud-env (>= 1.6.0, < 2.3.0)
+      google-cloud-env (>= 1.6.0, < 2.4.0)
       google-cloud-storage (~> 1.31)
       highline (~> 2.0)
-      http-cookie (~> 1.0.5)
       irb (>= 1.8)
       json (< 3.0.0)
       jwt (>= 2.10.3, < 4)
@@ -104,8 +105,8 @@ GEM
       optparse (>= 0.1.1, < 1.0.0)
       ostruct (>= 0.1.0)
       plist (>= 3.1.0, < 4.0.0)
-      rubyzip (>= 2.0.0, < 3.0.0)
-      security (= 0.1.5)
+      rubyzip (>= 3.4.0, < 4.0.0)
+      security (~> 0.3)
       simctl (~> 1.6.3)
       terminal-notifier (>= 2.0.0, < 3.0.0)
       terminal-table (~> 4)
@@ -169,6 +170,9 @@ GEM
     google-protobuf (4.34.1-x64-mingw-ucrt)
       bigdecimal
       rake (~> 13.3)
+    google-protobuf (4.34.1-x86_64-linux-gnu)
+      bigdecimal
+      rake (~> 13.3)
     googleapis-common-protos (1.9.0)
       google-protobuf (~> 4.26)
       googleapis-common-protos-types (~> 1.21)
@@ -187,6 +191,9 @@ GEM
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     grpc (1.78.1-x64-mingw-ucrt)
+      google-protobuf (>= 3.25, < 5.0)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.78.1-x86_64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     highline (2.0.3)
@@ -242,8 +249,8 @@ GEM
     retriable (4.2.0)
     rexml (3.4.4)
     rouge (3.28.0)
-    rubyzip (2.4.1)
-    security (0.1.5)
+    rubyzip (3.4.0)
+    security (0.3.0)
     signet (0.22.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -283,6 +290,7 @@ GEM
 PLATFORMS
   arm64-darwin-24
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   fastlane
@@ -305,6 +313,7 @@ CHECKSUMS
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
   bigdecimal (4.1.2) sha256=53d217666027eab4280346fba98e7d5b66baaae1b9c3c1c0ffe89d48188a3fbd
+  cgi (0.5.2) sha256=61ca30298171190fd4fa0d8018e57ada456eae9b7a2b78526debf7f0a0e6f8bb
   claide (1.1.0) sha256=6d3c5c089dde904d96aa30e73306d0d4bd444b1accb9b3125ce14a3c0183f82e
   colored (1.2) sha256=9d82b47ac589ce7f6cab64b1f194a2009e9fd00c326a5357321f44afab2c1d2c
   colored2 (3.1.2) sha256=b13c2bd7eeae2cf7356a62501d398e72fde78780bd26aec6a979578293c28b4a
@@ -324,7 +333,7 @@ CHECKSUMS
   faraday-net_http (3.4.4) sha256=0e78af151747ed1b00f33e25973b4bc220d7f16c00c39676817c8b12331eb588
   faraday-retry (2.4.0) sha256=7b79c48fb7e56526faf247b12d94a680071ff40c9fda7cf1ec1549439ad11ebe
   fastimage (2.4.1) sha256=c64bebd46b6fd8943ab70c1e6e85ff728f970f2e48f92ecd249b6bc3a540ad20
-  fastlane (2.238.0) sha256=78e9252df2224c7e427012638e41051edfa29b133a40fda883fd2f1c13a77b98
+  fastlane (2.240.1) sha256=cf792bc99ec6af6574ea416cda6530f519c8b4b3a46b1a3b52488ebf1696aa5c
   fastlane-sirp (1.1.0) sha256=10bc94f9682efd8e1badfb31452a76dd8981f1f3a33717c765fde6d75b54d847
   fiddle (1.1.8) sha256=7fa8ee3627271497f3add5503acdbc3f40b32f610fc1cf49634f083ef3f32eee
   gapic-common (0.23.0) sha256=331f483bc6ff9768808058562f765fa57d1d90c678af41a4225309936083ab44
@@ -342,11 +351,13 @@ CHECKSUMS
   google-logging-utils (0.2.0) sha256=675462b4ea5affa825a3442694ca2d75d0069455a1d0956127207498fca3df7b
   google-protobuf (4.34.1-arm64-darwin) sha256=2745061f973119e6e7f3c81a0c77025d291a3caa6585a2cd24a25bbc7bedb267
   google-protobuf (4.34.1-x64-mingw-ucrt) sha256=8361420912aabb400a86b6e0a4baa99fa77b4b93d1fa0c5ddcd11c18969ba4d5
+  google-protobuf (4.34.1-x86_64-linux-gnu) sha256=87088c9fd8e47b5b40ca498fc1195add6149e941ff7e81c532a5b0b8876d4cc9
   googleapis-common-protos (1.9.0) sha256=207be372d8d25e3876e1e1155d057e14f3c92f8f5428772864a8ce04a0b756e4
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.17.4) sha256=acc2cac2a6011048f149c922cbc6c9675719e165aa5000c7fa3876c480fe9ae3
   grpc (1.78.1-arm64-darwin) sha256=7378b58db8dc65b19dce8006a47c0da30f1faf5d07160d2e1816c31126d3a388
   grpc (1.78.1-x64-mingw-ucrt) sha256=9362924da9418c73ee37cc34eaa2a28f123c24b6b7ceb728a43408d27c589c71
+  grpc (1.78.1-x86_64-linux-gnu) sha256=c0715fe9bc80cf21fbaca2713abf8db6f628f6f31ec1d8762b667151e6ab0c9f
   highline (2.0.3) sha256=2ddd5c127d4692721486f91737307236fe005352d12a4202e26c48614f719479
   http-cookie (1.0.8) sha256=b14fe0445cf24bf9ae098633e9b8d42e4c07c3c1f700672b09fbfe32ffd41aa6
   io-console (0.9.2) sha256=efa74f891dd03c0939a931dfc6e74c2813d904763d456ea9762b0525e748db08
@@ -381,8 +392,8 @@ CHECKSUMS
   retriable (4.2.0) sha256=90c3b257472a1c02f2a3dfa64dd35a420f7a624cef1a5981e20fdac5730f8cdc
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
   rouge (3.28.0) sha256=0d6de482c7624000d92697772ab14e48dca35629f8ddf3f4b21c99183fd70e20
-  rubyzip (2.4.1) sha256=8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615
-  security (0.1.5) sha256=3a977a0eca7706e804c96db0dd9619e0a94969fe3aac9680fcfc2bf9b8a833b7
+  rubyzip (3.4.0) sha256=6de39bc9eba302b635a476d16c9e16b0872ad24517c2f98f2b3a7ea23caff57b
+  security (0.3.0) sha256=bc9d06718258a96c8552ce4044bfe69144491b10d3403d74c4753a03a720ecf0
   signet (0.22.0) sha256=b76d495ccb07ad35dbc89f3e920665a9d8ed717141955034005d7843dcfe4780
   simctl (1.6.10) sha256=b99077f4d13ad81eace9f86bf5ba4df1b0b893a4d1b368bd3ed59b5b27f9236b
   terminal-notifier (2.0.0) sha256=7a0d2b2212ab9835c07f4b2e22a94cff64149dba1eed203c04835f7991078cea
