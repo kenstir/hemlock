@@ -58,6 +58,9 @@ idl)
 *cache*|sk)
     url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22hemlock.cache_key%22%5D&param=%22ANONYMOUS%22"
     ;;
+override)
+    url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22opac.patron.auto_overide_hold_events%22%5D&param=%22ANONYMOUS%22"
+    ;;
 *vers*)
     url="${url}?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
     ;;

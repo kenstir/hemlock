@@ -32,9 +32,10 @@ object EgOrg {
 
     var orgTypes = mutableListOf<OrgType>()
     private var orgs = mutableListOf<Organization>()
-    var smsEnabled = false
     var alertBannerEnabled = false
     var alertBannerText: String? = null
+    var autoHoldOverrideEnabled = false
+    var smsEnabled = false
 
     val allOrgs: List<Organization>
         get() = orgs
