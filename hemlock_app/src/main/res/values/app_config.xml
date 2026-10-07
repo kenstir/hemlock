@@ -10,6 +10,7 @@
     <string name="app_factory_provider">net.kenstir.apps.hemlock.HemlockAppFactory</string>
     <string name="app_feedback_url">https://docs.google.com/forms/d/e/1FAIpQLSdJ667-fEC14SN8LYBA-BxFDYErCC_jRpj3oqz-SjseH8JAKQ/viewform?entry.1598427127=%1$s</string>
     <bool name="app_enable_hierarchical_org_tree">false</bool>
+    <bool name="app_enable_metarecord_holds">true</bool>
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_analytics">true</bool>
     <bool name="app_is_generic_app">true</bool>

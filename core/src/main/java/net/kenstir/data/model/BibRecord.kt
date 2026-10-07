@@ -38,6 +38,7 @@ interface BibRecord: Serializable {
 
     var copyCounts: ArrayList<CopyCount>?
     var marcRecord: MARCRecord?
+    var metarecordId: Int?
     var isDeleted: Boolean
 
     fun hasAttributes(): Boolean

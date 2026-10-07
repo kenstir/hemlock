@@ -83,14 +83,6 @@ class RecordDetailsActivity : BaseActivity() {
         finish()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finishWithIntent()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {

@@ -13,6 +13,7 @@
     <string name="app_details_link_url_template">https://search.owwl.org/Record/{record_id}#more-details-accordion</string>
     <bool name="app_enable_phone_notification">true</bool>
     <bool name="app_enable_hold_use_override">true</bool>
+    <bool name="app_enable_metarecord_holds">false</bool>
     <bool name="app_enable_part_holds">true</bool>
     <bool name="app_enable_pay_fines">false</bool>
     <bool name="app_need_marc_record">true</bool>

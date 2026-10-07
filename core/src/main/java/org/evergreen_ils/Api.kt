@@ -20,7 +20,7 @@ package org.evergreen_ils
  */
 object Api {
     const val ANONYMOUS = "ANONYMOUS"
-    const val IDL_CLASSES_USED = "ac,acn,acp,aec,aecs,ahr,ahrn,ahtc,aoa,aou,aoucd,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
+    const val IDL_CLASSES_USED = "ac,acn,acp,aec,aecs,ahr,ahrn,ahtc,aoa,aou,aoucd,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mmr,mous,mra,mraf,mus,mvr,perm_ex"
 
     /// actor
 
@@ -101,6 +101,7 @@ object Api {
     const val HOLD_CANCEL = "open-ils.circ.hold.cancel"
     const val HOLD_TEST_AND_CREATE = "open-ils.circ.holds.test_and_create.batch"
     const val HOLD_TEST_AND_CREATE_OVERRIDE = "open-ils.circ.holds.test_and_create.batch.override"
+    const val CIRC_METARECORD_HOLDS_FILTERS = "open-ils.circ.mmr.holds.filters"
     const val TITLE_HOLD_IS_POSSIBLE = "open-ils.circ.title_hold.is_possible"
 
     /// fielder

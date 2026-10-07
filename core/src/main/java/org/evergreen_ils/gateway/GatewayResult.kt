@@ -89,7 +89,6 @@ class GatewayResult {
             when (type) {
                 ResultType.EMPTY -> ArrayList()
                 else -> payload as List<OSRFObject>
-
             }
         } catch (_: Exception) {
             throw GatewayException("Internal Server Error: expected array, got $type")

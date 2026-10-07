@@ -31,6 +31,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
 
     override var copyCounts: ArrayList<CopyCount>? = null
     override var marcRecord: MARCRecord? = null
+    override var metarecordId: Int? = null
     var attrs: HashMap<String, String>? = null
     override var isDeleted = false
 
@@ -113,6 +114,8 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         } catch (_: Exception) {
             // ignore
         }
+        val mmrObj = breObj.getObject("metarecord")
+        metarecordId = mmrObj?.getInt("id")
     }
 
     fun updateFromMRAResponse(mraObj: OSRFObject?) {

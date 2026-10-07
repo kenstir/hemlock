@@ -1,0 +1,5 @@
+* New feature: Advanced Hold
+* Improve layout of Place Hold screen
+* Target Android 16
+* internal: Upgrade to Android Studio Quail 3 Patch 1 and AGP 9.3.1
+* internal: Upgrade to fastlane 2.237.0

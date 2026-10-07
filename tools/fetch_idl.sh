@@ -28,6 +28,9 @@ function join_with { local IFS="$1"; shift; echo "$*"; }
 args="$(join_with '&' "${params[@]}")"
 echo args="$args"
 
+# remove /osrf-gateway-v1
+base=${base%/osrf-gateway-v1}
+
 # fetch full IDL and IDL with only select classes
 set -x
 curl -o fm_IDL.$(basename $base).$version.full.xml "$base/reports/fm_IDL.xml"
