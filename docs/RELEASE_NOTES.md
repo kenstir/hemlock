@@ -1,12 +1,14 @@
 ## 5.2.0
 
 ### New
-* New feature: tap to zoom on item image in Details screen
+* New feature: Advanced Hold
+* Improved Place Hold screen
+* New feature: Tap to zoom item image in Details screen
 * Target Android 16
 
 ### Internal
 * internal: Upgrade to Android Studio Quail 3 Patch 1 and AGP 9.3.1
-* internal: Upgrade fastlane to 2.237.0
+* internal: Upgrade to fastlane 2.239.0
 
 ## 5.1.0
 

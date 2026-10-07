@@ -45,6 +45,10 @@ object EvergreenBiblioService: BiblioService {
         return EgCodedValueMap.getValueFromCode(EgCodedValueMap.ICON_FORMAT, formatCode) ?: formatCode
     }
 
+    override fun languageLabel(languageCode: String): String {
+        return EgCodedValueMap.getValueFromCode(EgCodedValueMap.ITEM_LANG, languageCode) ?: languageCode
+    }
+
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
         return try {
             val record: MBRecord = bibRecord.requireType()

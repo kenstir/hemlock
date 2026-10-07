@@ -29,6 +29,7 @@ import net.kenstir.data.model.Organization
 import net.kenstir.data.Result
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.round
 
 /** Utils that wrap Crashlytics (and now FirebaseAnalytics)
@@ -68,6 +69,7 @@ object Analytics {
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
         const val HOLD_REACTIVATE_KEY = "hold_reactivate" // bool
         const val HOLD_SUSPEND_KEY = "hold_suspend" // bool
+        const val HOLD_TYPE_KEY = "hold_type"
         const val LOGIN_TYPE = "login_type" // { barcode | username }
         const val RESULT = "result" // { ok | error_message }
         const val SEARCH_CLASS = "search_class"
@@ -272,7 +274,11 @@ object Analytics {
         return sb.toString()
     }
 
-    fun orgDimensionKey(selectedOrg: Organization?, defaultOrg: Organization?, homeOrg: Organization?): String {
+    /** Returns a string to use as a value in a [logEvent] bundle for the org dimension.
+     *
+     * We don't really care about the org itself, just whether it is the home org, the default org, or some other org.
+     */
+    fun orgDimensionValue(selectedOrg: Organization?, defaultOrg: Organization?, homeOrg: Organization?): String {
         return when {
             selectedOrg == null || defaultOrg == null || homeOrg == null -> "null"
             selectedOrg.id == defaultOrg.id -> "default"
@@ -282,11 +288,21 @@ object Analytics {
         }
     }
 
-    private fun loginTypeKey(username: String, barcode: String?): String {
+    /** Returns a string to use as a value in a [logEvent] bundle for the login_type dimension.
+     */
+    private fun loginTypeDimensionValue(username: String, barcode: String?): String {
         return when {
             username == barcode -> "barcode"
             else -> "username"
         }
+    }
+
+    fun notifyDimensionValue(notifyByEmail: Boolean, notifyByPhone: Boolean, notifyBySMS: Boolean): String {
+        val notify = ArrayList<String?>()
+        if (notifyByEmail) notify.add("email")
+        if (notifyByPhone) notify.add("phone")
+        if (notifyBySMS) notify.add("sms")
+        return notify.joinToString("|")
     }
 
     /** Returns "true" or "false" to use as a value in a [logEvent] bundle.
@@ -330,7 +346,7 @@ object Analytics {
         logEvent(
             Event.LOGIN, bundleOf(
             Param.RESULT to Value.OK,
-            Param.LOGIN_TYPE to loginTypeKey(username, barcode),
+            Param.LOGIN_TYPE to loginTypeDimensionValue(username, barcode),
             Param.NUM_ACCOUNTS to numAccounts,
         ))
     }

@@ -68,7 +68,7 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.bookbags.BookBagUtils.showAddToListDialog
 import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.util.Analytics
-import net.kenstir.util.Analytics.orgDimensionKey
+import net.kenstir.util.Analytics.orgDimensionValue
 import net.kenstir.util.getCustomMessage
 
 const val ITEM_PLACE_HOLD = 0
@@ -301,7 +301,7 @@ class SearchActivity : BaseActivity() {
             Analytics.Param.SEARCH_CLASS to searchClass,
             Analytics.Param.SEARCH_FORMAT to searchFormatCode,
             Analytics.Param.SEARCH_ORG_KEY to
-                    orgDimensionKey(orgService.selectedOrganization,
+                    orgDimensionValue(orgService.selectedOrganization,
                         orgService.findOrg(App.account.searchOrg),
                         orgService.findOrg(App.account.homeOrg)),
         )

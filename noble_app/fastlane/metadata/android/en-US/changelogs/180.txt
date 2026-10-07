@@ -1,0 +1,6 @@
+* New feature: Advanced Hold
+* Improved Place Hold screen
+* New feature: Tap to zoom item image in Details screen
+* Update minimum Android version to 6.0 (API 23)
+* Fixed accessibility issues where author and copy info text links were too small
+* Fixed ANR (App Not Responding) errors by moving account operations off main thread
