@@ -17,6 +17,7 @@
 
 package net.kenstir.ui
 
+import android.os.Build
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -32,7 +33,7 @@ class Application : android.app.Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
-        Log.d(TAG, "[init] Application.onCreate kotlin ${KotlinVersion.CURRENT}")
+        Log.d(TAG, "[init] Application.onCreate kotlin ${KotlinVersion.CURRENT} android ${Build.VERSION.RELEASE} sdk ${Build.VERSION.SDK_INT}")
         super.onCreate()
 
         // ThemeManager requires AppState
