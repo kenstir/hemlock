@@ -21,6 +21,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -196,6 +197,9 @@ class LaunchActivity : AppCompatActivity() {
                     is Result.Error -> "unknown"
                 }
                 Analytics.logMessageToBuffer("IP $ip")
+
+                // append the runtime info
+                Analytics.logMessageToBuffer("android ${Build.VERSION.RELEASE} sdk ${Build.VERSION.SDK_INT}")
 
                 val i = Intent(Intent.ACTION_SENDTO)
                 i.data = Uri.parse("mailto:") // only email apps should handle this

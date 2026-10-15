@@ -6,6 +6,9 @@
 * New feature: Tap to zoom item image in Details screen
 * Target Android 16
 
+### Fixed
+* pines: Fix SSLHandshakeException on Android 10 and earlier
+  by adding new cert's root CA as additional trust anchor
 ### Internal
 * internal: Upgrade to Android Studio Quail 3 Patch 1 and AGP 9.3.1
 * internal: Upgrade to fastlane 2.239.0
