@@ -370,6 +370,17 @@ class GatewayResultTest {
         assertEquals("User already has an open hold on the selected item", result.errorMessage)
     }
 
+    /// Place hold fails slightly differently when using .override
+    @Test
+    fun test_placeHold_failWithHoldExistsOverride() {
+        val json = """
+            {"payload":[{"result":{"ilsevent":"5000","textcode":"PERM_FAILURE","desc":"Permission Denied","ilsperm":"HOLD_EXISTS.override"},"target":5565605}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("Permission Denied", result.errorMessage)
+    }
+
     /// This hold response has a payload with a result that is an event (not a list of events)
     @Test
     fun test_placeHold_failWithDatabaseError() {
