@@ -54,11 +54,7 @@ class LaunchViewModel : ViewModel() {
     private fun onLoadError(ex: Exception, where: String) {
         errors.incrementAndGet()
         Analytics.logFailedLaunch(ex, where)
-        try {
-            _status.value = ex.getCustomMessage()
-        } catch (ex: java.lang.Exception) {
-            _status.value = "Unexpected error"
-        }
+        _status.value = ex.getCustomMessage()
         _serviceDataReady.value = false
     }
 

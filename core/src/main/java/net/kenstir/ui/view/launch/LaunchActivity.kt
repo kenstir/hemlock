@@ -56,6 +56,7 @@ import net.kenstir.ui.util.appInfo
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
+import net.kenstir.util.isOnline
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -139,10 +140,14 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun onLaunchFailure() {
-        mRetryButton?.visibility = View.VISIBLE
-        if (mRetryCount > 0) {
-            mSendReportButton?.visibility = View.VISIBLE
+        val isOnline = isOnline(this)
+
+        if (!isOnline) {
+            mProgressText?.text = getString(R.string.no_internet_connection)
         }
+
+        mRetryButton?.visibility = View.VISIBLE
+        mSendReportButton?.visibility = if (mRetryCount > 0 && isOnline) View.VISIBLE else View.GONE
         mProgressBar?.visibility = View.INVISIBLE
     }
 
