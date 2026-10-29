@@ -23,10 +23,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         minSdk 23
-        targetSdk 36
+        targetSdk 37
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         versionName rootProject.ext.globalVersionName

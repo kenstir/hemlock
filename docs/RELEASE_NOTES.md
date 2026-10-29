@@ -1,3 +1,12 @@
+## UPCOMING
+
+### New
+* chore: Target Android 17
+
+### Fixed
+* Say "No internet connection" if login fails and the device is offline.
+  This replaces the detailed exception such as "Unable to resolve host".
+
 ## 5.2.0
 
 ### New
