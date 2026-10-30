@@ -75,6 +75,8 @@ const val ITEM_PLACE_HOLD = 0
 const val ITEM_SHOW_DETAILS = 1
 const val ITEM_ADD_TO_LIST = 2
 
+const val DEFAULT_SEARCH_FORMAT_VALUE = ""
+
 class SearchActivity : BaseActivity() {
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
@@ -195,7 +197,7 @@ class SearchActivity : BaseActivity() {
         )
         searchFormatOption = SpinnerStringOption(
             key = AppState.SEARCH_FORMAT,
-            defaultValue = "",
+            defaultValue = DEFAULT_SEARCH_FORMAT_VALUE,
             optionLabels = consortiumService.searchFormatSpinnerLabels,
             optionValues = consortiumService.searchFormatSpinnerValues
         )
@@ -579,6 +581,7 @@ class SearchActivity : BaseActivity() {
             Log.d(TAG, "[scanner]: got $it")
             searchTextView?.setText(it)
             setSearchClass(SearchClass.IDENTIFIER)
+            setSearchFormat(DEFAULT_SEARCH_FORMAT_VALUE)
             fetchSearchResults()
         }
     }
@@ -587,6 +590,13 @@ class SearchActivity : BaseActivity() {
         // Set the searchClassSpinner to the specified value. Because we are changing the state
         // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
         searchClassOption.selectByValue(value)
+        searchOptionsButton?.isChecked = true
+    }
+
+    private fun setSearchFormat(value: String) {
+        // Set the searchFormatSpinner to the specified value. Because we are changing the state
+        // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
+        searchFormatOption.selectByValue(value)
         searchOptionsButton?.isChecked = true
     }
 
