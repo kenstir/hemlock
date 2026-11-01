@@ -213,7 +213,7 @@ object EvergreenCircService: CircService {
         hold.record = bibRecord
 
         val attrsObj = EvergreenBiblioService.fetchMRA(target)
-        bibRecord?.updateFromMRAResponse(attrsObj)
+        bibRecord.updateFromMRAResponse(attrsObj)
     }
 
     private suspend fun loadMetarecordHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
