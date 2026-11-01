@@ -167,6 +167,9 @@ GEM
       googleauth (~> 1.9)
       mini_mime (~> 1.0)
     google-logging-utils (0.2.1)
+    google-protobuf (4.36.1-arm64-darwin)
+      bigdecimal
+      rake (~> 13.3)
     google-protobuf (4.36.1-x64-mingw-ucrt)
       bigdecimal
       rake (~> 13.3)
@@ -184,6 +187,9 @@ GEM
       os (>= 0.9, < 2.0)
       pstore (~> 0.1)
       signet (>= 0.16, < 2.a)
+    grpc (1.83.1-arm64-darwin)
+      google-protobuf (>= 3.25, < 5.0)
+      googleapis-common-protos-types (~> 1.0)
     grpc (1.83.1-x64-mingw-ucrt)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
@@ -221,6 +227,7 @@ GEM
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.1)
+    prism (2.1.0-arm64-darwin)
     prism (2.1.0-x64-mingw-ucrt)
     pstore (0.3.0)
     public_suffix (7.0.5)
@@ -283,6 +290,7 @@ GEM
       xcpretty (~> 0.2, >= 0.0.7)
 
 PLATFORMS
+  arm64-darwin-25
   x64-mingw-ucrt
 
 DEPENDENCIES
@@ -342,10 +350,12 @@ CHECKSUMS
   google-cloud-errors (1.7.0) sha256=6e682f42d89aae08689f36f28495de629d756da076bafff0003bac7f8042ebb3
   google-cloud-storage (1.62.1) sha256=10dbf2ebda3af1b4b841335364cb889827c6cb17bf6c9f8bc5313b6bef7a4d3c
   google-logging-utils (0.2.1) sha256=73945c3ac6800eba802c26b1744765d5057cc4d89182c7255ee1347b0ca96dc7
+  google-protobuf (4.36.1-arm64-darwin) sha256=4d82184f4582dfa123f9793cd7a73beca9b0d3f0d3717948c4120b6cc0d50f2d
   google-protobuf (4.36.1-x64-mingw-ucrt) sha256=1ac6ce359ed6c40dcb06c2a5f7814fb8b8b44353c419be72d4ec09d97a903636
   googleapis-common-protos (1.10.0) sha256=13e47ad0ce85d3d30065c03863efd302a82b0e08ba576f2a9b9dbbfeecb57ee0
   googleapis-common-protos-types (1.23.0) sha256=992e740a523794d9fc5f29a504465d8fc737aaa16c930fe7228e3346860faf0a
   googleauth (1.17.6) sha256=d4fd30f99aeb28ae46ef521cf8ac50927a453b8c6600f8940437ac11ad90bdfc
+  grpc (1.83.1-arm64-darwin) sha256=318b08cd32bb3a46e660c7e8aaf2f0b8ec72429396bf84576bb7266c846c5f32
   grpc (1.83.1-x64-mingw-ucrt) sha256=7f50183042850591dcf7b354a71701438e8978fd656b138196347bbbf968880f
   highline (2.0.3) sha256=2ddd5c127d4692721486f91737307236fe005352d12a4202e26c48614f719479
   http-cookie (1.1.6) sha256=ba4b82be64de61dc281243dac70e3c382c45142f20268ed9276a3670c93feaa9
@@ -371,6 +381,7 @@ CHECKSUMS
   plist (3.7.2) sha256=d37a4527cc1116064393df4b40e1dbbc94c65fa9ca2eec52edf9a13616718a42
   pp (0.6.4) sha256=dfcb0fce700c41456265922884f9fe195d7fbb0674a3578e6c0f69588e82b570
   prettyprint (0.2.1) sha256=d555d57ea6d7cf001d4774b693546a6bd88bec1e778ddffb5c60b68ceec4b7d4
+  prism (2.1.0-arm64-darwin) sha256=2d0c2e3e011cfd89c041940907d3ff3def379d7b0f2ba158d1d42238e8ad8afc
   prism (2.1.0-x64-mingw-ucrt) sha256=9cd54b1d4f645cb89fc28d17b7a35e7bdc018e1c93a1d499b09d37f14498235f
   pstore (0.3.0) sha256=97888d57cdc8b99b3587dde5e1d01fc5ca4a9124dfeb2afb84e3dd982e78f829
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
