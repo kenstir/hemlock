@@ -22,11 +22,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -47,7 +44,9 @@ import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
+import net.kenstir.ui.util.setMessageFromHtml
 import net.kenstir.ui.util.showAlert
+import net.kenstir.ui.util.showAndMakeLinksClickable
 import net.kenstir.util.Analytics
 import net.kenstir.util.md5
 
@@ -273,14 +272,9 @@ open class MainBaseActivity : BaseActivity() {
         }
 
         // show the alert dialog with simple HTML rendering of the message
-        val spannedMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(alertBanner, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            Html.fromHtml(alertBanner)
-        }
-        val builder = AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(resources.getString(R.string.system_alert_title))
-            .setMessage(spannedMessage)
+            .setMessageFromHtml(alertBanner)
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -288,12 +282,7 @@ open class MainBaseActivity : BaseActivity() {
                 AppState.setString(AppState.ALERT_BANNER_SQUELCHED_MD5, alertBannerMD5)
                 dialog.dismiss()
             }
-        val dialog = builder.create()
-        dialog.show()
-
-        // set the movementMethod on the TextView to make any links clickable
-        val messageView: TextView? = dialog.findViewById(android.R.id.message)
-        messageView?.movementMethod = LinkMovementMethod.getInstance()
+            .showAndMakeLinksClickable()
     }
 
     companion object {

@@ -18,14 +18,17 @@
 package net.kenstir.ui.util
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
+import android.text.Html
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -34,6 +37,7 @@ import net.kenstir.data.service.ServiceException
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_EXTENSIONS
+import net.kenstir.ui.AppState
 import net.kenstir.ui.Key
 import net.kenstir.ui.Lifecycle
 import net.kenstir.ui.view.search.RecordDetailsActivity
