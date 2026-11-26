@@ -23,6 +23,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -56,7 +57,8 @@ import net.kenstir.ui.util.appInfo
 import net.kenstir.ui.util.compatEnableEdgeToEdge
 import net.kenstir.util.Analytics
 import net.kenstir.util.getCustomMessage
-import net.kenstir.util.isOnline
+import net.kenstir.util.isDeviceOnline
+import net.kenstir.util.isServerOfflineError
 
 class LaunchActivity : AppCompatActivity() {
 
@@ -122,7 +124,7 @@ class LaunchActivity : AppCompatActivity() {
             if (ready) {
                 loadAccountData()
             } else {
-                onLaunchFailure()
+                onLaunchFailure(mModel.error.value)
             }
         })
     }
@@ -139,15 +141,22 @@ class LaunchActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfig)
     }
 
-    private fun onLaunchFailure() {
-        val isOnline = isOnline(this)
-
-        if (!isOnline) {
+    private fun onLaunchFailure(ex: Exception? = null) {
+        // if the device or server is offline, show a more usable message, and do not show the Send Report button
+        var isReportableFailure = true
+        if (!isDeviceOnline(this)) {
+            isReportableFailure = false
             mProgressText?.text = getString(R.string.no_internet_connection)
+        } else if (ex.isServerOfflineError() || App.svc.loader.isServerOfflineError(ex)) {
+            isReportableFailure = false
+            mProgressText?.text = getString(R.string.server_offline_message, App.svc.loader.serviceUrl)
+            Linkify.addLinks(mProgressText!!, Linkify.WEB_URLS)
+        } else {
+            // was already set by the model observer
         }
 
         mRetryButton?.visibility = View.VISIBLE
-        mSendReportButton?.visibility = if (mRetryCount > 0 && isOnline) View.VISIBLE else View.GONE
+        mSendReportButton?.visibility = if (mRetryCount > 0 && isReportableFailure) View.VISIBLE else View.GONE
         mProgressBar?.visibility = View.INVISIBLE
     }
 
@@ -187,7 +196,7 @@ class LaunchActivity : AppCompatActivity() {
             } catch (ex: Exception) {
                 mProgressText?.text = ex.getCustomMessage()
                 Analytics.logFailedLaunch(ex, "launchLoginFlow")
-                onLaunchFailure()
+                onLaunchFailure(ex)
             }
         }
     }
@@ -235,7 +244,7 @@ class LaunchActivity : AppCompatActivity() {
                 val msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 Analytics.logFailedLaunch(ex, "loadAccountData")
-                onLaunchFailure()
+                onLaunchFailure(ex)
             }
         }
     }

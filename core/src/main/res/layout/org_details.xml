@@ -405,6 +405,7 @@
                         android:id="@+id/org_details_email"
                         style="?android:buttonBarButtonStyle"
                         tools:text="contact_us@athenslibrary.org"
+                        android:contentDescription="@string/email_button_description"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

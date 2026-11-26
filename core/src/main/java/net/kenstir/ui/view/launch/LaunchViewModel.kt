@@ -43,6 +43,10 @@ class LaunchViewModel : ViewModel() {
     val status: LiveData<String>
         get() = _status
 
+    private val _error = MutableLiveData<Exception?>()
+    val error: LiveData<Exception?>
+        get() = _error
+
     private val _spinner = MutableLiveData<Boolean>()
     val spinner: LiveData<Boolean>
         get() = _spinner
@@ -54,6 +58,7 @@ class LaunchViewModel : ViewModel() {
     private fun onLoadError(ex: Exception, where: String) {
         errors.incrementAndGet()
         Analytics.logFailedLaunch(ex, where)
+        _error.value = ex
         _status.value = ex.getCustomMessage()
         _serviceDataReady.value = false
     }

@@ -50,6 +50,11 @@ interface LoaderService {
     fun initHttpClient(cacheDir: File): OkHttpClient
 
     /**
+     * Returns true if the exception caught during launch looks like the server is offline or unreachable
+     */
+    fun isServerOfflineError(ex: Throwable?): Boolean
+
+    /**
      * Load any and all prerequisite data required for the client to function.
      * With the exception of AuthService methods, this must be called before
      * any other Service methods.

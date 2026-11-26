@@ -315,4 +315,7 @@
     <string name="system_alert_title">Alert</string>
     <string name="system_alert_dont_show_again">Don\'t show again</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="server_offline_title">Server is offline</string>
+    <string name="server_offline_message">The server is offline\n\nTry again later, or visit %1$s in your browser</string>
+    <string name="email_button_description">contact email address</string>
 </resources>

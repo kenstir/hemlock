@@ -22,7 +22,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 
 /// Returns true if the device has an active internet connection
-fun isOnline(context: Context): Boolean {
+fun isDeviceOnline(context: Context): Boolean {
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     // Get the capabilities of the active network

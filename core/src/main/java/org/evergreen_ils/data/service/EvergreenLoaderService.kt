@@ -35,6 +35,7 @@ import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
+import org.evergreen_ils.gateway.GatewayException
 import org.evergreen_ils.gateway.idl.IDLParser
 import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.system.EgSms
@@ -59,6 +60,12 @@ object EvergreenLoaderService: LoaderService {
         GatewayClient.cacheDirectory = cacheDir
         GatewayClient.initHttpClient()
         return GatewayClient.okHttpClient
+    }
+
+    override fun isServerOfflineError(ex: Throwable?): Boolean {
+        if (ex == null) return false
+        if (ex is GatewayException && ex.message?.contains("is not JSON") == true) return true
+        return false
     }
 
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {

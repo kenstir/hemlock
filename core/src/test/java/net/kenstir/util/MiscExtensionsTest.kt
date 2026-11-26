@@ -39,6 +39,22 @@ class MiscExtensionsTest {
     }
 
     @Test
+    fun test_Exception_isServerOffline() {
+        // case: nginx is down, got: java.net.ConnectException: Failed to connect to ...
+        assertEquals(true, java.net.ConnectException("Failed to connect to HOST/IP:PORT").isServerOfflineError())
+
+        // case: nginx is up, evergreen down, got: java.io.InterruptedIOException: timeout
+        assertEquals(true, java.io.InterruptedIOException("timeout").isServerOfflineError())
+
+        // case seen in all the Evergreen Indiana reports
+        val msg = "Connect timeout has expired [url=https://evergreen.example.org/osrf-gateway-v1, connect_timeout=unknown ms]"
+        assertEquals(true, io.ktor.client.network.sockets.ConnectTimeoutException(msg).isServerOfflineError())
+
+        // server not offline
+        assertEquals(false, null.isServerOfflineError())
+    }
+
+    @Test
     fun test_indexOfOrZero() {
         val list = listOf("a", "b", "c")
         assertEquals(0, list.indexOfOrZero("a"))

@@ -18,7 +18,6 @@
 
 package net.kenstir.util
 
-import java.security.MessageDigest
 import kotlin.random.Random
 
 /** custom message for particular exceptional conditions
@@ -37,6 +36,20 @@ fun Exception.getCustomMessage(): String {
     }
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"
+}
+
+    /**
+     * returns true if the exception caught during launch looks like the server is offline or unreachable
+     */
+fun Throwable?.isServerOfflineError(): Boolean {
+    if (this == null) return false
+    // seen these; see also MiscExtensionsTest
+    if (this is java.net.ConnectException) return true
+    if (this is io.ktor.client.network.sockets.ConnectTimeoutException) return true
+    if (this is java.io.InterruptedIOException && this.message?.contains("timeout") == true) return true
+
+    val msg = this.message ?: ""
+    return msg.contains("Connect timeout has expired")
 }
 
 /** returns index of item in array that matches [element], or 0 if not found

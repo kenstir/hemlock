@@ -45,6 +45,10 @@ object MockLoaderService : LoaderService {
         return okHttpClient
     }
 
+    override fun isServerOfflineError(ex: Throwable?): Boolean {
+        return false
+    }
+
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions, resources: Resources): Result<Unit> {
         TODO("Not yet implemented")
     }
